@@ -91,7 +91,7 @@ class TMreceiver(UTIL.TCP.SingleServerReceivingClient):
     pass
   # ---------------------------------------------------------------------------
   def notifyError(self, errorMessage, data):
-    """error notification: hook for dedived classes"""
+    """error notification: hook for derived classes"""
     pass
 
 # =============================================================================
@@ -145,7 +145,7 @@ class TMsender(UTIL.TCP.Server):
     self.sendTmDataUnit(tmDu)
   # ---------------------------------------------------------------------------
   def clientAccepted(self):
-    """hook for dedived classes"""
+    """hook for derived classes"""
     pass
 
 # =============================================================================
@@ -315,19 +315,19 @@ class TCreceiver(UTIL.TCP.SingleClientReceivingServer):
     sys.exit(-1)
   # ---------------------------------------------------------------------------
   def clientAccepted(self):
-    """hook for dedived classes"""
+    """hook for derived classes"""
     pass
   # ---------------------------------------------------------------------------
   def notifyError(self, errorMessage, data):
-    """error notification: hook for dedived classes"""
+    """error notification: hook for derived classes"""
     pass
   # ---------------------------------------------------------------------------
   def notifyTCpacket(self, packetData):
-    """TC packet received: hook for dedived classes"""
+    """TC packet received: hook for derived classes"""
     pass
   # ---------------------------------------------------------------------------
   def notifyCltu(self, cltu):
-    """CLTU received: hook for dedived classes"""
+    """CLTU received: hook for derived classes"""
     pass
   # ---------------------------------------------------------------------------
   def sendResponseDataUnit(self, requestDataUnit, acknowledgement):
@@ -496,11 +496,11 @@ class AdminMessageSender(UTIL.TCP.SingleClientReceivingServer):
     LOG_WARNING("Connection closed by admin message client: " + details)
   # ---------------------------------------------------------------------------
   def clientAccepted(self):
-    """hook for dedived classes"""
+    """hook for derived classes"""
     pass
   # ---------------------------------------------------------------------------
   def notifyError(self, errorMessage, data):
-    """error notification: hook for dedived classes"""
+    """error notification: hook for derived classes"""
     pass
 
 # =============================================================================
