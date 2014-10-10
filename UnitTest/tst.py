@@ -16,6 +16,8 @@
 #******************************************************************************
 import EN_SPACE.DEF
 
+# for generating MIB tables from ENMAP data definitions
+
 # for generation of pid.dat
 #for pktRecord in EN_SPACE.DEF.TMTC_TM_PACKETS:
 #  tmPktDef = EN_SPACE.DEF.TMpktDef(pktRecord)
