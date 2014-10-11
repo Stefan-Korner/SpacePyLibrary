@@ -16,21 +16,27 @@
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import UTIL.SYS
 import EGSE.EDEN
+import UTIL.SYS, UTIL.TASK
+
+####################
+# global variables #
+####################
+# EDEN server is a singleton
+s_server = None
 
 ###########
 # classes #
 ###########
 # =============================================================================
-class ConsoleHandler(UTIL.SYS.ConsoleHandler):
+class ModelTask(UTIL.TASK.ProcessingTask):
   """Subclass of UTIL.SYS.ConsoleHandler"""
-  def __init__(self, server):
-    """Initialise attributes only"""
-    UTIL.SYS.ConsoleHandler.__init__(self)
-    self.server = server
   # ---------------------------------------------------------------------------
-  def process(self, argv):
+  def __init__(self):
+    """Initialise attributes only"""
+    UTIL.TASK.ProcessingTask.__init__(self, isParent=True)
+  # ---------------------------------------------------------------------------
+  def notifyCommand(self, argv):
     """Callback for processing the input arguments"""
     if len(argv) > 0:
       # decode the command
@@ -43,12 +49,12 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
         self.packetResponseCmd(argv)
       else:
         LOG_WARNING("Invalid command " + argv[0])
-    print "> ",
+        self.helpCmd([])
+    return 0
   # ---------------------------------------------------------------------------
   def helpCmd(self, argv):
     """Decoded help command"""
-    LOG("Available commands:")
-    LOG("-------------------")
+    LOG_INFO("Available commands:")
     LOG("")
     LOG("h | help .............provides this information")
     LOG("q | quit .............terminates the application")
@@ -57,19 +63,21 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
     """Decoded quit command"""
-    UTIL.SYS.s_eventLoop.stop()
+    UTIL.TASK.s_parentTask.stop()
   # ---------------------------------------------------------------------------
   def packetResponseCmd(self, argv):
     """Decoded packet response command"""
+    global s_server
     tcPktRespDu = EGSE.EDEN.TCpacketResponseDataUnit()
-    self.server.sendTcDataUnit(tcPktRespDu)
+    s_server.sendTcDataUnit(tcPktRespDu)
 
 # =============================================================================
 class Server(EGSE.EDEN.Server):
   """Subclass of EGSE.EDEN.Server"""
-  def __init__(self, eventLoop, portNr):
+  # ---------------------------------------------------------------------------
+  def __init__(self, portNr):
     """Initialise attributes only"""
-    EGSE.EDEN.Server.__init__(self, eventLoop, portNr)
+    EGSE.EDEN.Server.__init__(self, portNr)
   # ---------------------------------------------------------------------------
   def clientAccepted(self):
     LOG_INFO("Client accepted")
@@ -101,18 +109,14 @@ class Server(EGSE.EDEN.Server):
 # -----------------------------------------------------------------------------
 def initConfiguration():
   """initialise the system configuration"""
-  UTIL.SYS.s_configuration.setDefaults([
-    ["SYS_COLOR_LOG", "1"],
-    ["EDEN_SERVER_PORT", "13007"]])
+  UTIL.SYS.s_configuration.setDefaults([["EDEN_SERVER_PORT", "13007"]])
 # -----------------------------------------------------------------------------
 def createServer():
   """create the EDEN server"""
-  server = Server(
-    UTIL.SYS.s_eventLoop,
-    portNr=int(UTIL.SYS.s_configuration.EDEN_SERVER_PORT))
-  if not server.openConnectPort():
+  global s_server
+  s_server = Server(portNr=int(UTIL.SYS.s_configuration.EDEN_SERVER_PORT))
+  if not s_server.openConnectPort():
     sys.exit(-1)
-  return server
 
 ########
 # main #
@@ -120,13 +124,15 @@ def createServer():
 if __name__ == "__main__":
   # initialise the system configuration
   initConfiguration()
+  # initialise the console handler
+  consoleHandler = UTIL.TASK.ConsoleHandler()
+  # initialise the model
+  modelTask = ModelTask()
+  # register the console handler
+  modelTask.registerConsoleHandler(consoleHandler)
   # create the EDEN server
   LOG("Open the EDEN server")
-  server = createServer()
-  # register a console handler for interaction
-  consoleHandler = ConsoleHandler(server)
-  # start the event loop
-  LOG("Start the event loop...")
-  consoleHandler.process([])
-  UTIL.SYS.s_eventLoop.start()
-  sys.exit(0)
+  createServer()
+  # start the tasks
+  LOG("start modelTask...")
+  modelTask.start()

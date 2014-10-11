@@ -367,7 +367,10 @@ class ConsoleHandler(object):
   # ---------------------------------------------------------------------------
   def processBuffer(self, buffer):
     """Callback when a line is read from the console"""
-    pass
+    # split the buffer into tokens
+    argv = buffer.split()
+    # delegate the processing to the processing task
+    return UTIL.TASK.s_processingTask.notifyCommand(argv)
 
 # =============================================================================
 class RequestHandler(ConsoleHandler):
@@ -598,16 +601,6 @@ class RequestHandler(ConsoleHandler):
           self.clientSocket.send(retString)
         except:
           LOG_ERROR("send of Error response failed!")
-  # ---------------------------------------------------------------------------
-  def processBuffer(self, buffer):
-    """
-    Common command processing (from stdin and TCP/IP)
-    overloaded from ConsoleHandler.processBuffer
-    """
-    # split the buffer into tokens
-    argv = buffer.split()
-    # delegate the processing to the processing task
-    return UTIL.TASK.s_processingTask.notifyCommand(argv)
   # ---------------------------------------------------------------------------
   def connected(self):
     """Client (TECO) has connected: register/unregister file descriptors"""
