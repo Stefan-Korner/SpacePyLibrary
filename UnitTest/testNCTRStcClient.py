@@ -15,8 +15,8 @@
 # Ground Simulation - Unit Tests                                              *
 #******************************************************************************
 import sys
-from GDP.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import GDP.SYS
+from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import UTIL.SYS
 import GRND.NCTRS, GRND.NCTRSDU, GRND.NCTRSDUhelpers
 import CCSDS.CLTU
 import testData
@@ -25,11 +25,11 @@ import testData
 # classes #
 ###########
 # =============================================================================
-class ConsoleHandler(GDP.SYS.ConsoleHandler):
-  """Subclass of GDP.SYS.ConsoleHandler"""
+class ConsoleHandler(UTIL.SYS.ConsoleHandler):
+  """Subclass of UTIL.SYS.ConsoleHandler"""
   def __init__(self, tcSender):
     """Initialise attributes only"""
-    GDP.SYS.ConsoleHandler.__init__(self)
+    UTIL.SYS.ConsoleHandler.__init__(self)
     self.tcSender = tcSender
   # ---------------------------------------------------------------------------
   def process(self, argv):
@@ -74,7 +74,7 @@ class ConsoleHandler(GDP.SYS.ConsoleHandler):
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
     """Decoded quit command"""
-    GDP.SYS.s_eventLoop.stop()
+    UTIL.SYS.s_eventLoop.stop()
   # ---------------------------------------------------------------------------
   def packet1Cmd(self, argv):
     """Decoded packet1 command"""
@@ -182,7 +182,7 @@ class TCsender(GRND.NCTRS.TCsender):
 # -----------------------------------------------------------------------------
 def initConfiguration():
   """initialise the system configuration"""
-  GDP.SYS.s_configuration.setDefaults([
+  UTIL.SYS.s_configuration.setDefaults([
     ["SYS_COLOR_LOG", "1"],
     ["HOST", "10.0.0.100"],
     #["HOST", "192.168.178.46"],
@@ -190,10 +190,10 @@ def initConfiguration():
 # -----------------------------------------------------------------------------
 def createTCsender():
   """create the NCTRS TC receiver"""
-  tcSender = TCsender(GDP.SYS.s_eventLoop)
+  tcSender = TCsender(UTIL.SYS.s_eventLoop)
   if not tcSender.connectToServer(
-    serverHost=GDP.SYS.s_configuration.HOST,
-    serverPort=int(GDP.SYS.s_configuration.NCTRS_TC_SERVER_PORT)):
+    serverHost=UTIL.SYS.s_configuration.HOST,
+    serverPort=int(UTIL.SYS.s_configuration.NCTRS_TC_SERVER_PORT)):
     sys.exit(-1)
   return tcSender
 
@@ -211,5 +211,5 @@ if __name__ == "__main__":
   # start the event loop
   LOG("Start the event loop...")
   consoleHandler.process([])
-  GDP.SYS.s_eventLoop.start()
+  UTIL.SYS.s_eventLoop.start()
   sys.exit(0)

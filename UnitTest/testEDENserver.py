@@ -15,19 +15,19 @@
 # EGSE interfaces - Unit Tests                                                *
 #******************************************************************************
 import sys
-from GDP.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import GDP.SYS
+from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import UTIL.SYS
 import EGSE.EDEN
 
 ###########
 # classes #
 ###########
 # =============================================================================
-class ConsoleHandler(GDP.SYS.ConsoleHandler):
-  """Subclass of GDP.SYS.ConsoleHandler"""
+class ConsoleHandler(UTIL.SYS.ConsoleHandler):
+  """Subclass of UTIL.SYS.ConsoleHandler"""
   def __init__(self, server):
     """Initialise attributes only"""
-    GDP.SYS.ConsoleHandler.__init__(self)
+    UTIL.SYS.ConsoleHandler.__init__(self)
     self.server = server
   # ---------------------------------------------------------------------------
   def process(self, argv):
@@ -57,7 +57,7 @@ class ConsoleHandler(GDP.SYS.ConsoleHandler):
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
     """Decoded quit command"""
-    GDP.SYS.s_eventLoop.stop()
+    UTIL.SYS.s_eventLoop.stop()
   # ---------------------------------------------------------------------------
   def packetResponseCmd(self, argv):
     """Decoded packet response command"""
@@ -79,7 +79,7 @@ class Server(EGSE.EDEN.Server):
     #LOG_INFO("notifyTCpacketDataUnit")
     #LOG("tcPktDu = " + str(tcPktDu))
     #GRND.NCTRS.TCreceiver.notifyTCpacketDataUnit(self, tcCltuDu)
-	sys.exit(-1)
+    sys.exit(-1)
   # ---------------------------------------------------------------------------
   def notifyError(self, errorMessage, data):
     """error notification"""
@@ -93,7 +93,7 @@ class Server(EGSE.EDEN.Server):
     #LOG("  TYPE =    " + str(tcPacketDu.serviceType))
     #LOG("  SUBTYPE = " + str(tcPacketDu.serviceSubType))
     #LOG("  SSC =     " + str(tcPacketDu.sequenceControlCount))
-	sys.exit(-1)
+    sys.exit(-1)
 
 #############
 # functions #
@@ -101,15 +101,15 @@ class Server(EGSE.EDEN.Server):
 # -----------------------------------------------------------------------------
 def initConfiguration():
   """initialise the system configuration"""
-  GDP.SYS.s_configuration.setDefaults([
+  UTIL.SYS.s_configuration.setDefaults([
     ["SYS_COLOR_LOG", "1"],
     ["EDEN_SERVER_PORT", "13007"]])
 # -----------------------------------------------------------------------------
 def createServer():
   """create the EDEN server"""
   server = Server(
-    GDP.SYS.s_eventLoop,
-    portNr=int(GDP.SYS.s_configuration.NCTRS_TC_SERVER_PORT))
+    UTIL.SYS.s_eventLoop,
+    portNr=int(UTIL.SYS.s_configuration.EDEN_SERVER_PORT))
   if not server.openConnectPort():
     sys.exit(-1)
   return server
@@ -128,5 +128,5 @@ if __name__ == "__main__":
   # start the event loop
   LOG("Start the event loop...")
   consoleHandler.process([])
-  GDP.SYS.s_eventLoop.start()
+  UTIL.SYS.s_eventLoop.start()
   sys.exit(0)

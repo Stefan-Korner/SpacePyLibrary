@@ -15,8 +15,8 @@
 # Ground Simulation - Unit Tests                                              *
 #******************************************************************************
 import sys
-from GDP.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import GDP.SYS
+from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import UTIL.SYS
 import GRND.NCTRS
 import CCSDS.SEGMENThelpers
 
@@ -24,11 +24,11 @@ import CCSDS.SEGMENThelpers
 # classes #
 ###########
 # =============================================================================
-class ConsoleHandler(GDP.SYS.ConsoleHandler):
-  """Subclass of GDP.SYS.ConsoleHandler"""
+class ConsoleHandler(UTIL.SYS.ConsoleHandler):
+  """Subclass of UTIL.SYS.ConsoleHandler"""
   def __init__(self, tcReceiver):
     """Initialise attributes only"""
-    GDP.SYS.ConsoleHandler.__init__(self)
+    UTIL.SYS.ConsoleHandler.__init__(self)
     self.tcReceiver = tcReceiver
   # ---------------------------------------------------------------------------
   def process(self, argv):
@@ -64,7 +64,7 @@ class ConsoleHandler(GDP.SYS.ConsoleHandler):
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
     """Decoded quit command"""
-    GDP.SYS.s_eventLoop.stop()
+    UTIL.SYS.s_eventLoop.stop()
   # ---------------------------------------------------------------------------
   def packetResponseCmd(self, argv):
     """Decoded packet response command"""
@@ -139,7 +139,7 @@ class TCreceiver(GRND.NCTRS.TCreceiver):
 # -----------------------------------------------------------------------------
 def initConfiguration():
   """initialise the system configuration"""
-  GDP.SYS.s_configuration.setDefaults([
+  UTIL.SYS.s_configuration.setDefaults([
     ["SYS_COLOR_LOG", "1"],
     ["NCTRS_TC_SERVER_PORT", "13007"],
     ["DEF_GROUND_STATION_ID", "10"]])
@@ -147,9 +147,9 @@ def initConfiguration():
 def createTCreceiver():
   """create the NCTRS TC receiver"""
   tcReceiver = TCreceiver(
-    GDP.SYS.s_eventLoop,
-    portNr=int(GDP.SYS.s_configuration.NCTRS_TC_SERVER_PORT),
-    groundstationId=int(GDP.SYS.s_configuration.DEF_GROUND_STATION_ID))
+    UTIL.SYS.s_eventLoop,
+    portNr=int(UTIL.SYS.s_configuration.NCTRS_TC_SERVER_PORT),
+    groundstationId=int(UTIL.SYS.s_configuration.DEF_GROUND_STATION_ID))
   if not tcReceiver.openConnectPort():
     sys.exit(-1)
   return tcReceiver
@@ -168,5 +168,5 @@ if __name__ == "__main__":
   # start the event loop
   LOG("Start the event loop...")
   consoleHandler.process([])
-  GDP.SYS.s_eventLoop.start()
+  UTIL.SYS.s_eventLoop.start()
   sys.exit(0)

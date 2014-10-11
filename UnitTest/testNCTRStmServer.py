@@ -15,8 +15,8 @@
 # Ground Simulation - Unit Tests                                              *
 #******************************************************************************
 import sys
-from GDP.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import GDP.SYS
+from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import UTIL.SYS
 import GRND.NCTRS
 import testData
 
@@ -24,11 +24,11 @@ import testData
 # classes #
 ###########
 # =============================================================================
-class ConsoleHandler(GDP.SYS.ConsoleHandler):
-  """Subclass of GDP.SYS.ConsoleHandler"""
+class ConsoleHandler(UTIL.SYS.ConsoleHandler):
+  """Subclass of UTIL.SYS.ConsoleHandler"""
   def __init__(self, tmSender):
     """Initialise attributes only"""
-    GDP.SYS.ConsoleHandler.__init__(self)
+    UTIL.SYS.ConsoleHandler.__init__(self)
     self.tmSender = tmSender
   # ---------------------------------------------------------------------------
   def process(self, argv):
@@ -61,7 +61,7 @@ class ConsoleHandler(GDP.SYS.ConsoleHandler):
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
     """Decoded quit command"""
-    GDP.SYS.s_eventLoop.stop()
+    UTIL.SYS.s_eventLoop.stop()
   # ---------------------------------------------------------------------------
   def frame1Cmd(self, argv):
     """Decoded frame1 command"""
@@ -99,7 +99,7 @@ class TMsender(GRND.NCTRS.TMsender):
 # -----------------------------------------------------------------------------
 def initConfiguration():
   """initialise the system configuration"""
-  GDP.SYS.s_configuration.setDefaults([
+  UTIL.SYS.s_configuration.setDefaults([
     ["SYS_COLOR_LOG", "1"],
     ["NCTRS_TM_SERVER_PORT", "2502"],
     ["SPACECRAFT_ID", "758"]])
@@ -107,10 +107,10 @@ def initConfiguration():
 def createTMsender():
   """create the NCTRS TM sender"""
   nctrsTMfields = GRND.NCTRS.NCTRStmFields()
-  nctrsTMfields.spacecraftId = int(GDP.SYS.s_configuration.SPACECRAFT_ID)
+  nctrsTMfields.spacecraftId = int(UTIL.SYS.s_configuration.SPACECRAFT_ID)
   tmSender = TMsender(
-    GDP.SYS.s_eventLoop,
-    portNr=int(GDP.SYS.s_configuration.NCTRS_TM_SERVER_PORT),
+    UTIL.SYS.s_eventLoop,
+    portNr=int(UTIL.SYS.s_configuration.NCTRS_TM_SERVER_PORT),
     nctrsTMfields=nctrsTMfields)
   if not tmSender.openConnectPort():
     sys.exit(-1)
@@ -130,5 +130,5 @@ if __name__ == "__main__":
   # start the event loop
   LOG("Start the event loop...")
   consoleHandler.process([])
-  GDP.SYS.s_eventLoop.start()
+  UTIL.SYS.s_eventLoop.start()
   sys.exit(0)

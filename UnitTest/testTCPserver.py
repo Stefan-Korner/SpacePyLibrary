@@ -15,8 +15,8 @@
 # Unit Tests                                                                  *
 #******************************************************************************
 import sys
-from GDP.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import GDP.TCP, GDP.SYS
+from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import UTIL.TCP, UTIL.SYS
 
 #############
 # constants #
@@ -27,11 +27,11 @@ LINEBUFFERLEN = 256
 # classes #
 ###########
 # =============================================================================
-class TCPserver(GDP.TCP.SingleClientReceivingServer):
-  """Subclass of GDP.TCP.SingleClientReceivingServer"""
+class TCPserver(UTIL.TCP.SingleClientReceivingServer):
+  """Subclass of UTIL.TCP.SingleClientReceivingServer"""
   # ---------------------------------------------------------------------------
   def __init__(self, eventLoop, portNr):
-    GDP.TCP.SingleClientReceivingServer.__init__(self, eventLoop, portNr)
+    UTIL.TCP.SingleClientReceivingServer.__init__(self, eventLoop, portNr)
     self.tcpLineBuffer = ""
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
@@ -115,22 +115,22 @@ class TCPserver(GDP.TCP.SingleClientReceivingServer):
 # functions #
 #############
 def idleFunction():
-  GDP.SYS.s_eventLoop.createtimehandler(1000, idleFunction)
+  UTIL.SYS.s_eventLoop.createtimehandler(1000, idleFunction)
   LOG("--- idle ---")
 
 ###########################
 # Initialisation sequence #
 ###########################
 # register a console handler for termination
-consoleHandler = GDP.SYS.ConsoleHandler()
+consoleHandler = UTIL.SYS.ConsoleHandler()
 # create the TCP/IP receiver
 LOG("Open the TCP server")
-server = TCPserver(GDP.SYS.s_eventLoop, portNr=1234)
+server = TCPserver(UTIL.SYS.s_eventLoop, portNr=1234)
 if not server.openConnectPort():
   sys.exit(-1)
 # start the idle function
 idleFunction()
 # start the event loop
 LOG("Start the event loop...")
-GDP.SYS.s_eventLoop.start()
+UTIL.SYS.s_eventLoop.start()
 sys.exit(0)

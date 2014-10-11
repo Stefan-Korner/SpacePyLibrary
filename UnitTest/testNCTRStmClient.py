@@ -15,8 +15,8 @@
 # Ground Simulation - Unit Tests                                              *
 #******************************************************************************
 import sys
-from GDP.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import GDP.SYS
+from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import UTIL.SYS
 import GRND.NCTRS, GRND.NCTRSDU, GRND.NCTRSDUhelpers
 import testData
 
@@ -46,7 +46,7 @@ class TMreceiver(GRND.NCTRS.TMreceiver):
 # -----------------------------------------------------------------------------
 def initConfiguration():
   """initialise the system configuration"""
-  GDP.SYS.s_configuration.setDefaults([
+  UTIL.SYS.s_configuration.setDefaults([
     ["SYS_COLOR_LOG", "1"],
     ["HOST", "10.0.0.100"],
     #["HOST", "192.168.178.46"],
@@ -54,10 +54,10 @@ def initConfiguration():
 # -----------------------------------------------------------------------------
 def createTMreceiver():
   """create the NCTRS TM receiver"""
-  tmReceiver = TMreceiver(GDP.SYS.s_eventLoop)
+  tmReceiver = TMreceiver(UTIL.SYS.s_eventLoop)
   if not tmReceiver.connectToServer(
-    serverHost=GDP.SYS.s_configuration.HOST,
-    serverPort=int(GDP.SYS.s_configuration.NCTRS_TM_SERVER_PORT)):
+    serverHost=UTIL.SYS.s_configuration.HOST,
+    serverPort=int(UTIL.SYS.s_configuration.NCTRS_TM_SERVER_PORT)):
     sys.exit(-1)
   return tmReceiver
 
@@ -71,8 +71,8 @@ if __name__ == "__main__":
   LOG("Open the NCTRS TM receiver (client)")
   tmReceiver = createTMreceiver()
   # register a console handler for termination
-  consoleHandler = GDP.SYS.ConsoleHandler()
+  consoleHandler = UTIL.SYS.ConsoleHandler()
   # start the event loop
   LOG("Start the event loop...")
-  GDP.SYS.s_eventLoop.start()
+  UTIL.SYS.s_eventLoop.start()
   sys.exit(0)

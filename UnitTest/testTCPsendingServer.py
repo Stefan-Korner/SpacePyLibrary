@@ -15,18 +15,18 @@
 # Unit Tests                                                                  *
 #******************************************************************************
 import sys
-from GDP.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import GDP.TCP, GDP.SYS
+from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import UTIL.TCP, UTIL.SYS
 
 ###########
 # classes #
 ###########
 # =============================================================================
-class TCPsendingServer(GDP.TCP.Server):
-  """Subclass of GDP.TCP.Server"""
+class TCPsendingServer(UTIL.TCP.Server):
+  """Subclass of UTIL.TCP.Server"""
   # ---------------------------------------------------------------------------
   def __init__(self, eventLoop, portNr):
-    GDP.TCP.Server.__init__(self, eventLoop, portNr)
+    UTIL.TCP.Server.__init__(self, eventLoop, portNr)
     self.clientSocket = None
   # ---------------------------------------------------------------------------
   def accepted(self, clientSocket):
@@ -35,7 +35,7 @@ class TCPsendingServer(GDP.TCP.Server):
     self.clientSocket = clientSocket
     self.clientSocket.send("connected\n")
     # prepare a timer that calls the after method one second ago
-    GDP.SYS.s_eventLoop.createtimehandler(1000, self.after)
+    UTIL.SYS.s_eventLoop.createtimehandler(1000, self.after)
   # ---------------------------------------------------------------------------
   def after(self):
     """Called from a timer 1 second after connect"""
@@ -46,13 +46,13 @@ class TCPsendingServer(GDP.TCP.Server):
 # Initialisation sequence #
 ###########################
 # register a console handler for termination
-consoleHandler = GDP.SYS.ConsoleHandler()
+consoleHandler = UTIL.SYS.ConsoleHandler()
 # create the TCP/IP sender
 LOG("Open the TCP server")
-server = TCPsendingServer(GDP.SYS.s_eventLoop, portNr=1234)
+server = TCPsendingServer(UTIL.SYS.s_eventLoop, portNr=1234)
 if not server.openConnectPort():
   sys.exit(-1)
 # start the event loop
 LOG("Start the event loop...")
-GDP.SYS.s_eventLoop.start()
+UTIL.SYS.s_eventLoop.start()
 sys.exit(0)

@@ -15,15 +15,15 @@
 # Unit Tests                                                                  *
 #******************************************************************************
 import os, sys
-from GDP.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import GDP.TCP, GDP.SYS
+from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import UTIL.TCP, UTIL.SYS
 
 ###########################
 # Initialisation sequence #
 ###########################
 # create the TCP/IP cient
 LOG("Open the TCP client")
-client = GDP.TCP.Client()
+client = UTIL.TCP.Client()
 hostName = os.getenv("HOST")
 if hostName == None:
   #hostName = "10.0.0.100"

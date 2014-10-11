@@ -15,19 +15,19 @@
 # Ground Simulation - Unit Tests                                              *
 #******************************************************************************
 import sys
-from GDP.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import GDP.SYS
+from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import UTIL.SYS
 import GRND.NCTRS
 
 ###########
 # classes #
 ###########
 # =============================================================================
-class ConsoleHandler(GDP.SYS.ConsoleHandler):
-  """Subclass of GDP.SYS.ConsoleHandler"""
+class ConsoleHandler(UTIL.SYS.ConsoleHandler):
+  """Subclass of UTIL.SYS.ConsoleHandler"""
   def __init__(self, adminSender):
     """Initialise attributes only"""
-    GDP.SYS.ConsoleHandler.__init__(self)
+    UTIL.SYS.ConsoleHandler.__init__(self)
     self.adminSender = adminSender
   # ---------------------------------------------------------------------------
   def process(self, argv):
@@ -90,7 +90,7 @@ class ConsoleHandler(GDP.SYS.ConsoleHandler):
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
     """Decoded quit command"""
-    GDP.SYS.s_eventLoop.stop()
+    UTIL.SYS.s_eventLoop.stop()
   # ---------------------------------------------------------------------------
   def tmMessage1Cmd(self, argv):
     """Decoded ADMIN_MSG_TM_LINK_FLOW command"""
@@ -161,7 +161,7 @@ class AdminSender(GRND.NCTRS.AdminMessageSender):
 # -----------------------------------------------------------------------------
 def initConfiguration():
   """initialise the system configuration"""
-  GDP.SYS.s_configuration.setDefaults([
+  UTIL.SYS.s_configuration.setDefaults([
     ["SYS_COLOR_LOG", "1"],
     ["NCTRS_ADMIN_SERVER_PORT", "13006"],
     ["GROUND_STATION_NAME", "ESA G/S "]])
@@ -169,9 +169,9 @@ def initConfiguration():
 def createAdminSender():
   """create the NCTRS admin message sender"""
   adminSender = AdminSender(
-    GDP.SYS.s_eventLoop,
-    portNr=int(GDP.SYS.s_configuration.NCTRS_ADMIN_SERVER_PORT),
-    groundstationName=GDP.SYS.s_configuration.GROUND_STATION_NAME)
+    UTIL.SYS.s_eventLoop,
+    portNr=int(UTIL.SYS.s_configuration.NCTRS_ADMIN_SERVER_PORT),
+    groundstationName=UTIL.SYS.s_configuration.GROUND_STATION_NAME)
   if not adminSender.openConnectPort():
     sys.exit(-1)
   return adminSender
@@ -190,5 +190,5 @@ if __name__ == "__main__":
   # start the event loop
   LOG("Start the event loop...")
   consoleHandler.process([])
-  GDP.SYS.s_eventLoop.start()
+  UTIL.SYS.s_eventLoop.start()
   sys.exit(0)

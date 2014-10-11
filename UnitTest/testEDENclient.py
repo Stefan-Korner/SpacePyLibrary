@@ -15,8 +15,8 @@
 # EGSE interfaces - Unit Tests                                                *
 #******************************************************************************
 import sys
-from GDP.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import GDP.SYS
+from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import UTIL.SYS
 import EGSE.EDEN
 import testData
 
@@ -24,11 +24,11 @@ import testData
 # classes #
 ###########
 # =============================================================================
-class ConsoleHandler(GDP.SYS.ConsoleHandler):
-  """Subclass of GDP.SYS.ConsoleHandler"""
+class ConsoleHandler(UTIL.SYS.ConsoleHandler):
+  """Subclass of UTIL.SYS.ConsoleHandler"""
   def __init__(self, client):
     """Initialise attributes only"""
-    GDP.SYS.ConsoleHandler.__init__(self)
+    UTIL.SYS.ConsoleHandler.__init__(self)
     self.client = client
   # ---------------------------------------------------------------------------
   def process(self, argv):
@@ -61,7 +61,7 @@ class ConsoleHandler(GDP.SYS.ConsoleHandler):
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
     """Decoded quit command"""
-    GDP.SYS.s_eventLoop.stop()
+    UTIL.SYS.s_eventLoop.stop()
   # ---------------------------------------------------------------------------
   def packet1Cmd(self, argv):
     """Decoded packet1 command"""
@@ -95,7 +95,7 @@ class Client(EGSE.EDEN.Client):
 # -----------------------------------------------------------------------------
 def initConfiguration():
   """initialise the system configuration"""
-  GDP.SYS.s_configuration.setDefaults([
+  UTIL.SYS.s_configuration.setDefaults([
     ["SYS_COLOR_LOG", "1"],
     ["HOST", "10.0.0.100"],
     #["HOST", "192.168.178.46"],
@@ -103,10 +103,10 @@ def initConfiguration():
 # -----------------------------------------------------------------------------
 def createClient():
   """create the EDEN client"""
-  client = Client(GDP.SYS.s_eventLoop)
+  client = Client(UTIL.SYS.s_eventLoop)
   if not client.connectToServer(
-    serverHost=GDP.SYS.s_configuration.HOST,
-    serverPort=int(GDP.SYS.s_configuration.EDEN_SERVER_PORT)):
+    serverHost=UTIL.SYS.s_configuration.HOST,
+    serverPort=int(UTIL.SYS.s_configuration.EDEN_SERVER_PORT)):
     sys.exit(-1)
   return client
 
@@ -124,5 +124,5 @@ if __name__ == "__main__":
   # start the event loop
   LOG("Start the event loop...")
   consoleHandler.process([])
-  GDP.SYS.s_eventLoop.start()
+  UTIL.SYS.s_eventLoop.start()
   sys.exit(0)

@@ -15,17 +15,17 @@
 # Unit Tests                                                                  *
 #******************************************************************************
 import array
-import GDP.DU
+import UTIL.DU
 
 #############
 # functions #
 #############
 def test_DUoperations():
   """function to test the data unit operations"""
-  b = GDP.DU.BinaryUnit()
+  b = UTIL.DU.BinaryUnit()
   print "b =", b
   print "len(b) =", len(b)
-  b = GDP.DU.BinaryUnit("1234")
+  b = UTIL.DU.BinaryUnit("1234")
   print "b =", b
   print "len(b) =", len(b)
   b.setLen(10)
@@ -43,7 +43,7 @@ def test_DUoperations():
   b.setLen(257)
   print "b =", b
   print "len(b) =", len(b)
-  b = GDP.DU.BinaryUnit("1234")
+  b = UTIL.DU.BinaryUnit("1234")
   print "b =", b
   print "b.getBits( 0,  8) =", ("%08X" % b.getBits( 0,  8))
   print "b.getBits( 8,  8) =", ("%08X" % b.getBits( 8,  8))

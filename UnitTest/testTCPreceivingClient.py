@@ -15,8 +15,8 @@
 # Unit Tests                                                                  *
 #******************************************************************************
 import os, sys
-from GDP.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import GDP.TCP, GDP.SYS
+from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import UTIL.TCP, UTIL.SYS
 
 #############
 # constants #
@@ -27,11 +27,11 @@ LINEBUFFERLEN = 256
 # classes #
 ###########
 # =============================================================================
-class TCPreceivingClient(GDP.TCP.SingleServerReceivingClient):
-  """Subclass of GDP.TCP.SingleServerReceivingClient"""
+class TCPreceivingClient(UTIL.TCP.SingleServerReceivingClient):
+  """Subclass of UTIL.TCP.SingleServerReceivingClient"""
   # ---------------------------------------------------------------------------
   def __init__(self, eventLoop):
-    GDP.TCP.SingleServerReceivingClient.__init__(self, eventLoop)
+    UTIL.TCP.SingleServerReceivingClient.__init__(self, eventLoop)
     self.tcpLineBuffer = ""
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
@@ -103,10 +103,10 @@ class TCPreceivingClient(GDP.TCP.SingleServerReceivingClient):
 # Initialisation sequence #
 ###########################
 # register a console handler for termination
-consoleHandler = GDP.SYS.ConsoleHandler()
+consoleHandler = UTIL.SYS.ConsoleHandler()
 # create the TCP/IP cient
 LOG("Open the TCP client")
-client = TCPreceivingClient(GDP.SYS.s_eventLoop)
+client = TCPreceivingClient(UTIL.SYS.s_eventLoop)
 hostName = os.getenv("HOST")
 if hostName == None:
   #hostName = "10.0.0.100"
@@ -116,5 +116,5 @@ if not dataSocket:
   sys.exit(-1)
 # start the event loop
 LOG("Start the event loop...")
-GDP.SYS.s_eventLoop.start()
+UTIL.SYS.s_eventLoop.start()
 sys.exit(0)

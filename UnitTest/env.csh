@@ -13,4 +13,4 @@
 #******************************************************************************
 # Setup the csh Linux environment for Unit Tests, file needs to be sourced.   *
 #******************************************************************************
-setenv PYTHONPATH ${HOME}/SIMsources:${HOME}/SIMsources/UnitTest
+setenv PYTHONPATH ${HOME}/SpacePyLibrary:${HOME}/SpacePyLibrary/UnitTest
