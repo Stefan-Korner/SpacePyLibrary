@@ -29,7 +29,7 @@ class Server(object):
     self.portNr = portNr
     self.connectSocket = None
   # ---------------------------------------------------------------------------
-  def openConnectPort(self):
+  def openConnectPort(self, hostName=None):
     """Open the connect port"""
     # check if the port is already open
     if self.connectSocket != None:
@@ -58,7 +58,8 @@ class Server(object):
       connectSocket.close()
       return False
     # bind the server socket
-    hostName = socket.gethostname()
+    if hostName == None:
+      hostName = socket.gethostname()
     try:
       connectSocket.bind((hostName, self.portNr))
     except Exception, ex:
