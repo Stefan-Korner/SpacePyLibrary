@@ -16,22 +16,28 @@
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import UTIL.SYS
 import EGSE.EDEN
+import UTIL.SYS, UTIL.TASK
 import testData
+
+####################
+# global variables #
+####################
+# EDEN client is a singleton
+s_client = None
 
 ###########
 # classes #
 ###########
 # =============================================================================
-class ConsoleHandler(UTIL.SYS.ConsoleHandler):
+class ModelTask(UTIL.TASK.ProcessingTask):
   """Subclass of UTIL.SYS.ConsoleHandler"""
-  def __init__(self, client):
-    """Initialise attributes only"""
-    UTIL.SYS.ConsoleHandler.__init__(self)
-    self.client = client
   # ---------------------------------------------------------------------------
-  def process(self, argv):
+  def __init__(self):
+    """Initialise attributes only"""
+    UTIL.TASK.ProcessingTask.__init__(self, isParent=True)
+  # ---------------------------------------------------------------------------
+  def notifyCommand(self, argv):
     """Callback for processing the input arguments"""
     if len(argv) > 0:
       # decode the command
@@ -46,7 +52,7 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
         self.packet2Cmd(argv)
       else:
         LOG_WARNING("Invalid command " + argv[0])
-    print "> ",
+    return 0
   # ---------------------------------------------------------------------------
   def helpCmd(self, argv):
     """Decoded help command"""
@@ -61,7 +67,7 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
     """Decoded quit command"""
-    UTIL.SYS.s_eventLoop.stop()
+    UTIL.TASK.s_parentTask.stop()
   # ---------------------------------------------------------------------------
   def packet1Cmd(self, argv):
     """Decoded packet1 command"""
@@ -76,9 +82,9 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
 # =============================================================================
 class Client(EGSE.EDEN.Client):
   """Subclass of EGSE.EDEN.Client"""
-  def __init__(self, eventLoop):
+  def __init__(self):
     """Initialise attributes only"""
-    EGSE.EDEN.Client.__init__(self, eventLoop)
+    EGSE.EDEN.Client.__init__(self)
   # ---------------------------------------------------------------------------
   def notifyTCpacketResponseDataUnit(self, tcPktRespDu):
     """AD packet / BD segment response received"""
@@ -87,7 +93,7 @@ class Client(EGSE.EDEN.Client):
     #LOG("tcPktRespDu.acknowledgement = " +
     #         GRND.NCTRSDUhelpers.ackStr(tcPktRespDu.acknowledgement))
     #LOG("tcPktRespDu = " + str(tcPktRespDu))
-	sys.exit(-1)
+    sys.exit(-1)
 
 #############
 # functions #
@@ -96,19 +102,17 @@ class Client(EGSE.EDEN.Client):
 def initConfiguration():
   """initialise the system configuration"""
   UTIL.SYS.s_configuration.setDefaults([
-    ["SYS_COLOR_LOG", "1"],
-    ["HOST", "10.0.0.100"],
-    #["HOST", "192.168.178.46"],
+    ["HOST", "192.168.1.105"],
     ["EDEN_SERVER_PORT", "13007"]])
 # -----------------------------------------------------------------------------
 def createClient():
   """create the EDEN client"""
-  client = Client(UTIL.SYS.s_eventLoop)
-  if not client.connectToServer(
+  global s_client
+  s_client = Client()
+  if not s_client.connectToServer(
     serverHost=UTIL.SYS.s_configuration.HOST,
     serverPort=int(UTIL.SYS.s_configuration.EDEN_SERVER_PORT)):
     sys.exit(-1)
-  return client
 
 ########
 # main #
@@ -116,13 +120,15 @@ def createClient():
 if __name__ == "__main__":
   # initialise the system configuration
   initConfiguration()
+  # initialise the console handler
+  consoleHandler = UTIL.TASK.ConsoleHandler()
+  # initialise the model
+  modelTask = ModelTask()
+  # register the console handler
+  modelTask.registerConsoleHandler(consoleHandler)
   # create the EDEN client
   LOG("Open the EDEN client")
-  client = createClient()
-  # register a console handler for interaction
-  consoleHandler = ConsoleHandler(client)
-  # start the event loop
-  LOG("Start the event loop...")
-  consoleHandler.process([])
-  UTIL.SYS.s_eventLoop.start()
-  sys.exit(0)
+  createClient()
+  # start the tasks
+  LOG("start modelTask...")
+  modelTask.start()
