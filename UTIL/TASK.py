@@ -19,7 +19,7 @@
 #              (e.g. SuSE 8) all tasks are processed within the main thread.  *
 #              On multi-threaded python (e.g. Active Python 8.5 or SUSE 10)   *
 #              each Task has a dedicated thread. A Task can be                *
-#              - the parent task: it is allways processed in the main thread. *
+#              - the parent task: it is always processed in the main thread.  *
 #                Access to the parent task is possible through the global     *
 #                variable s_parentTask. There should be only 1 parent task    *
 #                at all.                                                      *
