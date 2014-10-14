@@ -110,7 +110,7 @@ class Server(EGSE.EDEN.Server):
 def initConfiguration():
   """initialise the system configuration"""
   UTIL.SYS.s_configuration.setDefaults([
-    ["HOST", "192.168.1.105"],
+    ["HOST", "192.168.1.100"],
     ["EDEN_SERVER_PORT", "48569"]])
 # -----------------------------------------------------------------------------
 def createServer():
