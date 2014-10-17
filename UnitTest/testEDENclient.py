@@ -85,15 +85,6 @@ class Client(EGSE.EDEN.Client):
   def __init__(self):
     """Initialise attributes only"""
     EGSE.EDEN.Client.__init__(self)
-  # ---------------------------------------------------------------------------
-  def notifyTCpacketResponseDataUnit(self, tcPktRespDu):
-    """AD packet / BD segment response received"""
-    #LOG("")
-    #LOG("*** notifyTCpacketResponseDataUnit ***")
-    #LOG("tcPktRespDu.acknowledgement = " +
-    #         GRND.NCTRSDUhelpers.ackStr(tcPktRespDu.acknowledgement))
-    #LOG("tcPktRespDu = " + str(tcPktRespDu))
-    sys.exit(-1)
 
 #############
 # functions #

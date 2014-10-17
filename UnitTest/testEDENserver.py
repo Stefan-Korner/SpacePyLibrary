@@ -81,27 +81,6 @@ class Server(EGSE.EDEN.Server):
   # ---------------------------------------------------------------------------
   def clientAccepted(self):
     LOG_INFO("Client accepted")
-  # ---------------------------------------------------------------------------
-  def notifyTCpacketDataUnit(self, tcPktDu):
-    """AD packet / BD segment received"""
-    #LOG_INFO("notifyTCpacketDataUnit")
-    #LOG("tcPktDu = " + str(tcPktDu))
-    #GRND.NCTRS.TCreceiver.notifyTCpacketDataUnit(self, tcCltuDu)
-    sys.exit(-1)
-  # ---------------------------------------------------------------------------
-  def notifyError(self, errorMessage, data):
-    """error notification"""
-    LOG_ERROR(errorMessage)
-    LOG(str(data))
-  # ---------------------------------------------------------------------------
-  def notifyTCpacket(self, tcPacketDu):
-    """TC packet received"""
-    #LOG("- notifyTCpacket")
-    #LOG("  APID =    " + str(tcPacketDu.applicationProcessId))
-    #LOG("  TYPE =    " + str(tcPacketDu.serviceType))
-    #LOG("  SUBTYPE = " + str(tcPacketDu.serviceSubType))
-    #LOG("  SSC =     " + str(tcPacketDu.sequenceControlCount))
-    sys.exit(-1)
 
 #############
 # functions #
