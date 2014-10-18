@@ -56,22 +56,22 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
       self.disconnectClient()
       self.notifyConnectionClosed("")
       return
-    if tcDuHeaderLen != EGSE.EDENPDU.PDU_HEADER_BYTE_SIZE:
+    if pduHeaderLen != EGSE.EDENPDU.PDU_HEADER_BYTE_SIZE:
       LOG_ERROR("Read of PDU header failed: invalid size: " + str(pduHeaderLen))
       self.disconnectClient()
       self.notifyConnectionClosed("invalid data")
       return
     pdu = EGSE.EDENPDU.PDU(pduHeader)
     # consistency check
-    dataFieldSize = pdu.dataFieldSize
-    if dataFieldSize <= 0:
-      LOG_ERROR("Read of PDU header failed: invalid data field size: " + str(dataFieldSize))
+    dataFieldLength = pdu.dataFieldLength
+    if dataFieldLength <= 0:
+      LOG_ERROR("Read of PDU header failed: invalid data field size: " + str(dataFieldLength))
       self.disconnectClient()
       self.notifyConnectionClosed("invalid data")
       return
     # read the data field for the PDU from the data socket
     try:
-      dataField = self.dataSocket.recv(dataFieldSize);
+      dataField = self.dataSocket.recv(dataFieldLength);
     except Exception, ex:
       LOG_ERROR("Read of remaining PDU failed: " + str(ex))
       self.disconnectClient()
@@ -79,7 +79,7 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
       return
     # consistency check
     remainingSizeRead = len(dataField)
-    if remainingSizeRead != dataFieldSize:
+    if remainingSizeRead != dataFieldLength:
       LOG_ERROR("Read of remaining PDU failed: invalid remaining size: " + str(remainingSizeRead))
       self.disconnectClient()
       self.notifyConnectionClosed("invalid data")
@@ -111,6 +111,14 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
     # this operation does not verify the contents of the DU
     self.dataSocket.send(pdu.getBufferString())
   # ---------------------------------------------------------------------------
+  def sendCmdExec(self, message):
+    """Send a (CMD,EXEC) PDU to the SCOE"""
+    pdu = EGSE.EDENPDU.PDU()
+    pdu.pduType = EGSE.EDENPDU.PDU_TYPE_CMD
+    pdu.subType = EGSE.EDENPDU.SUB_TYPE_EXEC
+    pdu.setDataField(message)
+    self.sendPDU(pdu)
+  # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when the SCOE has send data"""
     # read the PDU header from the data socket
@@ -122,27 +130,27 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
       return
     # consistency check
     pduHeaderLen = len(pduHeader)
-    if tcDuHeaderLen == 0:
+    if pduHeaderLen == 0:
       # client termination
       self.disconnectFromServer()
       self.notifyConnectionClosed("")
       return
-    if tcDuHeaderLen != EGSE.EDENPDU.PDU_HEADER_BYTE_SIZE:
+    if pduHeaderLen != EGSE.EDENPDU.PDU_HEADER_BYTE_SIZE:
       LOG_ERROR("Read of PDU header failed: invalid size: " + str(pduHeaderLen))
       self.disconnectFromServer()
       self.notifyConnectionClosed("invalid data")
       return
     pdu = EGSE.EDENPDU.PDU(pduHeader)
     # consistency check
-    dataFieldSize = pdu.dataFieldSize
-    if dataFieldSize <= 0:
-      LOG_ERROR("Read of PDU header failed: invalid data field size: " + str(dataFieldSize))
+    dataFieldLength = pdu.dataFieldLength
+    if dataFieldLength <= 0:
+      LOG_ERROR("Read of PDU header failed: invalid data field size: " + str(dataFieldLength))
       self.disconnectFromServer()
       self.notifyConnectionClosed("invalid data")
       return
     # read the data field for the PDU from the data socket
     try:
-      dataField = self.dataSocket.recv(dataFieldSize);
+      dataField = self.dataSocket.recv(dataFieldLength);
     except Exception, ex:
       LOG_ERROR("Read of remaining PDU failed: " + str(ex))
       self.disconnectFromServer()
@@ -150,7 +158,7 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
       return
     # consistency check
     remainingSizeRead = len(dataField)
-    if remainingSizeRead != dataFieldSize:
+    if remainingSizeRead != dataFieldLength:
       LOG_ERROR("Read of remaining PDU failed: invalid remaining size: " + str(remainingSizeRead))
       self.disconnectFromServer()
       self.notifyConnectionClosed("invalid data")

@@ -46,10 +46,8 @@ class ModelTask(UTIL.TASK.ProcessingTask):
         self.helpCmd(argv)
       elif cmd == "Q" or cmd == "QUIT":
         self.quitCmd(argv)
-      elif cmd == "P" or cmd == "PACKET1":
-        self.packet1Cmd(argv)
-      elif cmd == "B" or cmd == "PACKET2":
-        self.packet2Cmd(argv)
+      elif cmd == "1" or cmd == "CMD_EXEC":
+        self.cmdExecCmd(argv)
       else:
         LOG_WARNING("Invalid command " + argv[0])
     return 0
@@ -61,23 +59,23 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("")
     LOG("h | help ........provides this information")
     LOG("q | quit ........terminates the application")
-    LOG("p | packet1 .....send TC packet via EDEN TC SCOE DU")
-    LOG("b | packet2 .....send TC packet via EDEN TC SPACE DU")
+    LOG("1 | cmd_exec ....send message via EDEN (CMD,EXEC)")
     LOG("")
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
     """Decoded quit command"""
     UTIL.TASK.s_parentTask.stop()
   # ---------------------------------------------------------------------------
-  def packet1Cmd(self, argv):
-    """Decoded packet1 command"""
-    tcPktDu = GRND.NCTRSDU.TCpacketDataUnit()
-    print "tcPktDu =", tcPktDu
-    self.client.sendTcDataUnit(tcPktDu)
-  # ---------------------------------------------------------------------------
-  def packet2Cmd(self, argv):
-    """Decoded packet2 command"""
-    LOG_WARNING("Command not implemented: " + argv[0])
+  def cmdExecCmd(self, argv):
+    """Decoded (CMD,EXEC) command"""
+    global s_client
+    if len(argv) != 2:
+      LOG_WARNING("Invalid command argument(s)")
+      LOG("usage: cmd_exec <message>")
+      LOG("or:    1 <message>")
+      return
+    message = argv[0]
+    s_client.sendCmdExec(message)
 
 # =============================================================================
 class Client(EGSE.EDEN.Client):

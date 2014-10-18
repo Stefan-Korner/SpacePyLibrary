@@ -30,7 +30,7 @@ PDU_ATTRIBUTES = {
   "field1":          (14, 16, BYTES),
   "field2":          (30,  4, BYTES),
   "field3":          (34,  4, BYTES),
-  "dataFieldLength": (38, 4, BYTES)}
+  "dataFieldLength": (38,  4, UNSIGNED)}
 
 # =============================================================================
 # constant values of attributes:
@@ -86,7 +86,7 @@ class PDU(BinaryUnit):
     BinaryUnit.__init__(self,
                         binaryString,
                         PDU_HEADER_BYTE_SIZE,
-                        PDU_HEADER_ATTRIBUTES)
+                        PDU_ATTRIBUTES)
   # ---------------------------------------------------------------------------
   def getDataField(self):
     """returns the dataField"""
@@ -98,4 +98,4 @@ class PDU(BinaryUnit):
     """set the dataField and the dataFieldSize"""
     self.setLen(PDU_HEADER_BYTE_SIZE)
     self.append(dataField)
-    self.dataFieldSize = len(dataField)
+    self.dataFieldLength = len(dataField)
