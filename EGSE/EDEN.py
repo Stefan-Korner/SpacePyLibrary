@@ -86,10 +86,30 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
       return
     pdu.setDataField(dataField)
     LOG_INFO("PDU = " + str(pdu))
+    try:
+      if pdu.pduType == EGSE.EDENPDU.PDU_TYPE_CMD:
+        if pdu.subType == EGSE.EDENPDU.SUB_TYPE_EXEC:
+          # (CMD,EXEC)
+          self.notifyCmdExec(pdu.getDataField().tostring())
+        else:
+          LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType))
+          self.disconnectClient()
+          self.notifyConnectionClosed("invalid data")
+      else:
+        LOG_ERROR("Read of PDU header failed: invalid pduType: " + str(pdu.pduType))
+        self.disconnectClient()
+        self.notifyConnectionClosed("invalid data")
+    except Exception, ex:
+      LOG_ERROR("Processing of received PDU failed: " + str(ex))
   # ---------------------------------------------------------------------------
   def notifyConnectionClosed(self, details):
     """Connection closed by client"""
     LOG_WARNING("Connection closed by CCS: " + details)
+  # ---------------------------------------------------------------------------
+  def notifyCmdExec(self, message):
+    """(CMD,EXEC) received: hook for derived classes"""
+    LOG_INFO("message = " + message)
+    pass
   # ---------------------------------------------------------------------------
   def clientAccepted(self):
     """hook for derived classes"""

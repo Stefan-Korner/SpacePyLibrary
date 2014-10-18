@@ -74,7 +74,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       LOG("usage: cmd_exec <message>")
       LOG("or:    1 <message>")
       return
-    message = argv[0]
+    message = argv[1]
     s_client.sendCmdExec(message)
 
 # =============================================================================

@@ -13,7 +13,7 @@
 #******************************************************************************
 # EGSE interfaces - EDEN protocol Data Units Module                           *
 #******************************************************************************
-from UTIL.DU import BITS, BYTES, UNSIGNED, BinaryUnit
+from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, BinaryUnit
 
 #############
 # constants #
@@ -25,9 +25,9 @@ from UTIL.DU import BITS, BYTES, UNSIGNED, BinaryUnit
 # -----------------------------------------------------------------------------
 PDU_HEADER_BYTE_SIZE = 42
 PDU_ATTRIBUTES = {
-  "pduType":         ( 0,  4, BYTES),
-  "subType":         ( 4, 10, BYTES),
-  "field1":          (14, 16, BYTES),
+  "pduType":         ( 0,  4, STRING),
+  "subType":         ( 4, 10, STRING),
+  "field1":          (14, 16, STRING),
   "field2":          (30,  4, BYTES),
   "field3":          (34,  4, BYTES),
   "dataFieldLength": (38,  4, UNSIGNED)}
@@ -92,7 +92,7 @@ class PDU(BinaryUnit):
     """returns the dataField"""
     # the dataFieldSize must contain the correct size
     headerByteSize = PDU_HEADER_BYTE_SIZE
-    return self.getBytes(headerByteSize, self.dataFieldSize)
+    return self.getBytes(headerByteSize, self.dataFieldLength)
   # ---------------------------------------------------------------------------
   def setDataField(self, dataField):
     """set the dataField and the dataFieldSize"""

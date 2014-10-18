@@ -22,6 +22,7 @@ import array
 BITS = 0
 BYTES = 1
 UNSIGNED = 2
+STRING = 3
 
 # index = [firstBitInBytePos][lastBitInBytePos]
 BIT_FILTER = [
@@ -105,8 +106,10 @@ class BinaryUnit(object):
           retStr += str(self.getBits(fieldOffset, fieldLength))
         elif fieldType == BYTES:
           retStr += str(self.getBytes(fieldOffset, fieldLength))
-        else:
+        elif fieldType == UNSIGNED:
           retStr += str(self.getUnsigned(fieldOffset, fieldLength))
+        else:
+          retStr += str(self.getString(fieldOffset, fieldLength))
     if self.attributeMap2 != None:
       for name, fieldSpec in self.attributeMap2.iteritems():
         retStr += "\n" + name + " = "
@@ -118,8 +121,10 @@ class BinaryUnit(object):
           fieldOffset += self.attributesSize1
           if fieldType == BYTES:
             retStr += str(self.getBytes(fieldOffset, fieldLength))
-          else:
+          elif fieldType == UNSIGNED:
             retStr += str(self.getUnsigned(fieldOffset, fieldLength))
+          else:
+            retStr += str(self.getString(fieldOffset, fieldLength))
     return retStr
   # ---------------------------------------------------------------------------
   def __len__(self):
@@ -295,6 +300,15 @@ class BinaryUnit(object):
       value >>= 8
       bytePos -= 1
   # ---------------------------------------------------------------------------
+  def getString(self, bytePos, byteLength):
+    """extracts a string"""
+    data = self.getBytes(bytePos, byteLength)
+    return self.getBytes(bytePos, byteLength).tostring()
+  # ---------------------------------------------------------------------------
+  def setString(self, bytePos, byteLength, byteArray):
+    """set a string"""
+    self.setBytes(bytePos, byteLength, byteArray)
+  # ---------------------------------------------------------------------------
   def __getattr__(self, name):
     """read access to the data unit attributes"""
     # try first access to fields from attribute map 1
@@ -306,8 +320,10 @@ class BinaryUnit(object):
         return self.getBits(fieldOffset, fieldLength)
       elif fieldType == BYTES:
         return self.getBytes(fieldOffset, fieldLength)
-      else:
+      elif fieldType == UNSIGNED:
         return self.getUnsigned(fieldOffset, fieldLength)
+      else:
+        return self.getString(fieldOffset, fieldLength)
     # attribute not in first attribute map ---> try the second one
     if self.attributeMap2 == None:
       raise AttributeError("attribute not found")
@@ -322,8 +338,10 @@ class BinaryUnit(object):
         fieldOffset += self.attributesSize1
         if fieldType == BYTES:
           return self.getBytes(fieldOffset, fieldLength)
-        else:
+        elif fieldType == UNSIGNED:
           return self.getUnsigned(fieldOffset, fieldLength)
+        else:
+          return self.getString(fieldOffset, fieldLength)
     # attribute not in first and second attribute map
     raise AttributeError("attribute not found")
   # ---------------------------------------------------------------------------
@@ -338,8 +356,10 @@ class BinaryUnit(object):
         self.setBits(fieldOffset, fieldLength, value)
       elif fieldType == BYTES:
         self.setBytes(fieldOffset, fieldLength, value)
-      else:
+      elif fieldType == UNSIGNED:
         self.setUnsigned(fieldOffset, fieldLength, value)
+      else:
+        self.setString(fieldOffset, fieldLength, value)
       return
     # attribute not in first attribute map ---> try the second one
     if self.attributeMap2 == None:
@@ -355,8 +375,10 @@ class BinaryUnit(object):
         fieldOffset += self.attributesSize1
         if fieldType == BYTES:
           self.setBytes(fieldOffset, fieldLength, value)
-        else:
+        elif fieldType == UNSIGNED:
           self.setUnsigned(fieldOffset, fieldLength, value)
+        else:
+          self.setString(fieldOffset, fieldLength, value)
       return
     # attribute not in first and second attribute map
     raise AttributeError("attribute not found")
