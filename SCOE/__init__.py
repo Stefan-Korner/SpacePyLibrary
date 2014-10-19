@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #******************************************************************************
 # (C) 2014, Stefan Korner, Austria                                            *
 #                                                                             *
@@ -12,25 +11,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser     *
 # General Public License for more details.                                    *
 #******************************************************************************
-# Unit Tests                                                                  *
+# SCOE reference implementation                                               *
 #******************************************************************************
-import os, sys
-from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import UTIL.TCP, UTIL.SYS
-
-###########################
-# Initialisation sequence #
-###########################
-# create the TCP/IP cient
-LOG("Open the TCP client")
-client = UTIL.TCP.Client()
-hostName = os.getenv("HOST")
-if hostName == None:
-  #hostName = "10.0.0.100"
-  hostName = "192.168.178.46"
-dataSocket = client.connectToServer(hostName, 1234)
-if not dataSocket:
-  sys.exit(-1)
-dataSocket.send("quit\n")
-dataSocket.close()
-sys.exit(0)
+__all__ = ["EGSEgui", "EGSEserver"]

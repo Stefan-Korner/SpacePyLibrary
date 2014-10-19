@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 #******************************************************************************
 # (C) 2014, Stefan Korner, Austria                                            *
 #                                                                             *
@@ -12,47 +11,52 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser     *
 # General Public License for more details.                                    *
 #******************************************************************************
-# Unit Tests                                                                  *
+# EGSE server for connection to CCS                                           *
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import UTIL.TCP, UTIL.SYS
+import EGSE.EDEN
+import UTIL.SYS, UTIL.TASK
 
 ###########
 # classes #
 ###########
 # =============================================================================
-class TCPsendingServer(UTIL.TCP.Server):
-  """Subclass of UTIL.TCP.Server"""
+class Server(EGSE.EDEN.Server):
+  """Subclass of GRND.NCTRS.TCreceiver"""
   # ---------------------------------------------------------------------------
-  def __init__(self, eventLoop, portNr):
-    UTIL.TCP.Server.__init__(self, eventLoop, portNr)
-    self.clientSocket = None
+  def __init__(self, portNr):
+    """Initialise attributes only"""
+    EGSE.EDEN.Server.__init__(self, portNr)
   # ---------------------------------------------------------------------------
-  def accepted(self, clientSocket):
-    """Client has connected"""
-    LOG("*** accepted ***")
-    self.clientSocket = clientSocket
-    self.clientSocket.send("connected\n")
-    # prepare a timer that calls the after method one second ago
-    UTIL.SYS.s_eventLoop.createtimehandler(1000, self.after)
+  def clientAccepted(self):
+    """Overloaded from GRND.NCTRS.TCreceiver"""
+    LOG_INFO("CCS client accepted", "EGSE")
+    # notify the status change
+    UTIL.TASK.s_processingTask.setCCSconnected()
   # ---------------------------------------------------------------------------
-  def after(self):
-    """Called from a timer 1 second after connect"""
-    LOG("*** after ***")
-    self.clientSocket.send("quit\n")
+  def notifyError(self, errorMessage, data):
+    """error notification"""
+    LOG_ERROR(errorMessage)
+    try:
+      LOG(str(data))
+    except Exception, ex:
+      LOG_WARNING("data passed to notifyError are invalid: " + str(ex))
 
-###########################
-# Initialisation sequence #
-###########################
-# register a console handler for termination
-consoleHandler = UTIL.SYS.ConsoleHandler()
-# create the TCP/IP sender
-LOG("Open the TCP server")
-server = TCPsendingServer(UTIL.SYS.s_eventLoop, portNr=1234)
-if not server.openConnectPort():
-  sys.exit(-1)
-# start the event loop
-LOG("Start the event loop...")
-UTIL.SYS.s_eventLoop.start()
-sys.exit(0)
+####################
+# global variables #
+####################
+# EGSE server is a singleton
+s_server = None
+
+#############
+# functions #
+#############
+# functions to encapsulate access to s_server
+# -----------------------------------------------------------------------------
+def createEGSEserver():
+  """create the EGSE server"""
+  global s_server
+  s_server = Server(portNr=int(UTIL.SYS.s_configuration.EDEN_SERVER_PORT))
+  if not s_server.openConnectPort(UTIL.SYS.s_configuration.HOST):
+    sys.exit(-1)
