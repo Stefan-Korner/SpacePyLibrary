@@ -45,8 +45,8 @@ class ModelTask(UTIL.TASK.ProcessingTask):
         self.helpCmd(argv)
       elif cmd == "Q" or cmd == "QUIT":
         self.quitCmd(argv)
-      elif cmd == "P" or cmd == "PACKETRESPONSE":
-        self.packetResponseCmd(argv)
+      elif cmd == "1" or cmd == "CMD_ANSW":
+        self.cmdAnswCmd(argv)
       else:
         LOG_WARNING("Invalid command " + argv[0])
         self.helpCmd([])
@@ -56,20 +56,25 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     """Decoded help command"""
     LOG_INFO("Available commands:")
     LOG("")
-    LOG("h | help .............provides this information")
-    LOG("q | quit .............terminates the application")
-    LOG("p | packetresponse ...send NCTRS TC packet response")
+    LOG("h | help ........provides this information")
+    LOG("q | quit ........terminates the application")
+    LOG("1 | cmd_answ ....send message via EDEN (CMD,ANSW)")
     LOG("")
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
     """Decoded quit command"""
     UTIL.TASK.s_parentTask.stop()
   # ---------------------------------------------------------------------------
-  def packetResponseCmd(self, argv):
-    """Decoded packet response command"""
-    global s_server
-    tcPktRespDu = EGSE.EDEN.TCpacketResponseDataUnit()
-    s_server.sendTcDataUnit(tcPktRespDu)
+  def cmdAnswCmd(self, argv):
+    """Decoded (CMD,ANSW) command"""
+    global s_client
+    if len(argv) != 2:
+      LOG_WARNING("Invalid command argument(s)")
+      LOG("usage: cmd_answ <message>")
+      LOG("or:    1 <message>")
+      return
+    message = argv[1]
+    s_server.sendCmdAnsw(message)
 
 # =============================================================================
 class Server(EGSE.EDEN.Server):
