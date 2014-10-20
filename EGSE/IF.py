@@ -46,8 +46,8 @@ class Configuration(object):
 class CCSlink(object):
   """Interface to the central checkout system"""
   # ---------------------------------------------------------------------------
-  def pushXXX(self, xxxDu):
-    """consumes a xxx"""
+  def pushTMpacket(self, tmPacketDu):
+    """consumes a telemetry packet"""
     pass
 
 ####################

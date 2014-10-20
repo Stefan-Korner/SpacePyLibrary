@@ -15,14 +15,14 @@
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import EGSE.EDEN
+import EGSE.EDEN, EGSE.IF
 import UTIL.SYS, UTIL.TASK
 
 ###########
 # classes #
 ###########
 # =============================================================================
-class Server(EGSE.EDEN.Server):
+class Server(EGSE.EDEN.Server, EGSE.IF.CCSlink):
   """Subclass of GRND.NCTRS.TCreceiver"""
   # ---------------------------------------------------------------------------
   def __init__(self, portNr):
@@ -34,6 +34,13 @@ class Server(EGSE.EDEN.Server):
     LOG_INFO("CCS client accepted", "EGSE")
     # notify the status change
     UTIL.TASK.s_processingTask.setCCSconnected()
+  # ---------------------------------------------------------------------------
+  def pushTMpacket(self, tmPacketDu):
+    """
+    consumes a telemetry packet:
+    implementation of EGSE.IF.CCSlink.pushTMpacket
+    """
+    LOG_ERROR("pushTMpacket not implemented")
   # ---------------------------------------------------------------------------
   def notifyError(self, errorMessage, data):
     """error notification"""

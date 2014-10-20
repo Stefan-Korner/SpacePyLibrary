@@ -1036,7 +1036,7 @@ if cmdPrompt:
 
 # initialise singletons
 SPACE.DEF.init()
-SPACE.OBC.init()
+SPACE.OBC.init(egseMode=False)
 SPACE.OBQ.init()
 SPACE.TMGEN.init()
 LINK.TMTC.init()

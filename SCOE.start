@@ -1,0 +1,30 @@
+#!/bin/csh
+#******************************************************************************
+# (C) 2014, Stefan Korner, Austria                                            *
+#                                                                             *
+# The Space Python Library is free software; you can redistribute it and/or   *
+# modify it under the terms of the GNU Lesser General Public License as       *
+# published by the Free Software Foundation; either version 2.1 of the        *
+# License, or (at your option) any later version.                             *
+#                                                                             *
+# The Space Python Library is distributed in the hope that it will be useful, *
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser     *
+# General Public License for more details.                                    *
+#******************************************************************************
+# Start scrip for the SCOE.                                                   *
+#******************************************************************************
+setenv TC_ACK_ACCEPT_SUCC_MNEMO TC_ACK_1_1
+setenv TC_ACK_ACCEPT_FAIL_MNEMO TC_ACK_1_2
+setenv TC_ACK_EXESTA_SUCC_MNEMO TC_ACK_1_3
+setenv TC_ACK_EXESTA_FAIL_MNEMO TC_ACK_1_4
+setenv TC_ACK_EXEPRO_SUCC_MNEMO TC_ACK_1_5
+setenv TC_ACK_EXEPRO_FAIL_MNEMO TC_ACK_1_6
+setenv TC_ACK_EXECUT_SUCC_MNEMO TC_ACK_1_7
+setenv TC_ACK_EXECUT_FAIL_MNEMO TC_ACK_1_8
+setenv TC_ACK_APID_PARAM_BYTE_OFFSET 10
+setenv TC_ACK_SSC_PARAM_BYTE_OFFSET 12
+setenv TM_CYCLIC_MNEMO ZYCLIC
+setenv TCO_MISSION_EPOCH_STR "1970.001.00.00.00.000000"
+setenv PYTHONPATH ${HOME}/Python/SpacePyLibrary:${HOME}/Python/SpacePyLibrary/UnitTest
+python SCOE.py dummy

@@ -26,9 +26,9 @@ import UTIL.SYS, UTIL.TASK
 class OnboardComputerImpl(SPACE.IF.OnboardComputer):
   """Interface of the onboard computer"""
   # ---------------------------------------------------------------------------
-  def __init__(self):
+  def __init__(self, egseMode):
     """Initialise attributes only"""
-    pass
+    self.egseMode = egseMode
   # ---------------------------------------------------------------------------
   def pushTCpacket(self, tcPacketDu):
     """
@@ -73,7 +73,10 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
       LOG("SUBTYPE = " + str(tcPacketDu.serviceSubType), "SPACE")
       # special handling if the packet is a PUS OBQ management command
       if tcPacketDu.serviceType == PUS.SERVICES.TC_OBQ_TYPE:
-        SPACE.IF.s_onboardQueue.pushMngPacket(tcPacketDu)
+        if SPACE.IF.s_onboardQueue == None:
+          LOG_ERROR("No OBQ implementation for OBQ management command", "SPACE")
+        else:
+          SPACE.IF.s_onboardQueue.pushMngPacket(tcPacketDu)
       # send TC acknowledgements
       self.generateAcksFromTCpacket(tcPacketDu, ack1, ack2, ack3, ack4)
     else:
@@ -93,7 +96,10 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
       LOG_ERROR("packet creation failed: SPID = " + str(spid), "SPACE")
       return
     # send the TM packet
-    LINK.IF.s_packetLink.pushTMpacket(tmPacketDu)
+    if self.egseMode:
+      EGSE.IF.s_ccsLink.pushTMpacket(tmPacketDu)
+    else:
+      LINK.IF.s_packetLink.pushTMpacket(tmPacketDu)
   # ---------------------------------------------------------------------------
   def generateAcksFromTCpacket(self, tcPacketDu, ack1, ack2, ack3, ack4):
     """
@@ -226,6 +232,6 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
 #############
 # functions #
 #############
-def init():
+def init(egseMode):
   # initialise singleton(s)
-  SPACE.IF.s_onboardComputer = OnboardComputerImpl()
+  SPACE.IF.s_onboardComputer = OnboardComputerImpl(egseMode)

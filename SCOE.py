@@ -18,6 +18,8 @@ import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import EGSE.EDEN
 import SCOE.EGSEserver, SCOE.EGSEgui
+import SIM.SPACEgui
+import SPACE.DEF, SPACE.IF, SPACE.OBC, SPACE.TMGEN
 import UI.TKI
 import UTIL.SYS, UTIL.TASK
 
@@ -27,6 +29,19 @@ import UTIL.SYS, UTIL.TASK
 SYS_CONFIGURATION = [
   ["HOST", "192.168.1.100"],
   ["EDEN_SERVER_PORT", "48569"],
+  ["TC_ACK_ACCEPT_SUCC_MNEMO", "<<shall be passed as environment variable>>"],
+  ["TC_ACK_ACCEPT_FAIL_MNEMO", "<<shall be passed as environment variable>>"],
+  ["TC_ACK_EXESTA_SUCC_MNEMO", "<<shall be passed as environment variable>>"],
+  ["TC_ACK_EXESTA_FAIL_MNEMO", "<<shall be passed as environment variable>>"],
+  ["TC_ACK_EXEPRO_SUCC_MNEMO", "<<shall be passed as environment variable>>"],
+  ["TC_ACK_EXEPRO_FAIL_MNEMO", "<<shall be passed as environment variable>>"],
+  ["TC_ACK_EXECUT_SUCC_MNEMO", "<<shall be passed as environment variable>>"],
+  ["TC_ACK_EXECUT_FAIL_MNEMO", "<<shall be passed as environment variable>>"],
+  ["TC_ACK_APID_PARAM_BYTE_OFFSET", "<<shall be passed as environment variable>>"],
+  ["TC_ACK_SSC_PARAM_BYTE_OFFSET", "<<shall be passed as environment variable>>"],
+  ["TM_CYCLIC_MNEMO", "<<shall be passed as environment variable>>"],
+  ["TM_CYCLIC_PERIOD_MS", "5000"],
+  ["TCO_MISSION_EPOCH_STR", "<<shall be passed as environment variable>>"],
   ["SYS_COLOR_LOG", "1"],
   ["SYS_APP_MNEMO", "SCOE"],
   ["SYS_APP_NAME", "Special Checkout Equipment"],
@@ -64,6 +79,44 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       retStatus = self.quitCmd(argv)
     elif (cmd == "U") or (cmd == "DUMPCONFIGURATION"):
       retStatus = self.dumpConfigurationCmd(argv)
+    elif (cmd == "P") or (cmd == "SETPACKETDATA"):
+      retStatus = self.setPacketDataCmd(argv)
+    elif (cmd == "S") or (cmd == "SENDPACKET"):
+      retStatus = self.sendPacketCmd(argv)
+    elif (cmd == "E") or (cmd == "ENABLECYCLIC"):
+      retStatus = self.enableCyclicCmd(argv)
+    elif (cmd == "D") or (cmd == "DISABLECYCLIC"):
+      retStatus = self.disableCyclicCmd(argv)
+    elif (cmd == "A1") or (cmd == "OBCENABLEACK1"):
+      retStatus = self.obcEnableAck1Cmd(argv)
+    elif (cmd == "N1") or (cmd == "OBCENABLENAK1"):
+      retStatus = self.obcEnableNak1Cmd(argv)
+    elif (cmd == "D1") or (cmd == "OBCDISABLEACK1"):
+      retStatus = self.obcDisableAck1Cmd(argv)
+    elif (cmd == "A2") or (cmd == "OBCENABLEACK2"):
+      retStatus = self.obcEnableAck2Cmd(argv)
+    elif (cmd == "N2") or (cmd == "OBCENABLENAK2"):
+      retStatus = self.obcEnableNak2Cmd(argv)
+    elif (cmd == "D2") or (cmd == "OBCDISABLEACK2"):
+      retStatus = self.obcDisableAck2Cmd(argv)
+    elif (cmd == "A3") or (cmd == "OBCENABLEACK3"):
+      retStatus = self.obcEnableAck3Cmd(argv)
+    elif (cmd == "N3") or (cmd == "OBCENABLENAK3"):
+      retStatus = self.obcEnableNak3Cmd(argv)
+    elif (cmd == "D3") or (cmd == "OBCDISABLEACK3"):
+      retStatus = self.obcDisableAck3Cmd(argv)
+    elif (cmd == "A4") or (cmd == "OBCENABLEACK4"):
+      retStatus = self.obcEnableAck4Cmd(argv)
+    elif (cmd == "N4") or (cmd == "OBCENABLENAK4"):
+      retStatus = self.obcEnableNak4Cmd(argv)
+    elif (cmd == "D4") or (cmd == "OBCDISABLEACK4"):
+      retStatus = self.obcDisableAck4Cmd(argv)
+    elif (cmd == "A") or (cmd == "SENDACK"):
+      retStatus = self.sendAckCmd(argv)
+    elif (cmd == "L") or (cmd == "LISTPACKETS"):
+      retStatus = self.listPacketsCmd(argv)
+    elif (cmd == "G") or (cmd == "GENERATE"):
+      retStatus = self.generateCmd(argv)
     else:
       LOG_WARNING("invalid command " + argv[0])
       return -1
@@ -81,6 +134,33 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("h  | help ...............provides this information", "EGSE")
     LOG("q  | quit ...............terminates SIM application", "EGSE")
     LOG("u  | dumpConfiguration...dumps the configuration", "EGSE")
+    LOG_INFO("Available space segment commands:", "SPACE")
+    LOG("", "SPACE")
+    LOG("x  | exit ...............terminates client connection (only for TCP/IP clients)", "SPACE")
+    LOG("h  | help ...............provides this information", "SPACE")
+    LOG("q  | quit ...............terminates SIM application", "SPACE")
+    LOG("u  | dumpConfiguration...dumps the configuration", "SPACE")
+    LOG("p  | setPacketData <pktMnemonic> [<params> <values>]", "SPACE")
+    LOG("                         predefine data for the next TM packet", "SPACE")
+    LOG("s  | sendPacket [<pktMnemonic> [<params> <values>]]", "SPACE")
+    LOG("                         send predefined or specific TM packet", "SPACE")
+    LOG("e  | enableCyclic........enables cyclic sending of TM packet", "SPACE")
+    LOG("d  | disableCyclic.......disables cyclic sending of TM packet", "SPACE")
+    LOG("a1 | obcEnableAck1.......enables autom. sending of ACK1 for TCs", "SPACE")
+    LOG("n1 | obcEnableNak1.......enables autom. sending of NAK1 for TCs", "SPACE")
+    LOG("d1 | obcDisableAck1......disables autom. sending of ACK1 for TCs", "SPACE")
+    LOG("a2 | obcEnableAck2.......enables autom. sending of ACK2 for TCs", "SPACE")
+    LOG("n2 | obcEnableNak2.......enables autom. sending of NAK2 for TCs", "SPACE")
+    LOG("d2 | obcDisableAck2......disables autom. sending of ACK2 for TCs", "SPACE")
+    LOG("a3 | obcEnableAck3.......enables autom. sending of ACK3 for TCs", "SPACE")
+    LOG("n3 | obcEnableNak3.......enables autom. sending of NAK3 for TCs", "SPACE")
+    LOG("d3 | obcDisableAck3......disables autom. sending of ACK3 for TCs", "SPACE")
+    LOG("a4 | obcEnableAck4.......enables autom. sending of ACK4 for TCs", "SPACE")
+    LOG("n4 | obcEnableNak4.......enables autom. sending of NAK4 for TCs", "SPACE")
+    LOG("d4 | obcDisableAck4......disables autom. sending of ACK4 for TCs", "SPACE")
+    LOG("a  | sendAck <apid> <ssc> <stype> sends a TC acknowledgement", "SPACE")
+    LOG("l  | listPackets.........lists available packets", "SPACE")
+    LOG("g  | generate............generates the testdata.txt file in testbin directory", "SPACE")
     return True
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
@@ -93,6 +173,332 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     """Decoded dumpConfiguration command"""
     self.logMethod("dumpConfigurationCmd")
     EGSE.IF.s_configuration.dump()
+    return True
+  # ---------------------------------------------------------------------------
+  def setPacketDataCmd(self, argv):
+    """Decoded setPacketData command"""
+    self.logMethod("setPacketDataCmd", "SPACE")
+
+    # consistency check
+    if not SPACE.IF.s_configuration.connected:
+      LOG_WARNING("TM connection not connected", "SPACE")
+      return False
+    if len(argv) != 2 and len(argv) != 4:
+      LOG_WARNING("invalid parameters passed for TM connection", "SPACE")
+      return False
+
+    # extract the arguments
+    pktMnemonic = argv[1]
+    if len(argv) == 2:
+      params = ""
+      values = ""
+    else:
+      params = argv[2]
+      values = argv[3]
+    # check the packet data
+    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic, params, values)
+    if tmPacketData == None:
+      LOG_WARNING("invalid data passed for TM connection", "SPACE")
+      return False
+    # initialise the packet data
+    SPACE.IF.s_configuration.tmPacketData = tmPacketData
+    LOG("Packet = " + SPACE.IF.s_configuration.tmPacketData.pktName, "SPACE")
+    LOG("SPID = " + str(SPACE.IF.s_configuration.tmPacketData.pktSPID), "SPACE")
+    LOG("Parameters and values = " + str(SPACE.IF.s_configuration.tmPacketData.parameterValuesList), "SPACE")
+
+    # notify the GUI
+    self.notifyGUItask("PACKETDATA_SET")
+    return True
+  # ---------------------------------------------------------------------------
+  def sendPacketCmd(self, argv):
+    """Decoded sendPacket command"""
+    self.logMethod("sendPacketCmd", "SPACE")
+
+    # consistency check
+    if not SPACE.IF.s_configuration.connected:
+      LOG_WARNING("TM connection not connected", "SPACE")
+      return False
+    if len(argv) != 1 and len(argv) != 2 and len(argv) != 4:
+      LOG_WARNING("invalid parameters passed for TM connection", "SPACE")
+      return False
+
+    # extract the arguments
+    if len(argv) == 1:
+      if SPACE.IF.s_configuration.tmPacketData == None:
+        LOG_WARNING("packet data not initialised", "SPACE")
+        return False
+      tmPacketData = SPACE.IF.s_configuration.tmPacketData
+    else:
+      pktMnemonic = argv[1]
+      if len(argv) == 2:
+        params = ""
+        values = ""
+      else:
+        params = argv[2]
+        values = argv[3]
+      # check the packet data
+      tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic, params, values)
+      if tmPacketData == None:
+        LOG_WARNING("invalid data passed for TM connection", "SPACE")
+        return False
+
+    # send the packet
+    try:
+      SPACE.IF.s_onboardComputer.generateTMpacket(tmPacketData)
+    except Exception, ex:
+      LOG_WARNING("cannot send packet via connection: " + str(ex), "SPACE")
+      return False
+    return True
+  # ---------------------------------------------------------------------------
+  def enableCyclicCmd(self, argv):
+    """Decoded enableCyclic command"""
+    self.logMethod("enableCyclicCmd", "SPACE")
+
+    # consistency check
+    if not SPACE.IF.s_configuration.connected:
+      LOG_WARNING("TM connection not connected", "SPACE")
+      return False
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for enableCyclic", "SPACE")
+      return False
+
+    SPACE.IF.s_onboardComputer.startCyclicTM()
+    return True
+  # ---------------------------------------------------------------------------
+  def disableCyclicCmd(self, argv):
+    """Decoded disableCyclic command"""
+    self.logMethod("disableCyclic", "SPACE")
+
+    # consistency check
+    if not SPACE.IF.s_configuration.connected:
+      LOG_WARNING("TM connection not connected", "SPACE")
+      return False
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for disableCyclic", "SPACE")
+      return False
+
+    SPACE.IF.s_onboardComputer.stopCyclicTM()
+    return True
+  # ---------------------------------------------------------------------------
+  def obcEnableAck1Cmd(self, argv):
+    """Decoded obcEnableAck1 command"""
+    self.logMethod("obcEnableAck1Cmd", "SPACE")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for obcEnableAck1", "SPACE")
+      return False
+    # enable the ack sending
+    SPACE.IF.s_configuration.obcAck1 = SPACE.IF.ENABLE_ACK
+    # notify the GUI
+    self.notifyGUItask("OBC_ENABLED_ACK1")
+    return True
+  def obcEnableNak1Cmd(self, argv):
+    """Decoded obcEnableNak1 command"""
+    self.logMethod("obcEnableNak1Cmd", "SPACE")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for obcEnableNak1", "SPACE")
+      return False
+    # enable the ack sending
+    SPACE.IF.s_configuration.obcAck1 = SPACE.IF.ENABLE_NAK
+    # notify the GUI
+    self.notifyGUItask("OBC_ENABLED_NAK1")
+    return True
+  def obcDisableAck1Cmd(self, argv):
+    """Decoded obcDisableAck1 command"""
+    self.logMethod("obcDisableAck1Cmd", "SPACE")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for obcDisableAck1", "SPACE")
+      return False
+    # enable the ack sending
+    SPACE.IF.s_configuration.obcAck1 = SPACE.IF.DISABLE_ACK
+    # notify the GUI
+    self.notifyGUItask("OBC_DISABLED_ACK1")
+    return True
+  # ---------------------------------------------------------------------------
+  def obcEnableAck2Cmd(self, argv):
+    """Decoded obcEnableAck2 command"""
+    self.logMethod("obcEnableAck2Cmd", "SPACE")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for obcEnableAck2", "SPACE")
+      return False
+    # enable the ack sending
+    SPACE.IF.s_configuration.obcAck2 = SPACE.IF.ENABLE_ACK
+    # notify the GUI
+    self.notifyGUItask("OBC_ENABLED_ACK2")
+    return True
+  def obcEnableNak2Cmd(self, argv):
+    """Decoded obcEnableNak2 command"""
+    self.logMethod("obcEnableNak2Cmd", "SPACE")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for obcEnableNak2", "SPACE")
+      return False
+    # enable the ack sending
+    SPACE.IF.s_configuration.obcAck2 = SPACE.IF.ENABLE_NAK
+    # notify the GUI
+    self.notifyGUItask("OBC_ENABLED_NAK2")
+    return True
+  def obcDisableAck2Cmd(self, argv):
+    """Decoded obcDisableAck2 command"""
+    self.logMethod("obcDisableAck2Cmd", "SPACE")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for obcDisableAck2", "SPACE")
+      return False
+    # enable the ack sending
+    SPACE.IF.s_configuration.obcAck2 = SPACE.IF.DISABLE_ACK
+    # notify the GUI
+    self.notifyGUItask("OBC_DISABLED_ACK2")
+    return True
+  # ---------------------------------------------------------------------------
+  def obcEnableAck3Cmd(self, argv):
+    """Decoded obcEnableAck3 command"""
+    self.logMethod("obcEnableAck3Cmd", "SPACE")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for obcEnableAck3", "SPACE")
+      return False
+    # enable the ack sending
+    SPACE.IF.s_configuration.obcAck3 = SPACE.IF.ENABLE_ACK
+    # notify the GUI
+    self.notifyGUItask("OBC_ENABLED_ACK3")
+    return True
+  def obcEnableNak3Cmd(self, argv):
+    """Decoded obcEnableNak3 command"""
+    self.logMethod("obcEnableNak3Cmd", "SPACE")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for obcEnableNak3", "SPACE")
+      return False
+    # enable the ack sending
+    SPACE.IF.s_configuration.obcAck3 = SPACE.IF.ENABLE_NAK
+    # notify the GUI
+    self.notifyGUItask("OBC_ENABLED_NAK3")
+    return True
+  def obcDisableAck3Cmd(self, argv):
+    """Decoded obcDisableAck3 command"""
+    self.logMethod("obcDisableAck3Cmd", "SPACE")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for obcDisableAck3", "SPACE")
+      return False
+    # enable the ack sending
+    SPACE.IF.s_configuration.obcAck3 = SPACE.IF.DISABLE_ACK
+    # notify the GUI
+    self.notifyGUItask("OBC_DISABLED_ACK3")
+    return True
+  # ---------------------------------------------------------------------------
+  def obcEnableAck4Cmd(self, argv):
+    """Decoded obcEnableAck4 command"""
+    self.logMethod("obcEnableAck4Cmd", "SPACE")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for obcEnableAck4", "SPACE")
+      return False
+    # enable the ack sending
+    SPACE.IF.s_configuration.obcAck4 = SPACE.IF.ENABLE_ACK
+    # notify the GUI
+    self.notifyGUItask("OBC_ENABLED_ACK4")
+    return True
+  def obcEnableNak4Cmd(self, argv):
+    """Decoded obcEnableNak4 command"""
+    self.logMethod("obcEnableNak4Cmd", "SPACE")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for obcEnableNak4", "SPACE")
+      return False
+    # enable the ack sending
+    SPACE.IF.s_configuration.obcAck4 = SPACE.IF.ENABLE_NAK
+    # notify the GUI
+    self.notifyGUItask("OBC_ENABLED_NAK4")
+    return True
+  def obcDisableAck4Cmd(self, argv):
+    """Decoded obcDisableAck4 command"""
+    self.logMethod("obcDisableAck4Cmd", "SPACE")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for obcDisableAck4", "SPACE")
+      return False
+    # enable the ack sending
+    SPACE.IF.s_configuration.obcAck4 = SPACE.IF.DISABLE_ACK
+    # notify the GUI
+    self.notifyGUItask("OBC_DISABLED_ACK4")
+    return True
+  # ---------------------------------------------------------------------------
+  def sendAckCmd(self, argv):
+    """Decoded sendAck command"""
+    self.logMethod("sendAckCmd", "SPACE")
+
+    # consistency check
+    if not SPACE.IF.s_configuration.connected:
+      LOG_WARNING("TM connection not connected", "SPACE")
+      return False
+    if len(argv) != 4:
+      LOG_WARNING("invalid parameters passed for TC acknowledgement", "SPACE")
+      return False
+
+    # extract the arguments
+    apid = int(argv[1])
+    ssc = int(argv[2])
+    subtypeStr = argv[3]
+    if subtypeStr == "1":
+      ackType = PUS.SERVICES.TC_ACK_ACCEPT_SUCC
+    elif subtypeStr == "2":
+      ackType = PUS.SERVICES.TC_ACK_ACCEPT_FAIL
+    elif subtypeStr == "3":
+      ackType = PUS.SERVICES.TC_ACK_EXESTA_SUCC
+    elif subtypeStr == "4":
+      ackType = PUS.SERVICES.TC_ACK_EXESTA_FAIL
+    elif subtypeStr == "5":
+      ackType = PUS.SERVICES.TC_ACK_EXEPRO_SUCC
+    elif subtypeStr == "6":
+      ackType = PUS.SERVICES.TC_ACK_EXEPRO_FAIL
+    elif subtypeStr == "7":
+      ackType = PUS.SERVICES.TC_ACK_EXECUT_SUCC
+    elif subtypeStr == "8":
+      ackType = PUS.SERVICES.TC_ACK_EXECUT_FAIL
+    else:
+      LOG_ERROR("invalid ackType for TC acknowledgement", "SPACE")
+      return False
+    SPACE.IF.s_onboardComputer.generateAck(apid, ssc, ackType);
+    return True
+  # ---------------------------------------------------------------------------
+  def listPacketsCmd(self, argv):
+    """Decoded listPackets command"""
+    self.logMethod("listPacketsCmd", "SPACE")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed", "SPACE")
+      return False
+    # read the MIB 
+    try:
+      for tmPktDef in SPACE.IF.s_definitions.getTMpktDefs():
+        LOG(tmPktDef.pktName + " (SPID = " + str(tmPktDef.pktSPID) + ") - " + tmPktDef.pktDescr, "SPACE")
+    except Exception, ex:
+      LOG_ERROR("MIB Error: " + str(ex), "SPACE")
+      return False
+    return True
+  # ---------------------------------------------------------------------------
+  def generateCmd(self, argv):
+    """Decoded generate command"""
+    self.logMethod("generateCmd", "SPACE")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed", "SPACE")
+      return False
+    # generate the testdata.sim and testdata.txt files
+    definitionFileName = SCOS.ENV.s_environment.definitionFileName()
+    LOG("generate to " + definitionFileName, "SPACE")
+    try:
+      # update the TM definitions to ensure an actual testdata.sim
+      SPACE.IF.s_definitions.createDefinitions()
+      LOG(definitionFileName + " generated", "SPACE")
+    except Exception, ex:
+      LOG_ERROR("Generation Error: " + str(ex), "SPACE")
+      return False
     return True
   # ---------------------------------------------------------------------------
   def setCCSconnected(self):
@@ -108,6 +514,25 @@ class ModelTask(UTIL.TASK.ProcessingTask):
 def help(*argv): UTIL.TASK.s_processingTask.helpCmd(("", ) + argv)
 def quit(*argv): UTIL.TASK.s_processingTask.quitCmd(("", ) + argv)
 def dumpConfiguration(*argv): UTIL.TASK.s_processingTask.dumpConfigurationCmd(("", ) + argv)
+def setPacketData(*argv): UTIL.TASK.s_processingTask.setPacketDataCmd(("", ) + argv)
+def sendPacket(*argv): UTIL.TASK.s_processingTask.sendPacketCmd(("", ) + argv)
+def enableCyclic(*argv): UTIL.TASK.s_processingTask.enableCyclicCmd(("", ) + argv)
+def disableCyclic(*argv): UTIL.TASK.s_processingTask.disableCyclicCmd(("", ) + argv)
+def sendAck(*argv): UTIL.TASK.s_processingTask.sendAckCmd(("", ) + argv)
+def obcEnableAck1(*argv): UTIL.TASK.s_processingTask.obcEnableAck1Cmd(("", ) + argv)
+def obcEnableNak1(*argv): UTIL.TASK.s_processingTask.obcEnableNak1Cmd(("", ) + argv)
+def obcDisableAck1(*argv): UTIL.TASK.s_processingTask.obcDisableAck1Cmd(("", ) + argv)
+def obcEnableAck2(*argv): UTIL.TASK.s_processingTask.obcEnableAck2Cmd(("", ) + argv)
+def obcEnableNak2(*argv): UTIL.TASK.s_processingTask.obcEnableNak2Cmd(("", ) + argv)
+def obcDisableAck2(*argv): UTIL.TASK.s_processingTask.obcDisableAck2Cmd(("", ) + argv)
+def obcEnableAck3(*argv): UTIL.TASK.s_processingTask.obcEnableAck3Cmd(("", ) + argv)
+def obcEnableNak3(*argv): UTIL.TASK.s_processingTask.obcEnableNak3Cmd(("", ) + argv)
+def obcDisableAck3(*argv): UTIL.TASK.s_processingTask.obcDisableAck3Cmd(("", ) + argv)
+def obcEnableAck4(*argv): UTIL.TASK.s_processingTask.obcEnableAck4Cmd(("", ) + argv)
+def obcEnableNak4(*argv): UTIL.TASK.s_processingTask.obcEnableNak4Cmd(("", ) + argv)
+def obcDisableAck4(*argv): UTIL.TASK.s_processingTask.obcDisableAck4Cmd(("", ) + argv)
+def listPackets(*argv): UTIL.TASK.s_processingTask.listPacketsCmd(("", ) + argv)
+def generate(*argv): UTIL.TASK.s_processingTask.generateCmd(("", ) + argv)
 # -----------------------------------------------------------------------------
 def printUsage(launchScriptName):
   """Prints the possible commandline options of the test driver"""
@@ -135,8 +560,9 @@ else:
   launchScriptName = sys.argv[1]
 # initialise the system configuration
 UTIL.SYS.s_configuration.setDefaults(SYS_CONFIGURATION)
-#UTIL.TIME.setMissionEpochStr(UTIL.SYS.s_configuration.TCO_MISSION_EPOCH_STR)
+UTIL.TIME.setMissionEpochStr(UTIL.SYS.s_configuration.TCO_MISSION_EPOCH_STR)
 EGSE.IF.s_configuration = EGSE.IF.Configuration()
+SPACE.IF.s_configuration = SPACE.IF.Configuration()
 # initialise the request handler
 requestHandler = UTIL.TASK.RequestHandler(sys.argv)
 if requestHandler.helpRequested:
@@ -159,7 +585,9 @@ if guiMode:
   guiTask = UI.TKI.GUItask()
   modelTask = ModelTask(isParent=False)
   win0 = UI.TKI.createWindow()
+  win1 = UI.TKI.createWindow()
   gui0view = SCOE.EGSEgui.GUIview(win0)
+  gui1view = SIM.SPACEgui.GUIview(win1)
   UI.TKI.finaliseGUIcreation()
 else:
   modelTask = ModelTask(isParent=True)
@@ -176,14 +604,18 @@ if cmdPrompt:
   modelTask.registerConsoleHandler(requestHandler)
 
 # initialise singletons
-#TODO
+SPACE.DEF.init()
+SPACE.OBC.init(egseMode=True)
+SPACE.TMGEN.init()
 
 # create the EGSE server
 LOG("Open the EGSE server")
 SCOE.EGSEserver.createEGSEserver()
 
 # load the definition data
-#TODO
+print "load definition data (take some time) ..."
+SPACE.IF.s_definitions.initDefinitions()
+print "definition data loaded"
 
 # start the tasks
 print "start modelTask..."

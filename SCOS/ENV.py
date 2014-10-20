@@ -50,8 +50,8 @@ class Environment(object):
     try:
       tpktConnTableFile = open(tpktConnTableFileName);
     except:
-      LOG_ERROR("cannot read " + tpktConnTableFileName)
-      sys.exit(-1)
+      LOG_WARNING("cannot read " + tpktConnTableFileName)
+      return
     fileContents = tpktConnTableFile.readlines()
     tpktConnTableFile.close()
     # parse the file to find the entry with connection ID 1
