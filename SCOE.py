@@ -504,8 +504,9 @@ class ModelTask(UTIL.TASK.ProcessingTask):
   def setCCSconnected(self):
     """CCS connection established"""
     EGSE.IF.s_configuration.connected = True
-    #SPACE.IF.s_configuration.connected = True
     self.notifyGUItask("CCS_CONNECTED")
+    SPACE.IF.s_configuration.connected = True
+    self.notifyGUItask("TM_CONNECTED")
 
 #############
 # functions #
