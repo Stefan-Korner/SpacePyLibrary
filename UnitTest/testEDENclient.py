@@ -46,7 +46,11 @@ class ModelTask(UTIL.TASK.ProcessingTask):
         self.helpCmd(argv)
       elif cmd == "Q" or cmd == "QUIT":
         self.quitCmd(argv)
-      elif cmd == "1" or cmd == "CMD_EXEC":
+      elif cmd == "1" or cmd == "TC_SPACE":
+        self.tcSpaceCmd(argv)
+      elif cmd == "2" or cmd == "TC_SCOE":
+        self.tcScoeCmd(argv)
+      elif cmd == "3" or cmd == "CMD_EXEC":
         self.cmdExecCmd(argv)
       else:
         LOG_WARNING("Invalid command " + argv[0])
@@ -59,12 +63,34 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("")
     LOG("h | help ........provides this information")
     LOG("q | quit ........terminates the application")
-    LOG("1 | cmd_exec ....send message via EDEN (CMD,EXEC)")
+    LOG("1 | tc_space ....send TC via EDEN (TC,SPACE)")
+    LOG("2 | tc_scoe .....send TC via EDEN (TC,SCOE)")
+    LOG("3 | cmd_exec ....send message via EDEN (CMD,EXEC)")
     LOG("")
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
     """Decoded quit command"""
     UTIL.TASK.s_parentTask.stop()
+  # ---------------------------------------------------------------------------
+  def tcSpaceCmd(self, argv):
+    """Decoded (TC,SPACE) command"""
+    global s_client
+    if len(argv) != 1:
+      LOG_WARNING("Invalid command argument(s)")
+      LOG("usage: tc_space")
+      LOG("or:    1")
+      return
+    s_client.sendTcSpace(testData.TC_PACKET_01)
+  # ---------------------------------------------------------------------------
+  def tcScoeCmd(self, argv):
+    """Decoded (TC,SCOE) command"""
+    global s_client
+    if len(argv) != 1:
+      LOG_WARNING("Invalid command argument(s)")
+      LOG("usage: tc_scoe")
+      LOG("or:    2")
+      return
+    s_client.sendTcScoe(testData.TC_PACKET_01)
   # ---------------------------------------------------------------------------
   def cmdExecCmd(self, argv):
     """Decoded (CMD,EXEC) command"""
@@ -72,7 +98,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     if len(argv) != 2:
       LOG_WARNING("Invalid command argument(s)")
       LOG("usage: cmd_exec <message>")
-      LOG("or:    1 <message>")
+      LOG("or:    3 <message>")
       return
     message = argv[1]
     s_client.sendCmdExec(message)

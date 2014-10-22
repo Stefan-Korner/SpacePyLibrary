@@ -94,7 +94,19 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
       return
     pdu.setDataField(dataField)
     try:
-      if pdu.pduType == EGSE.EDENPDU.PDU_TYPE_CMD:
+      if pdu.pduType == EGSE.EDENPDU.PDU_TYPE_TC:
+        if pdu.subType == EGSE.EDENPDU.SUB_TYPE_SPACE:
+          # (TC,SPACE)
+          self.notifyTcSpace(pdu.getDataField())
+        elif pdu.subType == EGSE.EDENPDU.SUB_TYPE_SCOE:
+          # (TC,SCOE)
+          self.notifyTcScoe(pdu.getDataField())
+        else:
+          LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType))
+          LOG_INFO("PDU = " + str(pdu))
+          self.disconnectClient()
+          self.notifyConnectionClosed("invalid data")
+      elif pdu.pduType == EGSE.EDENPDU.PDU_TYPE_CMD:
         if pdu.subType == EGSE.EDENPDU.SUB_TYPE_EXEC:
           # (CMD,EXEC)
           self.notifyCmdExec(pdu.getDataField().tostring())
@@ -114,6 +126,14 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
   def notifyConnectionClosed(self, details):
     """Connection closed by client"""
     LOG_WARNING("Connection closed by CCS: " + details)
+  # ---------------------------------------------------------------------------
+  def notifyTcSpace(self, tcPacket):
+    """(TC,SPACE) received: hook for derived classes"""
+    LOG_INFO("notifyTcSpace: tcPacket = " + UTIL.DU.array2str(tcPacket))
+  # ---------------------------------------------------------------------------
+  def notifyTcScoe(self, tcPacket):
+    """(TC,SCOE) received: hook for derived classes"""
+    LOG_INFO("notifyTcScoe: tcPacket = " + UTIL.DU.array2str(tcPacket))
   # ---------------------------------------------------------------------------
   def notifyCmdExec(self, message):
     """(CMD,EXEC) received: hook for derived classes"""
@@ -139,12 +159,28 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
     # this operation does not verify the contents of the DU
     self.dataSocket.send(pdu.getBufferString())
   # ---------------------------------------------------------------------------
-  def sendCmdExec(self, message):
+  def sendTcSpace(self, tcPacket):
+    """Send a (TC,SPACE) PDU to the SCOE"""
+    pdu = EGSE.EDENPDU.PDU()
+    pdu.pduType = EGSE.EDENPDU.PDU_TYPE_TC
+    pdu.subType = EGSE.EDENPDU.SUB_TYPE_SPACE
+    pdu.setDataField(tcPacket)
+    self.sendPDU(pdu)
+  # ---------------------------------------------------------------------------
+  def sendTcScoe(self, tcPacket):
+    """Send a (TC,SCOE) PDU to the SCOE"""
+    pdu = EGSE.EDENPDU.PDU()
+    pdu.pduType = EGSE.EDENPDU.PDU_TYPE_TC
+    pdu.subType = EGSE.EDENPDU.SUB_TYPE_SCOE
+    pdu.setDataField(tcPacket)
+    self.sendPDU(pdu)
+  # ---------------------------------------------------------------------------
+  def sendCmdExec(self, tcPacket):
     """Send a (CMD,EXEC) PDU to the SCOE"""
     pdu = EGSE.EDENPDU.PDU()
     pdu.pduType = EGSE.EDENPDU.PDU_TYPE_CMD
     pdu.subType = EGSE.EDENPDU.SUB_TYPE_EXEC
-    pdu.setDataField(message)
+    pdu.setDataField(tcPacket)
     self.sendPDU(pdu)
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):

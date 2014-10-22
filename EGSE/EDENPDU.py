@@ -37,6 +37,7 @@ PDU_ATTRIBUTES = {
 # -----------------------------------------------------------------------------
 # possible values for
 # - PDU.pduType
+PDU_TYPE_NULL = "????"
 PDU_TYPE_TC =   "TC  "
 PDU_TYPE_TC_E = "TC-E"
 PDU_TYPE_TC_A = "TC-A"
@@ -52,6 +53,7 @@ PDU_TYPE_PAR =  "PAR "
 # -----------------------------------------------------------------------------
 # possible values for
 # - PDU.subType
+SUB_TYPE_NULL =       "??????????"
 SUB_TYPE_ANSW =       "ANSW      "
 SUB_TYPE_CLTU =       "CLTU      "
 SUB_TYPE_ENVELOPE =   "ENVELOPE  "
@@ -69,6 +71,10 @@ SUB_TYPE_STATUS =     "STATUS    "
 SUB_TYPE_STOP =       "STOP      "
 SUB_TYPE_TIMEOUT =    "TIMEOUT   "
 SUB_TYPE_UNKNOWN =    "UNKNOWN   "
+# -----------------------------------------------------------------------------
+# possible values for
+# - PDU.field1
+FIELD1_NULL = "????????????????"
 
 ###########
 # classes #
@@ -87,6 +93,10 @@ class PDU(BinaryUnit):
                         binaryString,
                         PDU_HEADER_BYTE_SIZE,
                         PDU_ATTRIBUTES)
+    if emptyData:
+      self.pduType = PDU_TYPE_NULL
+      self.subType = SUB_TYPE_NULL
+      self.field1 = FIELD1_NULL
   # ---------------------------------------------------------------------------
   def getDataField(self):
     """returns the dataField"""
