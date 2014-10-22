@@ -122,23 +122,6 @@ EN_TM_PACKET_01 = [
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x00, 0x00, 0x00]
-EN_TM_PACKET_01_versionNumber = 0
-EN_TM_PACKET_01_packetType = 0
-EN_TM_PACKET_01_dataFieldHeaderFlag = 0
-EN_TM_PACKET_01_applicationProcessId = 1
-EN_TM_PACKET_01_segmentationFlags = 3
-EN_TM_PACKET_01_sequenceControlCount = 0
-EN_TM_PACKET_01_packetLength = 37
-EN_TM_PACKET_01_hdr2_timeStamp = array.array('B', [0, 0, 0, 0, 0, 0, 0])
-EN_TM_PACKET_01_hdr2_spare = array.array('B', [0, 0, 0])
-EN_TM_PACKET_01_tmtc_nrOfFillBytes = 0
-EN_TM_PACKET_01_tmtc_grp = 1
-EN_TM_PACKET_01_tmtc_code = 1
-EN_TM_PACKET_01_tmtc_ctrlErrorFlag = 0
-EN_TM_PACKET_01_tmtc_ctrlTTflag = 0
-EN_TM_PACKET_01_tmtc_ctrlRecFlag = 0
-EN_TM_PACKET_01_tmtc_ctrlSpare = 0
-EN_TM_PACKET_01_tmtc_tid = 0
 TM_FRAME_01 = [
   0x00, 0x00, 0x04, 0x6F, 0x02, 0xF6, 0x00, 0x00,
   0x00, 0x00, 0x4B, 0x2D, 0x03, 0xC4, 0xC7, 0x3F,
