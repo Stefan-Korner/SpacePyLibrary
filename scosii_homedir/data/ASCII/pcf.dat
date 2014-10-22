@@ -1,0 +1,1695 @@
+JCT00000	ProcessingClass			3	12	16			N	R		F	N	2		00		
+JCT00001	UserDataUV1			3	12	16			N	R		F	N	2		00		
+JCT00002	UserDataUV2			3	12	16			N	R		F	N	2		00		
+JCT00003	UserDataUVIS3			3	12	16			N	R		F	N	2		00		
+JCT00004	UserDataUVIS4			3	12	16			N	R		F	N	2		00		
+JCT00005	UserDataNIR5			3	12	16			N	R		F	N	2		00		
+JCT00006	UserDataNIR6			3	12	16			N	R		F	N	2		00		
+JCT00007	UserDataSWIR7a			3	12	16			N	R		F	N	2		00		
+JCT00008	UserDataSWIR7b			3	12	16			N	R		F	N	2		00		
+JCT00009	DemUVTableId			3	12	16			N	R		F	N	2		00		
+JCT00010	DemUVISTableId			3	12	16			N	R		F	N	2		00		
+JCT00011	DemNIRTableId			3	12	16			N	R		F	N	2		00		
+JCT00012	DemSWIRTableId			3	12	16			N	R		F	N	2		00		
+JCT00013	IsmUVTableId			3	12	16			N	R		F	N	2		00		
+JCT00014	IsmUVISTableId			3	12	16			N	R		F	N	2		00		
+JCT00015	IsmNIRTableId			3	12	16			N	R		F	N	2		00		
+JCT00016	IsmSWIRTableId			3	12	16			N	R		F	N	2		00		
+JCT00017	MasterCyclePeriod			2	20	20			N	R		F	N	2		00		
+JCT00018	HK Structure ID			2	16	16			S	R	JCKT0037	F	N			00		
+JCT10000	UV_ConfigId			3	4	8			N	R		F	N	2		10		
+JCT10001	UV_PuSeq			2	1	1			S	R	JCKT0001	F	N	2		10		
+JCT10002	UV_TestMode			2	1	1			S	R	JCKT0002	F	N	2		10		
+JCT10003	UV_RdSt			2	1	1			S	R	JCKT0003	F	N	2		10		
+JCT10004	UV_ClkDrvAll			2	1	1			S	R	JCKT0004	F	N	2		10		
+JCT10005	UV_ClkDrvAb			2	1	1			S	R	JCKT0004	F	N	2		10		
+JCT10006	UV_DumpPostfixCD			2	1	1			S	R	JCKT0005	F	N	2		10		
+JCT10007	UV_DumpPostfixAB			2	1	1			S	R	JCKT0005	F	N	2		10		
+JCT10008	UV_DumpGate			2	1	1			S	R	JCKT0006	F	N	2		10		
+JCT10009	UV_ImgClk1Rise			3	4	8			N	R		F	N	2		10		
+JCT10010	UV_ImgClk1Fall			3	4	8			N	R		F	N	2		10		
+JCT10011	UV_ImgClk2Rise			3	4	8			N	R		F	N	2		10		
+JCT10012	UV_ImgClk2Fall			3	4	8			N	R		F	N	2		10		
+JCT10013	UV_StrgClk1Rise			3	4	8			N	R		F	N	2		10		
+JCT10014	UV_StrgClk1Fall			3	4	8			N	R		F	N	2		10		
+JCT10015	UV_StrgClk2Rise			3	4	8			N	R		F	N	2		10		
+JCT10016	UV_StrgClk2Fall			3	4	8			N	R		F	N	2		10		
+JCT10017	UV_RiseR1A/2B			3	4	8			N	R		F	N	2		10		
+JCT10018	UV_FallR1A/2B			3	4	8			N	R		F	N	2		10		
+JCT10019	UV_RiseR2A/1B			3	4	8			N	R		F	N	2		10		
+JCT10020	UV_FallR2A/1B			3	4	8			N	R		F	N	2		10		
+JCT10021	UV_RiseR3AB			3	4	8			N	R		F	N	2		10		
+JCT10022	UV_FallR3AB			3	4	8			N	R		F	N	2		10		
+JCT10023	UV_RiseRA/B			3	4	8			N	R		F	N	2		10		
+JCT10024	UV_FallRA/B			3	4	8			N	R		F	N	2		10		
+JCT10025	UV_Rise1C/2D			3	4	8			N	R		F	N	2		10		
+JCT10026	UV_Fall1C/2D			3	4	8			N	R		F	N	2		10		
+JCT10027	UV_RiseR2C/1D			3	4	8			N	R		F	N	2		10		
+JCT10028	UV_FallR2C/1D			3	4	8			N	R		F	N	2		10		
+JCT10029	UV_RiseR3CD			3	4	8			N	R		F	N	2		10		
+JCT10030	UV_FallR3CD			3	4	8			N	R		F	N	2		10		
+JCT10031	UV_RiseRC/D			3	4	8			N	R		F	N	2		10		
+JCT10032	UV_FallRC/D			3	4	8			N	R		F	N	2		10		
+JCT10033	UV_T_D3			3	12	16			N	R		F	N	2		10		
+JCT10034	UV_T_D4			3	12	16			N	R		F	N	2		10		
+JCT10035	UV_StopColumnAb			3	12	16			N	R		F	N	2		10		
+JCT10036	UV_StopColumnCd			3	12	16			N	R		F	N	2		10		
+JCT10037	UV_ToAftLT			3	4	8			N	R		F	N	2		10		
+JCT10038	UV_AfePipelineLen			3	4	8			N	R		F	N	2		10		
+JCT10039	UV_AfeSampClkPhase			3	4	8			N	R		F	N	2		10		
+JCT10040	UV_AfeRegWrMask0			3	4	8			N	R		F	N	2		10		
+JCT10041	UV_AfeRegWrMask1			3	4	8			N	R		F	N	2		10		
+JCT10042	UV_AfeRegWrMask2			3	4	8			N	R		F	N	2		10		
+JCT10043	UV_AfeRegWrMask3			3	4	8			N	R		F	N	2		10		
+JCT10044	UV_AfeRegWrMask4			3	4	8			N	R		F	N	2		10		
+JCT10045	UV_AfeRegWrMask5			3	4	8			N	R		F	N	2		10		
+JCT10046	UV_AfeRegWrMask6			3	4	8			N	R		F	N	2		10		
+JCT10047	UV_AfeRegWrMask7			3	4	8			N	R		F	N	2		10		
+JCT10048	UV_AfeRegIgnMask0			3	4	8			N	R		F	N	2		10		
+JCT10049	UV_AfeRegIgnMask1			3	4	8			N	R		F	N	2		10		
+JCT10050	UV_AfeRegIgnMask2			3	4	8			N	R		F	N	2		10		
+JCT10051	UV_AfeRegIgnMask3			3	4	8			N	R		F	N	2		10		
+JCT10052	UV_AfeRegIgnMask4			3	4	8			N	R		F	N	2		10		
+JCT10053	UV_AfeRegIgnMask5			3	4	8			N	R		F	N	2		10		
+JCT10054	UV_AfeRegIgnMask6			3	4	8			N	R		F	N	2		10		
+JCT10055	UV_AfeRegIgnMask7			3	4	8			N	R		F	N	2		10		
+JCT10056	UV_AfeReg0			3	4	8			N	R		F	N	2		10		
+JCT10057	UV_AfeReg1_Powerdown con			3	4	8			N	R		F	N	2		10		
+JCT10058	UV_AfeReg2_PGA power tri			3	4	8			N	R		F	N	2		10		
+JCT10059	UV_AfeReg3_ADC power tri			3	4	8			N	R		F	N	2		10		
+JCT10060	UV_AfeReg4_VCLP control			3	4	8			N	R		F	N	2		10		
+JCT10061	UV_AfeReg5_LVDS output m			3	4	8			N	R		F	N	2		10		
+JCT10062	UV_AfeReg6_Sample & hold			3	4	8			N	R		F	N	2		10		
+JCT10063	UV_AfeReg7_Status			3	4	8			N	R		F	N	2		10		
+JCT10064	UV_AfeReg8_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10065	UV_AfeReg9_Clock monitor			3	4	8			N	R		F	N	2		10		
+JCT10066	UV_AfeReg10_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10067	UV_AfeReg11_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10068	UV_AfeReg12_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10069	UV_AfeReg13_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10070	UV_AfeReg14_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10071	UV_AfeReg15_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10072	UV_AfeReg16_CDAC1			3	4	8			N	R		F	N	2		10		
+JCT10073	UV_AfeReg17_CDAC1			3	4	8			N	R		F	N	2		10		
+JCT10074	UV_AfeReg18_FDAC1			3	4	8			N	R		F	N	2		10		
+JCT10075	UV_AfeReg19_FDAC1			3	4	8			N	R		F	N	2		10		
+JCT10076	UV_AfeReg20_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10077	UV_AfeReg21_PGA1			3	4	8			N	R		F	N	2		10		
+JCT10078	UV_AfeReg22_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10079	UV_AfeReg23_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10080	UV_AfeReg24_CDAC2			3	4	8			N	R		F	N	2		10		
+JCT10081	UV_AfeReg25_CDAC2			3	4	8			N	R		F	N	2		10		
+JCT10082	UV_AfeReg26_FDAC2			3	4	8			N	R		F	N	2		10		
+JCT10083	UV_AfeReg27_FDAC2			3	4	8			N	R		F	N	2		10		
+JCT10084	UV_AfeReg28_PGA2			3	4	8			N	R		F	N	2		10		
+JCT10085	UV_AfeReg29_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10086	UV_AfeReg30_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10087	UV_AfeReg31_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10088	UV_AfeReg32_Clamp start			3	4	8			N	R		F	N	2		10		
+JCT10089	UV_AfeReg33_Clamp end			3	4	8			N	R		F	N	2		10		
+JCT10090	UV_AfeReg34_Sample start			3	4	8			N	R		F	N	2		10		
+JCT10091	UV_AfeReg35_Sample end			3	4	8			N	R		F	N	2		10		
+JCT10092	UV_AfeReg36_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10093	UV_AfeReg37_INCLK range			3	4	8			N	R		F	N	2		10		
+JCT10094	UV_AfeReg38_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10095	UV_AfeReg39_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10096	UV_AfeReg40_DLL configur			3	4	8			N	R		F	N	2		10		
+JCT10097	UV_AfeReg41_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10098	UV_AfeReg42_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10099	UV_AfeReg43_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10100	UV_AfeReg44_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10101	UV_AfeReg45_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10102	UV_AfeReg46_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10103	UV_AfeReg47_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10104	UV_AfeReg48_Test pattern			3	4	8			N	R		F	N	2		10		
+JCT10105	UV_AfeReg49_Test pattern			3	4	8			N	R		F	N	2		10		
+JCT10106	UV_AfeReg50_Test pattern			3	4	8			N	R		F	N	2		10		
+JCT10107	UV_AfeReg51_Test pattern			3	4	8			N	R		F	N	2		10		
+JCT10108	UV_AfeReg52_Test pattern			3	4	8			N	R		F	N	2		10		
+JCT10109	UV_AfeReg53_Test pattern			3	4	8			N	R		F	N	2		10		
+JCT10110	UV_AfeReg54_Test pattern			3	4	8			N	R		F	N	2		10		
+JCT10111	UV_AfeReg55_Test pattern			3	4	8			N	R		F	N	2		10		
+JCT10112	UV_AfeReg56_Test pattern			3	4	8			N	R		F	N	2		10		
+JCT10113	UV_AfeReg57_Test pattern			3	4	8			N	R		F	N	2		10		
+JCT10114	UV_AfeReg58_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10115	UV_AfeReg59_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10116	UV_AfeReg60_Digital conf			3	4	8			N	R		F	N	2		10		
+JCT10117	UV_AfeReg61_Test & scan			3	4	8			N	R		F	N	2		10		
+JCT10118	UV_AfeReg62_Device ID			3	4	8			N	R		F	N	2		10		
+JCT10119	UV_AfeReg63_Reserved			3	4	8			N	R		F	N	2		10		
+JCT10120	UV_TempCfg			3	4	8			N	R		F	N	2		10		
+JCT10121	UV_DetMode			2	1	1			S	R	JCKT0007	F	N	2		10		
+JCT10122	UV_DetEnable			2	1	1			S	R	JCKT0008	F	N	2		10		
+JCT10123	UV_DetOpenLoopSetPoint		%	3	12	16			N	R	JCKP0001	F	N	2		10		
+JCT10124	UV_DetClosedLoopSetPoint			3	12	16			N	R		F	N	2		10		
+JCT10125	UV_DetKp			3	12	16			N	R		F	N	2		10		
+JCT10126	UV_DetKi			3	12	16			N	R		F	N	2		10		
+JCT10127	UV_DetDutyCycleSoftLimit		%	3	12	16			N	R	JCKP0001	F	N	2		10		
+JCT11000	VIS_ConfigId			3	4	8			N	R		F	N	2		11		
+JCT11001	VIS_PuSeq			2	1	1			S	R	JCKT0001	F	N	2		11		
+JCT11002	VIS_TestMode			2	1	1			S	R	JCKT0002	F	N	2		11		
+JCT11003	VIS_RdSt			2	1	1			S	R	JCKT0003	F	N	2		11		
+JCT11004	VIS_ClkDrvAll			2	1	1			S	R	JCKT0004	F	N	2		11		
+JCT11005	VIS_ClkDrvAb			2	1	1			S	R	JCKT0004	F	N	2		11		
+JCT11006	VIS_DumpPostfixCD			2	1	1			S	R	JCKT0005	F	N	2		11		
+JCT11007	VIS_DumpPostfixAB			2	1	1			S	R	JCKT0005	F	N	2		11		
+JCT11008	VIS_DumpGate			2	1	1			S	R	JCKT0006	F	N	2		11		
+JCT11009	VIS_ImgClk1Rise			3	4	8			N	R		F	N	2		11		
+JCT11010	VIS_ImgClk1Fall			3	4	8			N	R		F	N	2		11		
+JCT11011	VIS_ImgClk2Rise			3	4	8			N	R		F	N	2		11		
+JCT11012	VIS_ImgClk2Fall			3	4	8			N	R		F	N	2		11		
+JCT11013	VIS_StrgClk1Rise			3	4	8			N	R		F	N	2		11		
+JCT11014	VIS_StrgClk1Fall			3	4	8			N	R		F	N	2		11		
+JCT11015	VIS_StrgClk2Rise			3	4	8			N	R		F	N	2		11		
+JCT11016	VIS_StrgClk2Fall			3	4	8			N	R		F	N	2		11		
+JCT11017	VIS_RiseR1A/2B			3	4	8			N	R		F	N	2		11		
+JCT11018	VIS_FallR1A/2B			3	4	8			N	R		F	N	2		11		
+JCT11019	VIS_RiseR2A/1B			3	4	8			N	R		F	N	2		11		
+JCT11020	VIS_FallR2A/1B			3	4	8			N	R		F	N	2		11		
+JCT11021	VIS_RiseR3AB			3	4	8			N	R		F	N	2		11		
+JCT11022	VIS_FallR3AB			3	4	8			N	R		F	N	2		11		
+JCT11023	VIS_RiseRA/B			3	4	8			N	R		F	N	2		11		
+JCT11024	VIS_FallRA/B			3	4	8			N	R		F	N	2		11		
+JCT11025	VIS_Rise1C/2D			3	4	8			N	R		F	N	2		11		
+JCT11026	VIS_Fall1C/2D			3	4	8			N	R		F	N	2		11		
+JCT11027	VIS_RiseR2C/1D			3	4	8			N	R		F	N	2		11		
+JCT11028	VIS_FallR2C/1D			3	4	8			N	R		F	N	2		11		
+JCT11029	VIS_RiseR3CD			3	4	8			N	R		F	N	2		11		
+JCT11030	VIS_FallR3CD			3	4	8			N	R		F	N	2		11		
+JCT11031	VIS_RiseRC/D			3	4	8			N	R		F	N	2		11		
+JCT11032	VIS_FallRC/D			3	4	8			N	R		F	N	2		11		
+JCT11033	VIS_T_D3			3	12	16			N	R		F	N	2		11		
+JCT11034	VIS_T_D4			3	12	16			N	R		F	N	2		11		
+JCT11035	VIS_StopColumnAb			3	12	16			N	R		F	N	2		11		
+JCT11036	VIS_StopColumnCd			3	12	16			N	R		F	N	2		11		
+JCT11037	VIS_ToAftLT			3	4	8			N	R		F	N	2		11		
+JCT11038	VIS_AfePipelineLen			3	4	8			N	R		F	N	2		11		
+JCT11039	VIS_AfeSampClkPhase			3	4	8			N	R		F	N	2		11		
+JCT11040	VIS_AfeRegWrMask0			3	4	8			N	R		F	N	2		11		
+JCT11041	VIS_AfeRegWrMask1			3	4	8			N	R		F	N	2		11		
+JCT11042	VIS_AfeRegWrMask2			3	4	8			N	R		F	N	2		11		
+JCT11043	VIS_AfeRegWrMask3			3	4	8			N	R		F	N	2		11		
+JCT11044	VIS_AfeRegWrMask4			3	4	8			N	R		F	N	2		11		
+JCT11045	VIS_AfeRegWrMask5			3	4	8			N	R		F	N	2		11		
+JCT11046	VIS_AfeRegWrMask6			3	4	8			N	R		F	N	2		11		
+JCT11047	VIS_AfeRegWrMask7			3	4	8			N	R		F	N	2		11		
+JCT11048	VIS_AfeRegIgnMask0			3	4	8			N	R		F	N	2		11		
+JCT11049	VIS_AfeRegIgnMask1			3	4	8			N	R		F	N	2		11		
+JCT11050	VIS_AfeRegIgnMask2			3	4	8			N	R		F	N	2		11		
+JCT11051	VIS_AfeRegIgnMask3			3	4	8			N	R		F	N	2		11		
+JCT11052	VIS_AfeRegIgnMask4			3	4	8			N	R		F	N	2		11		
+JCT11053	VIS_AfeRegIgnMask5			3	4	8			N	R		F	N	2		11		
+JCT11054	VIS_AfeRegIgnMask6			3	4	8			N	R		F	N	2		11		
+JCT11055	VIS_AfeRegIgnMask7			3	4	8			N	R		F	N	2		11		
+JCT11056	VIS_AfeReg0_Main configu			3	4	8			N	R		F	N	2		11		
+JCT11057	VIS_AfeReg1_Powerdown co			3	4	8			N	R		F	N	2		11		
+JCT11058	VIS_AfeReg2_PGA power tr			3	4	8			N	R		F	N	2		11		
+JCT11059	VIS_AfeReg3_ADC power tr			3	4	8			N	R		F	N	2		11		
+JCT11060	VIS_AfeReg4_VCLP control			3	4	8			N	R		F	N	2		11		
+JCT11061	VIS_AfeReg5_LVDS output			3	4	8			N	R		F	N	2		11		
+JCT11062	VIS_AfeReg6_Sample & hol			3	4	8			N	R		F	N	2		11		
+JCT11063	VIS_AfeReg7_Status			3	4	8			N	R		F	N	2		11		
+JCT11064	VIS_AfeReg8_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11065	VIS_AfeReg9_Clock monito			3	4	8			N	R		F	N	2		11		
+JCT11066	VIS_AfeReg10_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11067	VIS_AfeReg11_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11068	VIS_AfeReg12_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11069	VIS_AfeReg13_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11070	VIS_AfeReg14_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11071	VIS_AfeReg15_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11072	VIS_AfeReg16_CDAC1			3	4	8			N	R		F	N	2		11		
+JCT11073	VIS_AfeReg17_CDAC1			3	4	8			N	R		F	N	2		11		
+JCT11074	VIS_AfeReg18_FDAC1			3	4	8			N	R		F	N	2		11		
+JCT11075	VIS_AfeReg19_FDAC1			3	4	8			N	R		F	N	2		11		
+JCT11076	VIS_AfeReg20_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11077	VIS_AfeReg21_PGA1			3	4	8			N	R		F	N	2		11		
+JCT11078	VIS_AfeReg22_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11079	VIS_AfeReg23_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11080	VIS_AfeReg24_CDAC2			3	4	8			N	R		F	N	2		11		
+JCT11081	VIS_AfeReg25_CDAC2			3	4	8			N	R		F	N	2		11		
+JCT11082	VIS_AfeReg26_FDAC2			3	4	8			N	R		F	N	2		11		
+JCT11083	VIS_AfeReg27_FDAC2			3	4	8			N	R		F	N	2		11		
+JCT11084	VIS_AfeReg28_PGA2			3	4	8			N	R		F	N	2		11		
+JCT11085	VIS_AfeReg29_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11086	VIS_AfeReg30_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11087	VIS_AfeReg31_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11088	VIS_AfeReg32_Clamp start			3	4	8			N	R		F	N	2		11		
+JCT11089	VIS_AfeReg33_Clamp end			3	4	8			N	R		F	N	2		11		
+JCT11090	VIS_AfeReg34_Sample star			3	4	8			N	R		F	N	2		11		
+JCT11091	VIS_AfeReg35_Sample end			3	4	8			N	R		F	N	2		11		
+JCT11092	VIS_AfeReg36_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11093	VIS_AfeReg37_INCLK range			3	4	8			N	R		F	N	2		11		
+JCT11094	VIS_AfeReg38_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11095	VIS_AfeReg39_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11096	VIS_AfeReg40_DLL configu			3	4	8			N	R		F	N	2		11		
+JCT11097	VIS_AfeReg41_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11098	VIS_AfeReg42_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11099	VIS_AfeReg43_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11100	VIS_AfeReg44_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11101	VIS_AfeReg45_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11102	VIS_AfeReg46_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11103	VIS_AfeReg47_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11104	VIS_AfeReg48_Test patter			3	4	8			N	R		F	N	2		11		
+JCT11105	VIS_AfeReg49_Test patter			3	4	8			N	R		F	N	2		11		
+JCT11106	VIS_AfeReg50_Test patter			3	4	8			N	R		F	N	2		11		
+JCT11107	VIS_AfeReg51_Test patter			3	4	8			N	R		F	N	2		11		
+JCT11108	VIS_AfeReg52_Test patter			3	4	8			N	R		F	N	2		11		
+JCT11109	VIS_AfeReg53_Test patter			3	4	8			N	R		F	N	2		11		
+JCT11110	VIS_AfeReg54_Test patter			3	4	8			N	R		F	N	2		11		
+JCT11111	VIS_AfeReg55_Test patter			3	4	8			N	R		F	N	2		11		
+JCT11112	VIS_AfeReg56_Test patter			3	4	8			N	R		F	N	2		11		
+JCT11113	VIS_AfeReg57_Test patter			3	4	8			N	R		F	N	2		11		
+JCT11114	VIS_AfeReg58_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11115	VIS_AfeReg59_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11116	VIS_AfeReg60_Digital con			3	4	8			N	R		F	N	2		11		
+JCT11117	VIS_AfeReg61_Test & scan			3	4	8			N	R		F	N	2		11		
+JCT11118	VIS_AfeReg62_Device ID			3	4	8			N	R		F	N	2		11		
+JCT11119	VIS_AfeReg63_Reserved			3	4	8			N	R		F	N	2		11		
+JCT11120	VIS_TempCfg			3	4	8			N	R		F	N	2		11		
+JCT11121	VIS_DetMode			2	1	1			S	R	JCKT0007	F	N	2		11		
+JCT11122	VIS_DetEnable			2	1	1			S	R	JCKT0008	F	N	2		11		
+JCT11123	VIS_DetOpenLoopSetPoint			3	12	16			N	R		F	N	2		11		
+JCT11124	VIS_DetClosedLoopSetPoin			3	12	16			N	R		F	N	2		11		
+JCT11125	VIS_DetKp			3	12	16			N	R		F	N	2		11		
+JCT11126	VIS_DetKi			3	12	16			N	R		F	N	2		11		
+JCT11127	VIS_DetDutyCycleSoftLimi			3	12	16			N	R		F	N	2		11		
+JCT12000	NIR_ConfigId			3	4	8			N	R		F	N	2		12		
+JCT12001	NIR_PuSeq			2	1	1			S	R	JCKT0001	F	N	2		12		
+JCT12002	NIR_TestMode			2	1	1			S	R	JCKT0002	F	N	2		12		
+JCT12003	NIR_RdSt			2	1	1			S	R	JCKT0003	F	N	2		12		
+JCT12004	NIR_ClkDrvAll			2	1	1			S	R	JCKT0004	F	N	2		12		
+JCT12005	NIR_ClkDrvAb			2	1	1			S	R	JCKT0004	F	N	2		12		
+JCT12006	NIR_DumpPostfixCD			2	1	1			S	R	JCKT0005	F	N	2		12		
+JCT12007	NIR_DumpPostfixAB			2	1	1			S	R	JCKT0005	F	N	2		12		
+JCT12008	NIR_DumpGate			2	1	1			S	R	JCKT0006	F	N	2		12		
+JCT12009	NIR_ImgClk1Rise			3	4	8			N	R		F	N	2		12		
+JCT12010	NIR_ImgClk1Fall			3	4	8			N	R		F	N	2		12		
+JCT12011	NIR_ImgClk2Rise			3	4	8			N	R		F	N	2		12		
+JCT12012	NIR_ImgClk2Fall			3	4	8			N	R		F	N	2		12		
+JCT12013	NIR_StrgClk1Rise			3	4	8			N	R		F	N	2		12		
+JCT12014	NIR_StrgClk1Fall			3	4	8			N	R		F	N	2		12		
+JCT12015	NIR_StrgClk2Rise			3	4	8			N	R		F	N	2		12		
+JCT12016	NIR_StrgClk2Fall			3	4	8			N	R		F	N	2		12		
+JCT12017	NIR_RiseR1A/2B			3	4	8			N	R		F	N	2		12		
+JCT12018	NIR_FallR1A/2B			3	4	8			N	R		F	N	2		12		
+JCT12019	NIR_RiseR2A/1B			3	4	8			N	R		F	N	2		12		
+JCT12020	NIR_FallR2A/1B			3	4	8			N	R		F	N	2		12		
+JCT12021	NIR_RiseR3AB			3	4	8			N	R		F	N	2		12		
+JCT12022	NIR_FallR3AB			3	4	8			N	R		F	N	2		12		
+JCT12023	NIR_RiseRA/B			3	4	8			N	R		F	N	2		12		
+JCT12024	NIR_FallRA/B			3	4	8			N	R		F	N	2		12		
+JCT12025	NIR_Rise1C/2D			3	4	8			N	R		F	N	2		12		
+JCT12026	NIR_Fall1C/2D			3	4	8			N	R		F	N	2		12		
+JCT12027	NIR_RiseR2C/1D			3	4	8			N	R		F	N	2		12		
+JCT12028	NIR_FallR2C/1D			3	4	8			N	R		F	N	2		12		
+JCT12029	NIR_RiseR3CD			3	4	8			N	R		F	N	2		12		
+JCT12030	NIR_FallR3CD			3	4	8			N	R		F	N	2		12		
+JCT12031	NIR_RiseRC/D			3	4	8			N	R		F	N	2		12		
+JCT12032	NIR_FallRC/D			3	4	8			N	R		F	N	2		12		
+JCT12033	NIR_T_D3			3	12	16			N	R		F	N	2		12		
+JCT12034	NIR_T_D4			3	12	16			N	R		F	N	2		12		
+JCT12035	NIR_StopColumnAb			3	12	16			N	R		F	N	2		12		
+JCT12036	NIR_StopColumnCd			3	12	16			N	R		F	N	2		12		
+JCT12037	NIR_ToAftLT			3	4	8			N	R		F	N	2		12		
+JCT12038	NIR_AfePipelineLen			3	4	8			N	R		F	N	2		12		
+JCT12039	NIR_AfeSampClkPhase			3	4	8			N	R		F	N	2		12		
+JCT12040	NIR_AfeRegWrMask0			3	4	8			N	R		F	N	2		12		
+JCT12041	NIR_AfeRegWrMask1			3	4	8			N	R		F	N	2		12		
+JCT12042	NIR_AfeRegWrMask2			3	4	8			N	R		F	N	2		12		
+JCT12043	NIR_AfeRegWrMask3			3	4	8			N	R		F	N	2		12		
+JCT12044	NIR_AfeRegWrMask4			3	4	8			N	R		F	N	2		12		
+JCT12045	NIR_AfeRegWrMask5			3	4	8			N	R		F	N	2		12		
+JCT12046	NIR_AfeRegWrMask6			3	4	8			N	R		F	N	2		12		
+JCT12047	NIR_AfeRegWrMask7			3	4	8			N	R		F	N	2		12		
+JCT12048	NIR_AfeRegIgnMask0			3	4	8			N	R		F	N	2		12		
+JCT12049	NIR_AfeRegIgnMask1			3	4	8			N	R		F	N	2		12		
+JCT12050	NIR_AfeRegIgnMask2			3	4	8			N	R		F	N	2		12		
+JCT12051	NIR_AfeRegIgnMask3			3	4	8			N	R		F	N	2		12		
+JCT12052	NIR_AfeRegIgnMask4			3	4	8			N	R		F	N	2		12		
+JCT12053	NIR_AfeRegIgnMask5			3	4	8			N	R		F	N	2		12		
+JCT12054	NIR_AfeRegIgnMask6			3	4	8			N	R		F	N	2		12		
+JCT12055	NIR_AfeRegIgnMask7			3	4	8			N	R		F	N	2		12		
+JCT12056	NIR_AfeReg0_Main configu			3	4	8			N	R		F	N	2		12		
+JCT12057	NIR_AfeReg1_Powerdown co			3	4	8			N	R		F	N	2		12		
+JCT12058	NIR_AfeReg2_PGA power tr			3	4	8			N	R		F	N	2		12		
+JCT12059	NIR_AfeReg3_ADC power tr			3	4	8			N	R		F	N	2		12		
+JCT12060	NIR_AfeReg4_VCLP control			3	4	8			N	R		F	N	2		12		
+JCT12061	NIR_AfeReg5_LVDS output			3	4	8			N	R		F	N	2		12		
+JCT12062	NIR_AfeReg6_Sample & hol			3	4	8			N	R		F	N	2		12		
+JCT12063	NIR_AfeReg7_Status			3	4	8			N	R		F	N	2		12		
+JCT12064	NIR_AfeReg8_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12065	NIR_AfeReg9_Clock monito			3	4	8			N	R		F	N	2		12		
+JCT12066	NIR_AfeReg10_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12067	NIR_AfeReg11_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12068	NIR_AfeReg12_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12069	NIR_AfeReg13_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12070	NIR_AfeReg14_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12071	NIR_AfeReg15_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12072	NIR_AfeReg16_CDAC1			3	4	8			N	R		F	N	2		12		
+JCT12073	NIR_AfeReg17_CDAC1			3	4	8			N	R		F	N	2		12		
+JCT12074	NIR_AfeReg18_FDAC1			3	4	8			N	R		F	N	2		12		
+JCT12075	NIR_AfeReg19_FDAC1			3	4	8			N	R		F	N	2		12		
+JCT12076	NIR_AfeReg20_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12077	NIR_AfeReg21_PGA1			3	4	8			N	R		F	N	2		12		
+JCT12078	NIR_AfeReg22_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12079	NIR_AfeReg23_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12080	NIR_AfeReg24_CDAC2			3	4	8			N	R		F	N	2		12		
+JCT12081	NIR_AfeReg25_CDAC2			3	4	8			N	R		F	N	2		12		
+JCT12082	NIR_AfeReg26_FDAC2			3	4	8			N	R		F	N	2		12		
+JCT12083	NIR_AfeReg27_FDAC2			3	4	8			N	R		F	N	2		12		
+JCT12084	NIR_AfeReg28_PGA2			3	4	8			N	R		F	N	2		12		
+JCT12085	NIR_AfeReg29_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12086	NIR_AfeReg30_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12087	NIR_AfeReg31_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12088	NIR_AfeReg32_Clamp start			3	4	8			N	R		F	N	2		12		
+JCT12089	NIR_AfeReg33_Clamp end			3	4	8			N	R		F	N	2		12		
+JCT12090	NIR_AfeReg34_Sample star			3	4	8			N	R		F	N	2		12		
+JCT12091	NIR_AfeReg35_Sample end			3	4	8			N	R		F	N	2		12		
+JCT12092	NIR_AfeReg36_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12093	NIR_AfeReg37_INCLK range			3	4	8			N	R		F	N	2		12		
+JCT12094	NIR_AfeReg38_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12095	NIR_AfeReg39_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12096	NIR_AfeReg40_DLL configu			3	4	8			N	R		F	N	2		12		
+JCT12097	NIR_AfeReg41_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12098	NIR_AfeReg42_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12099	NIR_AfeReg43_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12100	NIR_AfeReg44_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12101	NIR_AfeReg45_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12102	NIR_AfeReg46_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12103	NIR_AfeReg47_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12104	NIR_AfeReg48_Test patter			3	4	8			N	R		F	N	2		12		
+JCT12105	NIR_AfeReg49_Test patter			3	4	8			N	R		F	N	2		12		
+JCT12106	NIR_AfeReg50_Test patter			3	4	8			N	R		F	N	2		12		
+JCT12107	NIR_AfeReg51_Test patter			3	4	8			N	R		F	N	2		12		
+JCT12108	NIR_AfeReg52_Test patter			3	4	8			N	R		F	N	2		12		
+JCT12109	NIR_AfeReg53_Test patter			3	4	8			N	R		F	N	2		12		
+JCT12110	NIR_AfeReg54_Test patter			3	4	8			N	R		F	N	2		12		
+JCT12111	NIR_AfeReg55_Test patter			3	4	8			N	R		F	N	2		12		
+JCT12112	NIR_AfeReg56_Test patter			3	4	8			N	R		F	N	2		12		
+JCT12113	NIR_AfeReg57_Test patter			3	4	8			N	R		F	N	2		12		
+JCT12114	NIR_AfeReg58_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12115	NIR_AfeReg59_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12116	NIR_AfeReg60_Digital con			3	4	8			N	R		F	N	2		12		
+JCT12117	NIR_AfeReg61_Test & scan			3	4	8			N	R		F	N	2		12		
+JCT12118	NIR_AfeReg62_Device ID			3	4	8			N	R		F	N	2		12		
+JCT12119	NIR_AfeReg63_Reserved			3	4	8			N	R		F	N	2		12		
+JCT12120	NIR_TempCfg			3	4	8			N	R		F	N	2		12		
+JCT12121	NIR_DetMode			2	1	1			S	R	JCKT0007	F	N	2		12		
+JCT12122	NIR_DetEnable			2	1	1			S	R	JCKT0008	F	N	2		12		
+JCT12123	NIR_DetOpenLoopSetPoint			3	12	16			N	R		F	N	2		12		
+JCT12124	NIR_DetClosedLoopSetPoin			3	12	16			N	R		F	N	2		12		
+JCT12125	NIR_DetKp			3	12	16			N	R		F	N	2		12		
+JCT12126	NIR_DetKi			3	12	16			N	R		F	N	2		12		
+JCT12127	NIR_DetDutyCycleSoftLimi			3	12	16			N	R		F	N	2		12		
+JCT13000	Swir_CLK_LOCAL_EN			3	14	32			N	R		F	N	2		13		
+JCT13001	Swir_CHNL_PWRUP			3	14	32			N	R		F	N	2		13		
+JCT13002	Swir_CHNL_CAL			3	14	32			N	R		F	N	2		13		
+JCT13003	Swir_CHNL_TEST			3	14	32			N	R		F	N	2		13		
+JCT13004	Swir_DCFG_GAIN			3	14	32			N	R		F	N	2		13		
+JCT13005	Swir_C_ACQUISITION_ENA			3	14	32			N	R		F	N	2		13		
+JCT13006	Swir_C_REF_ENA			3	14	32			N	R		F	N	2		13		
+JCT13007	Swir_C_SYNC_DELAY			3	14	32			N	R		F	N	2		13		
+JCT13008	Swir_C_INTEGR_DELAY_INT			3	14	32			N	R		F	N	2		13		
+JCT13009	Swir_C_INTEGR_HOLD_INT			3	14	32			N	R		F	N	2		13		
+JCT13010	Swir_C_NR_OF_LINES			3	14	32			N	R		F	N	2		13		
+JCT13011	Swir_C_ADC_CLK_PHASE			3	14	32			N	R		F	N	2		13		
+JCT13012	Swir_HK_MUX_DELAY			3	14	32			N	R		F	N	2		13		
+JCT13013	Swir_HK_MUX_CFG			3	14	32			N	R		F	N	2		13		
+JCT13014	Swir_HK_ADC_CS_N			3	14	32			N	R		F	N	2		13		
+JCT13015	Swir_DET_LATCHUP_PROT_EN			3	14	32			N	R		F	N	2		13		
+JCT13016	Swir_DETECTOR_BIAS			3	14	32			N	R		F	N	2		13		
+JCT13017	Swir_C_INTEGR_DELAY_EXT			3	14	32			N	R		F	N	2		13		
+JCT13018	Swir_C_INTEGR_HOLD_EXT			3	14	32			N	R		F	N	2		13		
+JCT13019	Swir_CODE_VERSION			3	14	32			N	R		F	N	2		13		
+JCT13020	Swir_BOARD_ID			3	14	32			N	R		F	N	2		13		
+JCT20000	UV_FtDur			3	6	10			N	R		F	N	2		20		
+JCT20001	UV_LtDur			3	1	5			N	R		F	N	2		20		
+JCT20002	UV_FtSel			2	2	2			N	R		F	N	2		20		
+JCT20003	UV_AbApId			3	7	11			N	R		F	N	2		20		
+JCT20004	UV_CdApId			3	7	11			N	R		F	N	2		20		
+JCT20005	UV_AbSt			3	4	8			N	R		F	N	2		20		
+JCT20006	UV_CdSt			3	4	8			N	R		F	N	2		20		
+JCT20007	UV_AbSst			3	4	8			N	R		F	N	2		20		
+JCT20008	UV_CdSst			3	4	8			N	R		F	N	2		20		
+JCT20009	UV_AbDId			3	4	8			N	R		F	N	2		20		
+JCT20010	UV_CdDId			3	4	8			N	R		F	N	2		20		
+JCT20011	UV_ICID_Dem			3	12	16			N	R		F	N	2		20		
+JCT20012	UV_ICV_Dem			3	4	8			N	R		F	N	2		20		
+JCT20013	UV_Ignore0			2	1	1			S	R	JCKT0009	F	N	2		20		
+JCT20014	UV_Flush0			3	5	9			N	R		F	N	2		20		
+JCT20015	UV_Expose0			2	20	20			N	R		F	N	2		20		
+JCT20016	UV_Unit0			2	2	2			S	R	JCKT0010	F	N	2		20		
+JCT20017	UV_Ignore1			2	1	1			S	R	JCKT0009	F	N	2		20		
+JCT20018	UV_Flush1			3	5	9			N	R		F	N	2		20		
+JCT20019	UV_Expose1			2	20	20			N	R		F	N	2		20		
+JCT20020	UV_Unit1			2	2	2			S	R	JCKT0010	F	N	2		20		
+JCT20021	UV_Ignore2			2	1	1			S	R	JCKT0009	F	N	2		20		
+JCT20022	UV_Flush2			3	5	9			N	R		F	N	2		20		
+JCT20023	UV_Expose2			2	20	20			N	R		F	N	2		20		
+JCT20024	UV_Unit2			2	2	2			S	R	JCKT0010	F	N	2		20		
+JCT20025	UV_Ignore3			2	1	1			S	R	JCKT0009	F	N	2		20		
+JCT20026	UV_Flush3			3	5	9			N	R		F	N	2		20		
+JCT20027	UV_Expose3			2	20	20			N	R		F	N	2		20		
+JCT20028	UV_Unit3			2	2	2			S	R	JCKT0010	F	N	2		20		
+JCT20029	UV_ExpCnt0			3	8	12			N	R		F	N	2		20		
+JCT20030	UV_Offset0			2	20	20			N	R		F	N	2		20		
+JCT20031	UV_ExpCnt1			3	8	12			N	R		F	N	2		20		
+JCT20032	UV_Offset1			2	20	20			N	R		F	N	2		20		
+JCT20033	UV_ExpCnt2			3	8	12			N	R		F	N	2		20		
+JCT20034	UV_Offset2			2	20	20			N	R		F	N	2		20		
+JCT20035	UV_ExpCnt3			3	8	12			N	R		F	N	2		20		
+JCT20036	UV_Offset3			2	20	20			N	R		F	N	2		20		
+JCT20037	UV_RssDur			3	9	13			N	R		F	N	2		20		
+JCT20038	UV_ReadDur			3	6	10			N	R		F	N	2		20		
+JCT20039	UV_LtCount			3	2	6			N	R		F	N	2		20		
+JCT20040	UV_Ignore			2	1	1			S	R	JCKT0009	F	N	2		20		
+JCT20041	UV_FtSkip			2	1	1			N	R		F	N	2		20		
+JCT20042	UV_AbCoAdd			3	4	8			N	R		F	N	2		20		
+JCT20043	UV_CdCoAdd			3	4	8			N	R		F	N	2		20		
+JCT20044	UV_AbRead0			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20045	UV_CdRead0			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20046	UV_AbGain0			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20047	UV_CdGain0			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20048	UV_Size1			3	7	11			N	R		F	N	2		20		
+JCT20049	UV_AbBin1			3	2	6			N	R		F	N	2		20		
+JCT20050	UV_CdBin1			3	2	6			N	R		F	N	2		20		
+JCT20051	UV_AbRead1			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20052	UV_CdRead1			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20053	UV_AbGain1			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20054	UV_CdGain1			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20055	UV_Size2			3	7	11			N	R		F	N	2		20		
+JCT20056	UV_AbBin2			3	2	6			N	R		F	N	2		20		
+JCT20057	UV_CdBin2			3	2	6			N	R		F	N	2		20		
+JCT20058	UV_AbRead2			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20059	UV_CdRead2			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20060	UV_AbGain2			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20061	UV_CdGain2			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20062	UV_Size3			3	7	11			N	R		F	N	2		20		
+JCT20063	UV_AbBin3			3	2	6			N	R		F	N	2		20		
+JCT20064	UV_CdBin3			3	2	6			N	R		F	N	2		20		
+JCT20065	UV_AbRead3			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20066	UV_CdRead3			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20067	UV_AbGain3			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20068	UV_CdGain3			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20069	UV_Size4			3	7	11			N	R		F	N	2		20		
+JCT20070	UV_AbBin4			3	2	6			N	R		F	N	2		20		
+JCT20071	UV_CdBin4			3	2	6			N	R		F	N	2		20		
+JCT20072	UV_AbRead4			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20073	UV_CdRead4			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20074	UV_AbGain4			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20075	UV_CdGain4			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20076	UV_Size5			3	7	11			N	R		F	N	2		20		
+JCT20077	UV_AbBin5			3	2	6			N	R		F	N	2		20		
+JCT20078	UV_CdBin5			3	2	6			N	R		F	N	2		20		
+JCT20079	UV_AbRead5			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20080	UV_CdRead5			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20081	UV_AbGain5			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20082	UV_CdGain5			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20083	UV_Size6			3	7	11			N	R		F	N	2		20		
+JCT20084	UV_AbBin6			3	2	6			N	R		F	N	2		20		
+JCT20085	UV_CdBin6			3	2	6			N	R		F	N	2		20		
+JCT20086	UV_AbRead6			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20087	UV_CdRead6			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20088	UV_AbGain6			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20089	UV_CdGain6			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20090	UV_Size7			3	7	11			N	R		F	N	2		20		
+JCT20091	UV_AbBin7			3	2	6			N	R		F	N	2		20		
+JCT20092	UV_CdBin7			3	2	6			N	R		F	N	2		20		
+JCT20093	UV_AbRead7			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20094	UV_CdRead7			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20095	UV_AbGain7			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20096	UV_CdGain7			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20097	UV_Size8			3	7	11			N	R		F	N	2		20		
+JCT20098	UV_AbBin8			3	2	6			N	R		F	N	2		20		
+JCT20099	UV_CdBin8			3	2	6			N	R		F	N	2		20		
+JCT20100	UV_AbRead8			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20101	UV_CdRead8			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20102	UV_AbGain8			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20103	UV_CdGain8			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20104	UV_Size9			3	7	11			N	R		F	N	2		20		
+JCT20105	UV_AbBin9			3	2	6			N	R		F	N	2		20		
+JCT20106	UV_CdBin9			3	2	6			N	R		F	N	2		20		
+JCT20107	UV_AbRead9			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20108	UV_CdRead9			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20109	UV_AbGain9			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20110	UV_CdGain9			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20111	UV_Size10			3	7	11			N	R		F	N	2		20		
+JCT20112	UV_AbBin10			3	2	6			N	R		F	N	2		20		
+JCT20113	UV_CdBin10			3	2	6			N	R		F	N	2		20		
+JCT20114	UV_AbRead10			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20115	UV_CdRead10			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20116	UV_AbGain10			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20117	UV_CdGain10			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20118	UV_Size11			3	7	11			N	R		F	N	2		20		
+JCT20119	UV_AbBin11			3	2	6			N	R		F	N	2		20		
+JCT20120	UV_CdBin11			3	2	6			N	R		F	N	2		20		
+JCT20121	UV_AbRead11			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20122	UV_CdRead11			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20123	UV_AbGain11			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20124	UV_CdGain11			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20125	UV_Size12			3	7	11			N	R		F	N	2		20		
+JCT20126	UV_AbBin12			3	2	6			N	R		F	N	2		20		
+JCT20127	UV_CdBin12			3	2	6			N	R		F	N	2		20		
+JCT20128	UV_AbRead12			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20129	UV_CdRead12			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20130	UV_AbGain12			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20131	UV_CdGain12			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20132	UV_Size13			3	7	11			N	R		F	N	2		20		
+JCT20133	UV_AbBin13			3	2	6			N	R		F	N	2		20		
+JCT20134	UV_CdBin13			3	2	6			N	R		F	N	2		20		
+JCT20135	UV_AbRead13			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20136	UV_CdRead13			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20137	UV_AbGain13			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20138	UV_CdGain13			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20139	UV_Size14			3	7	11			N	R		F	N	2		20		
+JCT20140	UV_AbBin14			3	2	6			N	R		F	N	2		20		
+JCT20141	UV_CdBin14			3	2	6			N	R		F	N	2		20		
+JCT20142	UV_AbRead14			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20143	UV_CdRead14			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20144	UV_AbGain14			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20145	UV_CdGain14			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20146	UV_Size15			3	7	11			N	R		F	N	2		20		
+JCT20147	UV_AbBin15			3	2	6			N	R		F	N	2		20		
+JCT20148	UV_CdBin15			3	2	6			N	R		F	N	2		20		
+JCT20149	UV_AbRead15			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20150	UV_CdRead15			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20151	UV_AbGain15			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20152	UV_CdGain15			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20153	UV_Size16			3	7	11			N	R		F	N	2		20		
+JCT20154	UV_AbBin16			3	2	6			N	R		F	N	2		20		
+JCT20155	UV_CdBin16			3	2	6			N	R		F	N	2		20		
+JCT20156	UV_AbRead16			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20157	UV_CdRead16			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20158	UV_AbGain16			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20159	UV_CdGain16			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20160	UV_Size17			3	7	11			N	R		F	N	2		20		
+JCT20161	UV_AbBin17			3	2	6			N	R		F	N	2		20		
+JCT20162	UV_CdBin17			3	2	6			N	R		F	N	2		20		
+JCT20163	UV_AbRead17			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20164	UV_CdRead17			2	1	1			S	R	JCKT0011	F	N	2		20		
+JCT20165	UV_AbGain17			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20166	UV_CdGain17			2	2	2			S	R	JCKT0012	F	N	2		20		
+JCT20167	UV_PackAb			2	1	1			S	R	JCKT0013	F	N	2		20		
+JCT20168	UV_SpColAb			3	6	10			N	R		F	N	2		20		
+JCT20169	UV_StartAb			3	6	10			N	R		F	N	2		20		
+JCT20170	UV_StopAb			3	6	10			N	R		F	N	2		20		
+JCT20171	UV_PackCd			2	1	1			S	R	JCKT0013	F	N	2		20		
+JCT20172	UV_SpColCd			3	6	10			N	R		F	N	2		20		
+JCT20173	UV_StartCd			3	6	10			N	R		F	N	2		20		
+JCT20174	UV_StopCd			3	6	10			N	R		F	N	2		20		
+JCT20175	UV_LineLen			3	6	10			N	R		F	N	2		20		
+JCT20176	UV_AbLineCnt			3	7	11			N	R		F	N	2		20		
+JCT20177	UV_CdLineCnt			3	7	11			N	R		F	N	2		20		
+JCT20178	UV_STst			2	1	1			S	R	JCKT0014	F	N	2		20		
+JCT20179	UV_OflLim			3	11	15			N	R		F	N	2		20		
+JCT20180	UV_AbClip			2	2	2			S	R	JCKT0015	F	N	2		20		
+JCT20181	UV_CdClip			2	2	2			S	R	JCKT0015	F	N	2		20		
+JCT21000	VIS_FtDur			3	6	10			N	R		F	N	2		21		
+JCT21001	VIS_LtDur			3	1	5			N	R		F	N	2		21		
+JCT21002	VIS_FtSel			2	2	2			N	R		F	N	2		21		
+JCT21003	VIS_AbApId			3	7	11			N	R		F	N	2		21		
+JCT21004	VIS_CdApId			3	7	11			N	R		F	N	2		21		
+JCT21005	VIS_AbSt			3	4	8			N	R		F	N	2		21		
+JCT21006	VIS_CdSt			3	4	8			N	R		F	N	2		21		
+JCT21007	VIS_AbSst			3	4	8			N	R		F	N	2		21		
+JCT21008	VIS_CdSst			3	4	8			N	R		F	N	2		21		
+JCT21009	VIS_AbDId			3	4	8			N	R		F	N	2		21		
+JCT21010	VIS_CdDId			3	4	8			N	R		F	N	2		21		
+JCT21011	VIS_ICID_Dem			3	12	16			N	R		F	N	2		21		
+JCT21012	VIS_ICV_Dem			3	4	8			N	R		F	N	2		21		
+JCT21013	VIS_Ignore0			2	1	1			S	R	JCKT0009	F	N	2		21		
+JCT21014	VIS_Flush0			3	5	9			N	R		F	N	2		21		
+JCT21015	VIS_Expose0			2	20	20			N	R		F	N	2		21		
+JCT21016	VIS_Unit0			2	2	2			S	R	JCKT0010	F	N	2		21		
+JCT21017	VIS_Ignore1			2	1	1			S	R	JCKT0009	F	N	2		21		
+JCT21018	VIS_Flush1			3	5	9			N	R		F	N	2		21		
+JCT21019	VIS_Expose1			2	20	20			N	R		F	N	2		21		
+JCT21020	VIS_Unit1			2	2	2			S	R	JCKT0010	F	N	2		21		
+JCT21021	VIS_Ignore2			2	1	1			S	R	JCKT0009	F	N	2		21		
+JCT21022	VIS_Flush2			3	5	9			N	R		F	N	2		21		
+JCT21023	VIS_Expose2			2	20	20			N	R		F	N	2		21		
+JCT21024	VIS_Unit2			2	2	2			S	R	JCKT0010	F	N	2		21		
+JCT21025	VIS_Ignore3			2	1	1			S	R	JCKT0009	F	N	2		21		
+JCT21026	VIS_Flush3			3	5	9			N	R		F	N	2		21		
+JCT21027	VIS_Expose3			2	20	20			N	R		F	N	2		21		
+JCT21028	VIS_Unit3			2	2	2			S	R	JCKT0010	F	N	2		21		
+JCT21029	VIS_ExpCnt0			3	8	12			N	R		F	N	2		21		
+JCT21030	VIS_Offset0			2	20	20			N	R		F	N	2		21		
+JCT21031	VIS_ExpCnt1			3	8	12			N	R		F	N	2		21		
+JCT21032	VIS_Offset1			2	20	20			N	R		F	N	2		21		
+JCT21033	VIS_ExpCnt2			3	8	12			N	R		F	N	2		21		
+JCT21034	VIS_Offset2			2	20	20			N	R		F	N	2		21		
+JCT21035	VIS_ExpCnt3			3	8	12			N	R		F	N	2		21		
+JCT21036	VIS_Offset3			2	20	20			N	R		F	N	2		21		
+JCT21037	VIS_RssDur			3	9	13			N	R		F	N	2		21		
+JCT21038	VIS_ReadDur			3	6	10			N	R		F	N	2		21		
+JCT21039	VIS_LtCount			3	2	6			N	R		F	N	2		21		
+JCT21040	VIS_Ignore			2	1	1			S	R	JCKT0009	F	N	2		21		
+JCT21041	VIS_FtSkip			2	1	1			N	R		F	N	2		21		
+JCT21042	VIS_AbCoAdd			3	4	8			N	R		F	N	2		21		
+JCT21043	VIS_CdCoAdd			3	4	8			N	R		F	N	2		21		
+JCT21044	VIS_AbRead0			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21045	VIS_CdRead0			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21046	VIS_AbGain0			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21047	VIS_CdGain0			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21048	VIS_Size1			3	7	11			N	R		F	N	2		21		
+JCT21049	VIS_AbBin1			3	2	6			N	R		F	N	2		21		
+JCT21050	VIS_CdBin1			3	2	6			N	R		F	N	2		21		
+JCT21051	VIS_AbRead1			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21052	VIS_CdRead1			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21053	VIS_AbGain1			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21054	VIS_CdGain1			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21055	VIS_Size2			3	7	11			N	R		F	N	2		21		
+JCT21056	VIS_AbBin2			3	2	6			N	R		F	N	2		21		
+JCT21057	VIS_CdBin2			3	2	6			N	R		F	N	2		21		
+JCT21058	VIS_AbRead2			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21059	VIS_CdRead2			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21060	VIS_AbGain2			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21061	VIS_CdGain2			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21062	VIS_Size3			3	7	11			N	R		F	N	2		21		
+JCT21063	VIS_AbBin3			3	2	6			N	R		F	N	2		21		
+JCT21064	VIS_CdBin3			3	2	6			N	R		F	N	2		21		
+JCT21065	VIS_AbRead3			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21066	VIS_CdRead3			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21067	VIS_AbGain3			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21068	VIS_CdGain3			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21069	VIS_Size4			3	7	11			N	R		F	N	2		21		
+JCT21070	VIS_AbBin4			3	2	6			N	R		F	N	2		21		
+JCT21071	VIS_CdBin4			3	2	6			N	R		F	N	2		21		
+JCT21072	VIS_AbRead4			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21073	VIS_CdRead4			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21074	VIS_AbGain4			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21075	VIS_CdGain4			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21076	VIS_Size5			3	7	11			N	R		F	N	2		21		
+JCT21077	VIS_AbBin5			3	2	6			N	R		F	N	2		21		
+JCT21078	VIS_CdBin5			3	2	6			N	R		F	N	2		21		
+JCT21079	VIS_AbRead5			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21080	VIS_CdRead5			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21081	VIS_AbGain5			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21082	VIS_CdGain5			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21083	VIS_Size6			3	7	11			N	R		F	N	2		21		
+JCT21084	VIS_AbBin6			3	2	6			N	R		F	N	2		21		
+JCT21085	VIS_CdBin6			3	2	6			N	R		F	N	2		21		
+JCT21086	VIS_AbRead6			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21087	VIS_CdRead6			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21088	VIS_AbGain6			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21089	VIS_CdGain6			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21090	VIS_Size7			3	7	11			N	R		F	N	2		21		
+JCT21091	VIS_AbBin7			3	2	6			N	R		F	N	2		21		
+JCT21092	VIS_CdBin7			3	2	6			N	R		F	N	2		21		
+JCT21093	VIS_AbRead7			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21094	VIS_CdRead7			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21095	VIS_AbGain7			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21096	VIS_CdGain7			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21097	VIS_Size8			3	7	11			N	R		F	N	2		21		
+JCT21098	VIS_AbBin8			3	2	6			N	R		F	N	2		21		
+JCT21099	VIS_CdBin8			3	2	6			N	R		F	N	2		21		
+JCT21100	VIS_AbRead8			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21101	VIS_CdRead8			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21102	VIS_AbGain8			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21103	VIS_CdGain8			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21104	VIS_Size9			3	7	11			N	R		F	N	2		21		
+JCT21105	VIS_AbBin9			3	2	6			N	R		F	N	2		21		
+JCT21106	VIS_CdBin9			3	2	6			N	R		F	N	2		21		
+JCT21107	VIS_AbRead9			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21108	VIS_CdRead9			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21109	VIS_AbGain9			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21110	VIS_CdGain9			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21111	VIS_Size10			3	7	11			N	R		F	N	2		21		
+JCT21112	VIS_AbBin10			3	2	6			N	R		F	N	2		21		
+JCT21113	VIS_CdBin10			3	2	6			N	R		F	N	2		21		
+JCT21114	VIS_AbRead10			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21115	VIS_CdRead10			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21116	VIS_AbGain10			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21117	VIS_CdGain10			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21118	VIS_Size11			3	7	11			N	R		F	N	2		21		
+JCT21119	VIS_AbBin11			3	2	6			N	R		F	N	2		21		
+JCT21120	VIS_CdBin11			3	2	6			N	R		F	N	2		21		
+JCT21121	VIS_AbRead11			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21122	VIS_CdRead11			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21123	VIS_AbGain11			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21124	VIS_CdGain11			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21125	VIS_Size12			3	7	11			N	R		F	N	2		21		
+JCT21126	VIS_AbBin12			3	2	6			N	R		F	N	2		21		
+JCT21127	VIS_CdBin12			3	2	6			N	R		F	N	2		21		
+JCT21128	VIS_AbRead12			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21129	VIS_CdRead12			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21130	VIS_AbGain12			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21131	VIS_CdGain12			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21132	VIS_Size13			3	7	11			N	R		F	N	2		21		
+JCT21133	VIS_AbBin13			3	2	6			N	R		F	N	2		21		
+JCT21134	VIS_CdBin13			3	2	6			N	R		F	N	2		21		
+JCT21135	VIS_AbRead13			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21136	VIS_CdRead13			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21137	VIS_AbGain13			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21138	VIS_CdGain13			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21139	VIS_Size14			3	7	11			N	R		F	N	2		21		
+JCT21140	VIS_AbBin14			3	2	6			N	R		F	N	2		21		
+JCT21141	VIS_CdBin14			3	2	6			N	R		F	N	2		21		
+JCT21142	VIS_AbRead14			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21143	VIS_CdRead14			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21144	VIS_AbGain14			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21145	VIS_CdGain14			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21146	VIS_Size15			3	7	11			N	R		F	N	2		21		
+JCT21147	VIS_AbBin15			3	2	6			N	R		F	N	2		21		
+JCT21148	VIS_CdBin15			3	2	6			N	R		F	N	2		21		
+JCT21149	VIS_AbRead15			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21150	VIS_CdRead15			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21151	VIS_AbGain15			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21152	VIS_CdGain15			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21153	VIS_Size16			3	7	11			N	R		F	N	2		21		
+JCT21154	VIS_AbBin16			3	2	6			N	R		F	N	2		21		
+JCT21155	VIS_CdBin16			3	2	6			N	R		F	N	2		21		
+JCT21156	VIS_AbRead16			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21157	VIS_CdRead16			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21158	VIS_AbGain16			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21159	VIS_CdGain16			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21160	VIS_Size17			3	7	11			N	R		F	N	2		21		
+JCT21161	VIS_AbBin17			3	2	6			N	R		F	N	2		21		
+JCT21162	VIS_CdBin17			3	2	6			N	R		F	N	2		21		
+JCT21163	VIS_AbRead17			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21164	VIS_CdRead17			2	1	1			S	R	JCKT0011	F	N	2		21		
+JCT21165	VIS_AbGain17			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21166	VIS_CdGain17			2	2	2			S	R	JCKT0012	F	N	2		21		
+JCT21167	VIS_PackAb			2	1	1			S	R	JCKT0013	F	N	2		21		
+JCT21168	VIS_SpColAb			3	6	10			N	R		F	N	2		21		
+JCT21169	VIS_StartAb			3	6	10			N	R		F	N	2		21		
+JCT21170	VIS_StopAb			3	6	10			N	R		F	N	2		21		
+JCT21171	VIS_PackCd			2	1	1			S	R	JCKT0013	F	N	2		21		
+JCT21172	VIS_SpColCd			3	6	10			N	R		F	N	2		21		
+JCT21173	VIS_StartCd			3	6	10			N	R		F	N	2		21		
+JCT21174	VIS_StopCd			3	6	10			N	R		F	N	2		21		
+JCT21175	VIS_LineLen			3	6	10			N	R		F	N	2		21		
+JCT21176	VIS_AbLineCnt			3	7	11			N	R		F	N	2		21		
+JCT21177	VIS_CdLineCnt			3	7	11			N	R		F	N	2		21		
+JCT21178	VIS_STst			2	1	1			S	R	JCKT0014	F	N	2		21		
+JCT21179	VIS_OflLim			3	11	15			N	R		F	N	2		21		
+JCT21180	VIS_AbClip			2	2	2			S	R	JCKT0015	F	N	2		21		
+JCT21181	VIS_CdClip			2	2	2			S	R	JCKT0015	F	N	2		21		
+JCT22000	NIR_FtDur			3	6	10			N	R		F	N	2		22		
+JCT22001	NIR_LtDur			3	1	5			N	R		F	N	2		22		
+JCT22002	NIR_FtSel			2	2	2			N	R		F	N	2		22		
+JCT22003	NIR_AbApId			3	7	11			N	R		F	N	2		22		
+JCT22004	NIR_CdApId			3	7	11			N	R		F	N	2		22		
+JCT22005	NIR_AbSt			3	4	8			N	R		F	N	2		22		
+JCT22006	NIR_CdSt			3	4	8			N	R		F	N	2		22		
+JCT22007	NIR_AbSst			3	4	8			N	R		F	N	2		22		
+JCT22008	NIR_CdSst			3	4	8			N	R		F	N	2		22		
+JCT22009	NIR_AbDId			3	4	8			N	R		F	N	2		22		
+JCT22010	NIR_CdDId			3	4	8			N	R		F	N	2		22		
+JCT22011	NIR_ICID_Dem			3	12	16			N	R		F	N	2		22		
+JCT22012	NIR_ICV_Dem			3	4	8			N	R		F	N	2		22		
+JCT22013	NIR_Ignore0			2	1	1			S	R	JCKT0009	F	N	2		22		
+JCT22014	NIR_Flush0			3	5	9			N	R		F	N	2		22		
+JCT22015	NIR_Expose0			2	20	20			N	R		F	N	2		22		
+JCT22016	NIR_Unit0			2	2	2			S	R	JCKT0010	F	N	2		22		
+JCT22017	NIR_Ignore1			2	1	1			S	R	JCKT0009	F	N	2		22		
+JCT22018	NIR_Flush1			3	5	9			N	R		F	N	2		22		
+JCT22019	NIR_Expose1			2	20	20			N	R		F	N	2		22		
+JCT22020	NIR_Unit1			2	2	2			S	R	JCKT0010	F	N	2		22		
+JCT22021	NIR_Ignore2			2	1	1			S	R	JCKT0009	F	N	2		22		
+JCT22022	NIR_Flush2			3	5	9			N	R		F	N	2		22		
+JCT22023	NIR_Expose2			2	20	20			N	R		F	N	2		22		
+JCT22024	NIR_Unit2			2	2	2			S	R	JCKT0010	F	N	2		22		
+JCT22025	NIR_Ignore3			2	1	1			S	R	JCKT0009	F	N	2		22		
+JCT22026	NIR_Flush3			3	5	9			N	R		F	N	2		22		
+JCT22027	NIR_Expose3			2	20	20			N	R		F	N	2		22		
+JCT22028	NIR_Unit3			2	2	2			S	R	JCKT0010	F	N	2		22		
+JCT22029	NIR_ExpCnt0			3	8	12			N	R		F	N	2		22		
+JCT22030	NIR_Offset0			2	20	20			N	R		F	N	2		22		
+JCT22031	NIR_ExpCnt1			3	8	12			N	R		F	N	2		22		
+JCT22032	NIR_Offset1			2	20	20			N	R		F	N	2		22		
+JCT22033	NIR_ExpCnt2			3	8	12			N	R		F	N	2		22		
+JCT22034	NIR_Offset2			2	20	20			N	R		F	N	2		22		
+JCT22035	NIR_ExpCnt3			3	8	12			N	R		F	N	2		22		
+JCT22036	NIR_Offset3			2	20	20			N	R		F	N	2		22		
+JCT22037	NIR_RssDur			3	9	13			N	R		F	N	2		22		
+JCT22038	NIR_ReadDur			3	6	10			N	R		F	N	2		22		
+JCT22039	NIR_LtCount			3	2	6			N	R		F	N	2		22		
+JCT22040	NIR_Ignore			2	1	1			S	R	JCKT0009	F	N	2		22		
+JCT22041	NIR_FtSkip			2	1	1			N	R		F	N	2		22		
+JCT22042	NIR_AbCoAdd			3	4	8			N	R		F	N	2		22		
+JCT22043	NIR_CdCoAdd			3	4	8			N	R		F	N	2		22		
+JCT22044	NIR_AbRead0			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22045	NIR_CdRead0			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22046	NIR_AbGain0			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22047	NIR_CdGain0			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22048	NIR_Size1			3	7	11			N	R		F	N	2		22		
+JCT22049	NIR_AbBin1			3	2	6			N	R		F	N	2		22		
+JCT22050	NIR_CdBin1			3	2	6			N	R		F	N	2		22		
+JCT22051	NIR_AbRead1			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22052	NIR_CdRead1			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22053	NIR_AbGain1			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22054	NIR_CdGain1			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22055	NIR_Size2			3	7	11			N	R		F	N	2		22		
+JCT22056	NIR_AbBin2			3	2	6			N	R		F	N	2		22		
+JCT22057	NIR_CdBin2			3	2	6			N	R		F	N	2		22		
+JCT22058	NIR_AbRead2			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22059	NIR_CdRead2			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22060	NIR_AbGain2			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22061	NIR_CdGain2			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22062	NIR_Size3			3	7	11			N	R		F	N	2		22		
+JCT22063	NIR_AbBin3			3	2	6			N	R		F	N	2		22		
+JCT22064	NIR_CdBin3			3	2	6			N	R		F	N	2		22		
+JCT22065	NIR_AbRead3			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22066	NIR_CdRead3			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22067	NIR_AbGain3			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22068	NIR_CdGain3			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22069	NIR_Size4			3	7	11			N	R		F	N	2		22		
+JCT22070	NIR_AbBin4			3	2	6			N	R		F	N	2		22		
+JCT22071	NIR_CdBin4			3	2	6			N	R		F	N	2		22		
+JCT22072	NIR_AbRead4			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22073	NIR_CdRead4			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22074	NIR_AbGain4			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22075	NIR_CdGain4			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22076	NIR_Size5			3	7	11			N	R		F	N	2		22		
+JCT22077	NIR_AbBin5			3	2	6			N	R		F	N	2		22		
+JCT22078	NIR_CdBin5			3	2	6			N	R		F	N	2		22		
+JCT22079	NIR_AbRead5			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22080	NIR_CdRead5			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22081	NIR_AbGain5			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22082	NIR_CdGain5			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22083	NIR_Size6			3	7	11			N	R		F	N	2		22		
+JCT22084	NIR_AbBin6			3	2	6			N	R		F	N	2		22		
+JCT22085	NIR_CdBin6			3	2	6			N	R		F	N	2		22		
+JCT22086	NIR_AbRead6			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22087	NIR_CdRead6			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22088	NIR_AbGain6			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22089	NIR_CdGain6			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22090	NIR_Size7			3	7	11			N	R		F	N	2		22		
+JCT22091	NIR_AbBin7			3	2	6			N	R		F	N	2		22		
+JCT22092	NIR_CdBin7			3	2	6			N	R		F	N	2		22		
+JCT22093	NIR_AbRead7			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22094	NIR_CdRead7			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22095	NIR_AbGain7			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22096	NIR_CdGain7			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22097	NIR_Size8			3	7	11			N	R		F	N	2		22		
+JCT22098	NIR_AbBin8			3	2	6			N	R		F	N	2		22		
+JCT22099	NIR_CdBin8			3	2	6			N	R		F	N	2		22		
+JCT22100	NIR_AbRead8			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22101	NIR_CdRead8			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22102	NIR_AbGain8			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22103	NIR_CdGain8			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22104	NIR_Size9			3	7	11			N	R		F	N	2		22		
+JCT22105	NIR_AbBin9			3	2	6			N	R		F	N	2		22		
+JCT22106	NIR_CdBin9			3	2	6			N	R		F	N	2		22		
+JCT22107	NIR_AbRead9			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22108	NIR_CdRead9			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22109	NIR_AbGain9			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22110	NIR_CdGain9			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22111	NIR_Size10			3	7	11			N	R		F	N	2		22		
+JCT22112	NIR_AbBin10			3	2	6			N	R		F	N	2		22		
+JCT22113	NIR_CdBin10			3	2	6			N	R		F	N	2		22		
+JCT22114	NIR_AbRead10			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22115	NIR_CdRead10			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22116	NIR_AbGain10			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22117	NIR_CdGain10			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22118	NIR_Size11			3	7	11			N	R		F	N	2		22		
+JCT22119	NIR_AbBin11			3	2	6			N	R		F	N	2		22		
+JCT22120	NIR_CdBin11			3	2	6			N	R		F	N	2		22		
+JCT22121	NIR_AbRead11			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22122	NIR_CdRead11			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22123	NIR_AbGain11			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22124	NIR_CdGain11			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22125	NIR_Size12			3	7	11			N	R		F	N	2		22		
+JCT22126	NIR_AbBin12			3	2	6			N	R		F	N	2		22		
+JCT22127	NIR_CdBin12			3	2	6			N	R		F	N	2		22		
+JCT22128	NIR_AbRead12			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22129	NIR_CdRead12			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22130	NIR_AbGain12			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22131	NIR_CdGain12			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22132	NIR_Size13			3	7	11			N	R		F	N	2		22		
+JCT22133	NIR_AbBin13			3	2	6			N	R		F	N	2		22		
+JCT22134	NIR_CdBin13			3	2	6			N	R		F	N	2		22		
+JCT22135	NIR_AbRead13			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22136	NIR_CdRead13			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22137	NIR_AbGain13			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22138	NIR_CdGain13			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22139	NIR_Size14			3	7	11			N	R		F	N	2		22		
+JCT22140	NIR_AbBin14			3	2	6			N	R		F	N	2		22		
+JCT22141	NIR_CdBin14			3	2	6			N	R		F	N	2		22		
+JCT22142	NIR_AbRead14			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22143	NIR_CdRead14			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22144	NIR_AbGain14			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22145	NIR_CdGain14			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22146	NIR_Size15			3	7	11			N	R		F	N	2		22		
+JCT22147	NIR_AbBin15			3	2	6			N	R		F	N	2		22		
+JCT22148	NIR_CdBin15			3	2	6			N	R		F	N	2		22		
+JCT22149	NIR_AbRead15			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22150	NIR_CdRead15			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22151	NIR_AbGain15			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22152	NIR_CdGain15			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22153	NIR_Size16			3	7	11			N	R		F	N	2		22		
+JCT22154	NIR_AbBin16			3	2	6			N	R		F	N	2		22		
+JCT22155	NIR_CdBin16			3	2	6			N	R		F	N	2		22		
+JCT22156	NIR_AbRead16			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22157	NIR_CdRead16			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22158	NIR_AbGain16			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22159	NIR_CdGain16			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22160	NIR_Size17			3	7	11			N	R		F	N	2		22		
+JCT22161	NIR_AbBin17			3	2	6			N	R		F	N	2		22		
+JCT22162	NIR_CdBin17			3	2	6			N	R		F	N	2		22		
+JCT22163	NIR_AbRead17			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22164	NIR_CdRead17			2	1	1			S	R	JCKT0011	F	N	2		22		
+JCT22165	NIR_AbGain17			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22166	NIR_CdGain17			2	2	2			S	R	JCKT0012	F	N	2		22		
+JCT22167	NIR_PackAb			2	1	1			S	R	JCKT0013	F	N	2		22		
+JCT22168	NIR_SpColAb			3	6	10			N	R		F	N	2		22		
+JCT22169	NIR_StartAb			3	6	10			N	R		F	N	2		22		
+JCT22170	NIR_StopAb			3	6	10			N	R		F	N	2		22		
+JCT22171	NIR_PackCd			2	1	1			S	R	JCKT0013	F	N	2		22		
+JCT22172	NIR_SpColCd			3	6	10			N	R		F	N	2		22		
+JCT22173	NIR_StartCd			3	6	10			N	R		F	N	2		22		
+JCT22174	NIR_StopCd			3	6	10			N	R		F	N	2		22		
+JCT22175	NIR_LineLen			3	6	10			N	R		F	N	2		22		
+JCT22176	NIR_AbLineCnt			3	7	11			N	R		F	N	2		22		
+JCT22177	NIR_CdLineCnt			3	7	11			N	R		F	N	2		22		
+JCT22178	NIR_STst			2	1	1			S	R	JCKT0014	F	N	2		22		
+JCT22179	NIR_OflLim			3	11	15			N	R		F	N	2		22		
+JCT22180	NIR_AbClip			2	2	2			S	R	JCKT0015	F	N	2		22		
+JCT22181	NIR_CdClip			2	2	2			S	R	JCKT0015	F	N	2		22		
+JCT23000	SWIR_FtDur			3	6	10			N	R		F	N	2		23		
+JCT23001	SWIR_LtDur			3	1	5			N	R		F	N	2		23		
+JCT23002	SWIR_FtSel			2	2	2			N	R		F	N	2		23		
+JCT23003	SWIR_AbApId			3	7	11			N	R		F	N	2		23		
+JCT23004	SWIR_CdApId			3	7	11			N	R		F	N	2		23		
+JCT23005	SWIR_AbSt			3	4	8			N	R		F	N	2		23		
+JCT23006	SWIR_CdSt			3	4	8			N	R		F	N	2		23		
+JCT23007	SWIR_AbSst			3	4	8			N	R		F	N	2		23		
+JCT23008	SWIR_CdSst			3	4	8			N	R		F	N	2		23		
+JCT23009	SWIR_AbDId			3	4	8			N	R		F	N	2		23		
+JCT23010	SWIR_CdDId			3	4	8			N	R		F	N	2		23		
+JCT23011	SWIR_ICID_Dem			3	12	16			N	R		F	N	2		23		
+JCT23012	SWIR_ICV_Dem			3	4	8			N	R		F	N	2		23		
+JCT23013	SWIR_Ignore0			2	1	1			S	R	JCKT0009	F	N	2		23		
+JCT23014	SWIR_Flush0			3	5	9			N	R		F	N	2		23		
+JCT23015	SWIR_Expose0			2	20	20			N	R		F	N	2		23		
+JCT23016	SWIR_Unit0			2	2	2			S	R	JCKT0010	F	N	2		23		
+JCT23017	SWIR_Ignore1			2	1	1			S	R	JCKT0009	F	N	2		23		
+JCT23018	SWIR_Flush1			3	5	9			N	R		F	N	2		23		
+JCT23019	SWIR_Expose1			2	20	20			N	R		F	N	2		23		
+JCT23020	SWIR_Unit1			2	2	2			S	R	JCKT0010	F	N	2		23		
+JCT23021	SWIR_Ignore2			2	1	1			S	R	JCKT0009	F	N	2		23		
+JCT23022	SWIR_Flush2			3	5	9			N	R		F	N	2		23		
+JCT23023	SWIR_Expose2			2	20	20			N	R		F	N	2		23		
+JCT23024	SWIR_Unit2			2	2	2			S	R	JCKT0010	F	N	2		23		
+JCT23025	SWIR_Ignore3			2	1	1			S	R	JCKT0009	F	N	2		23		
+JCT23026	SWIR_Flush3			3	5	9			N	R		F	N	2		23		
+JCT23027	SWIR_Expose3			2	20	20			N	R		F	N	2		23		
+JCT23028	SWIR_Unit3			2	2	2			S	R	JCKT0010	F	N	2		23		
+JCT23029	SWIR_ExpCnt0			3	8	12			N	R		F	N	2		23		
+JCT23030	SWIR_Offset0			2	20	20			N	R		F	N	2		23		
+JCT23031	SWIR_ExpCnt1			3	8	12			N	R		F	N	2		23		
+JCT23032	SWIR_Offset1			2	20	20			N	R		F	N	2		23		
+JCT23033	SWIR_ExpCnt2			3	8	12			N	R		F	N	2		23		
+JCT23034	SWIR_Offset2			2	20	20			N	R		F	N	2		23		
+JCT23035	SWIR_ExpCnt3			3	8	12			N	R		F	N	2		23		
+JCT23036	SWIR_Offset3			2	20	20			N	R		F	N	2		23		
+JCT23037	SWIR_RssDur			3	9	13			N	R		F	N	2		23		
+JCT23038	SWIR_ReadDur			3	6	10			N	R		F	N	2		23		
+JCT23039	SWIR_LtCount			3	2	6			N	R		F	N	2		23		
+JCT23040	SWIR_Ignore			2	1	1			S	R	JCKT0009	F	N	2		23		
+JCT23041	SWIR_FtSkip			2	1	1			N	R		F	N	2		23		
+JCT23042	SWIR_AbCoAdd			3	4	8			N	R		F	N	2		23		
+JCT23043	SWIR_CdCoAdd			3	4	8			N	R		F	N	2		23		
+JCT23044	SWIR_AbRead0			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23045	SWIR_CdRead0			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23046	SWIR_AbGain0			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23047	SWIR_CdGain0			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23048	SWIR_Size1			3	7	11			N	R		F	N	2		23		
+JCT23049	SWIR_AbBin1			3	2	6			N	R		F	N	2		23		
+JCT23050	SWIR_CdBin1			3	2	6			N	R		F	N	2		23		
+JCT23051	SWIR_AbRead1			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23052	SWIR_CdRead1			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23053	SWIR_AbGain1			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23054	SWIR_CdGain1			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23055	SWIR_Size2			3	7	11			N	R		F	N	2		23		
+JCT23056	SWIR_AbBin2			3	2	6			N	R		F	N	2		23		
+JCT23057	SWIR_CdBin2			3	2	6			N	R		F	N	2		23		
+JCT23058	SWIR_AbRead2			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23059	SWIR_CdRead2			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23060	SWIR_AbGain2			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23061	SWIR_CdGain2			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23062	SWIR_Size3			3	7	11			N	R		F	N	2		23		
+JCT23063	SWIR_AbBin3			3	2	6			N	R		F	N	2		23		
+JCT23064	SWIR_CdBin3			3	2	6			N	R		F	N	2		23		
+JCT23065	SWIR_AbRead3			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23066	SWIR_CdRead3			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23067	SWIR_AbGain3			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23068	SWIR_CdGain3			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23069	SWIR_Size4			3	7	11			N	R		F	N	2		23		
+JCT23070	SWIR_AbBin4			3	2	6			N	R		F	N	2		23		
+JCT23071	SWIR_CdBin4			3	2	6			N	R		F	N	2		23		
+JCT23072	SWIR_AbRead4			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23073	SWIR_CdRead4			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23074	SWIR_AbGain4			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23075	SWIR_CdGain4			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23076	SWIR_Size5			3	7	11			N	R		F	N	2		23		
+JCT23077	SWIR_AbBin5			3	2	6			N	R		F	N	2		23		
+JCT23078	SWIR_CdBin5			3	2	6			N	R		F	N	2		23		
+JCT23079	SWIR_AbRead5			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23080	SWIR_CdRead5			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23081	SWIR_AbGain5			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23082	SWIR_CdGain5			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23083	SWIR_Size6			3	7	11			N	R		F	N	2		23		
+JCT23084	SWIR_AbBin6			3	2	6			N	R		F	N	2		23		
+JCT23085	SWIR_CdBin6			3	2	6			N	R		F	N	2		23		
+JCT23086	SWIR_AbRead6			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23087	SWIR_CdRead6			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23088	SWIR_AbGain6			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23089	SWIR_CdGain6			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23090	SWIR_Size7			3	7	11			N	R		F	N	2		23		
+JCT23091	SWIR_AbBin7			3	2	6			N	R		F	N	2		23		
+JCT23092	SWIR_CdBin7			3	2	6			N	R		F	N	2		23		
+JCT23093	SWIR_AbRead7			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23094	SWIR_CdRead7			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23095	SWIR_AbGain7			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23096	SWIR_CdGain7			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23097	SWIR_Size8			3	7	11			N	R		F	N	2		23		
+JCT23098	SWIR_AbBin8			3	2	6			N	R		F	N	2		23		
+JCT23099	SWIR_CdBin8			3	2	6			N	R		F	N	2		23		
+JCT23100	SWIR_AbRead8			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23101	SWIR_CdRead8			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23102	SWIR_AbGain8			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23103	SWIR_CdGain8			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23104	SWIR_Size9			3	7	11			N	R		F	N	2		23		
+JCT23105	SWIR_AbBin9			3	2	6			N	R		F	N	2		23		
+JCT23106	SWIR_CdBin9			3	2	6			N	R		F	N	2		23		
+JCT23107	SWIR_AbRead9			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23108	SWIR_CdRead9			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23109	SWIR_AbGain9			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23110	SWIR_CdGain9			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23111	SWIR_Size10			3	7	11			N	R		F	N	2		23		
+JCT23112	SWIR_AbBin10			3	2	6			N	R		F	N	2		23		
+JCT23113	SWIR_CdBin10			3	2	6			N	R		F	N	2		23		
+JCT23114	SWIR_AbRead10			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23115	SWIR_CdRead10			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23116	SWIR_AbGain10			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23117	SWIR_CdGain10			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23118	SWIR_Size11			3	7	11			N	R		F	N	2		23		
+JCT23119	SWIR_AbBin11			3	2	6			N	R		F	N	2		23		
+JCT23120	SWIR_CdBin11			3	2	6			N	R		F	N	2		23		
+JCT23121	SWIR_AbRead11			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23122	SWIR_CdRead11			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23123	SWIR_AbGain11			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23124	SWIR_CdGain11			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23125	SWIR_Size12			3	7	11			N	R		F	N	2		23		
+JCT23126	SWIR_AbBin12			3	2	6			N	R		F	N	2		23		
+JCT23127	SWIR_CdBin12			3	2	6			N	R		F	N	2		23		
+JCT23128	SWIR_AbRead12			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23129	SWIR_CdRead12			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23130	SWIR_AbGain12			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23131	SWIR_CdGain12			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23132	SWIR_Size13			3	7	11			N	R		F	N	2		23		
+JCT23133	SWIR_AbBin13			3	2	6			N	R		F	N	2		23		
+JCT23134	SWIR_CdBin13			3	2	6			N	R		F	N	2		23		
+JCT23135	SWIR_AbRead13			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23136	SWIR_CdRead13			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23137	SWIR_AbGain13			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23138	SWIR_CdGain13			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23139	SWIR_Size14			3	7	11			N	R		F	N	2		23		
+JCT23140	SWIR_AbBin14			3	2	6			N	R		F	N	2		23		
+JCT23141	SWIR_CdBin14			3	2	6			N	R		F	N	2		23		
+JCT23142	SWIR_AbRead14			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23143	SWIR_CdRead14			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23144	SWIR_AbGain14			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23145	SWIR_CdGain14			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23146	SWIR_Size15			3	7	11			N	R		F	N	2		23		
+JCT23147	SWIR_AbBin15			3	2	6			N	R		F	N	2		23		
+JCT23148	SWIR_CdBin15			3	2	6			N	R		F	N	2		23		
+JCT23149	SWIR_AbRead15			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23150	SWIR_CdRead15			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23151	SWIR_AbGain15			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23152	SWIR_CdGain15			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23153	SWIR_Size16			3	7	11			N	R		F	N	2		23		
+JCT23154	SWIR_AbBin16			3	2	6			N	R		F	N	2		23		
+JCT23155	SWIR_CdBin16			3	2	6			N	R		F	N	2		23		
+JCT23156	SWIR_AbRead16			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23157	SWIR_CdRead16			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23158	SWIR_AbGain16			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23159	SWIR_CdGain16			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23160	SWIR_Size17			3	7	11			N	R		F	N	2		23		
+JCT23161	SWIR_AbBin17			3	2	6			N	R		F	N	2		23		
+JCT23162	SWIR_CdBin17			3	2	6			N	R		F	N	2		23		
+JCT23163	SWIR_AbRead17			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23164	SWIR_CdRead17			2	1	1			S	R	JCKT0011	F	N	2		23		
+JCT23165	SWIR_AbGain17			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23166	SWIR_CdGain17			2	2	2			S	R	JCKT0012	F	N	2		23		
+JCT23167	SWIR_PackAb			2	1	1			S	R	JCKT0013	F	N	2		23		
+JCT23168	SWIR_SpColAb			3	6	10			N	R		F	N	2		23		
+JCT23169	SWIR_StartAb			3	6	10			N	R		F	N	2		23		
+JCT23170	SWIR_StopAb			3	6	10			N	R		F	N	2		23		
+JCT23171	SWIR_PackCd			2	1	1			S	R	JCKT0013	F	N	2		23		
+JCT23172	SWIR_SpColCd			3	6	10			N	R		F	N	2		23		
+JCT23173	SWIR_StartCd			3	6	10			N	R		F	N	2		23		
+JCT23174	SWIR_StopCd			3	6	10			N	R		F	N	2		23		
+JCT23175	SWIR_LineLen			3	6	10			N	R		F	N	2		23		
+JCT23176	SWIR_AbLineCnt			3	7	11			N	R		F	N	2		23		
+JCT23177	SWIR_CdLineCnt			3	7	11			N	R		F	N	2		23		
+JCT23178	SWIR_STst			2	1	1			S	R	JCKT0014	F	N	2		23		
+JCT23179	SWIR_OflLim			3	11	15			N	R		F	N	2		23		
+JCT23180	SWIR_AbClip			2	2	2			S	R	JCKT0015	F	N	2		23		
+JCT23181	SWIR_CdClip			2	2	2			S	R	JCKT0015	F	N	2		23		
+JCT30000	SwImSts			2	1	1			S	R	JCKT0016	F	N	2		30		
+JCT30001	EepromProt			2	1	1			S	R	JCKT0017	F	N	2		30		
+JCT30002	SelectedPm			2	1	1			S	R	JCKT0018	F	N	2		30		
+JCT30003	UsedPm			2	1	1			S	R	JCKT0018	F	N	2		30		
+JCT30004	UnitMode			2	2	2			S	R	JCKT0019	F	N	2		30		
+JCT30005	SelExtPps			2	1	1			S	R	JCKT0020	F	N	2		30		
+JCT30006	ExtPpsSts			2	1	1			S	R	JCKT0021	F	N	2		30		
+JCT30007	TimeMgsSts			2	1	1			S	R	JCKT0021	F	N	2		30		
+JCT30008	ObtSyncSts			2	1	1			S	R	JCKT0022	F	N	2		30		
+JCT30009	SelMdl			2	1	1			S	R	JCKT0023	F	N	2		30		
+JCT30010	MdlSts			2	1	1			S	R	JCKT0024	F	N	2		30		
+JCT30011	CurrentNcoValue			3	14	32			N	R		F	N	2		30		
+JCT30012	ICID			3	12	16			N	R		F	N	2		30		
+JCT30013	ICV			3	4	8			N	R		F	N	2		30		
+JCT31000	FmmSts			2	2	2			S	R	JCKT0025	F	N	2		31		
+JCT31001	FmmCmdDir			2	1	1			S	R	JCKT0026	F	N	2		31		
+JCT31002	FmmCmdPos			3	4	8			N	R		F	N	2		31		
+JCT31003	FmmSeenPos			3	1	5			N	R		F	N	2		31		
+JCT31004	FmmSensor			2	1	1			S	R	JCKT0027	F	N	2		31		
+JCT31005	FmmLstPh			2	2	2			S	R	JCKT0028	F	N	2		31		
+JCT31006	FmmMtrCtr			2	2	2			S	R	JCKT0029	F	N	2		31		
+JCT31007	FmmRelPosCnt			3	12	16			N	R		F	N	2		31		
+JCT31008	FmmMeasMinCurrCoilA		A	3	4	8			N	R	JCKP0002	F	N	2		31		
+JCT31009	FmmMeasMaxCurrCoilA		A	3	4	8			N	R	JCKP0002	F	N	2		31		
+JCT31010	FmmMeasMinCurrCoilB		A	3	4	8			N	R	JCKP0002	F	N	2		31		
+JCT31011	FmmMeasMaxCurrCoilB		A	3	4	8			N	R	JCKP0002	F	N	2		31		
+JCT31012	DifmSts			2	2	2			S	R	JCKT0030	F	N	2		31		
+JCT31013	DifmCmdDir			2	1	1			S	R	JCKT0026	F	N	2		31		
+JCT31014	DifmCmdPos			3	4	8			N	R		F	N	2		31		
+JCT31015	DifmSeenPos			3	1	5			N	R		F	N	2		31		
+JCT31016	DifmSensor			2	1	1			S	R	JCKT0027	F	N	2		31		
+JCT31017	DifmLstPh			2	2	2			S	R	JCKT0028	F	N	2		31		
+JCT31018	DifmMtrCtr			2	2	2			S	R	JCKT0029	F	N	2		31		
+JCT31019	DifmRelPosCnt			3	12	16			N	R		F	N	2		31		
+JCT31020	DifmMeasMinCurrCoilA		A	3	4	8			N	R	JCKP0002	F	N	2		31		
+JCT31021	DifmMeasMaxCurrCoilA		A	3	4	8			N	R	JCKP0002	F	N	2		31		
+JCT31022	DifmMeasMinCurrCoilB		A	3	4	8			N	R	JCKP0002	F	N	2		31		
+JCT31023	DifmMeasMaxCurrCoilB		A	3	4	8			N	R	JCKP0002	F	N	2		31		
+JCT32000	MeasuredCurrentHeater0		A	4	9	13			N	R	JCKP0003	F	N	2		32		
+JCT32001	MeasuredCurrentHeater1		A	4	9	13			N	R	JCKP0003	F	N	2		32		
+JCT32002	MeasuredCurrentHeater2		A	4	9	13			N	R	JCKP0003	F	N	2		32		
+JCT32003	MeasuredCurrentHeater3		A	4	9	13			N	R	JCKP0003	F	N	2		32		
+JCT32004	MeasuredCurrentHeater4		A	4	9	13			N	R	JCKP0003	F	N	2		32		
+JCT32005	MeasuredCurrentHeater5		A	4	9	13			N	R	JCKP0003	F	N	2		32		
+JCT32006	MeasuredCurrentHeater6		A	4	9	13			N	R	JCKP0003	F	N	2		32		
+JCT32007	MeasuredCurrentHeater7		A	4	9	13			N	R	JCKP0003	F	N	2		32		
+JCT32008	MeasuredCurrentHeater8		A	4	9	13			N	R	JCKP0003	F	N	2		32		
+JCT32009	MeasuredCurrentHeater9		A	4	9	13			N	R	JCKP0003	F	N	2		32		
+JCT32010	MeasuredCurrentHeater10		A	4	9	13			N	R	JCKP0003	F	N	2		32		
+JCT32011	MeasuredCurrentHeater11		A	4	9	13			N	R	JCKP0003	F	N	2		32		
+JCT32012	MeasuredCurrentHeater12		A	4	9	13			N	R	JCKP0003	F	N	2		32		
+JCT32013	MeasuredCurrentHeater13		A	4	9	13			N	R	JCKP0003	F	N	2		32		
+JCT32014	MeasuredCurrentHeater14		A	4	9	13			N	R	JCKP0003	F	N	2		32		
+JCT32015	MeasuredCurrentHeater15		A	4	9	13			N	R	JCKP0003	F	N	2		32		
+JCT32016	MeasuredCurrentHeater16		A	4	9	13			N	R	JCKP0003	F	N	2		32		
+JCT32017	MeasuredCurrentHeater17		A	4	9	13			N	R	JCKP0003	F	N	2		32		
+JCT32018	MeasuredCurrentHeater18		A	4	9	13			N	R	JCKP0003	F	N	2		32		
+JCT32019	MeasuredCurrentHeater19		A	4	9	13			N	R	JCKP0003	F	N	2		32		
+JCT32020	MeasuredVoltageHeaters		A	4	9	13			N	R	JCKP0004	F	N	2		32		
+JCT32021	MeasuredVoltagePeltier1		A	4	9	13			N	R	JCKP0005	F	N	2		32		
+JCT32022	MeasuredVoltagePeltier2		A	4	9	13			N	R	JCKP0005	F	N	2		32		
+JCT32023	MeasuredVoltagePeltier3		A	4	9	13			N	R	JCKP0005	F	N	2		32		
+JCT32024	MeasuredVoltagePeltier4		A	4	9	13			N	R	JCKP0005	F	N	2		32		
+JCT32025	MeasuredVoltagePeltier5		A	4	9	13			N	R	JCKP0005	F	N	2		32		
+JCT32026	LastPwmDutyCycleHeater0		%	3	12	16			N	R	JCKP0006	F	N	2		32		
+JCT32027	LastPwmDutyCycleHeater1		%	3	12	16			N	R	JCKP0006	F	N	2		32		
+JCT32028	LastPwmDutyCycleHeater2		%	3	12	16			N	R	JCKP0006	F	N	2		32		
+JCT32029	LastPwmDutyCycleHeater3		%	3	12	16			N	R	JCKP0006	F	N	2		32		
+JCT32030	LastPwmDutyCycleHeater4		%	3	12	16			N	R	JCKP0006	F	N	2		32		
+JCT32031	LastPwmDutyCycleHeater5		%	3	12	16			N	R	JCKP0006	F	N	2		32		
+JCT32032	LastPwmDutyCycleHeater6		%	3	12	16			N	R	JCKP0006	F	N	2		32		
+JCT32033	LastPwmDutyCycleHeater7		%	3	12	16			N	R	JCKP0006	F	N	2		32		
+JCT32034	LastPwmDutyCycleHeater8		%	3	12	16			N	R	JCKP0006	F	N	2		32		
+JCT32035	LastPwmDutyCycleHeater9		%	3	12	16			N	R	JCKP0006	F	N	2		32		
+JCT32036	LastPwmDutyCycleHeater10		%	3	12	16			N	R	JCKP0006	F	N	2		32		
+JCT32037	LastPwmDutyCycleHeater11		%	3	12	16			N	R	JCKP0006	F	N	2		32		
+JCT32038	LastPwmDutyCycleHeater12		%	3	12	16			N	R	JCKP0006	F	N	2		32		
+JCT32039	LastPwmDutyCycleHeater13		%	3	12	16			N	R	JCKP0006	F	N	2		32		
+JCT32040	LastPwmDutyCycleHeater14		%	3	12	16			N	R	JCKP0006	F	N	2		32		
+JCT32041	LastPwmDutyCycleHeater15		%	3	12	16			N	R	JCKP0006	F	N	2		32		
+JCT32042	LastPwmDutyCycleHeater16		%	3	12	16			N	R	JCKP0006	F	N	2		32		
+JCT32043	LastPwmDutyCycleHeater17		%	3	12	16			N	R	JCKP0006	F	N	2		32		
+JCT32044	LastPwmDutyCycleHeater18		%	3	12	16			N	R	JCKP0006	F	N	2		32		
+JCT32045	LastPwmDutyCycleHeater19		%	3	12	16			N	R	JCKP0006	F	N	2		32		
+JCT32046	LastCurrentPeltier1		mA	3	12	16			N	R		F	N	2		32		
+JCT32047	LastCurrentPeltier2		mA	3	12	16			N	R		F	N	2		32		
+JCT32048	LastCurrentPeltier3		mA	3	12	16			N	R		F	N	2		32		
+JCT32049	LastCurrentPeltier4		mA	3	12	16			N	R		F	N	2		32		
+JCT32050	LastCurrentPeltier5		mA	3	12	16			N	R		F	N	2		32		
+JCT33000	HiResInstrTemp0		degC	3	14	32			N	R		F	N	2		33		
+JCT33001	HiResInstrTemp1		degC	3	14	32			N	R		F	N	2		33		
+JCT33002	HiResInstrTemp2		degC	3	14	32			N	R		F	N	2		33		
+JCT33003	HiResInstrTemp3		degC	3	14	32			N	R		F	N	2		33		
+JCT33004	HiResInstrTemp4		degC	3	14	32			N	R		F	N	2		33		
+JCT33005	HiResInstrTemp5		degC	3	14	32			N	R		F	N	2		33		
+JCT33006	HiResInstrTemp6		degC	3	14	32			N	R		F	N	2		33		
+JCT33007	HiResInstrTemp7		degC	3	14	32			N	R		F	N	2		33		
+JCT33008	HiResInstrTemp8		degC	3	14	32			N	R		F	N	2		33		
+JCT33009	InstrTemp0		degC	3	14	32			N	R		F	N	2		33		
+JCT33010	InstrTemp1		degC	3	14	32			N	R		F	N	2		33		
+JCT33011	InstrTemp2		degC	3	14	32			N	R		F	N	2		33		
+JCT33012	InstrTemp3		degC	3	14	32			N	R		F	N	2		33		
+JCT33013	InstrTemp4		degC	3	14	32			N	R		F	N	2		33		
+JCT33014	InstrTemp5		degC	3	14	32			N	R		F	N	2		33		
+JCT33015	InstrTemp6		degC	3	14	32			N	R		F	N	2		33		
+JCT33016	InstrTemp7		degC	3	14	32			N	R		F	N	2		33		
+JCT33017	InstrTemp8		degC	3	14	32			N	R		F	N	2		33		
+JCT33018	InstrTemp9		degC	3	14	32			N	R		F	N	2		33		
+JCT33019	InstrTemp10		degC	3	14	32			N	R		F	N	2		33		
+JCT33020	InstrTemp11		degC	3	14	32			N	R		F	N	2		33		
+JCT33021	InstrTemp12		degC	3	14	32			N	R		F	N	2		33		
+JCT33022	InstrTemp13		degC	3	14	32			N	R		F	N	2		33		
+JCT33023	InstrTemp14		degC	3	14	32			N	R		F	N	2		33		
+JCT33024	InstrTemp15		degC	3	14	32			N	R		F	N	2		33		
+JCT33025	InstrTemp16		degC	3	14	32			N	R		F	N	2		33		
+JCT33026	InstrTemp17		degC	3	14	32			N	R		F	N	2		33		
+JCT33027	InstrTemp18		degC	3	14	32			N	R		F	N	2		33		
+JCT33028	InstrTemp19		degC	3	14	32			N	R		F	N	2		33		
+JCT33029	InstrTemp20		degC	3	14	32			N	R		F	N	2		33		
+JCT33030	InstrTemp21		degC	3	14	32			N	R		F	N	2		33		
+JCT33031	InstrTemp22		degC	3	14	32			N	R		F	N	2		33		
+JCT33032	InstrTemp23		degC	3	14	32			N	R		F	N	2		33		
+JCT33033	InstrTemp24		degC	3	14	32			N	R		F	N	2		33		
+JCT33034	InstrTemp25		degC	3	14	32			N	R		F	N	2		33		
+JCT33035	InstrTemp26		degC	3	14	32			N	R		F	N	2		33		
+JCT33036	InstrTemp27		degC	3	14	32			N	R		F	N	2		33		
+JCT33037	InstrTemp28		degC	3	14	32			N	R		F	N	2		33		
+JCT33038	InstrTemp29		degC	3	14	32			N	R		F	N	2		33		
+JCT33039	InstrTemp30		degC	3	14	32			N	R		F	N	2		33		
+JCT33040	InstrTemp31		degC	3	14	32			N	R		F	N	2		33		
+JCT33041	InstrTemp32		degC	3	14	32			N	R		F	N	2		33		
+JCT33042	InstrTemp33		degC	3	14	32			N	R		F	N	2		33		
+JCT33043	InstrTemp34		degC	3	14	32			N	R		F	N	2		33		
+JCT33044	InstrTemp35		degC	3	14	32			N	R		F	N	2		33		
+JCT33045	InstrTemp36		degC	3	14	32			N	R		F	N	2		33		
+JCT33046	InstrTemp37		degC	3	14	32			N	R		F	N	2		33		
+JCT33047	InstrTemp38		degC	3	14	32			N	R		F	N	2		33		
+JCT33048	InstrTemp39		degC	3	14	32			N	R		F	N	2		33		
+JCT33049	InstrTemp40		degC	3	14	32			N	R		F	N	2		33		
+JCT33050	TempPhDmA		degC	3	14	32			N	R		F	N	2		33		
+JCT33051	TempPhDmB		degC	3	14	32			N	R		F	N	2		33		
+JCT33052	TempPmA		degC	3	14	32			N	R		F	N	2		33		
+JCT33053	TempPmB		degC	3	14	32			N	R		F	N	2		33		
+JCT33054	TempIsmUV		degC	3	14	32			N	R		F	N	2		33		
+JCT33055	TempIsmUVIS		degC	3	14	32			N	R		F	N	2		33		
+JCT33056	TempIsmNIR		degC	3	14	32			N	R		F	N	2		33		
+JCT33057	TempIsmSWIR		degC	3	14	32			N	R		F	N	2		33		
+JCT34000	3V3_ICU		V	4	9	13			N	R	JCKP0016	F	N	2		34		
+JCT34001	V12_ICU		V	4	9	13			N	R	JCKP0008	F	N	2		34		
+JCT34002	V12_PHTS		V	4	9	13			N	R	JCKP0008	F	N	2		34		
+JCT34003	VN15_ICU		V	4	9	13			N	R	JCKP0018	F	N	2		34		
+JCT34004	GND_ICU		V	4	9	13			N	R	JCKP0009	F	N	2		34		
+JCT35000	InstrTempRef1		Ohm	3	14	32			N	R		F	N	2		35		
+JCT35001	InstrTempRef2		Ohm	3	14	32			N	R		F	N	2		35		
+JCT35002	InstrTempRef3		Ohm	3	14	32			N	R		F	N	2		35		
+JCT35003	InstrTempRef4		Ohm	3	14	32			N	R		F	N	2		35		
+JCT35004	InstrTempVoltRef		V	4	9	13			N	R	JCKP0009	F	N	2		35		
+JCT35005	LastPvalueHeater0			4	14	32			N	R		F	N	2		35		
+JCT35006	LastIvalueHeater0			4	14	32			N	R		F	N	2		35		
+JCT35007	LastPvalueHeater1			4	14	32			N	R		F	N	2		35		
+JCT35008	LastIvalueHeater1			4	14	32			N	R		F	N	2		35		
+JCT35009	LastPvalueHeater2			4	14	32			N	R		F	N	2		35		
+JCT35010	LastIvalueHeater2			4	14	32			N	R		F	N	2		35		
+JCT35011	LastPvalueHeater3			4	14	32			N	R		F	N	2		35		
+JCT35012	LastIvalueHeater3			4	14	32			N	R		F	N	2		35		
+JCT35013	LastPvalueHeater4			4	14	32			N	R		F	N	2		35		
+JCT35014	LastIvalueHeater4			4	14	32			N	R		F	N	2		35		
+JCT35015	LastPvalueHeater5			4	14	32			N	R		F	N	2		35		
+JCT35016	LastIvalueHeater5			4	14	32			N	R		F	N	2		35		
+JCT35017	LastPvalueHeater6			4	14	32			N	R		F	N	2		35		
+JCT35018	LastIvalueHeater6			4	14	32			N	R		F	N	2		35		
+JCT35019	LastPvalueHeater7			4	14	32			N	R		F	N	2		35		
+JCT35020	LastIvalueHeater7			4	14	32			N	R		F	N	2		35		
+JCT35021	LastPvalueHeater8			4	14	32			N	R		F	N	2		35		
+JCT35022	LastIvalueHeater8			4	14	32			N	R		F	N	2		35		
+JCT35023	LastPvalueHeater9			4	14	32			N	R		F	N	2		35		
+JCT35024	LastIvalueHeater9			4	14	32			N	R		F	N	2		35		
+JCT35025	LastPvalueHeater10			4	14	32			N	R		F	N	2		35		
+JCT35026	LastIvalueHeater10			4	14	32			N	R		F	N	2		35		
+JCT35027	LastPvalueHeater11			4	14	32			N	R		F	N	2		35		
+JCT35028	LastIvalueHeater11			4	14	32			N	R		F	N	2		35		
+JCT35029	LastPvalueHeater12			4	14	32			N	R		F	N	2		35		
+JCT35030	LastIvalueHeater12			4	14	32			N	R		F	N	2		35		
+JCT35031	LastPvalueHeater13			4	14	32			N	R		F	N	2		35		
+JCT35032	LastIvalueHeater13			4	14	32			N	R		F	N	2		35		
+JCT35033	LastPvalueHeater14			4	14	32			N	R		F	N	2		35		
+JCT35034	LastIvalueHeater14			4	14	32			N	R		F	N	2		35		
+JCT35035	LastPvalueHeater15			4	14	32			N	R		F	N	2		35		
+JCT35036	LastIvalueHeater15			4	14	32			N	R		F	N	2		35		
+JCT35037	LastPvalueHeater16			4	14	32			N	R		F	N	2		35		
+JCT35038	LastIvalueHeater16			4	14	32			N	R		F	N	2		35		
+JCT35039	LastPvalueHeater17			4	14	32			N	R		F	N	2		35		
+JCT35040	LastIvalueHeater17			4	14	32			N	R		F	N	2		35		
+JCT35041	LastPvalueHeater18			4	14	32			N	R		F	N	2		35		
+JCT35042	LastIvalueHeater18			4	14	32			N	R		F	N	2		35		
+JCT35043	LastPvalueHeater19			4	14	32			N	R		F	N	2		35		
+JCT35044	LastIvalueHeater19			4	14	32			N	R		F	N	2		35		
+JCT35045	LastPvaluePeltier1			4	14	32			N	R		F	N	2		35		
+JCT35046	LastIvaluePeltier1			4	14	32			N	R		F	N	2		35		
+JCT35047	LastPvaluePeltier2			4	14	32			N	R		F	N	2		35		
+JCT35048	LastIvaluePeltier2			4	14	32			N	R		F	N	2		35		
+JCT35049	LastPvaluePeltier3			4	14	32			N	R		F	N	2		35		
+JCT35050	LastIvaluePeltier3			4	14	32			N	R		F	N	2		35		
+JCT35051	LastPvaluePeltier4			4	14	32			N	R		F	N	2		35		
+JCT35052	LastIvaluePeltier4			4	14	32			N	R		F	N	2		35		
+JCT35053	LastPvaluePeltier5			4	14	32			N	R		F	N	2		35		
+JCT35054	LastIvaluePeltier5			4	14	32			N	R		F	N	2		35		
+JCT36000	V3_DIG_UVN_UV		V	4	9	13			N	R	JCKP0007	F	N	2		36		
+JCT36001	V10_DIG_UVN_UV		V	4	9	13			N	R	JCKP0010	F	N	2		36		
+JCT36002	V3_ANA_UVN_UV		V	4	9	13			N	R	JCKP0007	F	N	2		36		
+JCT36003	V5_ANA_UVN_UV		V	4	9	13			N	R	JCKP0011	F	N	2		36		
+JCT36004	VN5_ANA_UVN_UV		V	4	9	13			N	R	JCKP0012	F	N	2		36		
+JCT36005	V28_ANA_UVN_UV		V	4	9	13			N	R	JCKP0013	F	N	2		36		
+JCT36006	V3_DIG_UVN_UVIS		V	4	9	13			N	R	JCKP0007	F	N	2		36		
+JCT36007	V10_DIG_UVN_UVIS		V	4	9	13			N	R	JCKP0010	F	N	2		36		
+JCT36008	V3_ANA_UVN_UVIS		V	4	9	13			N	R	JCKP0007	F	N	2		36		
+JCT36009	V5_ANA_UVN_UVIS		V	4	9	13			N	R	JCKP0011	F	N	2		36		
+JCT36010	VN5_ANA_UVN_UVIS		V	4	9	13			N	R	JCKP0012	F	N	2		36		
+JCT36011	V28_ANA_UVN_UVIS		V	4	9	13			N	R	JCKP0013	F	N	2		36		
+JCT36012	V3_DIG_UVN_NIR		V	4	9	13			N	R	JCKP0007	F	N	2		36		
+JCT36013	V10_DIG_UVN_NIR		V	4	9	13			N	R	JCKP0010	F	N	2		36		
+JCT36014	V3_ANA_UVN_NIR		V	4	9	13			N	R	JCKP0007	F	N	2		36		
+JCT36015	V5_ANA_UVN_NIR		V	4	9	13			N	R	JCKP0011	F	N	2		36		
+JCT36016	VN5_ANA_UVN_NIR		V	4	9	13			N	R	JCKP0012	F	N	2		36		
+JCT36017	V28_ANA_UVN_NIR		V	4	9	13			N	R	JCKP0013	F	N	2		36		
+JCT36018	V5_FEE_LPD2_SWIR		V	4	9	13			N	R	JCKP0022	F	N	2		36		
+JCT36019	7V2_FEE_LPD1_SWIR		V	4	9	13			N	R	JCKP0022	F	N	2		36		
+JCT36020	7V2_DET_LPD_SWIR		V	4	9	13			N	R	JCKP0022	F	N	2		36		
+JCT36021	V9_FEE_LPA_SWIR		V	4	9	13			N	R	JCKP0022	F	N	2		36		
+JCT36022	12V5_FEE_HPA_SWIR		V	4	9	13			N	R	JCKP0019	F	N	2		36		
+JCT36023	14V1_FEE_HNA_SWIR		V	4	9	13			N	R	JCKP0020	F	N	2		36		
+JCT36024	7V2_DET_LPA_SWIR		V	4	9	13			N	R	JCKP0022	F	N	2		36		
+JCT36025	VoltageLed1		V	4	9	13			N	R	JCKP0014	F	N	2		36		
+JCT36026	VoltageLed2		V	4	9	13			N	R	JCKP0014	F	N	2		36		
+JCT36027	VoltageLed3		V	4	9	13			N	R	JCKP0014	F	N	2		36		
+JCT36028	VoltageLed4		V	4	9	13			N	R	JCKP0014	F	N	2		36		
+JCT36029	VoltageLed5		V	4	9	13			N	R	JCKP0014	F	N	2		36		
+JCT36030	VoltageWls		V	4	9	13			N	R	JCKP0021	F	N	2		36		
+JCT36031	VoltageSls1		V	4	9	13			N	R	JCKP0017	F	N	2		36		
+JCT36032	VoltageSls2		V	4	9	13			N	R	JCKP0017	F	N	2		36		
+JCT36033	VoltageSls3		V	4	9	13			N	R	JCKP0017	F	N	2		36		
+JCT36034	VoltageSls4		V	4	9	13			N	R	JCKP0017	F	N	2		36		
+JCT36035	VoltageSls5		V	4	9	13			N	R	JCKP0017	F	N	2		36		
+JCT37000	Led1Commanded			2	1	1			S	R	JCKT0008	F	N	2		37		
+JCT37001	Led2Commanded			2	1	1			S	R	JCKT0008	F	N	2		37		
+JCT37002	Led3Commanded			2	1	1			S	R	JCKT0008	F	N	2		37		
+JCT37003	Led4Commanded			2	1	1			S	R	JCKT0008	F	N	2		37		
+JCT37004	Led5Commanded			2	1	1			S	R	JCKT0008	F	N	2		37		
+JCT37005	Sls1Commanded			2	1	1			S	R	JCKT0008	F	N	2		37		
+JCT37006	Sls2Commanded			2	1	1			S	R	JCKT0008	F	N	2		37		
+JCT37007	Sls3Commanded			2	1	1			S	R	JCKT0008	F	N	2		37		
+JCT37008	Sls4Commanded			2	1	1			S	R	JCKT0008	F	N	2		37		
+JCT37009	Sls5Commanded			2	1	1			S	R	JCKT0008	F	N	2		37		
+JCT37010	WlsCommanded			2	1	1			S	R	JCKT0008	F	N	2		37		
+JCT38000	V12_M2_2		V	4	9	13			N	R	JCKP0023	F	N	2		38		
+JCT38001	V12_M2_3		V	4	9	13			N	R	JCKP0023	F	N	2		38		
+JCT38002	CorrectableSdramErrCnt			3	12	16			N	R		F	N	2		38		
+JCT38003	SefiCorrOngoing			2	1	1			N	R		F	N	2		38		
+JCT38004	SefiCorrCnt			3	4	8			N	R		F	N	2		38		
+JCT38005	SefiUnCorr			2	1	1			N	R		F	N	2		38		
+JCT38006	Obdh1Init1			2	1	1			S	R	JCKT0031	F	N	2		38		
+JCT38007	Obdh1Init2			2	1	1			S	R	JCKT0031	F	N	2		38		
+JCT38008	Obdh1Init3			2	1	1			S	R	JCKT0031	F	N	2		38		
+JCT38009	Obdh2Init15			2	1	1			S	R	JCKT0031	F	N	2		38		
+JCT38010	Obdh1ErrCnt			3	4	8			N	R		F	N	2		38		
+JCT38011	Obdh2ErrCnt			3	4	8			N	R		F	N	2		38		
+JCT38012	SwVersionNumber			3	4	8			N	R		F	N	2		38		
+JCT38013	SwRevisionNumber			3	4	8			N	R		F	N	2		38		
+JCT38014	SwReservedSwId			3	12	16			N	R		F	N	2		38		
+JCT38015	PorterVersion			3	14	32			N	R		F	N	2		38		
+JCT38016	PorterRevision			3	14	32			N	R		F	N	2		38		
+JCT38017	PmResetCause			2	2	2			S	R	JCKT0032	F	N	2		38		
+JCT38018	NofSuccExeTc			3	12	16			N	R		F	N	2		38		
+JCT38019	NofRejectedTc			3	12	16			N	R		F	N	2		38		
+JCT38020	NofFailedTc			3	12	16			N	R		F	N	2		38		
+JCT38021	LastTcPktId			3	4	8			N	R		F	N	2		38		
+JCT38022	LastTcPktSeqCtrl			3	4	8			N	R		F	N	2		38		
+JCT38023	NofProgressEvts			3	4	8			N	R		F	N	2		38		
+JCT38024	NofLowEvts			3	4	8			N	R		F	N	2		38		
+JCT38025	NofMediumEvts			3	4	8			N	R		F	N	2		38		
+JCT38026	NofHighEvts			3	4	8			N	R		F	N	2		38		
+JCT38027	NofTimeOverrunsSwExe0			3	12	16			N	R		F	N	2		38		
+JCT38028	SmallestMarginSwExe0			4	12	16			N	R		F	N	2		38		
+JCT38029	NofTimeOverrunsSwExe1			3	12	16			N	R		F	N	2		38		
+JCT38030	SmallestMarginSwExe1			4	12	16			N	R		F	N	2		38		
+JCT38031	NofTimeOverrunsSwExe2			3	12	16			N	R		F	N	2		38		
+JCT38032	SmallestMarginSwExe2			4	12	16			N	R		F	N	2		38		
+JCT38033	NofTimeOverrunsSwExe3			3	12	16			N	R		F	N	2		38		
+JCT38034	SmallestMarginSwExe3			4	12	16			N	R		F	N	2		38		
+JCT38035	NofTimeOverrunsSwExe4			3	12	16			N	R		F	N	2		38		
+JCT38036	SmallestMarginSwExe4			4	12	16			N	R		F	N	2		38		
+JCT38037	NofTimeOverrunsSwExe5			3	12	16			N	R		F	N	2		38		
+JCT38038	SmallestMarginSwExe5			4	12	16			N	R		F	N	2		38		
+JCT38039	NofTimeOverrunsSwExe6			3	12	16			N	R		F	N	2		38		
+JCT38040	SmallestMarginSwExe6			4	12	16			N	R		F	N	2		38		
+JCT38041	NofTimeOverrunsSwExe7			3	12	16			N	R		F	N	2		38		
+JCT38042	SmallestMarginSwExe7			4	12	16			N	R		F	N	2		38		
+JCT38043	NofTimeOverrunsSwExe8			3	12	16			N	R		F	N	2		38		
+JCT38044	SmallestMarginSwExe8			4	12	16			N	R		F	N	2		38		
+JCT38045	NofTimeOverrunsSwExe9			3	12	16			N	R		F	N	2		38		
+JCT38046	SmallestMarginSwExe9			4	12	16			N	R		F	N	2		38		
+JCT38047	NofTimeOverrunsSwExe10			3	12	16			N	R		F	N	2		38		
+JCT38048	SmallestMarginSwExe10			4	12	16			N	R		F	N	2		38		
+JCT38049	NofTimeOverrunsSwExe11			3	12	16			N	R		F	N	2		38		
+JCT38050	SmallestMarginSwExe11			4	12	16			N	R		F	N	2		38		
+JCT38051	NofTimeOverrunsSwExe12			3	12	16			N	R		F	N	2		38		
+JCT38052	SmallestMarginSwExe12			4	12	16			N	R		F	N	2		38		
+JCT38053	NofTimeOverrunsSwExe13			3	12	16			N	R		F	N	2		38		
+JCT38054	SmallestMarginSwExe13			4	12	16			N	R		F	N	2		38		
+JCT38055	NofTimeOverrunsSwExe14			3	12	16			N	R		F	N	2		38		
+JCT38056	SmallestMarginSwExe14			4	12	16			N	R		F	N	2		38		
+JCT38057	NofTimeOverrunsSwExe15			3	12	16			N	R		F	N	2		38		
+JCT38058	SmallestMarginSwExe15			4	12	16			N	R		F	N	2		38		
+JCT38059	NofTimeOverrunsSwExe16			3	12	16			N	R		F	N	2		38		
+JCT38060	SmallestMarginSwExe16			4	12	16			N	R		F	N	2		38		
+JCT38061	NofTimeOverrunsSwExe17			3	12	16			N	R		F	N	2		38		
+JCT38062	SmallestMarginSwExe17			4	12	16			N	R		F	N	2		38		
+JCT38063	NofTimeOverrunsSwExe18			3	12	16			N	R		F	N	2		38		
+JCT38064	SmallestMarginSwExe18			4	12	16			N	R		F	N	2		38		
+JCT38065	NofTimeOverrunsSwExe19			3	12	16			N	R		F	N	2		38		
+JCT38066	SmallestMarginSwExe19			4	12	16			N	R		F	N	2		38		
+JCT40000	I_UVN_UV		A	4	9	13			N	R	JCKP0015	F	N	2		40		
+JCT40001	UVPowerCommanded			2	1	1			S	R	JCKT0033	F	N	2		40		
+JCT40002	UVStsSpw			2	1	1			S	R	JCKT0034	F	N	2		40		
+JCT40003	UVVersion			3	14	32			N	R		F	N	2		40		
+JCT40004	UVDemResetCnt			3	4	8			N	R		F	N	2		40		
+JCT40005	UVFsMmCnt			3	4	8			N	R		F	N	2		40		
+JCT40006	UVTeFlAbCnt			3	4	8			N	R		F	N	2		40		
+JCT40007	UVTeFlCdCnt			3	4	8			N	R		F	N	2		40		
+JCT40008	UVPixMmAbCnt			3	4	8			N	R		F	N	2		40		
+JCT40009	UVPixMmCdCnt			3	4	8			N	R		F	N	2		40		
+JCT40010	UVMemTestSts			2	2	2			S	R	JCKT0035	F	N	2		40		
+JCT40011	UVDbErrCnt			3	4	8			N	R		F	N	2		40		
+JCT40012	UVSbErrCnt			3	14	32			N	R		F	N	2		40		
+JCT40013	UVCorrectableAslDataErrC			3	12	16			N	R		F	N	2		40		
+JCT40014	UVUpdateSts			3	3	7			N	R		F	N	2		40		
+JCT40015	UVPackRun			2	1	1			S	R	JCKT0036	F	N	2		40		
+JCT40016	UVDemRun			2	1	1			S	R	JCKT0036	F	N	2		40		
+JCT40017	UVDemSts			3	4	8			N	R		F	N	2		40		
+JCT40018	UVPending			2	1	1			N	R		F	N	2		40		
+JCT40019	UVDemFwIss			2	4	4			N	R		F	N	2		40		
+JCT40020	UVDemFwRev			2	3	3			N	R		F	N	2		40		
+JCT40021	UVCcdTemp			3	12	16			N	R		F	N	2		40		
+JCT40022	UVFeeTemp			3	12	16			N	R		F	N	2		40		
+JCT40023	UVTRPTemp			3	12	16			N	R		F	N	2		40		
+JCT40024	UVCcdHeaterCurr			3	12	16			N	R		F	N	2		40		
+JCT40025	UVSpare1			3	12	16			N	R		F	N	2		40		
+JCT40026	UVSpare2			3	12	16			N	R		F	N	2		40		
+JCT40027	UVSpare3			3	12	16			N	R		F	N	2		40		
+JCT40028	UVV3Dig			3	12	16			N	R		F	N	2		40		
+JCT40029	UVV10Dig			3	12	16			N	R		F	N	2		40		
+JCT40030	UVV3Ana			3	12	16			N	R		F	N	2		40		
+JCT40031	UVV5Ana			3	12	16			N	R		F	N	2		40		
+JCT40032	UVVN5Ana			3	12	16			N	R		F	N	2		40		
+JCT40033	UVV28Ana			3	12	16			N	R		F	N	2		40		
+JCT40034	UVSpare5			3	12	16			N	R		F	N	2		40		
+JCT40035	UVSpare6			3	12	16			N	R		F	N	2		40		
+JCT41000	I_UVN_UVIS		A	4	9	13			N	R	JCKP0015	F	N	2		41		
+JCT41001	UVISPowerCommanded			2	1	1			S	R	JCKT0033	F	N	2		41		
+JCT41002	UVISStsSpw			2	1	1			S	R	JCKT0034	F	N	2		41		
+JCT41003	UVISVersion			3	14	32			N	R		F	N	2		41		
+JCT41004	UVISDemResetCnt			3	4	8			N	R		F	N	2		41		
+JCT41005	UVISFsMmCnt			3	4	8			N	R		F	N	2		41		
+JCT41006	UVISTeFlAbCnt			3	4	8			N	R		F	N	2		41		
+JCT41007	UVISTeFlCdCnt			3	4	8			N	R		F	N	2		41		
+JCT41008	UVISPixMmAbCnt			3	4	8			N	R		F	N	2		41		
+JCT41009	UVISPixMmCdCnt			3	4	8			N	R		F	N	2		41		
+JCT41010	UVISMemTestSts			2	2	2			S	R	JCKT0035	F	N	2		41		
+JCT41011	UVISDbErrCnt			3	4	8			N	R		F	N	2		41		
+JCT41012	UVISSbErrCnt			3	14	32			N	R		F	N	2		41		
+JCT41013	UVISCorrectableAslDataEr			3	12	16			N	R		F	N	2		41		
+JCT41014	UVISUpdateSts			3	3	7			N	R		F	N	2		41		
+JCT41015	UVISPackRun			2	1	1			S	R	JCKT0036	F	N	2		41		
+JCT41016	UVISDemRun			2	1	1			S	R	JCKT0036	F	N	2		41		
+JCT41017	UVISDemSts			3	4	8			N	R		F	N	2		41		
+JCT41018	UVISPending			2	1	1			N	R		F	N	2		41		
+JCT41019	UVISDemFwIss			2	4	4			N	R		F	N	2		41		
+JCT41020	UVISDemFwRev			2	3	3			N	R		F	N	2		41		
+JCT41021	UVISCcdTemp			3	12	16			N	R		F	N	2		41		
+JCT41022	UVISFeeTemp			3	12	16			N	R		F	N	2		41		
+JCT41023	UVISTRPTemp			3	12	16			N	R		F	N	2		41		
+JCT41024	UVISCcdHeaterCurr			3	12	16			N	R		F	N	2		41		
+JCT41025	UVISSpare1			3	12	16			N	R		F	N	2		41		
+JCT41026	UVISSpare2			3	12	16			N	R		F	N	2		41		
+JCT41027	UVISSpare3			3	12	16			N	R		F	N	2		41		
+JCT41028	UVISV3Dig			3	12	16			N	R		F	N	2		41		
+JCT41029	UVISV10Dig			3	12	16			N	R		F	N	2		41		
+JCT41030	UVISV3Ana			3	12	16			N	R		F	N	2		41		
+JCT41031	UVISV5Ana			3	12	16			N	R		F	N	2		41		
+JCT41032	UVISVN5Ana			3	12	16			N	R		F	N	2		41		
+JCT41033	UVISV28Ana			3	12	16			N	R		F	N	2		41		
+JCT41034	UVISSpare5			3	12	16			N	R		F	N	2		41		
+JCT41035	UVISSpare6			3	12	16			N	R		F	N	2		41		
+JCT42000	I_UVN_NIR		A	4	9	13			N	R	JCKP0015	F	N	2		42		
+JCT42001	NIRPowerCommanded			2	1	1			S	R	JCKT0033	F	N	2		42		
+JCT42002	NIRStsSpw			2	1	1			S	R	JCKT0034	F	N	2		42		
+JCT42003	NIRVersion			3	14	32			N	R		F	N	2		42		
+JCT42004	NIRDemResetCnt			3	4	8			N	R		F	N	2		42		
+JCT42005	NIRFsMmCnt			3	4	8			N	R		F	N	2		42		
+JCT42006	NIRTeFlAbCnt			3	4	8			N	R		F	N	2		42		
+JCT42007	NIRTeFlCdCnt			3	4	8			N	R		F	N	2		42		
+JCT42008	NIRPixMmAbCnt			3	4	8			N	R		F	N	2		42		
+JCT42009	NIRPixMmCdCnt			3	4	8			N	R		F	N	2		42		
+JCT42010	NIRMemTestSts			2	2	2			S	R	JCKT0035	F	N	2		42		
+JCT42011	NIRDbErrCnt			3	4	8			N	R		F	N	2		42		
+JCT42012	NIRSbErrCnt			3	14	32			N	R		F	N	2		42		
+JCT42013	NIRCorrectableAslDataErr			3	12	16			N	R		F	N	2		42		
+JCT42014	NIRUpdateSts			3	3	7			N	R		F	N	2		42		
+JCT42015	NIRPackRun			2	1	1			S	R	JCKT0036	F	N	2		42		
+JCT42016	NIRDemRun			2	1	1			S	R	JCKT0036	F	N	2		42		
+JCT42017	NIRDemSts			3	4	8			N	R		F	N	2		42		
+JCT42018	NIRPending			2	1	1			N	R		F	N	2		42		
+JCT42019	NIRDemFwIss			2	4	4			N	R		F	N	2		42		
+JCT42020	NIRDemFwRev			2	3	3			N	R		F	N	2		42		
+JCT42021	NIRCcdTemp			3	12	16			N	R		F	N	2		42		
+JCT42022	NIRFeeTemp			3	12	16			N	R		F	N	2		42		
+JCT42023	NIRTRPTemp			3	12	16			N	R		F	N	2		42		
+JCT42024	NIRCcdHeaterCurr			3	12	16			N	R		F	N	2		42		
+JCT42025	NIRSpare1			3	12	16			N	R		F	N	2		42		
+JCT42026	NIRSpare2			3	12	16			N	R		F	N	2		42		
+JCT42027	NIRSpare3			3	12	16			N	R		F	N	2		42		
+JCT42028	NIRV3Dig			3	12	16			N	R		F	N	2		42		
+JCT42029	NIRV10Dig			3	12	16			N	R		F	N	2		42		
+JCT42030	NIRV3Ana			3	12	16			N	R		F	N	2		42		
+JCT42031	NIRV5Ana			3	12	16			N	R		F	N	2		42		
+JCT42032	NIRVN5Ana			3	12	16			N	R		F	N	2		42		
+JCT42033	NIRV28Ana			3	12	16			N	R		F	N	2		42		
+JCT42034	NIRSpare5			3	12	16			N	R		F	N	2		42		
+JCT42035	NIRSpare6			3	12	16			N	R		F	N	2		42		
+JCT43000	I_SWIR		A	4	9	13			N	R	JCKP0015	F	N	2		43		
+JCT43001	SWIRPowerCommanded			2	1	1			S	R	JCKT0033	F	N	2		43		
+JCT43002	SWIRStsSpw			2	1	1			S	R	JCKT0034	F	N	2		43		
+JCT43003	SWIRVersion			3	14	32			N	R		F	N	2		43		
+JCT43004	SWIRFsMmCnt			3	4	8			N	R		F	N	2		43		
+JCT43005	SWIRTeFlAbCnt			3	4	8			N	R		F	N	2		43		
+JCT43006	SWIRTeFlCdCnt			3	4	8			N	R		F	N	2		43		
+JCT43007	SWIRPixMmAbCnt			3	4	8			N	R		F	N	2		43		
+JCT43008	SWIRPixMmCdCnt			3	4	8			N	R		F	N	2		43		
+JCT43009	SWIRMemTestSts			2	2	2			S	R	JCKT0035	F	N	2		43		
+JCT43010	SWIRDbErrCnt			3	4	8			N	R		F	N	2		43		
+JCT43011	SWIRSbErrCnt			3	14	32			N	R		F	N	2		43		
+JCT43012	SWIRCorrectableAslDataEr			3	12	16			N	R		F	N	2		43		
+JCT43013	SWIRUpdateSts			3	3	7			N	R		F	N	2		43		
+JCT43014	SWIRPackRun			2	1	1			S	R	JCKT0036	F	N	2		43		
+JCT43015	SWIRDemRun			2	1	1			S	R	JCKT0036	F	N	2		43		
+JCT43016	Swir_DET_LATCHUP_ACTUAL			3	14	32			N	R		F	N	2		43		
+JCT43017	Swir_DET_LATCHUP_STICKY			3	14	32			N	R		F	N	2		43		
+JCT43018	Swir_ADC0_CURR			3	14	32			N	R		F	N	2		43		
+JCT43019	Swir_ADC1_CURR			3	14	32			N	R		F	N	2		43		
+JCT43020	Swir_ADC2_CURR			3	14	32			N	R		F	N	2		43		
+JCT43021	Swir_ADC3_CURR			3	14	32			N	R		F	N	2		43		
+JCT43022	Swir_CHNL_CORR_ERR			3	14	32			N	R		F	N	2		43		
+JCT43023	Swir_CHNL_ERR			3	14	32			N	R		F	N	2		43		
+JCT43024	Swir_DCFG_ERR			3	14	32			N	R		F	N	2		43		
+JCT43025	Swir_DET_ON			3	14	32			N	R		F	N	2		43		
+JCT43026	Swir_HEATER_LEVEL			3	14	32			N	R		F	N	2		43		
+JCT43027	Swir_BIAS_ON			3	14	32			N	R		F	N	2		43		
+JCT43028	Swir_DATAVALID_ERR			3	14	32			N	R		F	N	2		43		
+JCT43029	Swir_IDL_CMD_ERR			3	14	32			N	R		F	N	2		43		
+JCT43030	Swir_HK_ADC_READ			3	14	32			N	R		F	N	2		43		
+JCT43031	Swir_HK_I_FEE_LPD1			3	14	32			N	R		F	N	2		43		
+JCT43032	Swir_HK_U_FEE_LPD1			3	14	32			N	R		F	N	2		43		
+JCT43033	Swir_HK_I_FEE_LPD2			3	14	32			N	R		F	N	2		43		
+JCT43034	Swir_HK_U_FEE_LPD2			3	14	32			N	R		F	N	2		43		
+JCT43035	Swir_HK_I_FEE_HPA			3	14	32			N	R		F	N	2		43		
+JCT43036	Swir_HK_U_FEE_HPA			3	14	32			N	R		F	N	2		43		
+JCT43037	Swir_HK_I_FEE_HNA			3	14	32			N	R		F	N	2		43		
+JCT43038	Swir_HK_U_FEE_HNA			3	14	32			N	R		F	N	2		43		
+JCT43039	Swir_HK_I_FEE_LPA			3	14	32			N	R		F	N	2		43		
+JCT43040	Swir_HK_U_FEE_LPA			3	14	32			N	R		F	N	2		43		
+JCT43041	Swir_HK_I_5V0D			3	14	32			N	R		F	N	2		43		
+JCT43042	Swir_HK_U_5V0D			3	14	32			N	R		F	N	2		43		
+JCT43043	Swir_HK_I_3V3D			3	14	32			N	R		F	N	2		43		
+JCT43044	Swir_HK_U_3V3D			3	14	32			N	R		F	N	2		43		
+JCT43045	Swir_HK_I_1V5D			3	14	32			N	R		F	N	2		43		
+JCT43046	Swir_HK_U_1v5D			3	14	32			N	R		F	N	2		43		
+JCT43047	Swir_HK_I_5VPA			3	14	32			N	R		F	N	2		43		
+JCT43048	Swir_HK_U_5VPA			3	14	32			N	R		F	N	2		43		
+JCT43049	Swir_HK_I_HEATER			3	14	32			N	R		F	N	2		43		
+JCT43050	Swir_HK_I_DET_LPD			3	14	32			N	R		F	N	2		43		
+JCT43051	Swir_HK_U_DET_LPD			3	14	32			N	R		F	N	2		43		
+JCT43052	Swir_HK_I_DET_LPA			3	14	32			N	R		F	N	2		43		
+JCT43053	Swir_HK_U_DET_LPA			3	14	32			N	R		F	N	2		43		
+JCT43054	Swir_HK_I_VDD			3	14	32			N	R		F	N	2		43		
+JCT43055	Swir_HK_U_VDD			3	14	32			N	R		F	N	2		43		
+JCT43056	Swir_HK_I_VDDA			3	14	32			N	R		F	N	2		43		
+JCT43057	Swir_HK_U_VDDA			3	14	32			N	R		F	N	2		43		
+JCT43058	Swir_HK_I_VDDO			3	14	32			N	R		F	N	2		43		
+JCT43059	Swir_HK_U_VDDO			3	14	32			N	R		F	N	2		43		
+JCT43060	Swir_HK_U_REF_D			3	14	32			N	R		F	N	2		43		
+JCT43061	Swir_HK_GND_D			3	14	32			N	R		F	N	2		43		
+JCT43062	Swir_HK_U_10VPA			3	14	32			N	R		F	N	2		43		
+JCT43063	Swir_HK_U_10VNA			3	14	32			N	R		F	N	2		43		
+JCT43064	Swir_HK_U_VDET			3	14	32			N	R		F	N	2		43		
+JCT43065	Swir_HK_U_HEATER			3	14	32			N	R		F	N	2		43		
+JCT43066	Swir_HK_TEMP_D1_BOX			3	14	32			N	R		F	N	2		43		
+JCT43067	Swir_HK_TEMP_D2_1V5D			3	14	32			N	R		F	N	2		43		
+JCT43068	Swir_HK_TEMP_D3_FPGA			3	14	32			N	R		F	N	2		43		
+JCT43069	Swir_HK_TEMP_D4_VADC			3	14	32			N	R		F	N	2		43		
+JCT43070	Swir_HK_TEMP_D5_COLD			3	14	32			N	R		F	N	2		43		
+JCT43071	Swir_HK_TEMP_D6_VAMP			3	14	32			N	R		F	N	2		43		
+JCT43072	Swir_HK_TEMP_A1_10VPA			3	14	32			N	R		F	N	2		43		
+JCT43073	Swir_HK_TEMP_A2_5VPA			3	14	32			N	R		F	N	2		43		
+JCT43074	Swir_HK_TEMP_A3_VREF			3	14	32			N	R		F	N	2		43		
+JCT43076	Swir_HK_DET_TS2			3	14	32			N	R		F	N	2		43		
+JCT43077	Swir_HK_MUX_STATUS			3	14	32			N	R		F	N	2		43		
+JCT43078	Swir_HK_BUSY_N_ERR			3	14	32			N	R		F	N	2		43		
+JCT43079	Swir_HK_SYNC_ERR			3	14	32			N	R		F	N	2		43		
+JCT43080	Swir_PID_ENABLE			3	14	32			N	R		F	N	2		43		
+JCT43081	Swir_PID_PERIOD			3	14	32			N	R		F	N	2		43		
+JCT43082	Swir_PID_SENSOR_SEL			3	14	32			N	R		F	N	2		43		
+JCT43083	Swir_PID_SETPOINT			3	14	32			N	R		F	N	2		43		
+JCT43084	Swir_PID_K0			3	14	32			N	R		F	N	2		43		
+JCT43085	Swir_PID_K1			3	14	32			N	R		F	N	2		43		
+JCT43086	Swir_PID_K2			3	14	32			N	R		F	N	2		43		
+JCT43087	Swir_PID_SHIFT			3	14	32			N	R		F	N	2		43		
+JCT43088	Swir_PID_INTVAL			3	14	32			N	R		F	N	2		43		
+JCT43089	Swir_TMTC_RX_STOPBIT_ERR			3	14	32			N	R		F	N	2		43		
+JCT43090	Swir_TMTC_RX_LENGTH_ERR			3	14	32			N	R		F	N	2		43		
+JCT43091	Swir_TMTC_RX_CHECKSUM_ER			3	14	32			N	R		F	N	2		43		
+JCT43092	Swir_TMTC_RX_TIMEOUT_ERR			3	14	32			N	R		F	N	2		43		
+JCT43093	Swir_TMTC_PR_TIMEOUT_ERR			3	14	32			N	R		F	N	2		43		
+JCT43094	Swir_TMTC_RAM_CORR_ERR			3	14	32			N	R		F	N	2		43		
+JCT43095	Swir_TMTC_RAM_ERR			3	14	32			N	R		F	N	2		43		
+JCT43096	Swir_TMTC_PACKET_CNT			3	14	32			N	R		F	N	2		43		
+JCT51003	FmmSeenPosDeg		deg	5	1	32			N	D		F	N	2		31		R
+JCT51015	DifmSeenPosDeg		deg	5	1	32			N	D		F	N	2		31		R
+VER1APID	PUS(1,1) TC APID			2	11				N	R		F	N	2		1		
+VER1SSC	PUS(1,1) TC SSC			2	14				N	R		F	N	2		1		
+VER2APID	PUS(1,2) TC APID			2	11				N	R		F	N	2		1		
+VER2SSC	PUS(1,2) TC SSC			2	14				N	R		F	N	2		1		
+VER3APID	PUS(1,3) TC APID			2	11				N	R		F	N	2		1		
+VER3SSC	PUS(1,3) TC SSC			2	14				N	R		F	N	2		1		
+VER4APID	PUS(1,4) TC APID			2	11				N	R		F	N	2		1		
+VER4SSC	PUS(1,4) TC SSC			2	14				N	R		F	N	2		1		
+VER5APID	PUS(1,5) TC APID			2	11				N	R		F	N	2		1		
+VER5SSC	PUS(1,5) TC SSC			2	14				N	R		F	N	2		1		
+VER6APID	PUS(1,6) TC APID			2	11				N	R		F	N	2		1		
+VER6SSC	PUS(1,6) TC SSC			2	14				N	R		F	N	2		1		
+VER7APID	PUS(1,7) TC APID			2	11				N	R		F	N	2		1		
+VER7SSC	PUS(1,7) TC SSC			2	14				N	R		F	N	2		1		
+VER8APID	PUS(1,8) TC APID			2	11				N	R		F	N	2		1		
+VER8SSC	PUS(1,8) TC SSC			2	14				N	R		F	N	2		1		

@@ -64,8 +64,8 @@ class Environment(object):
         self.pktDefaultPort = int(tokens[3])
         break
     if self.pktDefaultPort == None:
-      LOG_ERROR("no entry for connection 1 found in " + tpktConnTableFileName)
-      sys.exit(-1)
+      LOG_WARNING("no entry for connection 1 found in " + tpktConnTableFileName)
+      return
     # read essential information from TPKTconfigTable.dat
     tpktConfigTableFileName = self.mibDir() + "/TPKTconfigTable.dat"
     try:

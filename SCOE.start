@@ -26,5 +26,6 @@ setenv TC_ACK_APID_PARAM_BYTE_OFFSET 10
 setenv TC_ACK_SSC_PARAM_BYTE_OFFSET 12
 setenv TM_CYCLIC_MNEMO ZYCLIC
 setenv TCO_MISSION_EPOCH_STR "1970.001.00.00.00.000000"
+setenv scosii_homedir ${HOME}/Python/SpacePyLibrary/scosii_homedir
 setenv PYTHONPATH ${HOME}/Python/SpacePyLibrary:${HOME}/Python/SpacePyLibrary/UnitTest
 python SCOE.py dummy
