@@ -551,7 +551,6 @@ def printUsage(launchScriptName):
 # main #
 ########
 # detect if the application is launched with or without python prompt
-print "*** sys.argv =", sys.argv
 if sys.argv[0] == "":
   interpreter = True
   sys.argv = os.getenv("ARGS").split()
@@ -608,10 +607,12 @@ if cmdPrompt:
 SPACE.DEF.init()
 SPACE.OBC.init(egseMode=True)
 SPACE.TMGEN.init()
+print "-1-"
 
 # create the EGSE server
 LOG("Open the EGSE server")
 SCOE.EGSEserver.createEGSEserver()
+print "-2-"
 
 # load the definition data
 print "load definition data (take some time) ..."

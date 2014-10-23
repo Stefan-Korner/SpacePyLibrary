@@ -57,7 +57,6 @@ class Environment(object):
     # parse the file to find the entry with connection ID 1
     self.pktDefaultPort = None
     for line in fileContents:
-      print "*** line = " + line
       tokens = line.split()
       if len(tokens) >= 4 and tokens[0] == "1" and tokens[1].upper() == self.hostName.upper():
         # line found
