@@ -14,7 +14,7 @@
 # Utilities - Data Unit                                                       *
 # The data representation in the binary buffer is network byte order / big-   *
 # endian (highest buffer index = lowest significant byte). This allows direct *
-# sending of of the buffer over the network.                                  * 
+# sending of the buffer over the network.                                     * 
 #******************************************************************************
 import array
 
