@@ -97,10 +97,12 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
       if pdu.pduType == EGSE.EDENPDU.PDU_TYPE_TC:
         if pdu.subType == EGSE.EDENPDU.SUB_TYPE_SPACE:
           # (TC,SPACE)
-          self.notifyTcSpace(pdu.getDataField())
+          tcSpacePDU = EGSE.EDENPDU.TCscoe(pdu.buffer)
+          self.notifyTcSpace(tcSpacePDU.getCCSDSpacket())
         elif pdu.subType == EGSE.EDENPDU.SUB_TYPE_SCOE:
           # (TC,SCOE)
-          self.notifyTcScoe(pdu.getDataField())
+          tcScoePDU = EGSE.EDENPDU.TCscoe(pdu.buffer)
+          self.notifyTcScoe(tcScoePDU.getCCSDSpacket())
         else:
           LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType))
           LOG_INFO("PDU = " + str(pdu))
@@ -161,18 +163,14 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
   # ---------------------------------------------------------------------------
   def sendTcSpace(self, tcPacket):
     """Send a (TC,SPACE) PDU to the SCOE"""
-    pdu = EGSE.EDENPDU.PDU()
-    pdu.pduType = EGSE.EDENPDU.PDU_TYPE_TC
-    pdu.subType = EGSE.EDENPDU.SUB_TYPE_SPACE
-    pdu.setDataField(tcPacket)
+    pdu = EGSE.EDENPDU.TCspace()
+    pdu.setCCSDSpacket(tcPacket)
     self.sendPDU(pdu)
   # ---------------------------------------------------------------------------
   def sendTcScoe(self, tcPacket):
     """Send a (TC,SCOE) PDU to the SCOE"""
-    pdu = EGSE.EDENPDU.PDU()
-    pdu.pduType = EGSE.EDENPDU.PDU_TYPE_TC
-    pdu.subType = EGSE.EDENPDU.SUB_TYPE_SCOE
-    pdu.setDataField(tcPacket)
+    pdu = EGSE.EDENPDU.TCscoe()
+    pdu.setCCSDSpacket(tcPacket)
     self.sendPDU(pdu)
   # ---------------------------------------------------------------------------
   def sendCmdExec(self, tcPacket):
