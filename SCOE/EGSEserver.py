@@ -57,11 +57,13 @@ class Server(EGSE.EDEN.Server, EGSE.IF.CCSlink):
     """(TC,SPACE) received: overloaded from EGSE.EDEN.Server"""
     tcPacketDu = CCSDS.PACKET.TCpacket(tcPacket)
     SPACE.IF.s_onboardComputer.pushTCpacket(tcPacketDu)
+    return True
   # ---------------------------------------------------------------------------
   def notifyTcScoe(self, tcPacket):
     """(TC,SCOE) received: overloaded from EGSE.EDEN.Server"""
     tcPacketDu = CCSDS.PACKET.TCpacket(tcPacket)
     SPACE.IF.s_onboardComputer.pushTCpacket(tcPacketDu)
+    return True
 
 ####################
 # global variables #
