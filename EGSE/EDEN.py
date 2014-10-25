@@ -105,7 +105,7 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
         if pdu.subType == EGSE.EDENPDU.SUB_TYPE_SPACE:
           # (TC,SPACE)
           LOG_INFO("EDEN.Server.receiveCallback(TC,SPACE)")
-          tcSpacePDU = EGSE.EDENPDU.TCscoe(pdu.buffer)
+          tcSpacePDU = EGSE.EDENPDU.TCspace(pdu.buffer)
           self.notifyTcSpace(tcSpacePDU.getCCSDSpacket())
         elif pdu.subType == EGSE.EDENPDU.SUB_TYPE_SCOE:
           # (TC,SCOE)
@@ -223,9 +223,24 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
       return
     pdu.setDataField(dataField)
     try:
-      if pdu.pduType == EGSE.EDENPDU.PDU_TYPE_CMD:
+      if pdu.pduType == EGSE.EDENPDU.PDU_TYPE_TM:
+        if pdu.subType == EGSE.EDENPDU.SUB_TYPE_SPACE:
+          # (TM,SPACE)
+          LOG_INFO("EDEN.Client.receiveCallback(TM,SPACE)")
+          tmSpacePDU = EGSE.EDENPDU.TMspace(pdu.buffer)
+          self.notifyTmSpace(tmSpacePDU.getCCSDSpacket())
+        elif pdu.subType == EGSE.EDENPDU.SUB_TYPE_SCOE:
+          # (TM,SCOE)
+          LOG_INFO("EDEN.Client.receiveCallback(TM,SCOE)")
+          tmScoePDU = EGSE.EDENPDU.TMscoe(pdu.buffer)
+          self.notifyTmScoe(tmScoePDU.getCCSDSpacket())
+        else:
+          LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType))
+          LOG_INFO("PDU = " + str(pdu))
+      elif pdu.pduType == EGSE.EDENPDU.PDU_TYPE_CMD:
         if pdu.subType == EGSE.EDENPDU.SUB_TYPE_ANSW:
           # (CMD,ANSW)
+          LOG_INFO("EDEN.Client.receiveCallback(CMD,ANSW)")
           self.notifyCmdAnsw(pdu.getDataField().tostring())
         else:
           LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType))
@@ -239,6 +254,14 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
   def notifyConnectionClosed(self, details):
     """Connection closed by server"""
     LOG_WARNING("Connection closed by SCOE: " + details)
+  # ---------------------------------------------------------------------------
+  def notifyTmSpace(self, tmPacket):
+    """(TM,SPACE) received: hook for derived classes"""
+    LOG_INFO("notifyTmSpace: tmPacket = " + UTIL.DU.array2str(tmPacket))
+  # ---------------------------------------------------------------------------
+  def notifyTmScoe(self, tmPacket):
+    """(TM,SCOE) received: hook for derived classes"""
+    LOG_INFO("notifyTmScoe: tmPacket = " + UTIL.DU.array2str(tmPacket))
   # ---------------------------------------------------------------------------
   def notifyCmdAnsw(self, message):
     """(CMD,ANSW) received: hook for derived classes"""
