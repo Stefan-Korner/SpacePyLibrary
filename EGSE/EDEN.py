@@ -41,8 +41,23 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
     # this operation does not verify the contents of the PDU
     self.dataSocket.send(pdu.getBufferString())
   # ---------------------------------------------------------------------------
+  def sendTmSpace(self, tmPacket):
+    """Send a (TM,SPACE) PDU to the CCS"""
+    LOG_INFO("EDEN.Server.sendTmSpace")
+    tmSpacePDU = EGSE.EDENPDU.TMspace()
+    tmSpacePDU.setCCSDSpacket(tmPacket)
+    self.sendPDU(tmSpacePDU)
+  # ---------------------------------------------------------------------------
+  def sendTmScoe(self, tmPacket):
+    """Send a (TM,SCOE) PDU to the CCS"""
+    LOG_INFO("EDEN.Server.sendTmScoe")
+    tmScoePDU = EGSE.EDENPDU.TMscoe()
+    tmScoePDU.setCCSDSpacket(tmPacket)
+    self.sendPDU(tmScoePDU)
+  # ---------------------------------------------------------------------------
   def sendCmdAnsw(self, message):
     """Send a (CMD,ANSW) PDU to the CCS"""
+    LOG_INFO("EDEN.Server.sendCmdAnsw")
     pdu = EGSE.EDENPDU.PDU()
     pdu.pduType = EGSE.EDENPDU.PDU_TYPE_CMD
     pdu.subType = EGSE.EDENPDU.SUB_TYPE_ANSW
@@ -62,66 +77,55 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
     pduHeaderLen = len(pduHeader)
     if pduHeaderLen == 0:
       self.disconnectClient()
-      self.notifyConnectionClosed("")
+      self.notifyConnectionClosed("empty data read")
       return
     if pduHeaderLen != EGSE.EDENPDU.PDU_HEADER_BYTE_SIZE:
       LOG_ERROR("Read of PDU header failed: invalid size: " + str(pduHeaderLen))
-      self.disconnectClient()
-      self.notifyConnectionClosed("invalid data")
       return
     pdu = EGSE.EDENPDU.PDU(pduHeader)
     # consistency check
     dataFieldLength = pdu.dataFieldLength
     if dataFieldLength <= 0:
       LOG_ERROR("Read of PDU header failed: invalid data field size: " + str(dataFieldLength))
-      self.disconnectClient()
-      self.notifyConnectionClosed("invalid data")
       return
     # read the data field for the PDU from the data socket
     try:
       dataField = self.dataSocket.recv(dataFieldLength);
     except Exception, ex:
       LOG_ERROR("Read of remaining PDU failed: " + str(ex))
-      self.disconnectClient()
-      self.notifyConnectionClosed("invalid data")
       return
     # consistency check
     remainingSizeRead = len(dataField)
     if remainingSizeRead != dataFieldLength:
       LOG_ERROR("Read of remaining PDU failed: invalid remaining size: " + str(remainingSizeRead))
-      self.disconnectClient()
-      self.notifyConnectionClosed("invalid data")
       return
     pdu.setDataField(dataField)
     try:
       if pdu.pduType == EGSE.EDENPDU.PDU_TYPE_TC:
         if pdu.subType == EGSE.EDENPDU.SUB_TYPE_SPACE:
           # (TC,SPACE)
+          LOG_INFO("EDEN.Server.receiveCallback(TC,SPACE)")
           tcSpacePDU = EGSE.EDENPDU.TCscoe(pdu.buffer)
           self.notifyTcSpace(tcSpacePDU.getCCSDSpacket())
         elif pdu.subType == EGSE.EDENPDU.SUB_TYPE_SCOE:
           # (TC,SCOE)
+          LOG_INFO("EDEN.Server.receiveCallback(TC,SCOE)")
           tcScoePDU = EGSE.EDENPDU.TCscoe(pdu.buffer)
           self.notifyTcScoe(tcScoePDU.getCCSDSpacket())
         else:
           LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType))
           LOG_INFO("PDU = " + str(pdu))
-          self.disconnectClient()
-          self.notifyConnectionClosed("invalid data")
       elif pdu.pduType == EGSE.EDENPDU.PDU_TYPE_CMD:
         if pdu.subType == EGSE.EDENPDU.SUB_TYPE_EXEC:
           # (CMD,EXEC)
+          LOG_INFO("EDEN.Server.receiveCallback(CMD,EXEC)")
           self.notifyCmdExec(pdu.getDataField().tostring())
         else:
           LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType))
           LOG_INFO("PDU = " + str(pdu))
-          self.disconnectClient()
-          self.notifyConnectionClosed("invalid data")
       else:
         LOG_ERROR("Read of PDU header failed: invalid pduType: " + str(pdu.pduType))
         LOG_INFO("PDU = " + str(pdu))
-        self.disconnectClient()
-        self.notifyConnectionClosed("invalid data")
     except Exception, ex:
       LOG_ERROR("Processing of received PDU failed: " + str(ex))
   # ---------------------------------------------------------------------------
@@ -195,35 +199,27 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
     if pduHeaderLen == 0:
       # client termination
       self.disconnectFromServer()
-      self.notifyConnectionClosed("")
+      self.notifyConnectionClosed("empty data read")
       return
     if pduHeaderLen != EGSE.EDENPDU.PDU_HEADER_BYTE_SIZE:
       LOG_ERROR("Read of PDU header failed: invalid size: " + str(pduHeaderLen))
-      self.disconnectFromServer()
-      self.notifyConnectionClosed("invalid data")
       return
     pdu = EGSE.EDENPDU.PDU(pduHeader)
     # consistency check
     dataFieldLength = pdu.dataFieldLength
     if dataFieldLength <= 0:
       LOG_ERROR("Read of PDU header failed: invalid data field size: " + str(dataFieldLength))
-      self.disconnectFromServer()
-      self.notifyConnectionClosed("invalid data")
       return
     # read the data field for the PDU from the data socket
     try:
       dataField = self.dataSocket.recv(dataFieldLength);
     except Exception, ex:
       LOG_ERROR("Read of remaining PDU failed: " + str(ex))
-      self.disconnectFromServer()
-      self.notifyConnectionClosed("invalid data")
       return
     # consistency check
     remainingSizeRead = len(dataField)
     if remainingSizeRead != dataFieldLength:
       LOG_ERROR("Read of remaining PDU failed: invalid remaining size: " + str(remainingSizeRead))
-      self.disconnectFromServer()
-      self.notifyConnectionClosed("invalid data")
       return
     pdu.setDataField(dataField)
     try:
@@ -234,13 +230,9 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
         else:
           LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType))
           LOG_INFO("PDU = " + str(pdu))
-          self.disconnectClient()
-          self.notifyConnectionClosed("invalid data")
       else:
         LOG_ERROR("Read of PDU header failed: invalid pduType: " + str(pdu.pduType))
         LOG_INFO("PDU = " + str(pdu))
-        self.disconnectClient()
-        self.notifyConnectionClosed("invalid data")
     except Exception, ex:
       LOG_ERROR("Processing of received PDU failed: " + str(ex))
   # ---------------------------------------------------------------------------

@@ -96,7 +96,7 @@ class Environment(object):
     return self.runtimeRoot + "/data/ASCII"
   # ---------------------------------------------------------------------------
   def definitionFileName(self):
-    """Get the testdata.bin file name"""
+    """Get the testdata.sim file name"""
     return self.runtimeRoot + "/testbin/testdata.sim"
   # ---------------------------------------------------------------------------
   def getPKTdefaultPort(self):
@@ -108,7 +108,7 @@ class Environment(object):
     return self.spacecraftID
   # ---------------------------------------------------------------------------
   def getTransferFrameSize(self):
-    """Returns the transfer frame siyz"""
+    """Returns the transfer frame size"""
     return self.transferFrameSize
   # ---------------------------------------------------------------------------
   def transferFrameHasSecondaryHeader(self):

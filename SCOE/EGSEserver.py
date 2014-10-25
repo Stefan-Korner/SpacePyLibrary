@@ -15,7 +15,9 @@
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import CCSDS.PACKET
 import EGSE.EDEN, EGSE.IF
+import SPACE.IF
 import UTIL.SYS, UTIL.TASK
 
 ###########
@@ -40,7 +42,8 @@ class Server(EGSE.EDEN.Server, EGSE.IF.CCSlink):
     consumes a telemetry packet:
     implementation of EGSE.IF.CCSlink.pushTMpacket
     """
-    LOG_ERROR("pushTMpacket not implemented")
+    # we expect a SPACE packet and not a SCOE packet
+    self.sendTmSpace(tmPacketDu.buffer)
   # ---------------------------------------------------------------------------
   def notifyError(self, errorMessage, data):
     """error notification"""
@@ -49,6 +52,16 @@ class Server(EGSE.EDEN.Server, EGSE.IF.CCSlink):
       LOG(str(data))
     except Exception, ex:
       LOG_WARNING("data passed to notifyError are invalid: " + str(ex))
+  # ---------------------------------------------------------------------------
+  def notifyTcSpace(self, tcPacket):
+    """(TC,SPACE) received: overloaded from EGSE.EDEN.Server"""
+    tcPacketDu = CCSDS.PACKET.TCpacket(tcPacket)
+    SPACE.IF.s_onboardComputer.pushTCpacket(tcPacketDu)
+  # ---------------------------------------------------------------------------
+  def notifyTcScoe(self, tcPacket):
+    """(TC,SCOE) received: overloaded from EGSE.EDEN.Server"""
+    tcPacketDu = CCSDS.PACKET.TCpacket(tcPacket)
+    SPACE.IF.s_onboardComputer.pushTCpacket(tcPacketDu)
 
 ####################
 # global variables #
@@ -65,5 +78,6 @@ def createEGSEserver():
   """create the EGSE server"""
   global s_server
   s_server = Server(portNr=int(UTIL.SYS.s_configuration.EDEN_SERVER_PORT))
+  EGSE.IF.s_ccsLink = s_server
   if not s_server.openConnectPort(UTIL.SYS.s_configuration.HOST):
     sys.exit(-1)

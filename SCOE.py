@@ -160,7 +160,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("d4 | obcDisableAck4......disables autom. sending of ACK4 for TCs", "SPACE")
     LOG("a  | sendAck <apid> <ssc> <stype> sends a TC acknowledgement", "SPACE")
     LOG("l  | listPackets.........lists available packets", "SPACE")
-    LOG("g  | generate............generates the testdata.txt file in testbin directory", "SPACE")
+    LOG("g  | generate............generates the testdata.sim file in testbin directory", "SPACE")
     return True
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
@@ -489,7 +489,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     if len(argv) != 1:
       LOG_WARNING("invalid parameters passed", "SPACE")
       return False
-    # generate the testdata.sim and testdata.txt files
+    # generate the testdata.sim and files
     definitionFileName = SCOS.ENV.s_environment.definitionFileName()
     LOG("generate to " + definitionFileName, "SPACE")
     try:
@@ -607,12 +607,10 @@ if cmdPrompt:
 SPACE.DEF.init()
 SPACE.OBC.init(egseMode=True)
 SPACE.TMGEN.init()
-print "-1-"
 
 # create the EGSE server
 LOG("Open the EGSE server")
 SCOE.EGSEserver.createEGSEserver()
-print "-2-"
 
 # load the definition data
 print "load definition data (take some time) ..."

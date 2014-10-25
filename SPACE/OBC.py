@@ -14,6 +14,7 @@
 # Space Simulation - Onboard Computer                                         *
 #******************************************************************************
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import EGSE.IF
 import LINK.IF
 import PUS.PACKET, PUS.SERVICES
 import SPACE.IF
