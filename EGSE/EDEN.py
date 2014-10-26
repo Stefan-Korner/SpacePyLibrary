@@ -43,7 +43,10 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
   # ---------------------------------------------------------------------------
   def sendTc_aSpace(self, status, tcIdentificationWord):
     """Send a (TC_A,SPACE) PDU to the CCS"""
-    LOG_INFO("EDEN.Server.sendTc_aSpace")
+    if status == 0:
+      LOG_INFO("EDEN.Server.sendTc_aSpace(OK)")
+    else:
+      LOG_ERROR("EDEN.Server.sendTc_aSpace(ERROR)")
     pdu = EGSE.EDENPDU.PDU()
     pdu.pduType = EGSE.EDENPDU.PDU_TYPE_TC_A
     pdu.subType = EGSE.EDENPDU.SUB_TYPE_SPACE
@@ -53,7 +56,10 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
   # ---------------------------------------------------------------------------
   def sendTc_aScoe(self, status, tcIdentificationWord):
     """Send a (TC_A,SCOE) PDU to the CCS"""
-    LOG_INFO("EDEN.Server.sendTc_aScoe")
+    if status == 0:
+      LOG_INFO("EDEN.Server.sendTc_aScoe(OK)")
+    else:
+      LOG_ERROR("EDEN.Server.sendTc_aScoe(ERROR)")
     pdu = EGSE.EDENPDU.PDU()
     pdu.pduType = EGSE.EDENPDU.PDU_TYPE_TC_A
     pdu.subType = EGSE.EDENPDU.SUB_TYPE_SCOE
@@ -63,14 +69,20 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
   # ---------------------------------------------------------------------------
   def sendTc_eSpace(self, tcSpacePDU, telecommandEchoStatus):
     """Send a (TC_E,SPACE) PDU to the CCS"""
-    LOG_INFO("EDEN.Server.sendTc_eSpace")
+    if telecommandEchoStatus == 0:
+      LOG_INFO("EDEN.Server.sendTc_eSpace(OK)")
+    else:
+      LOG_ERROR("EDEN.Server.sendTc_eSpace(ERROR)")
     tc_eSpacePDU = EGSE.EDENPDU.TC_Espace(tcSpacePDU.buffer)
     tc_eSpacePDU.telecommandEchoStatus = telecommandEchoStatus
     self.sendPDU(tc_eSpacePDU)
   # ---------------------------------------------------------------------------
   def sendTc_eScoe(self, tcSpacePDU, telecommandEchoStatus):
     """Send a (TC_E,SCOE) PDU to the CCS"""
-    LOG_INFO("EDEN.Server.sendTc_eScoe")
+    if telecommandEchoStatus == 0:
+      LOG_INFO("EDEN.Server.sendTc_eScoe(OK)")
+    else:
+      LOG_ERROR("EDEN.Server.sendTc_eScoe(ERROR)")
     tc_eScoePDU = EGSE.EDENPDU.TC_Escoe(tcSpacePDU.buffer)
     tc_eScoePDU.telecommandEchoStatus = telecommandEchoStatus
     self.sendPDU(tc_eScoePDU)
@@ -332,11 +344,11 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
   # ---------------------------------------------------------------------------
   def notifyTc_aSpace(self, status, tcIdentificationWord):
     """(TC_A,SPACE) received: hook for derived classes"""
-    LOG_INFO("notifyTc_aSpace: status = " + str(status) + ", tcIdentificationWord = " + str(status, tcIdentificationWord))
+    LOG_INFO("notifyTc_aSpace: status = " + str(status) + ", tcIdentificationWord = " + str(tcIdentificationWord))
   # ---------------------------------------------------------------------------
   def notifyTc_aScoe(self, status, tcIdentificationWord):
     """(TC_A,SCOE) received: hook for derived classes"""
-    LOG_INFO("notifyTc_aScoe: status = " + str(status) + ", tcIdentificationWord = " + str(status, tcIdentificationWord))
+    LOG_INFO("notifyTc_aScoe: status = " + str(status) + ", tcIdentificationWord = " + str(tcIdentificationWord))
   # ---------------------------------------------------------------------------
   def notifyTc_eSpace(self, tcPacket):
     """(TC_E,SPACE) received: hook for derived classes"""

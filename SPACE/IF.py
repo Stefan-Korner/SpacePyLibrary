@@ -543,23 +543,28 @@ class OnboardComputer(object):
   # ---------------------------------------------------------------------------
   def pushTCpacket(self, tcPacketDu):
     """consumes a telecommand packet from the uplink"""
-    pass
+    # shall return True for successful processing, otherwise False
+    return True
   # ---------------------------------------------------------------------------
   def processTCpacket(self, tcPacketDu, ack1, ack2, ack3, ack4):
     """processes a telecommand packet"""
-    pass
+    # shall return True for successful processing, otherwise False
+    return True
   # ---------------------------------------------------------------------------
   def generateTMpacket(self, tmPacketData):
     """generates a TM packet"""
-    pass
+    # shall return True for successful processing, otherwise False
+    return True
   # ---------------------------------------------------------------------------
   def generateAcksFromTCpacket(self, tcPacketDu, ack1, ack2, ack3, ack4):
     """generates TC acknowledgements according to PUS service 1"""
-    pass
+    # shall return True for successful processing, otherwise False
+    return True
   # ---------------------------------------------------------------------------
   def generateAck(self, tcAPID, tcSSC, ackType):
     """generates a TC acknowledgement according to PUS service 1"""
-    pass
+    # shall return True for successful processing, otherwise False
+    return True
   # ---------------------------------------------------------------------------
   def startCyclicTM(self):
     """start sending of cyclic TM"""

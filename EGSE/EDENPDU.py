@@ -28,8 +28,8 @@ PDU_HEADER_ATTRIBUTES = {
   "pduType":         ( 0,  4, STRING),
   "subType":         ( 4, 10, STRING),
   "field1":          (14, 16, STRING),
-  "field2":          (30,  4, BYTES),
-  "field3":          (34,  4, BYTES),
+  "field2":          (30,  4, UNSIGNED),
+  "field3":          (34,  4, UNSIGNED),
   "dataFieldLength": (38,  4, UNSIGNED)}
 # -----------------------------------------------------------------------------
 CCSDS_PDU_SEC_HEADER_BYTE_SIZE = 36
@@ -253,8 +253,7 @@ class TC_Espace(TCspace):
     """default constructor: delegates to TCspace"""
     emptyData = (binaryString == None)
     TCspace.__init__(self, binaryString)
-    if emptyData:
-      self.pduType = PDU_TYPE_TC_E
+    self.pduType = PDU_TYPE_TC_E
 
 # =============================================================================
 class TCscoe(CCSDSpdu):
@@ -288,8 +287,7 @@ class TC_Escoe(TCscoe):
     """default constructor: delegates to TCscoe"""
     emptyData = (binaryString == None)
     TCscoe.__init__(self, binaryString)
-    if emptyData:
-      self.pduType = PDU_TYPE_TC_E
+    self.pduType = PDU_TYPE_TC_E
 
 # =============================================================================
 class TMspace(CCSDSpdu):

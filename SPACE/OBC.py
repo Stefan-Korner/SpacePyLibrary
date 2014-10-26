@@ -48,16 +48,16 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
       # for SCOS-2000 compatibility we expect a CRC
       if not tcPacketDu.checkChecksum():
         LOG_ERROR("invalid TC packet CRC", "SPACE")
-        return
+        return False
     else:
       LOG("non-PUS packet", "SPACE")
       LOG("tcPacketDu = " + str(tcPacketDu), "SPACE")
     # further processing of the TC packet (e.g. reply telemetry)
-    self.processTCpacket(tcPacketDu,
-                         SPACE.IF.s_configuration.obcAck1,
-                         SPACE.IF.s_configuration.obcAck2,
-                         SPACE.IF.s_configuration.obcAck3,
-                         SPACE.IF.s_configuration.obcAck4)
+    return self.processTCpacket(tcPacketDu,
+                                SPACE.IF.s_configuration.obcAck1,
+                                SPACE.IF.s_configuration.obcAck2,
+                                SPACE.IF.s_configuration.obcAck3,
+                                SPACE.IF.s_configuration.obcAck4)
   # ---------------------------------------------------------------------------
   def processTCpacket(self, tcPacketDu, ack1, ack2, ack3, ack4):
     """
@@ -67,6 +67,7 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     LOG_INFO("processTCpacket", "SPACE")
     LOG("APID =    " + str(tcPacketDu.applicationProcessId), "SPACE")
     LOG("SSC =     " + str(tcPacketDu.sequenceControlCount), "SPACE")
+    ok = True
     if tcPacketDu.dataFieldHeaderFlag == 1:
       # CCSDS packet is a PUS packet
       object.__setattr__(tcPacketDu, "attributeMap2", PUS.PACKET.TC_PACKET_DATAFIELD_HEADER_ATTRIBUTES)
@@ -76,13 +77,15 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
       if tcPacketDu.serviceType == PUS.SERVICES.TC_OBQ_TYPE:
         if SPACE.IF.s_onboardQueue == None:
           LOG_ERROR("No OBQ implementation for OBQ management command", "SPACE")
+          okStatus = False
         else:
           SPACE.IF.s_onboardQueue.pushMngPacket(tcPacketDu)
       # send TC acknowledgements
-      self.generateAcksFromTCpacket(tcPacketDu, ack1, ack2, ack3, ack4)
+      ok &= self.generateAcksFromTCpacket(tcPacketDu, ack1, ack2, ack3, ack4)
     else:
       LOG("non-PUS packet", "SPACE")
       LOG("tcPacketDu = " + str(tcPacketDu), "SPACE")
+    return ok
   # ---------------------------------------------------------------------------
   def generateTMpacket(self, tmPacketData):
     """
@@ -95,52 +98,55 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     tmPacketDu = SPACE.IF.s_tmPacketGenerator.getTMpacket(spid, paramValues)
     if tmPacketDu == None:
       LOG_ERROR("packet creation failed: SPID = " + str(spid), "SPACE")
-      return
+      return False
     # send the TM packet
     if self.egseMode:
       EGSE.IF.s_ccsLink.pushTMpacket(tmPacketDu)
     else:
       LINK.IF.s_packetLink.pushTMpacket(tmPacketDu)
+    return True
   # ---------------------------------------------------------------------------
   def generateAcksFromTCpacket(self, tcPacketDu, ack1, ack2, ack3, ack4):
     """
     generates a TC acknowledgements according to PUS service 1:
     implementation of SPACE.IF.OnboardComputer.generateAcksFromTCpacket
     """
+    ok = True
     tcAPID =  str(tcPacketDu.applicationProcessId)
     tcSSC = str(tcPacketDu.sequenceControlCount)
     if ack1 == SPACE.IF.ENABLE_ACK:
       LOG_INFO("generate ACK1 (TC_ACK_ACCEPT_SUCC)", "SPACE")
-      self.generateAck(tcAPID, tcSSC, PUS.SERVICES.TC_ACK_ACCEPT_SUCC)
+      ok &= self.generateAck(tcAPID, tcSSC, PUS.SERVICES.TC_ACK_ACCEPT_SUCC)
     elif ack1 == SPACE.IF.ENABLE_NAK:
       LOG_ERROR("generate NAK1 (TC_ACK_ACCEPT_FAIL)", "SPACE")
-      self.generateAck(tcAPID, tcSSC, PUS.SERVICES.TC_ACK_ACCEPT_FAIL)
+      ok &= self.generateAck(tcAPID, tcSSC, PUS.SERVICES.TC_ACK_ACCEPT_FAIL)
     else:
       LOG_WARNING("suppress ACK1 (TC_ACK_ACCEPT_SUCC)", "SPACE")
     if ack2 == SPACE.IF.ENABLE_ACK:
       LOG_INFO("generate ACK2 (TC_ACK_EXESTA_SUCC)", "SPACE")
-      self.generateAck(tcAPID, tcSSC, PUS.SERVICES.TC_ACK_EXESTA_SUCC)
+      ok &= self.generateAck(tcAPID, tcSSC, PUS.SERVICES.TC_ACK_EXESTA_SUCC)
     elif ack2 == SPACE.IF.ENABLE_NAK:
       LOG_ERROR("generate NAK2 (TC_ACK_EXESTA_FAIL)", "SPACE")
-      self.generateAck(tcAPID, tcSSC, PUS.SERVICES.TC_ACK_EXESTA_FAIL)
+      ok &= self.generateAck(tcAPID, tcSSC, PUS.SERVICES.TC_ACK_EXESTA_FAIL)
     else:
       LOG_WARNING("suppress ACK2 (TC_ACK_EXESTA_SUCC)", "SPACE")
     if ack3 == SPACE.IF.ENABLE_ACK:
       LOG_INFO("generate ACK3 (TC_ACK_EXEPRO_SUCC)", "SPACE")
-      self.generateAck(tcAPID, tcSSC, PUS.SERVICES.TC_ACK_EXEPRO_SUCC)
+      ok &= self.generateAck(tcAPID, tcSSC, PUS.SERVICES.TC_ACK_EXEPRO_SUCC)
     elif ack3 == SPACE.IF.ENABLE_NAK:
       LOG_ERROR("generate NAK3 (TC_ACK_EXEPRO_FAIL)", "SPACE")
-      self.generateAck(tcAPID, tcSSC, PUS.SERVICES.TC_ACK_EXEPRO_FAIL)
+      ok &= self.generateAck(tcAPID, tcSSC, PUS.SERVICES.TC_ACK_EXEPRO_FAIL)
     else:
       LOG_WARNING("suppress ACK3 (TC_ACK_EXEPRO_SUCC)", "SPACE")
     if ack4 == SPACE.IF.ENABLE_ACK:
       LOG_INFO("generate ACK4 (TC_ACK_EXECUT_SUCC)", "SPACE")
-      self.generateAck(tcAPID, tcSSC, PUS.SERVICES.TC_ACK_EXECUT_SUCC)
+      ok &= self.generateAck(tcAPID, tcSSC, PUS.SERVICES.TC_ACK_EXECUT_SUCC)
     elif ack4 == SPACE.IF.ENABLE_NAK:
       LOG_ERROR("generate NAK4 (TC_ACK_EXECUT_FAIL)", "SPACE")
-      self.generateAck(tcAPID, tcSSC, PUS.SERVICES.TC_ACK_EXECUT_FAIL)
+      ok &= self.generateAck(tcAPID, tcSSC, PUS.SERVICES.TC_ACK_EXECUT_FAIL)
     else:
       LOG_WARNING("suppress ACK4 (TC_ACK_EXECUT_SUCC)", "SPACE")
+    return ok
   # ---------------------------------------------------------------------------
   def generateAck(self, tcAPID, tcSSC, ackType):
     """
@@ -149,7 +155,7 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     """
     if not SPACE.IF.s_configuration.connected:
       LOG_WARNING("cannot send ACK/NAK because TM link is not active", "SPACE")
-      return
+      return False
     if ackType == PUS.SERVICES.TC_ACK_ACCEPT_SUCC:
       pktMnemo = UTIL.SYS.s_configuration.TC_ACK_ACCEPT_SUCC_MNEMO
     elif ackType == PUS.SERVICES.TC_ACK_ACCEPT_FAIL:
@@ -168,10 +174,10 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
       pktMnemo = UTIL.SYS.s_configuration.TC_ACK_EXECUT_FAIL_MNEMO
     else:
       LOG_ERROR("invalid ackType for TC acknowledgement: " + str(ackType), "SPACE")
-      return
+      return False
     if pktMnemo == "None":
       LOG("no telemetry packet defined for acknowledgement(" + str(ackType) + ")", "SPACE")
-      return
+      return False
     # create the TM packet
     params =  "PUS_TYPE1_APID,PUS_TYPE1_SSC"
     values =  str(tcAPID)
@@ -183,9 +189,9 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     # check the TM packet
     if tmPacketData == None:
       LOG_ERROR("packet creation failed for this acknowledgement: " + str(ackType), "SPACE")
-      return
+      return False
     # send the TM packet
-    self.generateTMpacket(tmPacketData)
+    return self.generateTMpacket(tmPacketData)
   # ---------------------------------------------------------------------------
   def startCyclicTM(self):
     """
