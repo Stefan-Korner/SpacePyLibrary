@@ -18,6 +18,7 @@ import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import EGSE.EDEN
 import SCOE.EGSEserver, SCOE.EGSEgui
+import SCOS.ENV
 import SIM.SPACEgui
 import SPACE.DEF, SPACE.IF, SPACE.OBC, SPACE.TMGEN
 import UI.TKI

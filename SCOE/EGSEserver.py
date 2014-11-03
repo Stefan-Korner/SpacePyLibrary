@@ -62,6 +62,11 @@ class Server(EGSE.EDEN.Server, EGSE.IF.CCSlink):
     """(TC,SCOE) received: overloaded from EGSE.EDEN.Server"""
     tcPacketDu = CCSDS.PACKET.TCpacket(tcPacket)
     return SPACE.IF.s_onboardComputer.pushTCpacket(tcPacketDu)
+  # ---------------------------------------------------------------------------
+  def notifyCmdExec(self, message):
+    """(CMD,EXEC) received: overloaded from EGSE.EDEN.Server"""
+    LOG_INFO("notifyCmdExec: message = " + message)
+    self.sendCmdAnsw("this is a (CMD,ANSW) message")
 
 ####################
 # global variables #

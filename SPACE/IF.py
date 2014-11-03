@@ -104,11 +104,12 @@ class TMparamToPkt(object):
 class TMparamExtraction(object):
   """Defines a dedicated parameter extraction in a packet"""
   # ---------------------------------------------------------------------------
-  def __init__(self, bitPos, bitWidth, name, descr, piValue=False):
+  def __init__(self, bitPos, bitWidth, name, descr, isInteger, piValue=False):
     self.bitPos = bitPos
     self.bitWidth = bitWidth
     self.name = name
     self.descr = descr
+    self.isInteger = isInteger
     self.piValue = piValue
   # ---------------------------------------------------------------------------
   def __cmp__(self, other):
@@ -178,13 +179,14 @@ class TMpktDef(object):
     paramToPacket = self.paramLinks[paramName]
     paramDef = paramToPacket.paramDef
     paramDescr = paramDef.paramDescr
+    isInteger = paramDef.isInteger()
     pktSPID = paramToPacket.pktSPID
     locOffby = paramToPacket.locOffby
     locOffbi =  paramToPacket.locOffbi
     locNbocc = paramToPacket.locNbocc
     locLgocc = paramToPacket.locLgocc
     try:
-      bitWidth = paramToPacket.paramDef.getBitWidth()
+      bitWidth = paramDef.getBitWidth()
     except Exception, ex:
       LOG_WARNING("param " + paramName + ": " + str(ex) + " ---> ignored", "SPACE")
       return None
@@ -193,7 +195,7 @@ class TMpktDef(object):
     nameElements = paramName.split("#")
     if len(nameElements) == 1:
       # normal parameter
-      paramExtraction = TMparamExtraction(bitStartPos, bitWidth, paramName, paramDescr)
+      paramExtraction = TMparamExtraction(bitStartPos, bitWidth, paramName, paramDescr, isInteger)
     else:
       # supercommutated parameter
       commutation = int(nameElements[1])
@@ -201,7 +203,7 @@ class TMpktDef(object):
         LOG_WARNING("param " + nameElements[0] + " has invalid commutation " + nameElements[1], "SPACE")
         return None
       bitPos = bitStartPos + (locLgocc * (commutation - 1))
-      paramExtraction = TMparamExtraction(bitPos, bitWidth, fieldName, paramDescr)
+      paramExtraction = TMparamExtraction(bitPos, bitWidth, fieldName, paramDescr, isInteger)
     return paramExtraction
   # ---------------------------------------------------------------------------
   def getParamExtractions(self):
@@ -215,7 +217,7 @@ class TMpktDef(object):
       pi1BitWidth = self.pktPI1wid
       pi1ValueName = self.pktName + "_PI1VAL"
       pi1ValueDescr = "PI1 Value"
-      paramExtraction = TMparamExtraction(pi1BitPos, pi1BitWidth, pi1ValueName, pi1ValueDescr, True)
+      paramExtraction = TMparamExtraction(pi1BitPos, pi1BitWidth, pi1ValueName, pi1ValueDescr, True, True)
       retVal.append(paramExtraction)
     pi2BitPos = None
     pi2BitWidth = None
@@ -227,12 +229,13 @@ class TMpktDef(object):
       else:
         pi2ValueName = self.pktName + "_PI2VAL"
         pi2ValueDescr = "PI2 Value"
-        paramExtraction = TMparamExtraction(pi2BitPos, pi2BitWidth, pi2ValueName, pi2ValueDescr, True)
+        paramExtraction = TMparamExtraction(pi2BitPos, pi2BitWidth, pi2ValueName, pi2ValueDescr, True, True)
         retVal.append(paramExtraction)
     # insert other parameters
     for paramName, paramToPacket in self.paramLinks.iteritems():
       paramDef = paramToPacket.paramDef
       paramDescr = paramDef.paramDescr
+      isInteger = paramDef.isInteger()
       pktSPID = paramToPacket.pktSPID
       locOffby = paramToPacket.locOffby
       locOffbi =  paramToPacket.locOffbi
@@ -240,7 +243,7 @@ class TMpktDef(object):
       locLgocc = paramToPacket.locLgocc
       # ignore exceptions in getBitWidth
       try:
-        bitWidth = paramToPacket.paramDef.getBitWidth()
+        bitWidth = paramDef.getBitWidth()
       except Exception, ex:
         LOG_WARNING("param " + paramName + ": " + str(ex) + " ---> ignored", "SPACE")
         continue
@@ -253,7 +256,7 @@ class TMpktDef(object):
         if self.rangeOverlap(pi2BitPos, pi2BitWidth, bitStartPos, bitWidth):
           LOG_WARNING("param " + paramName + " overlaps PI2 ---> ignored", "SPACE")
           continue
-        paramExtraction = TMparamExtraction(bitStartPos, bitWidth, paramName, paramDescr)
+        paramExtraction = TMparamExtraction(bitStartPos, bitWidth, paramName, paramDescr, isInteger)
         retVal.append(paramExtraction)
       else:
         # supercommutated parameter
@@ -266,7 +269,7 @@ class TMpktDef(object):
           if self.rangeOverlap(pi2BitPos, pi2BitWidth, bitPos, bitWidth):
             LOG_WARNING("param " + fieldName + " overlaps PI2 ---> ignored", "SPACE")
             continue
-          paramExtraction = TMparamExtraction(bitPos, bitWidth, fieldName, paramDescr)
+          paramExtraction = TMparamExtraction(bitPos, bitWidth, fieldName, paramDescr, isInteger)
           retVal.append(paramExtraction)
     retVal.sort()
     return retVal

@@ -133,7 +133,13 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
         # apply the parameter value
         bitPos = paramExtraction.bitPos
         bitLength = paramExtraction.bitWidth
-        packet.setBits(bitPos, bitLength, paramValue)
+        isInteger = paramExtraction.isInteger
+        if isInteger:
+          packet.setBits(bitPos, bitLength, paramValue)
+        else:
+          bytePos = bitPos / 8
+          byteLength = bitLength / 8
+          packet.setString(bytePos, byteLength, paramValue)
     # re-calculate the sequence counter (maintained per APID)
     if applicationProcessId in self.sequenceCounters:
       sequenceCounter = (self.sequenceCounters[applicationProcessId] + 1) % 16384
