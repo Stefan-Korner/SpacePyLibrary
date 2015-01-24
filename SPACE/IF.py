@@ -38,6 +38,7 @@ class Configuration(object):
     self.tmPacketData = None
     self.sendCyclic = False
     self.cyclicPeriodMs = int(UTIL.SYS.s_configuration.TM_CYCLIC_PERIOD_MS)
+    self.pendingTMpackets = []
     self.obcAck1 = ENABLE_ACK
     self.obcAck2 = ENABLE_ACK
     self.obcAck3 = ENABLE_ACK
@@ -58,6 +59,7 @@ class Configuration(object):
       LOG("SPID = " + str(self.tmPacketData.pktSPID), "SPACE")
       LOG("Parameters and values = " + str(self.tmPacketData.parameterValuesList), "SPACE")
     LOG("Send cyclic TM = " + str(self.sendCyclic), "SPACE")
+    LOG("Pending TM packets= " + str(self.pendingTMpackets), "SPACE")
     LOG("TC Ack 1 = " + ACK_STRS[self.obcAck1], "SPACE")
     LOG("TC Ack 2 = " + ACK_STRS[self.obcAck2], "SPACE")
     LOG("TC Ack 3 = " + ACK_STRS[self.obcAck3], "SPACE")
@@ -568,6 +570,10 @@ class OnboardComputer(object):
     """generates a TC acknowledgement according to PUS service 1"""
     # shall return True for successful processing, otherwise False
     return True
+  # ---------------------------------------------------------------------------
+  def replayPackets(self, replayFileName):
+    """sends TM packet from a replay file"""
+    pass
   # ---------------------------------------------------------------------------
   def startCyclicTM(self):
     """start sending of cyclic TM"""

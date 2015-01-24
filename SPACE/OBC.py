@@ -193,6 +193,112 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     # send the TM packet
     return self.generateTMpacket(tmPacketData)
   # ---------------------------------------------------------------------------
+  def replayPackets(self, replayFileName):
+    """
+    sends TM packet from a replay file
+    implementation of SPACE.IF.OnboardComputer.replayPackets
+    """
+    LOG_WARNING("replayPackets(" + replayFileName + ")", "SPACE")
+    # read the TM packets file
+    try:
+      tmPacketsFile = open(replayFileName);
+    except:
+      LOG_ERROR("cannot read " + replayFileName, "SPACE")
+      return
+    fileContents = tmPacketsFile.readlines()
+    tmPacketsFile.close()
+    # load pending TM packets: parse the file
+    lineNr = 0
+    for line in fileContents:
+      lineNr += 1
+      # parse the line
+      tokens = line.split("(")
+      token0 = tokens[0].strip()
+      sleepVal = -1
+      pktMnemo = ""
+      params = ""
+      values = ""
+      if len(tokens) == 1:
+        if token0 == "":
+          # empty line
+          continue
+        if token0[0] == "#":
+          # comment
+          continue
+        # TM packet without parameters
+        pktMnemo = token0
+      else:
+        # remove a close brake from the reminder
+        token1 = tokens[1].split(")")[0].strip()
+        if token0 == "sleep":
+          # sleep statement
+          try:
+            sleepVal = int(token1)
+          except:
+            LOG_ERROR("syntax error in line " + str(lineNr) + " of " + replayFileName, "SPACE")
+            SPACE.IF.s_configuration.pendingTMpackets = []
+            return
+        else:
+          # TM packet with parameters
+          pktMnemo = token0
+          parmValueTokens = token1.split(",")
+          for paramValueToken in paramValueTokens:
+            paramValueSplit = paramValueToken.split("=")
+            if len(paramValueSplit) != 2:
+              LOG_ERROR("syntax error in line " + str(lineNr) + " of " + replayFileName, "SPACE")
+              SPACE.IF.s_configuration.pendingTMpackets = []
+              return
+            paramName = paramValueSplit[0].strip()
+            paramValue = paramValueSplit[1].strip()
+            if params == "":
+              params += paramName
+              values += paramValue
+            else:
+              params += "," + paramName
+              values += "," + paramValue
+      # line parsed
+      if sleepVal != -1:
+        # sleep statement
+        SPACE.IF.s_configuration.pendingTMpackets.append(sleepVal)
+      else:
+        # TM packet statement --> create the TM packet
+        tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemo,
+                                                                    params,
+                                                                    values)
+        # check the TM packet
+        if tmPacketData == None:
+          LOG_ERROR("error in line " + str(lineNr) + " of " + replayFileName, "SPACE")
+          SPACE.IF.s_configuration.pendingTMpackets = []
+          return
+        SPACE.IF.s_configuration.pendingTMpackets.append(tmPacketData)
+    # notify the GUI
+    UTIL.TASK.s_processingTask.notifyGUItask("UPDATE_REPLAY")
+    # start replay with sending of the first TM packet
+    self.sendReplayPacket()
+  # ---------------------------------------------------------------------------
+  def sendReplayPacket(self):
+    """timer triggered"""
+    while len(SPACE.IF.s_configuration.pendingTMpackets) > 0:
+      # get the next pending replay packet
+      pendingItem = SPACE.IF.s_configuration.pendingTMpackets.pop(0)
+      try:
+        pktMnemo = pendingItem.pktName
+        LOG("sendPacket " + pktMnemo, "SPACE")
+        # send the TM packet
+        self.generateTMpacket(pendingItem)
+      except:
+        sleepValue = pendingItem
+        LOG("sleep(" + str(sleepValue) + ")", "SPACE")
+        UTIL.TASK.s_processingTask.createTimeHandler(sleepValue,
+                                                     self.sendReplayPacket)
+        # notify the GUI
+        UTIL.TASK.s_processingTask.notifyGUItask("UPDATE_REPLAY")
+        return
+    # cyclic sending terminated
+    LOG_WARNING("replay finished", "SPACE")
+    # notify the GUI
+    UTIL.TASK.s_processingTask.notifyGUItask("UPDATE_REPLAY")
+  # ---------------------------------------------------------------------------
   def startCyclicTM(self):
     """
     start sending of cyclic:

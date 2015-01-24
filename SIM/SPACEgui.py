@@ -13,8 +13,9 @@
 #******************************************************************************
 # Space Segment Simulation GUI                                                *
 #******************************************************************************
-import Tkinter, tkSimpleDialog
+import Tkinter, tkFileDialog, tkSimpleDialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import SCOS.ENV
 import SPACE.IF
 import UI.TKI
 
@@ -195,6 +196,7 @@ class GUIview(UI.TKI.GUIwinView):
       [["PKT", self.setPacketDataCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, Tkinter.DISABLED],
        ["SND", self.sendPacketCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, Tkinter.DISABLED],
        ["ACK", self.sendAckCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, Tkinter.DISABLED],
+       ["RPLY", self.replayPacketsCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, Tkinter.DISABLED],
        ["LIST", self.listPacketsCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
        ["GEN", self.generateCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG]])
     self.appGrid(self.menuButtons,
@@ -229,13 +231,15 @@ class GUIview(UI.TKI.GUIwinView):
     self.spidField = UI.TKI.ValueField(self, row=4, label="SPID:")
     # parameter values
     self.parameterValuesField = UI.TKI.ValueField(self, row=5, label="Parameters and values:")
+    # replay TM packets
+    self.replayTMpacketsField = UI.TKI.ValueField(self, row=6, label="Replay TM packets:")
     # log messages
     self.messageLogger = UI.TKI.MessageLogger(self, "SPACE")
-    self.appGrid(self.messageLogger, row=6, columnspan=2)
+    self.appGrid(self.messageLogger, row=7, columnspan=2)
     # message line
     self.messageline = Tkinter.Message(self, relief=Tkinter.GROOVE)
     self.appGrid(self.messageline,
-                 row=7,
+                 row=8,
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,
@@ -266,6 +270,7 @@ class GUIview(UI.TKI.GUIwinView):
     self.addCommandMenuItem(label="OBCenableNak4", command=self.obcEnableNak4Callback)
     self.addCommandMenuItem(label="OBCdisableAck4", command=self.obcDisableAck4Callback)
     self.addCommandMenuItem(label="SendAck", command=self.sendAckCallback, enabled=False)
+    self.addCommandMenuItem(label="ReplayPackets", command=self.replayPacketsCallback, enabled=False)
     self.addCommandMenuItem(label="ListPackets", command=self.listPacketsCallback)
     self.addCommandMenuItem(label="Generate", command=self.generateCallback)
   # ---------------------------------------------------------------------------
@@ -411,6 +416,13 @@ class GUIview(UI.TKI.GUIwinView):
       subtypeStr = str(dialog.result[2] + 1)
       self.notifyModelTask(["SENDACK", apidStr, sscStr, subtypeStr])
   # ---------------------------------------------------------------------------
+  def replayPacketsCallback(self):
+    """Called when the ReplayPackets menu entry is selected"""	
+    fileName = tkFileDialog.askopenfilename(title="Open TM Packet Replay File",
+                                            initialdir=SCOS.ENV.s_environment.tmFilesDir())
+    if fileName != "":
+      self.notifyModelTask(["REPLAYPACKETS", fileName])
+  # ---------------------------------------------------------------------------
   def listPacketsCallback(self):
     """Called when the ListPackets menu entry is selected"""
     # disable the button during generation,
@@ -433,6 +445,8 @@ class GUIview(UI.TKI.GUIwinView):
       self.tmConnectedNotify()
     elif status == "PACKETDATA_SET":
       self.packetDataSetNotify()
+    elif status == "UPDATE_REPLAY":
+      self.updateReplayNotify()
     elif status == "ENABLED_CYCLIC":
       self.enabledCyclicNotify()
     elif status == "DISABLED_CYCLIC":
@@ -467,8 +481,10 @@ class GUIview(UI.TKI.GUIwinView):
     self.enableCommandMenuItem("SetPacketData")
     self.enableCommandMenuItem("EnableCyclic")
     self.enableCommandMenuItem("SendAck")
+    self.enableCommandMenuItem("ReplayPackets")
     self.menuButtons.setState("PKT", Tkinter.NORMAL)
     self.menuButtons.setState("ACK", Tkinter.NORMAL)
+    self.menuButtons.setState("RPLY", Tkinter.NORMAL)
     self.updateTMstatusField()
   # ---------------------------------------------------------------------------
   def packetDataSetNotify(self):
@@ -484,6 +500,34 @@ class GUIview(UI.TKI.GUIwinView):
         nameValueStr += ", "
       nameValueStr += nameValue[0] + "=" + nameValue[1]
     self.parameterValuesField.set(nameValueStr)
+  # ---------------------------------------------------------------------------
+  def updateReplayNotify(self):
+    """Called when the replay state has changed"""
+    nrPackets = len(SPACE.IF.s_configuration.pendingTMpackets)
+    if nrPackets == 0:
+      txt = ""
+    else:
+      txt = str(nrPackets) + ": "
+      # entry 0
+      try:
+        txt += SPACE.IF.s_configuration.pendingTMpackets[0].pktName
+      except:
+        txt += "sleep(" + str(SPACE.IF.s_configuration.pendingTMpackets[0]) + ")"
+      # entry 1
+      if nrPackets > 1:
+        try:
+          txt += ", " + SPACE.IF.s_configuration.pendingTMpackets[1].pktName
+        except:
+          txt += ", sleep(" + str(SPACE.IF.s_configuration.pendingTMpackets[1]) + ")"
+      # entry 2
+      if nrPackets > 2:
+        try:
+          txt += ", " + SPACE.IF.s_configuration.pendingTMpackets[2].pktName
+        except:
+          txt += ", sleep(" + str(SPACE.IF.s_configuration.pendingTMpackets[2]) + ")"
+      if nrPackets > 3:
+        txt += ", ..."
+    self.replayTMpacketsField.set(txt)
   # ---------------------------------------------------------------------------
   def enabledCyclicNotify(self):
     """Called when the enableCyclic function is succsssfully processed"""

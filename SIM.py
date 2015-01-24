@@ -50,6 +50,9 @@ SYS_CONFIGURATION = [
   ["TC_TT_PKT_BYTE_OFFSET", "<<shall be passed as environment variable>>"],
   ["TM_CYCLIC_MNEMO", "<<shall be passed as environment variable>>"],
   ["TM_CYCLIC_PERIOD_MS", "5000"],
+  ["TM_TT_TIME_BYTE_OFFSET", "10"],
+  ["TM_TT_COARSE_TIME_BYTE_SIZE", "4"],
+  ["TM_TT_FINE_TIME_BYTE_SIZE", "4"],
   ["TCO_MISSION_EPOCH_STR", "<<shall be passed as environment variable>>"],
   ["SYS_COLOR_LOG", "1"],
   ["SYS_APP_MNEMO", "SIM"],
@@ -146,6 +149,8 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       retStatus = self.obcDisableAck4Cmd(argv)
     elif (cmd == "A") or (cmd == "SENDACK"):
       retStatus = self.sendAckCmd(argv)
+    elif (cmd == "RP") or (cmd == "REPLAYPACKETS"):
+      retStatus = self.replayPacketsCmd(argv)
     elif (cmd == "L") or (cmd == "LISTPACKETS"):
       retStatus = self.listPacketsCmd(argv)
     elif (cmd == "G") or (cmd == "GENERATE"):
@@ -234,8 +239,9 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("n4 | obcEnableNak4.......enables autom. sending of NAK4 for TCs", "SPACE")
     LOG("d4 | obcDisableAck4......disables autom. sending of ACK4 for TCs", "SPACE")
     LOG("a  | sendAck <apid> <ssc> <stype> sends a TC acknowledgement", "SPACE")
+    LOG("rp | replayPackets <replayFile> replays TM packets", "SPACE")
     LOG("l  | listPackets.........lists available packets", "SPACE")
-    LOG("g  | generate............generates the testdata.sim file in testbin directory", "SPACE")
+    LOG("g  | generate............generates the testdata.txt file in testbin directory", "SPACE")
     LOG_INFO("Available onboard queue commands:", "OBQ")
     LOG("", "OBQ")
     LOG("x  | exit ...............terminates client connection (only for TCP/IP clients)", "OBQ")
@@ -717,6 +723,23 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     SPACE.IF.s_onboardComputer.generateAck(apid, ssc, ackType);
     return True
   # ---------------------------------------------------------------------------
+  def replayPacketsCmd(self, argv):
+    """Decoded replayPackets command"""
+    self.logMethod("replayPacketsCmd", "SPACE")
+
+    # consistency check
+    if not SPACE.IF.s_configuration.connected:
+      LOG_WARNING("TM connection not connected", "SPACE")
+      return False
+    if len(argv) != 2:
+      LOG_WARNING("invalid parameters passed for replay packets", "SPACE")
+      return False
+
+    # extract the arguments
+    replayFileName = argv[1]
+    SPACE.IF.s_onboardComputer.replayPackets(replayFileName);
+    return True
+  # ---------------------------------------------------------------------------
   def listPacketsCmd(self, argv):
     """Decoded listPackets command"""
     self.logMethod("listPacketsCmd", "SPACE")
@@ -934,6 +957,7 @@ def sendPacket(*argv): UTIL.TASK.s_processingTask.sendPacketCmd(("", ) + argv)
 def enableCyclic(*argv): UTIL.TASK.s_processingTask.enableCyclicCmd(("", ) + argv)
 def disableCyclic(*argv): UTIL.TASK.s_processingTask.disableCyclicCmd(("", ) + argv)
 def sendAck(*argv): UTIL.TASK.s_processingTask.sendAckCmd(("", ) + argv)
+def replayPackets(*argv): UTIL.TASK.s_processingTask.replayPacketsCmd(("", ) + argv)
 def obcEnableAck1(*argv): UTIL.TASK.s_processingTask.obcEnableAck1Cmd(("", ) + argv)
 def obcEnableNak1(*argv): UTIL.TASK.s_processingTask.obcEnableNak1Cmd(("", ) + argv)
 def obcDisableAck1(*argv): UTIL.TASK.s_processingTask.obcDisableAck1Cmd(("", ) + argv)

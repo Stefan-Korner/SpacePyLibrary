@@ -35,14 +35,19 @@ class TMframeDefaults(object):
     self.spacecraftId = SCOS.ENV.s_environment.getSpacecraftID()
     self.virtualChannelId = 0
     self.operationalControlField = 1
-    self.secondaryHeaderFlag = 0
+    if SCOS.ENV.s_environment.transferFrameHasSecondaryHeader():
+      self.secondaryHeaderFlag = 1
+      self.secondaryHeaderSize = \
+        SCOS.ENV.TRANSFER_FRAME_SECONDARY_HEADER_SIZE - 1
+    else:
+      self.secondaryHeaderFlag = 0
+      self.secondaryHeaderSize = 0
     self.synchronisationFlag = 0
     self.packetOrderFlag = 0
     self.segmentLengthId = 3
     self.firstHeaderPointer = 0
     # secondary header defaults
     self.secondaryHeaderVersionNr = 0
-    self.secondaryHeaderSize = 0
     self.virtualChannelFCountHigh = 0
 
 # =============================================================================

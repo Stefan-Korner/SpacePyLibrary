@@ -18,7 +18,7 @@ import CCSDS.PACKET
 import PUS.PACKET
 import SCOS.ENV
 import SPACE.IF
-import UTIL.SYS
+import UTIL.SYS, UTIL.TIME
 
 ###########
 # classes #
@@ -45,6 +45,9 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
     self.packetDefaults = TMpacketDefaults()
     self.tcAckAPIDparamByteOffset = int(UTIL.SYS.s_configuration.TC_ACK_APID_PARAM_BYTE_OFFSET)
     self.tcAckSSCparamByteOffset = int(UTIL.SYS.s_configuration.TC_ACK_SSC_PARAM_BYTE_OFFSET)
+    self.tmTTtimeByteOffset = int(UTIL.SYS.s_configuration.TM_TT_TIME_BYTE_OFFSET)
+    self.tmTTcoarseTimeByteSize = int(UTIL.SYS.s_configuration.TM_TT_COARSE_TIME_BYTE_SIZE)
+    self.tmTTfineTimeByteSize = int(UTIL.SYS.s_configuration.TM_TT_FINE_TIME_BYTE_SIZE)
   # ---------------------------------------------------------------------------
   def getIdlePacket(self, packetSize):
     """
@@ -140,6 +143,29 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
           bytePos = bitPos / 8
           byteLength = bitLength / 8
           packet.setString(bytePos, byteLength, paramValue)
+    # re-calculate the time stamp
+    if tmPktDef.pktHasDFhdr and self.tmTTtimeByteOffset > 0:
+      timeStamp = UTIL.TIME.getActualTime()
+      # TODO: time correlation
+      coarseTime = int(timeStamp)
+      packet.setUnsigned(self.tmTTtimeByteOffset,
+                         self.tmTTcoarseTimeByteSize,
+                         coarseTime)
+      fimeTimeByteOffset = self.tmTTtimeByteOffset + \
+                           self.tmTTcoarseTimeByteSize
+      fineTime = timeStamp - coarseTime
+      if self.tmTTfineTimeByteSize == 1:
+        fineTimeVal = int(fineTime * 0x100)
+        packet.setUnsigned(fimeTimeByteOffset, 1, fineTimeVal)
+      elif self.tmTTfineTimeByteSize == 2:
+        fineTimeVal = int(fineTime * 0x10000)
+        packet.setUnsigned(fimeTimeByteOffset, 2, fineTimeVal)
+      elif self.tmTTfineTimeByteSize == 3:
+        fineTimeVal = int(fineTime * 0x1000000)
+        packet.setUnsigned(fimeTimeByteOffset, 3, fineTimeVal)
+      elif self.tmTTfineTimeByteSize == 4:
+        fineTimeVal = int(fineTime * 0x100000000)
+        packet.setUnsigned(fimeTimeByteOffset, 4, fineTimeVal)
     # re-calculate the sequence counter (maintained per APID)
     if applicationProcessId in self.sequenceCounters:
       sequenceCounter = (self.sequenceCounters[applicationProcessId] + 1) % 16384

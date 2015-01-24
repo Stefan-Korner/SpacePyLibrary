@@ -27,6 +27,9 @@ VPD_DATA_SPACE = 4
 TPKT_PKT_IDLE_APID = 2047
 TPKT_PKT_IDLE_SPID = 5071
 TPKT_PKT_IDLE_FRAME_SPID = 5074
+# default value from the CCSDS standard
+TRANSFER_FRAME_DEFAULT_SIZE = 1115
+TRANSFER_FRAME_SECONDARY_HEADER_SIZE = 4
 
 ###########
 # classes #
@@ -84,6 +87,8 @@ class Environment(object):
         # line found
         self.spacecraftID = int(tokens[0])
         self.transferFrameSize = int(tokens[6])
+        if self.transferFrameSize == -1:
+          self.transferFrameSize = TRANSFER_FRAME_DEFAULT_SIZE
         self.transferFrameHasSecondaryHdr = \
           (tokens[7] == "y" or tokens[7] == "Y")
         break
@@ -94,6 +99,10 @@ class Environment(object):
   def mibDir(self):
     """Get the MIB directory"""
     return self.runtimeRoot + "/data/ASCII"
+  # ---------------------------------------------------------------------------
+  def tmFilesDir(self):
+    """Get the TM replay files directory"""
+    return self.runtimeRoot + "/tmFiles"
   # ---------------------------------------------------------------------------
   def definitionFileName(self):
     """Get the testdata.sim file name"""
@@ -112,7 +121,7 @@ class Environment(object):
     return self.transferFrameSize
   # ---------------------------------------------------------------------------
   def transferFrameHasSecondaryHeader(self):
-    """Returns of the transfer frame has a secondary header"""
+    """Returns if the transfer frame has a secondary header"""
     return self.transferFrameHasSecondaryHdr
 
 ####################
