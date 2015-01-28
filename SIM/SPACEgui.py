@@ -420,7 +420,7 @@ class GUIview(UI.TKI.GUIwinView):
     """Called when the ReplayPackets menu entry is selected"""	
     fileName = tkFileDialog.askopenfilename(title="Open TM Packet Replay File",
                                             initialdir=SCOS.ENV.s_environment.tmFilesDir())
-    if fileName != "":
+    if fileName != "" and fileName != ():
       self.notifyModelTask(["REPLAYPACKETS", fileName])
   # ---------------------------------------------------------------------------
   def listPacketsCallback(self):

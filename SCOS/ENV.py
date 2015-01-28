@@ -102,7 +102,7 @@ class Environment(object):
   # ---------------------------------------------------------------------------
   def tmFilesDir(self):
     """Get the TM replay files directory"""
-    return self.runtimeRoot + "/tmFiles"
+    return self.runtimeRoot + "/data/tmFiles"
   # ---------------------------------------------------------------------------
   def definitionFileName(self):
     """Get the testdata.sim file name"""
