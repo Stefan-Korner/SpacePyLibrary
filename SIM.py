@@ -30,6 +30,7 @@ import UTIL.SYS, UTIL.TASK, UTIL.TIME
 # constants #
 #############
 SYS_CONFIGURATION = [
+  ["HOST", "192.168.1.100"],
   ["NCTRS_ADMIN_SERVER_PORT", "13006"],
   ["NCTRS_TC_SERVER_PORT", "13007"],
   ["NCTRS_TM_SERVER_PORT", "2502"],
@@ -1049,7 +1050,7 @@ else:
 # register the TCP/IP server socket for remote control
 if requestHandler.portNr != 0:
   print "register connect port..."
-  if not requestHandler.openConnectPort():
+  if not requestHandler.openConnectPort(UTIL.SYS.s_configuration.HOST):
     sys.exit(-1)
   connectSocket = requestHandler.connectSocket
   modelTask.createFileHandler(connectSocket, requestHandler.tcpConnectCallback)
@@ -1068,11 +1069,11 @@ LINK.TMGEN.init()
 
 # create the NCTRS servers
 LOG("Open the NCTRS TM sender (server)")
-SIM.TMserver.createTMsender()
+SIM.TMserver.createTMsender(UTIL.SYS.s_configuration.HOST)
 LOG("Open the NCTRS TC receiver (server)")
-SIM.TCserver.createTCreceiver()
+SIM.TCserver.createTCreceiver(UTIL.SYS.s_configuration.HOST)
 LOG("Open the NCTRS admin message sender (server)")
-SIM.AdminServer.createAdminSender()
+SIM.AdminServer.createAdminSender(UTIL.SYS.s_configuration.HOST)
 
 # load the definition data
 print "load definition data (take some time) ..."

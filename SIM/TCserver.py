@@ -85,11 +85,11 @@ s_tcReceiver = None
 #############
 # functions to encapsulate access to s_tcReceiver
 # -----------------------------------------------------------------------------
-def createTCreceiver():
+def createTCreceiver(hostName=None):
   """create the NCTRS TC receiver"""
   global s_tcReceiver
   s_tcReceiver = NCTRStcReceiver(
     portNr=int(UTIL.SYS.s_configuration.NCTRS_TC_SERVER_PORT),
     groundstationId=int(UTIL.SYS.s_configuration.DEF_GROUND_STATION_ID))
-  if not s_tcReceiver.openConnectPort():
+  if not s_tcReceiver.openConnectPort(hostName):
     sys.exit(-1)

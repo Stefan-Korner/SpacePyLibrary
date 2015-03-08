@@ -54,12 +54,12 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
 #############
 # functions #
 #############
-def createTMsender():
+def createTMsender(hostName=None):
   """create the NCTRS TM sender"""
   nctrsTMfields = GRND.NCTRS.NCTRStmFields()
   nctrsTMfields.spacecraftId = int(UTIL.SYS.s_configuration.SPACECRAFT_ID)
   GRND.IF.s_tmMcsLink = TMsender(
     portNr=int(UTIL.SYS.s_configuration.NCTRS_TM_SERVER_PORT),
     nctrsTMfields=nctrsTMfields)
-  if not GRND.IF.s_tmMcsLink.openConnectPort():
+  if not GRND.IF.s_tmMcsLink.openConnectPort(hostName):
     sys.exit(-1)

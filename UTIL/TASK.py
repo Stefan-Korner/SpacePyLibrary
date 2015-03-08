@@ -443,7 +443,7 @@ class RequestHandler(ConsoleHandler):
     if logFileName != None:
       UTIL.SYS.s_logger.enableFileLogging(logFileName)
   # ---------------------------------------------------------------------------
-  def openConnectPort(self):
+  def openConnectPort(self, hostName=None):
     """Open the test driver TCP/IP connect port (TECO connect port)"""
     # check if the port is already open
     if self.connectSocket != None:
@@ -476,7 +476,8 @@ class RequestHandler(ConsoleHandler):
       return False
 
     # bind the server socket
-    hostName = socket.gethostname()
+    if hostName == None:
+      hostName = socket.gethostname()
     try:
       connectSocket.bind((hostName, self.portNr))
     except:

@@ -55,13 +55,13 @@ s_adminSender = None
 #############
 # functions to encapsulate access to s_adminSender
 # -----------------------------------------------------------------------------
-def createAdminSender():
+def createAdminSender(hostName=None):
   """create the NCTRS admin message sender"""
   global s_adminSender
   s_adminSender = AdminSender(
     portNr=int(UTIL.SYS.s_configuration.NCTRS_ADMIN_SERVER_PORT),
     groundstationName=UTIL.SYS.s_configuration.GROUND_STATION_NAME)
-  if not s_adminSender.openConnectPort():
+  if not s_adminSender.openConnectPort(hostName):
     sys.exit(-1)
 # -----------------------------------------------------------------------------
 def sendAdminMessageTC(eventId, adCounter=0, vcId=0, mapId=0):

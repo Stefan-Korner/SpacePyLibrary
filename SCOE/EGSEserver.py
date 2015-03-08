@@ -79,10 +79,10 @@ s_server = None
 #############
 # functions to encapsulate access to s_server
 # -----------------------------------------------------------------------------
-def createEGSEserver():
+def createEGSEserver(hostName=None):
   """create the EGSE server"""
   global s_server
   s_server = Server(portNr=int(UTIL.SYS.s_configuration.EDEN_SERVER_PORT))
   EGSE.IF.s_ccsLink = s_server
-  if not s_server.openConnectPort(UTIL.SYS.s_configuration.HOST):
+  if not s_server.openConnectPort(hostName):
     sys.exit(-1)

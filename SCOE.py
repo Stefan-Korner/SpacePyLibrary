@@ -618,7 +618,7 @@ else:
 # register the TCP/IP server socket for remote control
 if requestHandler.portNr != 0:
   print "register connect port..."
-  if not requestHandler.openConnectPort():
+  if not requestHandler.openConnectPort(UTIL.SYS.s_configuration.HOST):
     sys.exit(-1)
   connectSocket = requestHandler.connectSocket
   modelTask.createFileHandler(connectSocket, requestHandler.tcpConnectCallback)
@@ -634,7 +634,7 @@ SPACE.TMGEN.init()
 
 # create the EGSE server
 LOG("Open the EGSE server")
-SCOE.EGSEserver.createEGSEserver()
+SCOE.EGSEserver.createEGSEserver(UTIL.SYS.s_configuration.HOST)
 
 # load the definition data
 print "load definition data (take some time) ..."
