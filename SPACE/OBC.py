@@ -241,7 +241,7 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
         else:
           # TM packet with parameters
           pktMnemo = token0
-          parmValueTokens = token1.split(",")
+          paramValueTokens = token1.split(",")
           for paramValueToken in paramValueTokens:
             paramValueSplit = paramValueToken.split("=")
             if len(paramValueSplit) != 2:
