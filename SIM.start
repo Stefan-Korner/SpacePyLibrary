@@ -14,7 +14,7 @@
 #******************************************************************************
 # Start scrip for the SIM simulator.                                          *
 #******************************************************************************
-setenv HOST realsvm1scos
+setenv HOST 192.168.1.100
 setenv NCTRS_ADMIN_SERVER_PORT 32010
 setenv NCTRS_TC_SERVER_PORT 32009
 setenv NCTRS_TM_SERVER_PORT 22104
@@ -37,10 +37,7 @@ setenv TM_TT_COARSE_TIME_BYTE_SIZE 4
 setenv TM_TT_FINE_TIME_BYTE_SIZE 3
 setenv TCO_MISSION_EPOCH_STR "1970.001.00.00.00.000000"
 setenv SYS_COLOR_LOG 1
-#setenv scosii_homedir ${HOME}/SpacePyLibrary/scosii_homedir
-setenv scosii_homedir ${HOME}/1
-#setenv PYTHON python
-setenv PYTHON /opt/ActivePython-2.7/bin/python
-setenv PYTHONPATH ${HOME}/SpacePyLibrary:${HOME}/SpacePyLibrary/UnitTest
-unsetenv PYTHONHOME
+setenv scosii_homedir ${HOME}/Python/SpacePyLibrary/scosii_homedir
+setenv PYTHON python
+setenv PYTHONPATH ${HOME}/Python/SpacePyLibrary:${HOME}/Python/SpacePyLibrary/UnitTest
 ${PYTHON} SIM.py dummy
