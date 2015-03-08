@@ -202,7 +202,7 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     useSPIDasKey = (UTIL.SYS.s_configuration.TM_REPLAY_KEY == "SPID") 
     # read the TM packets file
     try:
-      tmPacketsFile = open(replayFileName);
+      tmPacketsFile = open(replayFileName)
     except:
       LOG_ERROR("cannot read " + replayFileName, "SPACE")
       return
@@ -228,7 +228,16 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
           # comment
           continue
         # TM packet without parameters
-        pktMnemo = token0
+        if useSPIDasKey:
+          try:
+            pktSPID = int(token0)
+          except:
+            LOG_ERROR("syntax error in line " + str(lineNr) + " of " + replayFileName, "SPACE")
+            SPACE.IF.s_configuration.pendingTMpackets = []
+            return
+          pktMnemo = "?"
+        else:
+          pktMnemo = token0
       else:
         # remove a close brake from the reminder
         token1 = tokens[1].split(")")[0].strip()

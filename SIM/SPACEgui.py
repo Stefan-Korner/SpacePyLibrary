@@ -276,9 +276,6 @@ class GUIview(UI.TKI.GUIwinView):
   # ---------------------------------------------------------------------------
   def setPacketDataCallback(self):
     """Called when the SetPacketData menu entry is selected"""
-    if not SPACE.IF.s_configuration.connected:
-      LOG_ERROR("TM connection not connected", "SPACE")
-      return
     # do the dialog
     dialog = TMpacketBrowser(self,
       title="Set Packet Data Dialog",
@@ -417,7 +414,7 @@ class GUIview(UI.TKI.GUIwinView):
       self.notifyModelTask(["SENDACK", apidStr, sscStr, subtypeStr])
   # ---------------------------------------------------------------------------
   def replayPacketsCallback(self):
-    """Called when the ReplayPackets menu entry is selected"""	
+    """Called when the ReplayPackets menu entry is selected"""
     fileName = tkFileDialog.askopenfilename(title="Open TM Packet Replay File",
                                             initialdir=SCOS.ENV.s_environment.tmFilesDir())
     if fileName != "" and fileName != ():
@@ -443,6 +440,8 @@ class GUIview(UI.TKI.GUIwinView):
     """Generic callback when something changes in the model"""
     if status == "TM_CONNECTED":
       self.tmConnectedNotify()
+    elif status == "TM_RECORDING":
+      self.tmRecordingNotify()
     elif status == "PACKETDATA_SET":
       self.packetDataSetNotify()
     elif status == "UPDATE_REPLAY":
@@ -475,6 +474,10 @@ class GUIview(UI.TKI.GUIwinView):
       self.obcEnabledNak4Notify()
     elif status == "OBC_DISABLED_ACK4":
       self.obcDisabledAck4Notify()
+    elif status == "FRAME_REC_STARTED":
+      self.frameRecStarted()
+    elif status == "FRAME_REC_STOPPED":
+      self.frameRecStopped()
   # ---------------------------------------------------------------------------
   def tmConnectedNotify(self):
     """Called when the TM connect function is succsssfully processed"""
@@ -627,6 +630,35 @@ class GUIview(UI.TKI.GUIwinView):
     self.disableCommandMenuItem("OBCdisableAck4")
     self.checkButtons.setButtonPressed("ACK4", False)
     self.checkButtons.setButtonPressed("NAK4", False)
+  # ---------------------------------------------------------------------------
+  def frameRecStarted(self):
+    """Called when the recordFrames function is succsssfully processed"""
+    self.enableCommandMenuItem("SetPacketData")
+    self.enableCommandMenuItem("EnableCyclic")
+    self.enableCommandMenuItem("SendAck")
+    self.enableCommandMenuItem("ReplayPackets")
+    self.menuButtons.setState("PKT", Tkinter.NORMAL)
+    self.menuButtons.setState("ACK", Tkinter.NORMAL)
+    self.menuButtons.setState("RPLY", Tkinter.NORMAL)
+  # ---------------------------------------------------------------------------
+  def frameRecStopped(self):
+    """Called when the stopFrameRecorder function is succsssfully processed"""
+    if SPACE.IF.s_configuration.connected:
+      self.enableCommandMenuItem("SetPacketData")
+      self.enableCommandMenuItem("EnableCyclic")
+      self.enableCommandMenuItem("SendAck")
+      self.enableCommandMenuItem("ReplayPackets")
+      self.menuButtons.setState("PKT", Tkinter.NORMAL)
+      self.menuButtons.setState("ACK", Tkinter.NORMAL)
+      self.menuButtons.setState("RPLY", Tkinter.NORMAL)
+    else:
+      self.disableCommandMenuItem("SetPacketData")
+      self.disableCommandMenuItem("EnableCyclic")
+      self.disableCommandMenuItem("SendAck")
+      self.disableCommandMenuItem("ReplayPackets")
+      self.menuButtons.setState("PKT", Tkinter.DISABLED)
+      self.menuButtons.setState("ACK", Tkinter.DISABLED)
+      self.menuButtons.setState("RPLY", Tkinter.DISABLED)
   # ---------------------------------------------------------------------------
   def updateTMstatusField(self):
     """updated the TM status field depending on the SPACE.IF.s_configuration"""

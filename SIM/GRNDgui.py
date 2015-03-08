@@ -13,9 +13,10 @@
 #******************************************************************************
 # Ground Segment Simulation GUI                                               *
 #******************************************************************************
-import Tkinter
+import Tkinter, tkFileDialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import GRND.IF
+import SCOS.ENV
 import UI.TKI
 
 #############
@@ -40,7 +41,9 @@ class GUIview(UI.TKI.GUIwinView):
     UI.TKI.GUIwinView.__init__(self, master, "GRND", "Ground Segment")
     # menu buttons
     self.menuButtons = UI.TKI.MenuButtons(self,
-      [["AD-I", self.initialiseADcallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG]])
+      [["AD-I", self.initialiseADcallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
+       ["REC+", self.recordFramesCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
+       ["REC-", self.stopFrameRecorderCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, Tkinter.DISABLED]])
     self.appGrid(self.menuButtons,
                  row=0,
                  columnspan=2,
@@ -106,6 +109,8 @@ class GUIview(UI.TKI.GUIwinView):
     self.addCommandMenuItem(label="GRNDenableAck2", command=self.grndEnableAck2Callback, enabled=False)
     self.addCommandMenuItem(label="GRNDenableNak2", command=self.grndEnableNak2Callback)
     self.addCommandMenuItem(label="GRNDdisableAck2", command=self.grndDisableAck2Callback)
+    self.addCommandMenuItem(label="RecordFrames", command=self.recordFramesCallback)
+    self.addCommandMenuItem(label="StopFrameRecorder", command=self.stopFrameRecorderCallback, enabled=False)
   # ---------------------------------------------------------------------------
   def initialiseADcallback(self):
     """Called when the InitialiseAD menu entry is selected"""
@@ -155,6 +160,19 @@ class GUIview(UI.TKI.GUIwinView):
     else:
       self.notifyModelTask(["GRNDDISABLEACK2"])
   # ---------------------------------------------------------------------------
+  def recordFramesCallback(self):
+    """Called when the RecordFrames menu entry is selected"""
+
+
+    fileName = tkFileDialog.asksaveasfilename(title="Create TM Frame Record File",
+                                              initialdir=SCOS.ENV.s_environment.tmFilesDir())
+    if fileName != "" and fileName != ():
+      self.notifyModelTask(["RECORDFRAMES", fileName])
+  # ---------------------------------------------------------------------------
+  def stopFrameRecorderCallback(self):
+    """Called when the StopFrameRecorder menu entry is selected"""
+    self.notifyModelTask(["STOPFRAMERECORDER"])
+  # ---------------------------------------------------------------------------
   def notifyStatus(self, status):
     """Generic callback when something changes in the model"""
     if status == "TM_CONNECTED":
@@ -175,6 +193,10 @@ class GUIview(UI.TKI.GUIwinView):
       self.grndEnabledNak2Notify()
     elif status == "GRND_DISABLED_ACK2":
       self.grndDisabledAck2Notify()
+    elif status == "FRAME_REC_STARTED":
+      self.frameRecStarted()
+    elif status == "FRAME_REC_STOPPED":
+      self.frameRecStopped()
   # ---------------------------------------------------------------------------
   def tmConnectedNotify(self):
     """Called when the TM connect function is successfully processed"""
@@ -234,3 +256,17 @@ class GUIview(UI.TKI.GUIwinView):
     self.disableCommandMenuItem("GRNDdisableAck2")
     self.checkButtons.setButtonPressed("ACK2", False)
     self.checkButtons.setButtonPressed("NAK2", False)
+  # ---------------------------------------------------------------------------
+  def frameRecStarted(self):
+    """Called when the recordFrames function is succsssfully processed"""
+    self.disableCommandMenuItem("RecordFrames")
+    self.enableCommandMenuItem("StopFrameRecorder")
+    self.menuButtons.setState("REC+", Tkinter.DISABLED)
+    self.menuButtons.setState("REC-", Tkinter.NORMAL)
+  # ---------------------------------------------------------------------------
+  def frameRecStopped(self):
+    """Called when the stopFrameRecorder function is succsssfully processed"""
+    self.enableCommandMenuItem("RecordFrames")
+    self.disableCommandMenuItem("StopFrameRecorder")
+    self.menuButtons.setState("REC+", Tkinter.NORMAL)
+    self.menuButtons.setState("REC-", Tkinter.DISABLED)

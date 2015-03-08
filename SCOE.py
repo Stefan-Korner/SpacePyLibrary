@@ -187,9 +187,6 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     self.logMethod("setPacketDataCmd", "SPACE")
 
     # consistency check
-    if not SPACE.IF.s_configuration.connected:
-      LOG_WARNING("TM connection not connected", "SPACE")
-      return False
     if len(argv) != 2 and len(argv) != 4:
       LOG_WARNING("invalid parameters passed for TM connection", "SPACE")
       return False
@@ -222,9 +219,6 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     self.logMethod("sendPacketCmd", "SPACE")
 
     # consistency check
-    if not SPACE.IF.s_configuration.connected:
-      LOG_WARNING("TM connection not connected", "SPACE")
-      return False
     if len(argv) != 1 and len(argv) != 2 and len(argv) != 4:
       LOG_WARNING("invalid parameters passed for TM connection", "SPACE")
       return False
@@ -262,9 +256,6 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     self.logMethod("enableCyclicCmd", "SPACE")
 
     # consistency check
-    if not SPACE.IF.s_configuration.connected:
-      LOG_WARNING("TM connection not connected", "SPACE")
-      return False
     if len(argv) != 1:
       LOG_WARNING("invalid parameters passed for enableCyclic", "SPACE")
       return False
@@ -277,9 +268,6 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     self.logMethod("disableCyclic", "SPACE")
 
     # consistency check
-    if not SPACE.IF.s_configuration.connected:
-      LOG_WARNING("TM connection not connected", "SPACE")
-      return False
     if len(argv) != 1:
       LOG_WARNING("invalid parameters passed for disableCyclic", "SPACE")
       return False
@@ -440,9 +428,6 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     self.logMethod("sendAckCmd", "SPACE")
 
     # consistency check
-    if not SPACE.IF.s_configuration.connected:
-      LOG_WARNING("TM connection not connected", "SPACE")
-      return False
     if len(argv) != 4:
       LOG_WARNING("invalid parameters passed for TC acknowledgement", "SPACE")
       return False
@@ -478,9 +463,6 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     self.logMethod("replayPacketsCmd", "SPACE")
 
     # consistency check
-    #if not SPACE.IF.s_configuration.connected:
-    #  LOG_WARNING("TM connection not connected", "SPACE")
-    #  return False
     if len(argv) != 2:
       LOG_WARNING("invalid parameters passed for replay packets", "SPACE")
       return False

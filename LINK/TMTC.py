@@ -207,7 +207,7 @@ class CCSDSgroundSpace(LINK.IF.SpaceLink, LINK.IF.PacketLink):
   # ---------------------------------------------------------------------------
   def receiveTMframe(self, tmFrameDu):
     """TM frame received"""
-    GRND.IF.s_tmMcsLink.sendFrame(tmFrameDu.getBufferString())
+    GRND.IF.s_tmMcsLink.pushTMframe(tmFrameDu)
 
 #############
 # functions #

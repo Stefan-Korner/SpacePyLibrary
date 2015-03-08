@@ -107,6 +107,10 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       retStatus = self.grndEnableNak2Cmd(argv)
     elif (cmd == "DB") or (cmd == "GRNDDISABLEACK2"):
       retStatus = self.grndDisableAck2Cmd(argv)
+    elif (cmd == "RF") or (cmd == "RECORDFRAMES"):
+      retStatus = self.recordFramesCmd(argv)
+    elif (cmd == "SR") or (cmd == "STOPFRAMERECORDER"):
+      retStatus = self.stopFrameRecorderCmd(argv)
     elif (cmd == "T") or (cmd == "SETCLCW"):
       retStatus = self.setCLCWcmd(argv)
     elif (cmd == "V") or (cmd == "ENABLECLCW"):
@@ -205,6 +209,8 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("ab | grndEnableAck2......enables autom. sending of ACK2 for TCs", "GRND")
     LOG("nb | grndEnableNak2......enables autom. sending of NAK2 for TCs", "GRND")
     LOG("db | grndDisableAck2.....disables autom. sending of ACK2 for TCs", "GRND")
+    LOG("rf | recordFrames <recordFile> records TM frames", "GRND")
+    LOG("sr | stopFrameRecorder...stops recording of TM frames", "GRND")
     LOG_INFO("Available space link commands:", "LINK")
     LOG("", "LINK")
     LOG("x | exit ................terminates client connection (only for TCP/IP clients)", "LINK")
@@ -358,6 +364,34 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     self.notifyGUItask("GRND_DISABLED_ACK2")
     return True
   # ---------------------------------------------------------------------------
+  def recordFramesCmd(self, argv):
+    """decoded recordFrames command"""
+    self.logMethod("recordFramesCmd", "GRND")
+    # consistency check
+    if GRND.IF.s_configuration.frameRecordFile:
+      LOG_WARNING("Frame recording already started", "GRND")
+      return False
+    if len(argv) != 2:
+      LOG_WARNING("invalid parameters passed for recordFrames", "GRND")
+      return False
+    # extract the arguments
+    recordFileName = argv[1]
+    GRND.IF.s_tmMcsLink.recordFrames(recordFileName);
+    return True
+  # ---------------------------------------------------------------------------
+  def stopFrameRecorderCmd(self, argv):
+    """decoded stopFrameRecorder command"""
+    self.logMethod("stopFrameRecorderCmd", "GRND")
+    # consistency check
+    if not GRND.IF.s_configuration.frameRecordFile:
+      LOG_WARNING("Frame recording not started", "GRND")
+      return False
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for stopFrameRecorder", "GRND")
+      return False
+    GRND.IF.s_tmMcsLink.stopFrameRecorder();
+    return True
+  # ---------------------------------------------------------------------------
   def setCLCWcmd(self, argv):
     """Decoded setCLCW command"""
     self.logMethod("setCLCWcmd", "LINK")
@@ -439,9 +473,6 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     self.logMethod("setPacketDataCmd", "SPACE")
 
     # consistency check
-    if not SPACE.IF.s_configuration.connected:
-      LOG_WARNING("TM connection not connected", "SPACE")
-      return False
     if len(argv) != 2 and len(argv) != 4:
       LOG_WARNING("invalid parameters passed for TM connection", "SPACE")
       return False
@@ -474,9 +505,6 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     self.logMethod("sendPacketCmd", "SPACE")
 
     # consistency check
-    if not SPACE.IF.s_configuration.connected:
-      LOG_WARNING("TM connection not connected", "SPACE")
-      return False
     if len(argv) != 1 and len(argv) != 2 and len(argv) != 4:
       LOG_WARNING("invalid parameters passed for TM connection", "SPACE")
       return False
@@ -514,9 +542,6 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     self.logMethod("enableCyclicCmd", "SPACE")
 
     # consistency check
-    if not SPACE.IF.s_configuration.connected:
-      LOG_WARNING("TM connection not connected", "SPACE")
-      return False
     if len(argv) != 1:
       LOG_WARNING("invalid parameters passed for enableCyclic", "SPACE")
       return False
@@ -529,9 +554,6 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     self.logMethod("disableCyclic", "SPACE")
 
     # consistency check
-    if not SPACE.IF.s_configuration.connected:
-      LOG_WARNING("TM connection not connected", "SPACE")
-      return False
     if len(argv) != 1:
       LOG_WARNING("invalid parameters passed for disableCyclic", "SPACE")
       return False
@@ -692,9 +714,6 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     self.logMethod("sendAckCmd", "SPACE")
 
     # consistency check
-    if not SPACE.IF.s_configuration.connected:
-      LOG_WARNING("TM connection not connected", "SPACE")
-      return False
     if len(argv) != 4:
       LOG_WARNING("invalid parameters passed for TC acknowledgement", "SPACE")
       return False
@@ -730,9 +749,6 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     self.logMethod("replayPacketsCmd", "SPACE")
 
     # consistency check
-    if not SPACE.IF.s_configuration.connected:
-      LOG_WARNING("TM connection not connected", "SPACE")
-      return False
     if len(argv) != 2:
       LOG_WARNING("invalid parameters passed for replay packets", "SPACE")
       return False
@@ -949,6 +965,14 @@ def help(*argv): UTIL.TASK.s_processingTask.helpCmd(("", ) + argv)
 def quit(*argv): UTIL.TASK.s_processingTask.quitCmd(("", ) + argv)
 def dumpConfiguration(*argv): UTIL.TASK.s_processingTask.dumpConfigurationCmd(("", ) + argv)
 def initialiseAD(*argv): UTIL.TASK.s_processingTask.initialiseADcmd(("", ) + argv)
+def grndEnableAck1(*argv): UTIL.TASK.s_processingTask.grndEnableAck1Cmd(("", ) + argv)
+def grndEnableNak1(*argv): UTIL.TASK.s_processingTask.grndEnableNak1Cmd(("", ) + argv)
+def grndDisableAck1(*argv): UTIL.TASK.s_processingTask.grndDisableAck1Cmd(("", ) + argv)
+def grndEnableAck2(*argv): UTIL.TASK.s_processingTask.grndEnableAck2Cmd(("", ) + argv)
+def grndEnableNak2(*argv): UTIL.TASK.s_processingTask.grndEnableNak2Cmd(("", ) + argv)
+def grndDisableAck2(*argv): UTIL.TASK.s_processingTask.grndDisableAck2Cmd(("", ) + argv)
+def recordFrames(*argv): UTIL.TASK.s_processingTask.recordFramesCmd(("", ) + argv)
+def stopFrameRecorder(*argv): UTIL.TASK.s_processingTask.stopFrameRecorderCmd(("", ) + argv)
 def setCLCW(*argv): UTIL.TASK.s_processingTask.setCLCWcmd(("", ) + argv)
 def enableCLCW(*argv): UTIL.TASK.s_processingTask.enableCLCWcmd(("", ) + argv)
 def disableCLCW(*argv): UTIL.TASK.s_processingTask.disableCLCWcmd(("", ) + argv)

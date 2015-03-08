@@ -41,7 +41,44 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
     consumes a telemetry frame:
     implementation of GROUND.IF.TMmcsLink.pushTMframe
     """
-    self.sendFrame(tmFrameDu.getBufferString())
+    if GRND.IF.s_configuration.frameRecordFile:
+      try:
+        LOG_INFO("Frame recorded", "GRND")
+        GRND.IF.s_configuration.frameRecordFile.write("*** FRAME ***\n")
+        GRND.IF.s_configuration.frameRecordFile.flush()
+      except:
+        LOG_ERROR("cannot write to frame recording file", "GRND")
+    if GRND.IF.s_configuration.nctrsTMconn:
+      self.sendFrame(tmFrameDu.getBufferString())
+  # ---------------------------------------------------------------------------
+  def recordFrames(self, recordFileName):
+    """
+    starts TM frame recording:
+    implementation of GROUND.IF.TMmcsLink.recordFrames
+    """
+    # open the TM frame recording file
+    try:
+      recordingFile = open(recordFileName, "w")
+    except:
+      LOG_ERROR("cannot open " + recordFileName, "GRND")
+      return
+    GRND.IF.s_configuration.frameRecordFile = recordingFile
+    # notify the GUI
+    UTIL.TASK.s_processingTask.notifyGUItask("FRAME_REC_STARTED")
+  # ---------------------------------------------------------------------------
+  def stopFrameRecorder(self):
+    """
+    stops TM frame recording:
+    implementation of GROUND.IF.TMmcsLink.stopFrameRecorder
+    """
+    # open the TM frame recording file
+    try:
+      GRND.IF.s_configuration.frameRecordFile.close()
+      GRND.IF.s_configuration.frameRecordFile = None
+    except:
+      LOG_ERROR("cannot close frame recording file", "GRND")
+    # notify the GUI
+    UTIL.TASK.s_processingTask.notifyGUItask("FRAME_REC_STOPPED")
   # ---------------------------------------------------------------------------
   def notifyError(self, errorMessage, data):
     """error notification"""

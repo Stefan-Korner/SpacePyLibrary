@@ -41,6 +41,7 @@ class Configuration(object):
     self.nctrsAdminPort = UTIL.SYS.s_configuration.NCTRS_ADMIN_SERVER_PORT
     self.grndAck1 = ENABLE_ACK
     self.grndAck2 = ENABLE_ACK
+    self.frameRecordFile = None
   # ---------------------------------------------------------------------------
   def dump(self):
     """Dumps the status of the configuration attributes"""
@@ -53,6 +54,7 @@ class Configuration(object):
     LOG("NCTRS admin message port = " + str(self.nctrsAdminPort), "GRND")
     LOG("TC Ack 1 = " + ACK_STRS[self.grndAck1], "GRND")
     LOG("TC Ack 2 = " + ACK_STRS[self.grndAck2], "GRND")
+    LOG("Frame Record File = " + str(self.frameRecordFile), "GRND")
 
 ##############
 # interfaces #
@@ -63,6 +65,14 @@ class TMmcsLink(object):
   # ---------------------------------------------------------------------------
   def pushTMframe(self, tmFrameDu):
     """consumes a telemetry frame"""
+    pass
+  # ---------------------------------------------------------------------------
+  def recordFrames(self, recordFileName):
+    """starts TM frame recording"""
+    pass
+  # ---------------------------------------------------------------------------
+  def stopFrameRecorder(self):
+    """stops TM frame recording"""
     pass
 
 ####################
