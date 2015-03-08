@@ -290,6 +290,16 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     if pktSPID == -1:
       return None
     return SPACE.IF.TMpacketInjectData(pktSPID, pktMnemonic, params, values)
+  # ---------------------------------------------------------------------------
+  def getTMpacketInjectDataBySPID(self, spid, params, values):
+    """
+    returns the data that are used for packet injection:
+    implementation of SPACE.IF.Definitions.getTMpacketInjectDataBySPID
+    """
+    pktDef = self.getTMpktDefBySPID(spid)
+    if pktDef == None:
+      return None
+    return SPACE.IF.TMpacketInjectData(spid, pktDef.pktName, params, values)
 
 #############
 # functions #

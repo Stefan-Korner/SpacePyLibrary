@@ -54,6 +54,7 @@ SYS_CONFIGURATION = [
   ["TM_TT_TIME_BYTE_OFFSET", "10"],
   ["TM_TT_COARSE_TIME_BYTE_SIZE", "4"],
   ["TM_TT_FINE_TIME_BYTE_SIZE", "4"],
+  ["TM_REPLAY_KEY", "SPID"],
   ["TCO_MISSION_EPOCH_STR", "<<shall be passed as environment variable>>"],
   ["SYS_COLOR_LOG", "1"],
   ["SYS_APP_MNEMO", "SIM"],

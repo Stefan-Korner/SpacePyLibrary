@@ -541,6 +541,10 @@ class Definitions(object):
   def getTMpacketInjectData(self, pktMnemonic, params, values):
     """returns the data that are used for packet injection"""
     pass
+  # ---------------------------------------------------------------------------
+  def getTMpacketInjectDataBySPID(self, spid, params, values):
+    """returns the data that are used for packet injection"""
+    pass
 
 # =============================================================================
 class OnboardComputer(object):

@@ -199,6 +199,7 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     implementation of SPACE.IF.OnboardComputer.replayPackets
     """
     LOG_WARNING("replayPackets(" + replayFileName + ")", "SPACE")
+    useSPIDasKey = (UTIL.SYS.s_configuration.TM_REPLAY_KEY == "SPID") 
     # read the TM packets file
     try:
       tmPacketsFile = open(replayFileName);
@@ -215,6 +216,7 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
       tokens = line.split("(")
       token0 = tokens[0].strip()
       sleepVal = -1
+      pktSPID = -1
       pktMnemo = ""
       params = ""
       values = ""
@@ -240,7 +242,17 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
             return
         else:
           # TM packet with parameters
-          pktMnemo = token0
+          if useSPIDasKey:
+            try:
+              pktSPID = int(token0)
+            except:
+              LOG_ERROR("syntax error in line " + str(lineNr) + " of " + replayFileName, "SPACE")
+              SPACE.IF.s_configuration.pendingTMpackets = []
+              return
+            pktMnemo = "?"
+          else:
+            pktMnemo = token0
+            pktSPID = -1
           paramValueTokens = token1.split(",")
           for paramValueToken in paramValueTokens:
             paramValueSplit = paramValueToken.split("=")
@@ -262,9 +274,12 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
         SPACE.IF.s_configuration.pendingTMpackets.append(sleepVal)
       else:
         # TM packet statement --> create the TM packet
-        tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemo,
-                                                                    params,
-                                                                    values)
+        if useSPIDasKey:
+          tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectDataBySPID(
+            pktSPID, params, values)
+        else:
+          tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(
+            pktMnemo, params, values)
         # check the TM packet
         if tmPacketData == None:
           LOG_ERROR("error in line " + str(lineNr) + " of " + replayFileName, "SPACE")
@@ -283,7 +298,8 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
       pendingItem = SPACE.IF.s_configuration.pendingTMpackets.pop(0)
       try:
         pktMnemo = pendingItem.pktName
-        LOG("sendPacket " + pktMnemo, "SPACE")
+        spid = pendingItem.pktSPID
+        LOG("sendPacket " + pktMnemo + ", SPID=" + str(spid), "SPACE")
         # send the TM packet
         self.generateTMpacket(pendingItem)
       except:
