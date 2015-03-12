@@ -42,6 +42,7 @@ class Configuration(object):
     self.grndAck1 = ENABLE_ACK
     self.grndAck2 = ENABLE_ACK
     self.frameRecordFile = None
+    self.frameRecordFormat = UTIL.SYS.s_configuration.TM_RECORD_FORMAT
   # ---------------------------------------------------------------------------
   def dump(self):
     """Dumps the status of the configuration attributes"""
@@ -55,6 +56,7 @@ class Configuration(object):
     LOG("TC Ack 1 = " + ACK_STRS[self.grndAck1], "GRND")
     LOG("TC Ack 2 = " + ACK_STRS[self.grndAck2], "GRND")
     LOG("Frame Record File = " + str(self.frameRecordFile), "GRND")
+    LOG("Frame Record Format = " + str(self.frameRecordFormat), "GRND")
 
 ##############
 # interfaces #

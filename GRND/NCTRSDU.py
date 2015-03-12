@@ -186,13 +186,13 @@ class TMdataUnit(BinaryUnit):
                         TM_DU_ATTRIBUTES)
   # ---------------------------------------------------------------------------
   def getFrame(self):
-    """returns the CLTU"""
+    """returns the transfer frame"""
     # the packetSize must contain the correct size
     headerByteSize = TM_DU_HEADER_BYTE_SIZE
     return self.getBytes(headerByteSize, self.packetSize - headerByteSize)
   # ---------------------------------------------------------------------------
   def setFrame(self, frame):
-    """set the CLTU and the packetSize"""
+    """set the transfer frame and the packetSize"""
     self.setLen(TM_DU_HEADER_BYTE_SIZE)
     self.append(frame)
     self.packetSize = len(self)

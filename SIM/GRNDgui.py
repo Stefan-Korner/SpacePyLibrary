@@ -162,8 +162,6 @@ class GUIview(UI.TKI.GUIwinView):
   # ---------------------------------------------------------------------------
   def recordFramesCallback(self):
     """Called when the RecordFrames menu entry is selected"""
-
-
     fileName = tkFileDialog.asksaveasfilename(title="Create TM Frame Record File",
                                               initialdir=SCOS.ENV.s_environment.tmFilesDir())
     if fileName != "" and fileName != ():
