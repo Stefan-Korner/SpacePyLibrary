@@ -62,6 +62,26 @@ class BinaryUnit(object):
     """returns the used elements of the buffer as binary string"""
     return self.buffer[0:self.usedBufferSize].tostring()
   # ---------------------------------------------------------------------------
+  def getBufferHeader(self):
+    """returns the header part of the buffer as binary string"""
+    if self.attributesSize1 == None:
+      # error
+      return ""
+    if self.attributesSize1 > self.usedBufferSize:
+      # error
+      return ""
+    return self.buffer[0:self.attributesSize1].tostring()
+  # ---------------------------------------------------------------------------
+  def getBufferBody(self):
+    """returns the body part of the buffer as binary string"""
+    if self.attributesSize1 == None:
+      # error
+      return ""
+    if self.attributesSize1 > self.usedBufferSize:
+      # error
+      return ""
+    return self.buffer[self.attributesSize1:self.usedBufferSize].tostring()
+  # ---------------------------------------------------------------------------
   def __lt__(self, other):
     """compares if self < other"""
     if other == None:

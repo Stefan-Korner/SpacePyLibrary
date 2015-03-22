@@ -17,7 +17,7 @@ import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import GRND.CRYOSATDU, GRND.IF, GRND.NCTRS, GRND.NCTRSDU
 import SPACE.OBC
-import UTIL.SYS, UTIL.TASK
+import UTIL.DU, UTIL.SYS, UTIL.TASK
 
 ###########
 # classes #
@@ -43,8 +43,9 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
     """
     if GRND.IF.s_configuration.frameRecordFile:
       try:
-        if GRND.IF.s_configuration.frameRecordFormat == "NCTRS":
-          LOG_INFO("NCTRS Frame recorded", "GRND")
+        if GRND.IF.s_configuration.frameRecordFormat == "NCTRS" or \
+           GRND.IF.s_configuration.frameRecordFormat == "NCTRS_ASCII":
+          LOG_INFO(GRND.IF.s_configuration.frameRecordFormat + " Frame recorded", "GRND")
           # Prepare the TM frame for recording
           actualCCSDStimeDU = \
             UTIL.TIME.getCCSDStimeDU(UTIL.TIME.getActualTime())
@@ -60,10 +61,19 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
           # ensure a correct size attribute
           tmDu.packetSize = len(tmDu)
           # write the DU to file
-          GRND.IF.s_configuration.frameRecordFile.write(tmDu.getBufferString())
+          if GRND.IF.s_configuration.frameRecordFormat == "NCTRS":
+            GRND.IF.s_configuration.frameRecordFile.write(tmDu.getBufferString())
+          else:
+            # NCTRS_ASCII
+            GRND.IF.s_configuration.frameRecordFile.write("\n" + GRND.IF.s_configuration.frameRecordFormat + " Frame Header:")
+            GRND.IF.s_configuration.frameRecordFile.write(UTIL.DU.array2str(tmDu.getBufferHeader()))
+            GRND.IF.s_configuration.frameRecordFile.write("\n" + GRND.IF.s_configuration.frameRecordFormat + " Frame Body:")
+            GRND.IF.s_configuration.frameRecordFile.write(UTIL.DU.array2str(tmDu.getBufferBody()))
+            GRND.IF.s_configuration.frameRecordFile.write("\n")
           GRND.IF.s_configuration.frameRecordFile.flush()
-        elif GRND.IF.s_configuration.frameRecordFormat == "CRYOSAT":
-          LOG_INFO("CRYOSAT Frame recorded", "GRND")
+        elif GRND.IF.s_configuration.frameRecordFormat == "CRYOSAT" or \
+             GRND.IF.s_configuration.frameRecordFormat == "CRYOSAT_ASCII":
+          LOG_INFO(GRND.IF.s_configuration.frameRecordFormat + " Frame recorded", "GRND")
           # Prepare the TM frame for recording
           tmDu = GRND.CRYOSATDU.TMframeDataUnit()
           tmDu.setFrame(tmFrameDu.getBufferString())
@@ -74,7 +84,15 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
           tmDu.spare = 0
           tmDu.padding = 0
           # write the DU to file
-          GRND.IF.s_configuration.frameRecordFile.write(tmDu.getBufferString())
+          if GRND.IF.s_configuration.frameRecordFormat == "CRYOSAT":
+            GRND.IF.s_configuration.frameRecordFile.write(tmDu.getBufferString())
+          else:
+            # CRYOSAT_ASCII
+            GRND.IF.s_configuration.frameRecordFile.write("\n" + GRND.IF.s_configuration.frameRecordFormat + " Frame Header:")
+            GRND.IF.s_configuration.frameRecordFile.write(UTIL.DU.array2str(tmDu.getBufferHeader()))
+            GRND.IF.s_configuration.frameRecordFile.write("\n" + GRND.IF.s_configuration.frameRecordFormat + " Frame Body:")
+            GRND.IF.s_configuration.frameRecordFile.write(UTIL.DU.array2str(tmDu.getBufferBody()))
+            GRND.IF.s_configuration.frameRecordFile.write("\n")
           GRND.IF.s_configuration.frameRecordFile.flush()
       except Exception, ex:
         LOG_ERROR("cannot write to frame recording file", "GRND")

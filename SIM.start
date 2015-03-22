@@ -35,6 +35,7 @@ setenv TM_CYCLIC_MNEMO ZYCLIC
 setenv TM_TT_TIME_BYTE_OFFSET 9
 setenv TM_TT_COARSE_TIME_BYTE_SIZE 4
 setenv TM_TT_FINE_TIME_BYTE_SIZE 3
+setenv TM_RECORD_FORMAT "CRYOSAT_ASCII"
 setenv TCO_MISSION_EPOCH_STR "1970.001.00.00.00.000000"
 setenv SYS_COLOR_LOG 1
 setenv scosii_homedir ${HOME}/Python/SpacePyLibrary/scosii_homedir
