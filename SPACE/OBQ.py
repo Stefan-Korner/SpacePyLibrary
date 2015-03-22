@@ -84,7 +84,7 @@ class OnboardQueueImpl(SPACE.IF.OnboardQueue):
         return
       # calculate the execution time
       ttExecTimeData = tcPacketDu.getBytes(self.timeByteOffset, UTIL.TIME.CUC_TIME_PFC17_BYTE_SIZE)
-      ttExecTime = UTIL.TIME.correlateCucPFC17(ttExecTimeData)
+      ttExecTime = UTIL.TIME.correlateOBTcucPFC17(ttExecTimeData)
       SPACE.IF.s_onboardQueue.insertTTpacket(ttExecTime, ttPacketDu)
   # ---------------------------------------------------------------------------
   def insertTTpacket(self, ttExecTime, ttPacketDu):

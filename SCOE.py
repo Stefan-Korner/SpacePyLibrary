@@ -45,7 +45,8 @@ SYS_CONFIGURATION = [
   ["TM_TT_COARSE_TIME_BYTE_SIZE", "4"],
   ["TM_TT_FINE_TIME_BYTE_SIZE", "4"],
   ["TM_REPLAY_KEY", "SPID"],
-  ["TCO_MISSION_EPOCH_STR", "<<shall be passed as environment variable>>"],
+  ["OBT_MISSION_EPOCH_STR", UTIL.TIME.UNIX_MISSION_EPOCH_STR],
+  ["OBT_LEAP_SECONDS", str(GPS_LEAP_SECONDS_2015)],
   ["SYS_COLOR_LOG", "1"],
   ["SYS_APP_MNEMO", "SCOE"],
   ["SYS_APP_NAME", "Special Checkout Equipment"],
@@ -567,7 +568,8 @@ else:
   launchScriptName = sys.argv[1]
 # initialise the system configuration
 UTIL.SYS.s_configuration.setDefaults(SYS_CONFIGURATION)
-UTIL.TIME.setMissionEpochStr(UTIL.SYS.s_configuration.TCO_MISSION_EPOCH_STR)
+UTIL.TIME.setOBTmissionEpochStr(UTIL.SYS.s_configuration.OBT_MISSION_EPOCH_STR)
+UTIL.TIME.setOBTleapSeconds(int(UTIL.SYS.s_configuration.OBT_LEAP_SECONDS))
 EGSE.IF.s_configuration = EGSE.IF.Configuration()
 SPACE.IF.s_configuration = SPACE.IF.Configuration()
 # initialise the request handler

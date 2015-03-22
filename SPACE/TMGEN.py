@@ -146,14 +146,14 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
     # re-calculate the time stamp
     if tmPktDef.pktHasDFhdr and self.tmTTtimeByteOffset > 0:
       timeStamp = UTIL.TIME.getActualTime()
-      # TODO: time correlation
-      coarseTime = int(timeStamp)
+      obtTime = UTIL.TIME.correlateToOBTmissionEpoch(timeStamp)
+      coarseTime = int(obtTime)
       packet.setUnsigned(self.tmTTtimeByteOffset,
                          self.tmTTcoarseTimeByteSize,
                          coarseTime)
       fimeTimeByteOffset = self.tmTTtimeByteOffset + \
                            self.tmTTcoarseTimeByteSize
-      fineTime = timeStamp - coarseTime
+      fineTime = obtTime - coarseTime
       if self.tmTTfineTimeByteSize == 1:
         fineTimeVal = int(fineTime * 0x100)
         packet.setUnsigned(fimeTimeByteOffset, 1, fineTimeVal)

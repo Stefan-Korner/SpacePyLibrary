@@ -17,7 +17,7 @@ import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import GRND.CRYOSATDU, GRND.IF, GRND.NCTRS, GRND.NCTRSDU
 import SPACE.OBC
-import UTIL.DU, UTIL.SYS, UTIL.TASK
+import UTIL.DU, UTIL.SYS, UTIL.TASK, UTIL.TIME
 
 ###########
 # classes #
@@ -47,15 +47,15 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
            GRND.IF.s_configuration.frameRecordFormat == "NCTRS_ASCII":
           LOG_INFO(GRND.IF.s_configuration.frameRecordFormat + " Frame recorded", "GRND")
           # Prepare the TM frame for recording
-          actualCCSDStimeDU = \
-            UTIL.TIME.getCCSDStimeDU(UTIL.TIME.getActualTime())
+          ertCCSDStimeDU = \
+            UTIL.TIME.getERTccsdsTimeDU(UTIL.TIME.getActualTime())
           tmDu = GRND.NCTRSDU.TMdataUnit()
           tmDu.setFrame(tmFrameDu.getBufferString())
           tmDu.spacecraftId = self.nctrsTMfields.spacecraftId
           tmDu.dataStreamType = self.nctrsTMfields.dataStreamType
           tmDu.virtualChannelId = self.nctrsTMfields.virtualChannelId
           tmDu.routeId = self.nctrsTMfields.routeId
-          tmDu.earthReceptionTime = actualCCSDStimeDU.getBufferString()
+          tmDu.earthReceptionTime = ertCCSDStimeDU.getBufferString()
           tmDu.sequenceFlag = self.nctrsTMfields.sequenceFlag
           tmDu.qualityFlag = self.nctrsTMfields.qualityFlag
           # ensure a correct size attribute
@@ -77,8 +77,12 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
           # Prepare the TM frame for recording
           tmDu = GRND.CRYOSATDU.TMframeDataUnit()
           tmDu.setFrame(tmFrameDu.getBufferString())
-          tmDu.downlinkTimeSec = 1000   # dummy value
-          tmDu.downlinkTimeMicro = 0
+          timeStamp = UTIL.TIME.getActualTime()
+          ertTime = UTIL.TIME.correlateToERTmissionEpoch(timeStamp)
+          coarseTime = int(ertTime)
+          fineTime = int((ertTime - coarseTime) * 1000000)
+          tmDu.downlinkTimeSec = coarseTime
+          tmDu.downlinkTimeMicro = fineTime
           tmDu.numberCorrSymbols = 0
           tmDu.rsErorFlag = 0
           tmDu.spare = 0

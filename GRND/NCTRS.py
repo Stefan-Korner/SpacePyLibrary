@@ -132,14 +132,14 @@ class TMsender(UTIL.TCP.Server):
   # ---------------------------------------------------------------------------
   def sendFrame(self, tmFrame):
     """Send the TM frame to the TM receiver"""
-    actualCCSDStimeDU = UTIL.TIME.getCCSDStimeDU(UTIL.TIME.getActualTime())
+    ertCCSDStimeDU = UTIL.TIME.getERTccsdsTimeDU(UTIL.TIME.getActualTime())
     tmDu = GRND.NCTRSDU.TMdataUnit()
     tmDu.setFrame(tmFrame)
     tmDu.spacecraftId = self.nctrsTMfields.spacecraftId
     tmDu.dataStreamType = self.nctrsTMfields.dataStreamType
     tmDu.virtualChannelId = self.nctrsTMfields.virtualChannelId
     tmDu.routeId = self.nctrsTMfields.routeId
-    tmDu.earthReceptionTime = actualCCSDStimeDU.getBufferString()
+    tmDu.earthReceptionTime = ertCCSDStimeDU.getBufferString()
     tmDu.sequenceFlag = self.nctrsTMfields.sequenceFlag
     tmDu.qualityFlag = self.nctrsTMfields.qualityFlag
     self.sendTmDataUnit(tmDu)
@@ -332,9 +332,9 @@ class TCreceiver(UTIL.TCP.SingleClientReceivingServer):
   # ---------------------------------------------------------------------------
   def sendResponseDataUnit(self, requestDataUnit, acknowledgement):
     """sends a response data unit from a request data unit"""
-    actualCCSDStimeDU = UTIL.TIME.getCCSDStimeDU(UTIL.TIME.getActualTime())
+    ertCCSDStimeDU = UTIL.TIME.getERTccsdsTimeDU(UTIL.TIME.getActualTime())
     tcRespDu = requestDataUnit.createResponseDataUnit()
-    tcRespDu.time = actualCCSDStimeDU.getBufferString()
+    tcRespDu.time = ertCCSDStimeDU.getBufferString()
     tcRespDu.serviceType = requestDataUnit.serviceType
     tcRespDu.groundstationId = self.groundstationId
     tcRespDu.sequenceCounter = requestDataUnit.tcId

@@ -79,6 +79,7 @@ class Environment(object):
     tpktConfigTableFile.close()
     # parse the file and take the first data entry
     self.spacecraftID = None
+    self.virtualChannelID = None
     self.transferFrameSize = None
     self.transferFrameHasSecondaryHdr = None
     for line in fileContents:
@@ -86,6 +87,7 @@ class Environment(object):
       if len(tokens) >= 8 and tokens[0] != "#":
         # line found
         self.spacecraftID = int(tokens[0])
+        self.virtualChannelID = int(tokens[1])
         self.transferFrameSize = int(tokens[6])
         if self.transferFrameSize == -1:
           self.transferFrameSize = TRANSFER_FRAME_DEFAULT_SIZE
@@ -115,6 +117,10 @@ class Environment(object):
   def getSpacecraftID(self):
     """Returns the spacecraft ID"""
     return self.spacecraftID
+  # ---------------------------------------------------------------------------
+  def getVirtualChannelID(self):
+    """Returns the Virtual Channel ID"""
+    return self.virtualChannelID
   # ---------------------------------------------------------------------------
   def getTransferFrameSize(self):
     """Returns the transfer frame size"""

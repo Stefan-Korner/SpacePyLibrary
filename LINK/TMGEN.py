@@ -33,7 +33,7 @@ class TMframeDefaults(object):
     self.transferFrameSize = SCOS.ENV.s_environment.getTransferFrameSize()
     self.versionNumber = 0
     self.spacecraftId = SCOS.ENV.s_environment.getSpacecraftID()
-    self.virtualChannelId = 0
+    self.virtualChannelId = SCOS.ENV.s_environment.getVirtualChannelID()
     self.operationalControlField = 1
     if SCOS.ENV.s_environment.transferFrameHasSecondaryHeader():
       self.secondaryHeaderFlag = 1

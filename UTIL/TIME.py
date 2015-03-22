@@ -19,21 +19,34 @@ from UTIL.DU import BITS, BYTES, UNSIGNED, BinaryUnit
 #############
 # constants #
 #############
-EPOCH_1958_SEC_DELTA = -378691200
+CUC_MISSION_EPOCH_STR = "1958.001.00.00.00.000"
+UNIX_MISSION_EPOCH_STR = "1970.001.00.00.00.000"
+GPS_LEAP_SECONDS_1980 = 0
+GPS_LEAP_SECONDS_2009 = 15
+GPS_LEAP_SECONDS_2012 = 16
+GPS_LEAP_SECONDS_2015 = 17
 TIME_BYTE_SIZE = 8
 TIME_ATTRIBUTES = {
   "days": (0, 2, UNSIGNED),
   "mils": (2, 4, UNSIGNED),
   "mics": (6, 2, UNSIGNED)}
-CMD_GPS_LEAP_SECONDS = 15
 CUC_TIME_PFC17_BYTE_SIZE = 6
 
 ####################
 # global variables #
 ####################
-# shall be initialised via setMissionEpochStr()
-s_tcoMissionEpochStr = ""
-s_tcoMissionEpoch = 0
+# shall be initialised via setOBTmissionEpochStr()
+s_obtMissionEpochStr = ""
+s_obtMissionEpoch = 0
+s_obtMissionEpochWithLeapSeconds = 0
+# shall be initialised via setOBTleapSeconds()
+s_obtLeapSeconds = 0
+# shall be initialised via setERTmissionEpochStr()
+s_ertMissionEpochStr = ""
+s_ertMissionEpoch = 0
+s_ertMissionEpochWithLeapSeconds = 0
+# shall be initialised via setERTleapSeconds()
+s_ertLeapSeconds = 0
 
 #############
 # functions #
@@ -88,10 +101,55 @@ def getTimeFromASDstr(tmStr):
     # invalid format
     return 0.0
 # -----------------------------------------------------------------------------
-def getCCSDStimeDU(pyTime):
+def setOBTmissionEpochStr(missionEpochStr):
+  """sets the OBT mission epoch string"""
+  global s_optMissionEpochStr, s_obtMissionEpoch
+  global s_obtLeapSeconds, s_obtMissionEpochWithLeapSeconds
+  s_obtMissionEpochStr = missionEpochStr
+  s_obtMissionEpoch = getTimeFromASDstr(s_obtMissionEpochStr)
+  s_obtMissionWithLeapSeconds = s_obtMissionEpoch - s_obtLeapSeconds
+# -----------------------------------------------------------------------------
+def setOBTleapSeconds(leapSeconds):
+  """sets the OBT leap seconds"""
+  global s_obtMissionEpoch
+  global s_obtLeapSeconds, s_obtMissionEpochWithLeapSeconds
+  s_obtLeapSeconds = leapSeconds
+  s_obtMissionWithLeapSeconds = s_obtMissionEpoch - s_leapSeconds
+# -----------------------------------------------------------------------------
+def correlateFromOBTmissionEpoch(pyEpochTime):
+  """correlate the OBT mission epoch time to the local time"""
+  return pyEpochTime + s_obtMissionEpochWithLeapSeconds
+# -----------------------------------------------------------------------------
+def correlateToOBTmissionEpoch(pyUTCtime):
+  """correlate the local time to OBT mission epoch time"""
+  return pyUTCtime - s_obtMissionEpochWithLeapSeconds
+# -----------------------------------------------------------------------------
+def setERTmissionEpochStr(missionEpochStr):
+  """sets the ERT mission epoch string"""
+  global s_ertMissionEpochStr, s_ertMissionEpoch
+  global s_ertLeapSeconds, s_ertMissionEpochWithLeapSeconds
+  s_ertMissionEpochStr = missionEpochStr
+  s_ertMissionEpoch = getTimeFromASDstr(s_ertMissionEpochStr)
+  s_ertMissionWithLeapSeconds = s_ertMissionEpoch - s_ertLeapSeconds
+# -----------------------------------------------------------------------------
+def setERTleapSeconds(leapSeconds):
+  """sets the ERT leap seconds"""
+  global s_ertMissionEpoch
+  global s_ertLeapSeconds, s_ertMissionEpochWithLeapSeconds
+  s_ertLeapSeconds = leapSeconds
+  s_ertMissionWithLeapSeconds = s_ertMissionEpoch - s_leapSeconds
+# -----------------------------------------------------------------------------
+def correlateFromERTmissionEpoch(pyEpochTime):
+  """correlate the ERT mission epoch time to the local time"""
+  return pyEpochTime + s_ertMissionEpochWithLeapSeconds
+# -----------------------------------------------------------------------------
+def correlateToERTmissionEpoch(pyUTCtime):
+  """correlate the local time to ERT mission epoch time"""
+  return pyUTCtime - s_ertMissionEpochWithLeapSeconds
+# -----------------------------------------------------------------------------
+def getERTccsdsTimeDU(pyTime):
   """returns an 8 byte binary data unit representation of time"""
-  # align it to the CCSDS epoch 1958
-  pyTime -= EPOCH_1958_SEC_DELTA
+  pyTime = correlateToERTmissionEpoch(pyTime)
   # split seconds and micros
   secs = int(pyTime)
   mics = int(round((pyTime - secs) * 1000000))
@@ -107,17 +165,7 @@ def getCCSDStimeDU(pyTime):
   timeDU.mics = mics
   return timeDU
 # -----------------------------------------------------------------------------
-def setMissionEpochStr(missionEpochStr):
-  """sets the mission epoch string"""
-  global s_tcoMissionEpochStr, s_tcoMissionEpoch
-  s_tcoMissionEpochStr = missionEpochStr
-  s_tcoMissionEpoch = getTimeFromASDstr(s_tcoMissionEpochStr) - CMD_GPS_LEAP_SECONDS
-# -----------------------------------------------------------------------------
-def correlateFromMissionEpoch(pyEpochTime):
-  """correlate the mission epoch time to the local time"""
-  return pyEpochTime + s_tcoMissionEpoch
-# -----------------------------------------------------------------------------
-def correlateCucPFC17(byteArray):
+def correlateOBTcucPFC17(byteArray):
   """correlate the mission epoch time to the local time"""
   if len(byteArray) != CUC_TIME_PFC17_BYTE_SIZE:
     # invalid format
@@ -128,4 +176,4 @@ def correlateCucPFC17(byteArray):
                 (byteArray[3] * 0x0000001) + \
                 (byteArray[4] / 256.0) + \
                 (byteArray[5] / 65535.0)
-  return correlateFromMissionEpoch(pyEpochTime)
+  return correlateFromOBTMissionEpoch(pyEpochTime)
