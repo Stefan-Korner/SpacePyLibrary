@@ -114,7 +114,7 @@ def setOBTleapSeconds(leapSeconds):
   global s_obtMissionEpoch
   global s_obtLeapSeconds, s_obtMissionEpochWithLeapSeconds
   s_obtLeapSeconds = leapSeconds
-  s_obtMissionWithLeapSeconds = s_obtMissionEpoch - s_leapSeconds
+  s_obtMissionWithLeapSeconds = s_obtMissionEpoch - s_obtLeapSeconds
 # -----------------------------------------------------------------------------
 def correlateFromOBTmissionEpoch(pyEpochTime):
   """correlate the OBT mission epoch time to the local time"""
@@ -137,7 +137,7 @@ def setERTleapSeconds(leapSeconds):
   global s_ertMissionEpoch
   global s_ertLeapSeconds, s_ertMissionEpochWithLeapSeconds
   s_ertLeapSeconds = leapSeconds
-  s_ertMissionWithLeapSeconds = s_ertMissionEpoch - s_leapSeconds
+  s_ertMissionWithLeapSeconds = s_ertMissionEpoch - s_ertLeapSeconds
 # -----------------------------------------------------------------------------
 def correlateFromERTmissionEpoch(pyEpochTime):
   """correlate the ERT mission epoch time to the local time"""
