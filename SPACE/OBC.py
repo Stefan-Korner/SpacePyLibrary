@@ -212,6 +212,12 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     lineNr = 0
     for line in fileContents:
       lineNr += 1
+      if len(line) == 0:
+        # empty line
+        continue
+      if line[0] == "#":
+        # comment
+        continue
       # parse the line
       tokens = line.split("(")
       token0 = tokens[0].strip()
@@ -222,10 +228,10 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
       values = ""
       if len(tokens) == 1:
         if token0 == "":
-          # empty line
+          # empty line (should be already handled above)
           continue
         if token0[0] == "#":
-          # comment
+          # comment (should be already handled above)
           continue
         # TM packet without parameters
         if useSPIDasKey:
