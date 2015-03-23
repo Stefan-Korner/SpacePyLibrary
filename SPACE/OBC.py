@@ -96,6 +96,10 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     spid = tmPacketData.pktSPID
     paramValues = tmPacketData.parameterValuesList
     tmPacketDu = SPACE.IF.s_tmPacketGenerator.getTMpacket(spid, paramValues)
+    if tmPacketDu.dataFieldHeaderFlag:
+      LOG("PUS Packet:" + UTIL.DU.array2str(tmPacketDu.getBufferString()[0:min(16,len(tmPacketDu))]), "SPACE")
+    else:
+      LOG("CCSDS Packet:" + UTIL.DU.array2str(tmPacketDu.getBufferString()[0:min(16,len(tmPacketDu))]), "SPACE")
     if tmPacketDu == None:
       LOG_ERROR("packet creation failed: SPID = " + str(spid), "SPACE")
       return False
