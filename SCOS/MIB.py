@@ -11,7 +11,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser     *
 # General Public License for more details.                                    *
 #******************************************************************************
-# SCOS-2000 Functionality - Environment                                       *
+# SCOS - Mission Database (MIB) handling                                      *
 #******************************************************************************
 import SCOS.ENV
 
