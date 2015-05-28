@@ -230,6 +230,7 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
       pktMnemo = ""
       params = ""
       values = ""
+      dataField = None
       if len(tokens) == 1:
         if token0 == "":
           # empty line (should be already handled above)
@@ -238,6 +239,9 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
           # comment (should be already handled above)
           continue
         # TM packet without parameters
+        # could contain the datafield in hex
+        tokens = line.split("[")
+        token0 = tokens[0].strip()
         if useSPIDasKey:
           try:
             pktSPID = int(token0)
@@ -248,6 +252,10 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
           pktMnemo = "?"
         else:
           pktMnemo = token0
+        if len(tokens) > 1:
+          # TM packet has a data field
+          token1 = tokens[1].split("]")[0].strip()
+          dataField = UTIL.DU.str2array(token1)
       else:
         # remove a close brake from the reminder
         token1 = tokens[1].split(")")[0].strip()
@@ -295,10 +303,10 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
         # TM packet statement --> create the TM packet
         if useSPIDasKey:
           tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectDataBySPID(
-            pktSPID, params, values)
+            pktSPID, params, values, dataField)
         else:
           tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(
-            pktMnemo, params, values)
+            pktMnemo, params, values, dataField)
         # check the TM packet
         if tmPacketData == None:
           LOG_ERROR("error in line " + str(lineNr) + " of " + replayFileName, "SPACE")

@@ -445,3 +445,8 @@ def array2str(binaryString, maxLen=65536):
   filler = "   " * fillerSize
   retStr += filler + retStr2
   return retStr
+
+def str2array(hexString):
+  """converts a hex string into a binaryString"""
+  # e.g. "00 01 FF FE 64 12" converts to array('B', [0, 1, 255, 254, 100, 18])
+  return array.array('B', map((lambda x: int(x, 16)), hexString.split()))

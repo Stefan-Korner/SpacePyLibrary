@@ -482,11 +482,12 @@ class TMparamDef(object):
 class TMpacketInjectData(object):
   """Data of a TM packet that can be injected"""
   # ---------------------------------------------------------------------------
-  def __init__(self, pktSPID, pktMnemonic, params, values):
+  def __init__(self, pktSPID, pktMnemonic, params, values, dataField):
     """Initialisation with default data"""
     self.pktName = pktMnemonic.upper()
     self.pktSPID = pktSPID
     self.parameterValuesList = []
+    self.dataField = dataField
     if params == "" or values == "":
       return
     # there are parameter-names and parameter-values
@@ -538,11 +539,11 @@ class Definitions(object):
     """returns the TM parameter definitions"""
     pass
   # ---------------------------------------------------------------------------
-  def getTMpacketInjectData(self, pktMnemonic, params, values):
+  def getTMpacketInjectData(self, pktMnemonic, params, values, dataField=None):
     """returns the data that are used for packet injection"""
     pass
   # ---------------------------------------------------------------------------
-  def getTMpacketInjectDataBySPID(self, spid, params, values):
+  def getTMpacketInjectDataBySPID(self, spid, params, values, dataField=None):
     """returns the data that are used for packet injection"""
     pass
 

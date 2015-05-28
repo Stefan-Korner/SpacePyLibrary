@@ -281,7 +281,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     self.initDefinitions()
     return self.definitionData.tmParamDefs
   # ---------------------------------------------------------------------------
-  def getTMpacketInjectData(self, pktMnemonic, params, values):
+  def getTMpacketInjectData(self, pktMnemonic, params, values, dataField=None):
     """
     returns the data that are used for packet injection:
     implementation of SPACE.IF.Definitions.getTMpacketInjectData
@@ -289,9 +289,13 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     pktSPID = self.getSPIDbyPktName(pktMnemonic)
     if pktSPID == -1:
       return None
-    return SPACE.IF.TMpacketInjectData(pktSPID, pktMnemonic, params, values)
+    return SPACE.IF.TMpacketInjectData(pktSPID,
+                                       pktMnemonic,
+                                       params,
+                                       values,
+                                       dataField)
   # ---------------------------------------------------------------------------
-  def getTMpacketInjectDataBySPID(self, spid, params, values):
+  def getTMpacketInjectDataBySPID(self, spid, params, values, dataField=None):
     """
     returns the data that are used for packet injection:
     implementation of SPACE.IF.Definitions.getTMpacketInjectDataBySPID
@@ -299,7 +303,11 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     pktDef = self.getTMpktDefBySPID(spid)
     if pktDef == None:
       return None
-    return SPACE.IF.TMpacketInjectData(spid, pktDef.pktName, params, values)
+    return SPACE.IF.TMpacketInjectData(spid,
+                                       pktDef.pktName,
+                                       params,
+                                       values,
+                                       dataField)
 
 #############
 # functions #
