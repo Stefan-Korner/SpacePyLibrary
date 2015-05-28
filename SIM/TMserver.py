@@ -41,10 +41,13 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
     consumes a telemetry frame:
     implementation of GROUND.IF.TMmcsLink.pushTMframe
     """
-    if GRND.IF.s_configuration.frameRecordFile:
+    recordFile = GRND.IF.s_configuration.frameRecordFile
+    if recordFile:
+      recordFormat = GRND.IF.s_configuration.frameRecordFormat
       try:
-        if GRND.IF.s_configuration.frameRecordFormat == "NCTRS" or \
-           GRND.IF.s_configuration.frameRecordFormat == "NCTRS_ASCII":
+        if recordFormat == "NCTRS" or \
+           recordFormat == "NCTRS_ASCII" or \
+           recordFormat == "NCTRS_ASCII_DETAILS":
           LOG_INFO(GRND.IF.s_configuration.frameRecordFormat + " Frame recorded", "GRND")
           # Prepare the TM frame for recording
           ertCCSDStimeDU = \
@@ -61,18 +64,45 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
           # ensure a correct size attribute
           tmDu.packetSize = len(tmDu)
           # write the DU to file
-          if GRND.IF.s_configuration.frameRecordFormat == "NCTRS":
-            GRND.IF.s_configuration.frameRecordFile.write(tmDu.getBufferString())
+          if recordFormat == "NCTRS":
+            recordFile.write(tmDu.getBufferString())
           else:
-            # NCTRS_ASCII
-            GRND.IF.s_configuration.frameRecordFile.write("\n" + GRND.IF.s_configuration.frameRecordFormat + " Frame Header:")
-            GRND.IF.s_configuration.frameRecordFile.write(UTIL.DU.array2str(tmDu.getBufferHeader()))
-            GRND.IF.s_configuration.frameRecordFile.write("\n" + GRND.IF.s_configuration.frameRecordFormat + " Frame Body:")
-            GRND.IF.s_configuration.frameRecordFile.write(UTIL.DU.array2str(tmDu.getBufferBody()))
-            GRND.IF.s_configuration.frameRecordFile.write("\n")
-          GRND.IF.s_configuration.frameRecordFile.flush()
-        elif GRND.IF.s_configuration.frameRecordFormat == "CRYOSAT" or \
-             GRND.IF.s_configuration.frameRecordFormat == "CRYOSAT_ASCII":
+            # NCTRS_ASCII or NCTRS_ASCII_DETAILS
+            recordFile.write("\n" + GRND.IF.s_configuration.frameRecordFormat + " Frame Header:")
+            if recordFormat == "NCTRS_ASCII_DETAILS":
+              recordFile.write("\ntmDu.packetSize = " + str(tmDu.packetSize))
+              recordFile.write("\ntmDu.spacecraftId = " + str(tmDu.spacecraftId))
+              recordFile.write("\ntmDu.dataStreamType = " + str(tmDu.dataStreamType))
+              recordFile.write("\ntmDu.virtualChannelId = " + str(tmDu.virtualChannelId))
+              recordFile.write("\ntmDu.routeId = " + str(tmDu.routeId))
+              recordFile.write("\ntmDu.earthReceptionTime = " + str(tmDu.earthReceptionTime))
+              recordFile.write("\ntmDu.sequenceFlag = " + str(tmDu.sequenceFlag))
+              recordFile.write("\ntmDu.qualityFlag = " + str(tmDu.downlinkTimeSec))
+              recordFile.write("\ntmDu.downlinkTimeSec = " + str(tmDu.qualityFlag))
+            recordFile.write(UTIL.DU.array2str(tmDu.getBufferHeader()))
+            recordFile.write("\n" + GRND.IF.s_configuration.frameRecordFormat + " Frame Body:")
+            if recordFormat == "NCTRS_ASCII_DETAILS":
+              recordFile.write("\ntmFrameDu.versionNumber = " + str(tmFrameDu.versionNumber))
+              recordFile.write("\ntmFrameDu.spacecraftId = " + str(tmFrameDu.spacecraftId))
+              recordFile.write("\ntmFrameDu.virtualChannelId = " + str(tmFrameDu.virtualChannelId))
+              recordFile.write("\ntmFrameDu.operationalControlField = " + str(tmFrameDu.operationalControlField))
+              recordFile.write("\ntmFrameDu.masterChannelFrameCount = " + str(tmFrameDu.masterChannelFrameCount))
+              recordFile.write("\ntmFrameDu.virtualChannelFCountLow = " + str(tmFrameDu.virtualChannelFCountLow))
+              recordFile.write("\ntmFrameDu.secondaryHeaderFlag = " + str(tmFrameDu.secondaryHeaderFlag))
+              recordFile.write("\ntmFrameDu.synchronisationFlag = " + str(tmFrameDu.synchronisationFlag))
+              recordFile.write("\ntmFrameDu.packetOrderFlag = " + str(tmFrameDu.packetOrderFlag))
+              recordFile.write("\ntmFrameDu.segmentLengthId = " + str(tmFrameDu.segmentLengthId))
+              recordFile.write("\ntmFrameDu.firstHeaderPointer = " + str(tmFrameDu.firstHeaderPointer))
+              if tmFrameDu.secondaryHeaderFlag:
+                recordFile.write("\ntmFrameDu.secondaryHeaderVersionNr = " + str(tmFrameDu.secondaryHeaderVersionNr))
+                recordFile.write("\ntmFrameDu.secondaryHeaderSize = " + str(tmFrameDu.secondaryHeaderSize))
+                recordFile.write("\ntmFrameDu.virtualChannelFCountHigh = " + str(tmFrameDu.virtualChannelFCountHigh))
+            recordFile.write(UTIL.DU.array2str(tmDu.getBufferBody()))
+            recordFile.write("\n")
+          recordFile.flush()
+        elif recordFormat == "CRYOSAT" or \
+             recordFormat == "CRYOSAT_ASCII" or \
+             recordFormat == "CRYOSAT_ASCII_DETAILS":
           LOG_INFO(GRND.IF.s_configuration.frameRecordFormat + " Frame recorded", "GRND")
           # Prepare the TM frame for recording
           tmDu = GRND.CRYOSATDU.TMframeDataUnit()
@@ -88,16 +118,39 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
           tmDu.spare = 0
           tmDu.padding = 0
           # write the DU to file
-          if GRND.IF.s_configuration.frameRecordFormat == "CRYOSAT":
-            GRND.IF.s_configuration.frameRecordFile.write(tmDu.getBufferString())
+          if recordFormat == "CRYOSAT":
+            recordFile.write(tmDu.getBufferString())
           else:
-            # CRYOSAT_ASCII
-            GRND.IF.s_configuration.frameRecordFile.write("\n" + GRND.IF.s_configuration.frameRecordFormat + " Frame Header:")
-            GRND.IF.s_configuration.frameRecordFile.write(UTIL.DU.array2str(tmDu.getBufferHeader()))
-            GRND.IF.s_configuration.frameRecordFile.write("\n" + GRND.IF.s_configuration.frameRecordFormat + " Frame Body:")
-            GRND.IF.s_configuration.frameRecordFile.write(UTIL.DU.array2str(tmDu.getBufferBody()))
-            GRND.IF.s_configuration.frameRecordFile.write("\n")
-          GRND.IF.s_configuration.frameRecordFile.flush()
+            # CRYOSAT_ASCII or CRYOSAT_ASCII_DETAILS
+            recordFile.write("\n" + GRND.IF.s_configuration.frameRecordFormat + " Frame Header:")
+            if recordFormat == "CRYOSAT_ASCII_DETAILS":
+              recordFile.write("\ntmDu.downlinkTimeSec = " + str(tmDu.downlinkTimeSec))
+              recordFile.write("\ntmDu.downlinkTimeMicro = " + str(tmDu.downlinkTimeMicro))
+              recordFile.write("\ntmDu.numberCorrSymbols = " + str(tmDu.numberCorrSymbols))
+              recordFile.write("\ntmDu.rsErorFlag = " + str(tmDu.rsErorFlag))
+            recordFile.write(UTIL.DU.array2str(tmDu.getBufferHeader()))
+            recordFile.write("\n" + GRND.IF.s_configuration.frameRecordFormat + " Frame Body:")
+            if recordFormat == "CRYOSAT_ASCII_DETAILS":
+              recordFile.write("\ntmFrameDu.versionNumber = " + str(tmFrameDu.versionNumber))
+              recordFile.write("\ntmFrameDu.spacecraftId = " + str(tmFrameDu.spacecraftId))
+              recordFile.write("\ntmFrameDu.virtualChannelId = " + str(tmFrameDu.virtualChannelId))
+              recordFile.write("\ntmFrameDu.operationalControlField = " + str(tmFrameDu.operationalControlField))
+              recordFile.write("\ntmFrameDu.masterChannelFrameCount = " + str(tmFrameDu.masterChannelFrameCount))
+              recordFile.write("\ntmFrameDu.virtualChannelFCountLow = " + str(tmFrameDu.virtualChannelFCountLow))
+              recordFile.write("\ntmFrameDu.secondaryHeaderFlag = " + str(tmFrameDu.secondaryHeaderFlag))
+              recordFile.write("\ntmFrameDu.synchronisationFlag = " + str(tmFrameDu.synchronisationFlag))
+              recordFile.write("\ntmFrameDu.packetOrderFlag = " + str(tmFrameDu.packetOrderFlag))
+              recordFile.write("\ntmFrameDu.segmentLengthId = " + str(tmFrameDu.segmentLengthId))
+              recordFile.write("\ntmFrameDu.firstHeaderPointer = " + str(tmFrameDu.firstHeaderPointer))
+              if tmFrameDu.secondaryHeaderFlag:
+                recordFile.write("\ntmFrameDu.secondaryHeaderVersionNr = " + str(tmFrameDu.secondaryHeaderVersionNr))
+                recordFile.write("\ntmFrameDu.secondaryHeaderSize = " + str(tmFrameDu.secondaryHeaderSize))
+                recordFile.write("\ntmFrameDu.virtualChannelFCountHigh = " + str(tmFrameDu.virtualChannelFCountHigh))
+            recordFile.write(UTIL.DU.array2str(tmDu.getBufferBody()))
+            recordFile.write("\n")
+          recordFile.flush()
+        else:
+          LOG_ERROR("invalid FRAME_RECORD_FORMAT: " + recordFormat, "GRND")
       except Exception, ex:
         LOG_ERROR("cannot write to frame recording file", "GRND")
         LOG(str(ex), "GRND")
