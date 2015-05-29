@@ -614,7 +614,7 @@ class TMpacketGenerator(object):
     """
     pass
   # ---------------------------------------------------------------------------
-  def getTMpacket(self, spid, parameterValues=[], reuse=True):
+  def getTMpacket(self, spid, parameterValues=[], dataField=None, reuse=True):
     """creates a CCSDS TM packet with optional parameter values"""
     pass
 

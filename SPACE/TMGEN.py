@@ -72,7 +72,7 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
     idlePacket.setChecksum()
     return idlePacket
   # ---------------------------------------------------------------------------
-  def getTMpacket(self, spid, parameterValues=[], reuse=True):
+  def getTMpacket(self, spid, parameterValues=[], dataField=None, reuse=True):
     """
     creates a CCSDS TM packet with optional parameter values:
     implementation of SPACE.IF.TMpacketGenerator.getTMpacket
@@ -81,13 +81,15 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
     tmPktDef = SPACE.IF.s_definitions.getTMpktDefBySPID(spid)
     if tmPktDef == None:
       raise Error("invalid SPID for packet creation: " + str(spid))
+    binarySize = tmPktDef.pktSPsize
     applicationProcessId = tmPktDef.pktAPID
     if reuse and spid in self.packetCache:
       # reuse a packet with the same definition from the cache
       packet = self.packetCache[spid]
+      packet.setLen(binarySize)
+      packet.setPacketLength()
     else:
       # create the TM packet
-      binarySize = tmPktDef.pktSPsize
       if tmPktDef.pktHasDFhdr:
         # PUS packet
         serviceType = tmPktDef.pktType
@@ -112,6 +114,17 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
         packet = self.getTMpacketHelper(binarySize,
                                         applicationProcessId)
       self.packetCache[spid] = packet
+    # apply the datafield
+    if dataField:
+      dataFieldOffset, dataFieldData = dataField
+      minExpectedPacketSize = dataFieldOffset + len(dataFieldData)
+      if tmPktDef.pktCheck:
+        minExpectedPacketSize += 2
+      # re-size the packet if needed
+      if len(packet) < minExpectedPacketSize:
+        packet.setLen(minExpectedPacketSize)
+        packet.setPacketLength()
+      packet.setBytes(dataFieldOffset, len(dataFieldData), dataFieldData)
     # apply the parameters
     for paramNameValue in parameterValues:
       paramName, paramValue = paramNameValue

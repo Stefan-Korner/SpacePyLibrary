@@ -95,7 +95,10 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     # create the TM packet
     spid = tmPacketData.pktSPID
     paramValues = tmPacketData.parameterValuesList
-    tmPacketDu = SPACE.IF.s_tmPacketGenerator.getTMpacket(spid, paramValues)
+    dataField = tmPacketData.dataField
+    tmPacketDu = SPACE.IF.s_tmPacketGenerator.getTMpacket(spid,
+                                                          paramValues,
+                                                          dataField)
     if tmPacketDu.dataFieldHeaderFlag:
       LOG("PUS Packet:" + UTIL.DU.array2str(tmPacketDu.getBufferString()[0:min(16,len(tmPacketDu))]), "SPACE")
     else:
@@ -254,8 +257,15 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
           pktMnemo = token0
         if len(tokens) > 1:
           # TM packet has a data field
+          # remove a close brake from the reminder
           token1 = tokens[1].split("]")[0].strip()
-          dataField = UTIL.DU.str2array(token1)
+          dataFieldInfo = token1.split(None, 1)
+          if len(dataFieldInfo) < 2:
+            LOG_ERROR("syntax error in line " + str(lineNr) + " of " + replayFileName, "SPACE")
+          else:
+            dataFieldOffset = int(dataFieldInfo[0], 16)
+            dataFieldData = UTIL.DU.str2array(dataFieldInfo[1])
+            dataField = [dataFieldOffset, dataFieldData]
       else:
         # remove a close brake from the reminder
         token1 = tokens[1].split(")")[0].strip()
