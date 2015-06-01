@@ -130,14 +130,14 @@ def setERTmissionEpochStr(missionEpochStr):
   global s_ertLeapSeconds, s_ertMissionEpochWithLeapSeconds
   s_ertMissionEpochStr = missionEpochStr
   s_ertMissionEpoch = getTimeFromASDstr(s_ertMissionEpochStr)
-  s_ertMissionWithLeapSeconds = s_ertMissionEpoch - s_ertLeapSeconds
+  s_ertMissionEpochWithLeapSeconds = s_ertMissionEpoch - s_ertLeapSeconds
 # -----------------------------------------------------------------------------
 def setERTleapSeconds(leapSeconds):
   """sets the ERT leap seconds"""
   global s_ertMissionEpoch
   global s_ertLeapSeconds, s_ertMissionEpochWithLeapSeconds
   s_ertLeapSeconds = leapSeconds
-  s_ertMissionWithLeapSeconds = s_ertMissionEpoch - s_ertLeapSeconds
+  s_ertMissionEpochWithLeapSeconds = s_ertMissionEpoch - s_ertLeapSeconds
 # -----------------------------------------------------------------------------
 def correlateFromERTmissionEpoch(pyEpochTime):
   """correlate the ERT mission epoch time to the local time"""
