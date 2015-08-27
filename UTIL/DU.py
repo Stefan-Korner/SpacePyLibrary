@@ -325,7 +325,6 @@ class BinaryUnit(object):
   # ---------------------------------------------------------------------------
   def getString(self, bytePos, byteLength):
     """extracts a string"""
-    data = self.getBytes(bytePos, byteLength)
     return self.getBytes(bytePos, byteLength).tostring()
   # ---------------------------------------------------------------------------
   def setString(self, bytePos, byteLength, byteArray):
