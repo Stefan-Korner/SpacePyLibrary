@@ -107,14 +107,14 @@ def setOBTmissionEpochStr(missionEpochStr):
   global s_obtLeapSeconds, s_obtMissionEpochWithLeapSeconds
   s_obtMissionEpochStr = missionEpochStr
   s_obtMissionEpoch = getTimeFromASDstr(s_obtMissionEpochStr)
-  s_obtMissionWithLeapSeconds = s_obtMissionEpoch - s_obtLeapSeconds
+  s_obtMissionEpochWithLeapSeconds = s_obtMissionEpoch - s_obtLeapSeconds
 # -----------------------------------------------------------------------------
 def setOBTleapSeconds(leapSeconds):
   """sets the OBT leap seconds"""
   global s_obtMissionEpoch
   global s_obtLeapSeconds, s_obtMissionEpochWithLeapSeconds
   s_obtLeapSeconds = leapSeconds
-  s_obtMissionWithLeapSeconds = s_obtMissionEpoch - s_obtLeapSeconds
+  s_obtMissionEpochWithLeapSeconds = s_obtMissionEpoch - s_obtLeapSeconds
 # -----------------------------------------------------------------------------
 def correlateFromOBTmissionEpoch(pyEpochTime):
   """correlate the OBT mission epoch time to the local time"""
