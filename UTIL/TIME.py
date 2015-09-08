@@ -176,4 +176,4 @@ def correlateOBTcucPFC17(byteArray):
                 (byteArray[3] * 0x0000001) + \
                 (byteArray[4] / 256.0) + \
                 (byteArray[5] / 65535.0)
-  return correlateFromOBTMissionEpoch(pyEpochTime)
+  return correlateFromOBTmissionEpoch(pyEpochTime)
