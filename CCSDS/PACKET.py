@@ -37,6 +37,10 @@ PRIMARY_HEADER_ATTRIBUTES = {
   "segmentationFlags":    (16,  2, BITS),
   "sequenceControlCount": (18, 14, BITS),
   "packetLength":         ( 4,  2, UNSIGNED)}
+FIRST_SEGMENT = 1
+CONTINUATION_SEGMENT = 0
+LAST_SEGMENT = 2
+UNSEGMENTED = 3
 
 ###########
 # classes #

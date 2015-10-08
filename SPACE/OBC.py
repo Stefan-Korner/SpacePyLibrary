@@ -14,6 +14,7 @@
 # Space Simulation - Onboard Computer                                         *
 #******************************************************************************
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import CCSDS.PACKET
 import EGSE.IF
 import LINK.IF
 import PUS.PACKET, PUS.SERVICES
@@ -96,9 +97,11 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     spid = tmPacketData.pktSPID
     paramValues = tmPacketData.parameterValuesList
     dataField = tmPacketData.dataField
+    segmentationFlags = tmPacketData.segmentationFlags
     tmPacketDu = SPACE.IF.s_tmPacketGenerator.getTMpacket(spid,
                                                           paramValues,
-                                                          dataField)
+                                                          dataField,
+                                                          segmentationFlags)
     if tmPacketDu.dataFieldHeaderFlag:
       LOG("PUS Packet:" + UTIL.DU.array2str(tmPacketDu.getBufferString()[0:min(16,len(tmPacketDu))]), "SPACE")
     else:
@@ -217,6 +220,7 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     tmPacketsFile.close()
     # load pending TM packets: parse the file
     lineNr = 0
+    segmentationFlags = CCSDS.PACKET.UNSEGMENTED
     for line in fileContents:
       lineNr += 1
       if len(line) == 0:
@@ -240,6 +244,12 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
           continue
         if token0[0] == "#":
           # comment (should be already handled above)
+          continue
+        if token0 == "firstSegment":
+          segmentationFlags = CCSDS.PACKET.FIRST_SEGMENT
+          continue
+        if token0 == "lastSegment":
+          segmentationFlags = CCSDS.PACKET.LAST_SEGMENT
           continue
         # TM packet without parameters
         # could contain the datafield in hex
@@ -313,16 +323,22 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
         # TM packet statement --> create the TM packet
         if useSPIDasKey:
           tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectDataBySPID(
-            pktSPID, params, values, dataField)
+            pktSPID, params, values, dataField, segmentationFlags)
         else:
           tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(
-            pktMnemo, params, values, dataField)
+            pktMnemo, params, values, dataField, segmentationFlags)
         # check the TM packet
         if tmPacketData == None:
           LOG_ERROR("error in line " + str(lineNr) + " of " + replayFileName, "SPACE")
           SPACE.IF.s_configuration.pendingTMpackets = []
           return
         SPACE.IF.s_configuration.pendingTMpackets.append(tmPacketData)
+        # change the state of the segmentationFlags
+        # Note: this is global and not per APID
+        if segmentationFlags == CCSDS.PACKET.FIRST_SEGMENT:
+          segmentationFlags = CCSDS.PACKET.CONTINUATION_SEGMENT
+        elif segmentationFlags == CCSDS.PACKET.LAST_SEGMENT:
+          segmentationFlags = CCSDS.PACKET.UNSEGMENTED
     # notify the GUI
     UTIL.TASK.s_processingTask.notifyGUItask("UPDATE_REPLAY")
     # start replay with sending of the first TM packet
@@ -336,7 +352,14 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
       try:
         pktMnemo = pendingItem.pktName
         spid = pendingItem.pktSPID
-        LOG("sendPacket " + pktMnemo + ", SPID=" + str(spid), "SPACE")
+        if pendingItem.segmentationFlags == CCSDS.PACKET.FIRST_SEGMENT:
+          LOG("firstSegment " + pktMnemo + ", SPID=" + str(spid), "SPACE")
+        elif pendingItem.segmentationFlags == CCSDS.PACKET.CONTINUATION_SEGMENT:
+          LOG("continuationSegment " + pktMnemo + ", SPID=" + str(spid), "SPACE")
+        elif pendingItem.segmentationFlags == CCSDS.PACKET.LAST_SEGMENT:
+          LOG("lastSegment " + pktMnemo + ", SPID=" + str(spid), "SPACE")
+        else:
+          LOG("sendPacket " + pktMnemo + ", SPID=" + str(spid), "SPACE")
         # send the TM packet
         self.generateTMpacket(pendingItem)
       except:

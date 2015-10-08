@@ -281,7 +281,12 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     self.initDefinitions()
     return self.definitionData.tmParamDefs
   # ---------------------------------------------------------------------------
-  def getTMpacketInjectData(self, pktMnemonic, params, values, dataField=None):
+  def getTMpacketInjectData(self,
+                            pktMnemonic,
+                            params,
+                            values,
+                            dataField=None,
+                            segmentationFlags=CCSDS.PACKET.UNSEGMENTED):
     """
     returns the data that are used for packet injection:
     implementation of SPACE.IF.Definitions.getTMpacketInjectData
@@ -293,9 +298,15 @@ class DefinitionsImpl(SPACE.IF.Definitions):
                                        pktMnemonic,
                                        params,
                                        values,
-                                       dataField)
+                                       dataField,
+                                       segmentationFlags)
   # ---------------------------------------------------------------------------
-  def getTMpacketInjectDataBySPID(self, spid, params, values, dataField=None):
+  def getTMpacketInjectDataBySPID(self,
+                                  spid,
+                                  params,
+                                  values,
+                                  dataField=None,
+                                  segmentationFlags=CCSDS.PACKET.UNSEGMENTED):
     """
     returns the data that are used for packet injection:
     implementation of SPACE.IF.Definitions.getTMpacketInjectDataBySPID
@@ -307,7 +318,8 @@ class DefinitionsImpl(SPACE.IF.Definitions):
                                        pktDef.pktName,
                                        params,
                                        values,
-                                       dataField)
+                                       dataField,
+                                       segmentationFlags)
 
 #############
 # functions #

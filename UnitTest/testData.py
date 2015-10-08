@@ -14,6 +14,7 @@
 # Test Data for Unit Tests                                                    *
 #******************************************************************************
 import array
+import CCSDS.PACKET, CCSDS.SEGMENT
 
 #############
 # constants #
@@ -40,7 +41,7 @@ TM_PACKET_01_versionNumber = 0
 TM_PACKET_01_packetType = 0
 TM_PACKET_01_dataFieldHeaderFlag = 1
 TM_PACKET_01_applicationProcessId = 68
-TM_PACKET_01_segmentationFlags = 3
+TM_PACKET_01_segmentationFlags = CCSDS.PACKET.UNSEGMENTED
 TM_PACKET_01_sequenceControlCount = 0
 TM_PACKET_01_packetLength = 15
 TM_PACKET_01_pusVersionNumber = 1
@@ -109,7 +110,7 @@ TM_PACKET_02_versionNumber = 0
 TM_PACKET_02_packetType = 0
 TM_PACKET_02_dataFieldHeaderFlag = 1
 TM_PACKET_02_applicationProcessId = 160
-TM_PACKET_02_segmentationFlags = 3
+TM_PACKET_02_segmentationFlags = CCSDS.PACKET.UNSEGMENTED
 TM_PACKET_02_sequenceControlCount = 0
 TM_PACKET_02_packetLength = 457
 TM_PACKET_02_pusVersionNumber = 1
@@ -451,7 +452,7 @@ TC_PACKET_01_versionNumber = 0
 TC_PACKET_01_packetType = 1
 TC_PACKET_01_dataFieldHeaderFlag = 1
 TC_PACKET_01_applicationProcessId = 652
-TC_PACKET_01_segmentationFlags = 3
+TC_PACKET_01_segmentationFlags = CCSDS.PACKET.UNSEGMENTED
 TC_PACKET_01_sequenceControlCount = 14
 TC_PACKET_01_packetLength = 269
 TC_PACKET_01_pusVersionNumber = 1
@@ -491,14 +492,14 @@ TC_SEGMENT_01 = [
   0x00, 0x00, 0x0F, 0x00, 0x1B, 0xFF, 0x00, 0x00,
   0x00, 0x00, 0x0F, 0x00, 0x1C, 0xFF, 0x00, 0x00,
   0x00]
-TC_SEGMENT_01_sequenceFlags = 1
+TC_SEGMENT_01_sequenceFlags = CCSDS.SEGMENT.FIRST_SEGMENT
 TC_SEGMENT_01_mapId = 2
 TC_SEGMENT_02 = [
   0x82, 0x00, 0x0F, 0x00, 0x1D, 0xFF, 0x00, 0x00,
   0x00, 0x00, 0x0F, 0x00, 0x1E, 0xFF, 0x00, 0x00,
   0x00, 0x00, 0x0F, 0x00, 0x1F, 0xFF, 0x00, 0x00,
   0x00, 0x00, 0x0F, 0xAC, 0x8F]
-TC_SEGMENT_02_sequenceFlags = 2
+TC_SEGMENT_02_sequenceFlags = CCSDS.SEGMENT.LAST_SEGMENT
 TC_SEGMENT_02_mapId = 2
 TC_FRAME_01 = [
   0x22, 0xF6, 0x00, 0xFF, 0x00, 0x42, 0x1A, 0x8C,

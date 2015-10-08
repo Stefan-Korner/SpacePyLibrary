@@ -27,6 +27,10 @@ TC_SEGMENT_HEADER_BYTE_SIZE = 1
 TC_SEGMENT_HEADER_ATTRIBUTES = {
   "sequenceFlags":            (0, 2, BITS),
   "mapId":                    (2, 6, BITS)}
+FIRST_SEGMENT = 1
+CONTINUATION_SEGMENT = 0
+LAST_SEGMENT = 2
+UNSEGMENTED = 3
 
 # =============================================================================
 # constant values of attributes:

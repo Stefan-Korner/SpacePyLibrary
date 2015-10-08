@@ -30,7 +30,7 @@ class TMpacketDefaults(object):
   def __init__(self):
     """default constructor"""
     self.versionNumber = 0
-    self.segmentationFlags = 3
+    self.segmentationFlags = CCSDS.PACKET.UNSEGMENTED
     self.pusVersionNumber = 1
     self.idlePacketAPID = SCOS.ENV.TPKT_PKT_IDLE_APID
 
@@ -72,7 +72,12 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
     idlePacket.setChecksum()
     return idlePacket
   # ---------------------------------------------------------------------------
-  def getTMpacket(self, spid, parameterValues=[], dataField=None, reuse=True):
+  def getTMpacket(self,
+                  spid,
+                  parameterValues=[],
+                  dataField=None,
+                  segmentationFlags=CCSDS.PACKET.UNSEGMENTED,
+                  reuse=True):
     """
     creates a CCSDS TM packet with optional parameter values:
     implementation of SPACE.IF.TMpacketGenerator.getTMpacket
@@ -114,6 +119,8 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
         packet = self.getTMpacketHelper(binarySize,
                                         applicationProcessId)
       self.packetCache[spid] = packet
+    # apply the segmentationFlags
+    packet.segmentationFlags = segmentationFlags
     # apply the datafield
     if dataField:
       dataFieldOffset, dataFieldData = dataField

@@ -15,6 +15,7 @@
 #******************************************************************************
 import string
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import CCSDS.PACKET
 import UTIL.SYS
 
 #############
@@ -482,12 +483,19 @@ class TMparamDef(object):
 class TMpacketInjectData(object):
   """Data of a TM packet that can be injected"""
   # ---------------------------------------------------------------------------
-  def __init__(self, pktSPID, pktMnemonic, params, values, dataField):
+  def __init__(self,
+               pktSPID,
+               pktMnemonic,
+               params,
+               values,
+               dataField,
+               segmentationFlags):
     """Initialisation with default data"""
     self.pktName = pktMnemonic.upper()
     self.pktSPID = pktSPID
     self.parameterValuesList = []
     self.dataField = dataField
+    self.segmentationFlags = segmentationFlags
     if params == "" or values == "":
       return
     # there are parameter-names and parameter-values
@@ -539,11 +547,21 @@ class Definitions(object):
     """returns the TM parameter definitions"""
     pass
   # ---------------------------------------------------------------------------
-  def getTMpacketInjectData(self, pktMnemonic, params, values, dataField=None):
+  def getTMpacketInjectData(self,
+                            pktMnemonic,
+                            params,
+                            values,
+                            dataField=None,
+                            segmentationFlags=CCSDS.PACKET.UNSEGMENTED):
     """returns the data that are used for packet injection"""
     pass
   # ---------------------------------------------------------------------------
-  def getTMpacketInjectDataBySPID(self, spid, params, values, dataField=None):
+  def getTMpacketInjectDataBySPID(self,
+                                  spid,
+                                  params,
+                                  values,
+                                  dataField=None,
+                                  segmentationFlags=CCSDS.PACKET.UNSEGMENTED):
     """returns the data that are used for packet injection"""
     pass
 
@@ -614,7 +632,12 @@ class TMpacketGenerator(object):
     """
     pass
   # ---------------------------------------------------------------------------
-  def getTMpacket(self, spid, parameterValues=[], dataField=None, reuse=True):
+  def getTMpacket(self,
+                  spid,
+                  parameterValues=[],
+                  dataField=None,
+                  segmentationFlags=CCSDS.PACKET.UNSEGMENTED,
+                  reuse=True):
     """creates a CCSDS TM packet with optional parameter values"""
     pass
 
