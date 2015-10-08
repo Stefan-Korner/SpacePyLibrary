@@ -77,8 +77,7 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
               recordFile.write("\ntmDu.routeId = " + str(tmDu.routeId))
               recordFile.write("\ntmDu.earthReceptionTime = " + str(tmDu.earthReceptionTime))
               recordFile.write("\ntmDu.sequenceFlag = " + str(tmDu.sequenceFlag))
-              recordFile.write("\ntmDu.qualityFlag = " + str(tmDu.downlinkTimeSec))
-              recordFile.write("\ntmDu.downlinkTimeSec = " + str(tmDu.qualityFlag))
+              recordFile.write("\ntmDu.qualityFlag = " + str(tmDu.qualityFlag))
             recordFile.write(UTIL.DU.array2str(tmDu.getBufferHeader()))
             recordFile.write("\n" + GRND.IF.s_configuration.frameRecordFormat + " Frame Body:")
             if recordFormat == "NCTRS_ASCII_DETAILS":

@@ -30,7 +30,7 @@ TM_FRAME_DU_ATTRIBUTES = {
   "numberCorrSymbols":    ( 8, 4, UNSIGNED),
   "rsErorFlag":           (12, 1, UNSIGNED),
   "spare":                (13, 1, UNSIGNED),
-  "padding":              (12, 2, UNSIGNED)}
+  "padding":              (14, 2, UNSIGNED)}
 
 ###########
 # classes #
