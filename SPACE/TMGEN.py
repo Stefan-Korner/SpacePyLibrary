@@ -20,6 +20,15 @@ import SCOS.ENV
 import SPACE.IF
 import UTIL.SYS, UTIL.TIME
 
+#############
+# constants #
+#############
+# -----------------------------------------------------------------------------
+# different formats for TM packet time stamp
+TM_TT_TIME_FORMAT_CDS1 = 1
+TM_TT_TIME_FORMAT_CDS2 = 2
+TM_TT_TIME_FORMAT_CUC = 3
+
 ###########
 # classes #
 ###########
@@ -45,6 +54,13 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
     self.packetDefaults = TMpacketDefaults()
     self.tcAckAPIDparamByteOffset = int(UTIL.SYS.s_configuration.TC_ACK_APID_PARAM_BYTE_OFFSET)
     self.tcAckSSCparamByteOffset = int(UTIL.SYS.s_configuration.TC_ACK_SSC_PARAM_BYTE_OFFSET)
+    tmTTtimeFormat = UTIL.SYS.s_configuration.TM_TT_TIME_FORMAT
+    if tmTTtimeFormat == "CDS1":
+      self.tmTTtimeFormat = TM_TT_TIME_FORMAT_CDS1
+    elif tmTTtimeFormat == "CDS2":
+      self.tmTTtimeFormat = TM_TT_TIME_FORMAT_CDS2
+    else:
+      self.tmTTtimeFormat = TM_TT_TIME_FORMAT_CUC
     self.tmTTtimeByteOffset = int(UTIL.SYS.s_configuration.TM_TT_TIME_BYTE_OFFSET)
     self.tmTTcoarseTimeByteSize = int(UTIL.SYS.s_configuration.TM_TT_COARSE_TIME_BYTE_SIZE)
     self.tmTTfineTimeByteSize = int(UTIL.SYS.s_configuration.TM_TT_FINE_TIME_BYTE_SIZE)
@@ -168,24 +184,34 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
       timeStamp = UTIL.TIME.getActualTime()
       obtTime = UTIL.TIME.correlateToOBTmissionEpoch(timeStamp)
       coarseTime = int(obtTime)
-      packet.setUnsigned(self.tmTTtimeByteOffset,
-                         self.tmTTcoarseTimeByteSize,
-                         coarseTime)
-      fimeTimeByteOffset = self.tmTTtimeByteOffset + \
-                           self.tmTTcoarseTimeByteSize
       fineTime = obtTime - coarseTime
-      if self.tmTTfineTimeByteSize == 1:
-        fineTimeVal = int(fineTime * 0x100)
-        packet.setUnsigned(fimeTimeByteOffset, 1, fineTimeVal)
-      elif self.tmTTfineTimeByteSize == 2:
-        fineTimeVal = int(fineTime * 0x10000)
-        packet.setUnsigned(fimeTimeByteOffset, 2, fineTimeVal)
-      elif self.tmTTfineTimeByteSize == 3:
-        fineTimeVal = int(fineTime * 0x1000000)
-        packet.setUnsigned(fimeTimeByteOffset, 3, fineTimeVal)
-      elif self.tmTTfineTimeByteSize == 4:
-        fineTimeVal = int(fineTime * 0x100000000)
-        packet.setUnsigned(fimeTimeByteOffset, 4, fineTimeVal)
+      if self.tmTTtimeFormat == TM_TT_TIME_FORMAT_CDS1:
+        days = coarseTime / 86400
+        seconds = coarseTime % 86400
+        # TODO: rest of the implementation
+      elif self.tmTTtimeFormat == TM_TT_TIME_FORMAT_CDS2:
+        days = coarseTime / 86400
+        seconds = coarseTime % 86400
+        # TODO: rest of the implementation
+      else
+        # self.tmTTtimeFormat == TM_TT_TIME_FORMAT_CUC
+        packet.setUnsigned(self.tmTTtimeByteOffset,
+                           self.tmTTcoarseTimeByteSize,
+                           coarseTime)
+        fimeTimeByteOffset = self.tmTTtimeByteOffset + \
+                             self.tmTTcoarseTimeByteSize
+        if self.tmTTfineTimeByteSize == 1:
+          fineTimeVal = int(fineTime * 0x100)
+          packet.setUnsigned(fimeTimeByteOffset, 1, fineTimeVal)
+        elif self.tmTTfineTimeByteSize == 2:
+          fineTimeVal = int(fineTime * 0x10000)
+          packet.setUnsigned(fimeTimeByteOffset, 2, fineTimeVal)
+        elif self.tmTTfineTimeByteSize == 3:
+          fineTimeVal = int(fineTime * 0x1000000)
+          packet.setUnsigned(fimeTimeByteOffset, 3, fineTimeVal)
+        elif self.tmTTfineTimeByteSize == 4:
+          fineTimeVal = int(fineTime * 0x100000000)
+          packet.setUnsigned(fimeTimeByteOffset, 4, fineTimeVal)
     # re-calculate the sequence counter (maintained per APID)
     if applicationProcessId in self.sequenceCounters:
       sequenceCounter = (self.sequenceCounters[applicationProcessId] + 1) % 16384

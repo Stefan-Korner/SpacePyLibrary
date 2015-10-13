@@ -51,6 +51,7 @@ SYS_CONFIGURATION = [
   ["TC_TT_PKT_BYTE_OFFSET", "<<shall be passed as environment variable>>"],
   ["TM_CYCLIC_MNEMO", "<<shall be passed as environment variable>>"],
   ["TM_CYCLIC_PERIOD_MS", "5000"],
+  ["TM_TT_TIME_FORMAT", "CUC"],
   ["TM_TT_TIME_BYTE_OFFSET", "10"],
   ["TM_TT_COARSE_TIME_BYTE_SIZE", "4"],
   ["TM_TT_FINE_TIME_BYTE_SIZE", "4"],
