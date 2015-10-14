@@ -28,6 +28,9 @@ import UTIL.SYS, UTIL.TIME
 TM_TT_TIME_FORMAT_CDS1 = 1
 TM_TT_TIME_FORMAT_CDS2 = 2
 TM_TT_TIME_FORMAT_CUC = 3
+CDS_DAY_BYTE_SIZE = 2
+CDS_MSEC_BYTE_SIZE = 4
+CDS_USEC_BYTE_SIZE = 2
 
 ###########
 # classes #
@@ -185,16 +188,7 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
       obtTime = UTIL.TIME.correlateToOBTmissionEpoch(timeStamp)
       coarseTime = int(obtTime)
       fineTime = obtTime - coarseTime
-      if self.tmTTtimeFormat == TM_TT_TIME_FORMAT_CDS1:
-        days = coarseTime / 86400
-        seconds = coarseTime % 86400
-        # TODO: rest of the implementation
-      elif self.tmTTtimeFormat == TM_TT_TIME_FORMAT_CDS2:
-        days = coarseTime / 86400
-        seconds = coarseTime % 86400
-        # TODO: rest of the implementation
-      else
-        # self.tmTTtimeFormat == TM_TT_TIME_FORMAT_CUC
+      if self.tmTTtimeFormat == TM_TT_TIME_FORMAT_CUC:
         packet.setUnsigned(self.tmTTtimeByteOffset,
                            self.tmTTcoarseTimeByteSize,
                            coarseTime)
@@ -212,6 +206,22 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
         elif self.tmTTfineTimeByteSize == 4:
           fineTimeVal = int(fineTime * 0x100000000)
           packet.setUnsigned(fimeTimeByteOffset, 4, fineTimeVal)
+      else:
+        # self.tmTTtimeFormat == TM_TT_TIME_FORMAT_CDS(1/2)
+        days = coarseTime / 86400
+        seconds = (coarseTime % 86400) + fineTime
+        milliseconds = seconds * 1000.0
+        # days + milliseconds of day is needed for CDS1 and CDS2
+        msecondsOfDay = int(milliseconds)
+        timeByteOffset = self.tmTTtimeByteOffset
+        packet.setUnsigned(timeByteOffset, CDS_DAY_BYTE_SIZE, days)
+        timeByteOffset += CDS_DAY_BYTE_SIZE
+        packet.setUnsigned(timeByteOffset, CDS_MSEC_BYTE_SIZE, msecondsOfDay)
+        if self.tmTTtimeFormat == TM_TT_TIME_FORMAT_CDS2:
+          msecondsFrac = milliseconds - msecondsOfDay
+          usecondsOfMsec = int(msecondsFrac * 1000.0)
+          timeByteOffset += CDS_MSEC_BYTE_SIZE
+          packet.setUnsigned(timeByteOffset, CDS_USEC_BYTE_SIZE, usecondsOfMsec)
     # re-calculate the sequence counter (maintained per APID)
     if applicationProcessId in self.sequenceCounters:
       sequenceCounter = (self.sequenceCounters[applicationProcessId] + 1) % 16384
