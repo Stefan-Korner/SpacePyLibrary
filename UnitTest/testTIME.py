@@ -20,6 +20,13 @@ import testData
 #############
 # functions #
 #############
+# -----------------------------------------------------------------------------
+def correlateOBTcucPFC17(byteArray):
+  """convenience function for backward compatibility"""
+  timeDU = UTIL.TIME.createCUC(byteArray)
+  pyTime = UTIL.TIME.convertFromCUC(timeDU)
+  return UTIL.TIME.correlateFromOBTmissionEpoch(pyTime)
+# -----------------------------------------------------------------------------
 def test_TIMEoperations():
   """function to test the TIME operations"""
   actualTime1 = UTIL.TIME.getActualTime()
@@ -40,8 +47,9 @@ def test_TIMEoperations():
   if zeroTimeStr2 != "1970.001.00.00.00.000000":
     print "Invalid ASD zero time 2:", zeroTimeStr2
     return False
-  zeroCCSDStime = UTIL.TIME.EPOCH_1958_SEC_DELTA
-  zeroCCSDStimeDU = UTIL.TIME.getCCSDStimeDU(zeroCCSDStime)
+  UTIL.TIME.setERTmissionEpochStr(UTIL.TIME.TAI_MISSION_EPOCH_STR)
+  zeroCCSDStime = UTIL.TIME.TAI_MISSION_EPOCH_DELTA
+  zeroCCSDStimeDU = UTIL.TIME.getERTccsdsTimeDU(zeroCCSDStime)
   if zeroCCSDStimeDU.days != 0:
     print "Invalid zero CCSDS time days:", zeroCCSDStimeDU.days
     return False
@@ -52,7 +60,7 @@ def test_TIMEoperations():
     print "Invalid zero CCSDS time microsedonds:", zeroCCSDStimeDU.mics
     return False
   days1CCSDStime = zeroCCSDStime + (24 * 60 * 60)
-  days1CCSDStimeDU = UTIL.TIME.getCCSDStimeDU(days1CCSDStime)
+  days1CCSDStimeDU = UTIL.TIME.getERTccsdsTimeDU(days1CCSDStime)
   if days1CCSDStimeDU.days != 1:
     print "Invalid days1 CCSDS time days:", days1CCSDStimeDU.days
     return False
@@ -63,7 +71,7 @@ def test_TIMEoperations():
     print "Invalid days1 CCSDS time microseconds:", days1CCSDStimeDU.mics
     return False
   mils1CCSDStime = zeroCCSDStime + 0.001
-  mils1CCSDStimeDU = UTIL.TIME.getCCSDStimeDU(mils1CCSDStime)
+  mils1CCSDStimeDU = UTIL.TIME.getERTccsdsTimeDU(mils1CCSDStime)
   if mils1CCSDStimeDU.days != 0:
     print "Invalid mils1 CCSDS time days:", mils1CCSDStimeDU.days
     return False
@@ -74,7 +82,7 @@ def test_TIMEoperations():
     print "Invalid mils1 CCSDS time microseconds:", mils1CCSDStimeDU.mics
     return False
   mics1CCSDStime = zeroCCSDStime + 0.000001
-  mics1CCSDStimeDU = UTIL.TIME.getCCSDStimeDU(mics1CCSDStime)
+  mics1CCSDStimeDU = UTIL.TIME.getERTccsdsTimeDU(mics1CCSDStime)
   if mics1CCSDStimeDU.days != 0:
     print "Invalid mics1 CCSDS time days:", mils1CCSDStimeDU.days
     return False
@@ -84,43 +92,44 @@ def test_TIMEoperations():
   if mics1CCSDStimeDU.mics != 1:
     print "Invalid mics1 CCSDS time microseconds:", mics1CCSDStimeDU.mics
     return False
-  zeroEpochTime1 = UTIL.TIME.correlateFromMissionEpoch(zeroTime)
+  zeroEpochTime1 = UTIL.TIME.correlateFromOBTmissionEpoch(zeroTime)
   if zeroEpochTime1 != 0:
     zeroEpochTime1Str = UTIL.TIME.getASDtimeStr(zeroEpochTime1)
     print "Invalid zero epoch time:", zeroEpochTime1Str
     return False
-  zeroEpochTime2 = UTIL.TIME.correlateCucPFC17(testData.ZERO_CUC_TIME_FIELD)
+  zeroEpochTime2 = correlateOBTcucPFC17(testData.ZERO_CUC_TIME_FIELD)
   if zeroEpochTime2 != 0:
     zeroEpochTime2Str = UTIL.TIME.getASDtimeStr(zeroEpochTime2)
     print "Invalid zero epoch time:", zeroEpochTime2Str
     return False
-  UTIL.TIME.setMissionEpochStr(testData.CUC_TIME_MISSION_EPOCH_STR)
-  cucTime1 = UTIL.TIME.correlateCucPFC17(testData.CUC_TIME1_FIELD)
+  UTIL.TIME.setOBTmissionEpochStr(UTIL.TIME.GPS_MISSION_EPOCH_STR)
+  UTIL.TIME.setOBTleapSeconds(UTIL.TIME.GPS_LEAP_SECONDS_2009)
+  cucTime1 = correlateOBTcucPFC17(testData.CUC_TIME1_FIELD)
   cucTime1Str = UTIL.TIME.getASDtimeStr(cucTime1, withMicros=True)
   if cucTime1Str != testData.CUC_TIME1_STR:
     print "Invalid CUC time 1:", cucTime1Str
     return False
-  cucTime2 = UTIL.TIME.correlateCucPFC17(testData.CUC_TIME2_FIELD)
+  cucTime2 = correlateOBTcucPFC17(testData.CUC_TIME2_FIELD)
   cucTime2Str = UTIL.TIME.getASDtimeStr(cucTime2, withMicros=True)
   if cucTime2Str != testData.CUC_TIME2_STR:
     print "Invalid CUC time 2:", cucTime2Str
     return False
-  cucTime3 = UTIL.TIME.correlateCucPFC17(testData.CUC_TIME3_FIELD)
+  cucTime3 = correlateOBTcucPFC17(testData.CUC_TIME3_FIELD)
   cucTime3Str = UTIL.TIME.getASDtimeStr(cucTime3, withMicros=True)
   if cucTime3Str != testData.CUC_TIME3_STR:
     print "Invalid CUC time 3:", cucTime3Str
     return False
-  cucTime4 = UTIL.TIME.correlateCucPFC17(testData.CUC_TIME4_FIELD)
+  cucTime4 = correlateOBTcucPFC17(testData.CUC_TIME4_FIELD)
   cucTime4Str = UTIL.TIME.getASDtimeStr(cucTime4, withMicros=True)
   if cucTime4Str != testData.CUC_TIME4_STR:
     print "Invalid CUC time 4:", cucTime4Str
     return False
-  cucTime5 = UTIL.TIME.correlateCucPFC17(testData.CUC_TIME5_FIELD)
+  cucTime5 = correlateOBTcucPFC17(testData.CUC_TIME5_FIELD)
   cucTime5Str = UTIL.TIME.getASDtimeStr(cucTime5, withMicros=True)
   if cucTime5Str != testData.CUC_TIME5_STR:
     print "Invalid CUC time 5:", cucTime5Str
     return False
-  cucTime6 = UTIL.TIME.correlateCucPFC17(testData.CUC_TIME6_FIELD)
+  cucTime6 = correlateOBTcucPFC17(testData.CUC_TIME6_FIELD)
   cucTime6Str = UTIL.TIME.getASDtimeStr(cucTime6, withMicros=True)
   if cucTime6Str != testData.CUC_TIME6_STR:
     print "Invalid CUC time 6:", cucTime6Str

@@ -33,8 +33,10 @@ class OnboardQueueImpl(SPACE.IF.OnboardQueue):
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise attributes only"""
-    self.timeByteOffset = int(UTIL.SYS.s_configuration.TC_TT_TIME_BYTE_OFFSET)
+    self.ttTtimeFormat = UTIL.TIME.timeFormat(UTIL.SYS.s_configuration.TM_TT_TIME_FORMAT)
+    self.ttTimeByteOffset = int(UTIL.SYS.s_configuration.TC_TT_TIME_BYTE_OFFSET)
     self.ttByteOffset = int(UTIL.SYS.s_configuration.TC_TT_PKT_BYTE_OFFSET)
+    self.ttFineTimeByteSize = int(UTIL.SYS.s_configuration.TC_TT_FINE_TIME_BYTE_SIZE)
     self.queue = {}
     self.checkCyclicCallback()
   # ---------------------------------------------------------------------------
@@ -83,8 +85,20 @@ class OnboardQueueImpl(SPACE.IF.OnboardQueue):
         LOG(str(ttPacketDu), "OBQ")
         return
       # calculate the execution time
-      ttExecTimeData = tcPacketDu.getBytes(self.timeByteOffset, UTIL.TIME.CUC_TIME_PFC17_BYTE_SIZE)
-      ttExecTime = UTIL.TIME.correlateOBTcucPFC17(ttExecTimeData)
+      if self.ttTtimeFormat == UTIL.TIME.TIME_FORMAT_CUC:
+        byteSize = self.ttFineTimeByteSize + UTIL.TIME.CUC0_TIME_BYTE_SIZE
+        ttExecTimeData = tcPacketDu.getBytes(self.ttTimeByteOffset, byteSize)
+        timeDU = UTIL.TIME.createCUC(ttExecTimeData)
+        obtExecTime = UTIL.TIME.convertFromCUC(timeDU)
+      else:
+        if self.ttTtimeFormat == UTIL.TIME.TIME_FORMAT_CDS1:
+          byteSize = UTIL.TIME.CDS1_TIME_BYTE_SIZE
+        else:
+          byteSize = UTIL.TIME.CDS2_TIME_BYTE_SIZE
+        ttExecTimeData = tcPacketDu.getBytes(self.ttTimeByteOffset, byteSize)
+        timeDU = UTIL.TIME.createCDS(ttExecTimeData)
+        obtExecTime = UTIL.TIME.convertFromCDS(timeDU)
+      ttExecTime = UTIL.TIME.correlateFromOBTmissionEpoch(obtExecTime)
       SPACE.IF.s_onboardQueue.insertTTpacket(ttExecTime, ttPacketDu)
   # ---------------------------------------------------------------------------
   def insertTTpacket(self, ttExecTime, ttPacketDu):
