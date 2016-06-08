@@ -8,3 +8,5 @@ PAR7	Bit Parameter 7			2	1	1			N	R		F	N	0		1234	1	R	Y		0	B
 PAR8	Bit Parameter 8			2	1	1			N	R		F	N	0		1234	1	R	Y		0	B
 PAR9	Unsigned Integer Parameter			3	14	32			N	R		F	N	0		1234	1	R	Y		0	B
 PAR10	String Parameter			8	8	64			T	R		F	N	0		1234	1	R	Y		0	B
+TC_ID	Telecommand ID			3	12	16			N	R		F	N	0		1234	1	R	Y		0	B
+TC_SSC	TC Source Sequence Count			3	12	16			N	R		F	N	0		1234	1	R	Y		0	B

@@ -15,19 +15,19 @@
 # Start scrip for the SCOE.                                                   *
 #******************************************************************************
 setenv HOST 192.168.1.100
-setenv TC_ACK_ACCEPT_SUCC_MNEMO TC_ACK_1_1
-setenv TC_ACK_ACCEPT_FAIL_MNEMO TC_ACK_1_2
-setenv TC_ACK_EXESTA_SUCC_MNEMO TC_ACK_1_3
-setenv TC_ACK_EXESTA_FAIL_MNEMO TC_ACK_1_4
-setenv TC_ACK_EXEPRO_SUCC_MNEMO TC_ACK_1_5
-setenv TC_ACK_EXEPRO_FAIL_MNEMO TC_ACK_1_6
-setenv TC_ACK_EXECUT_SUCC_MNEMO TC_ACK_1_7
-setenv TC_ACK_EXECUT_FAIL_MNEMO TC_ACK_1_8
-setenv TC_ACK_APID_PARAM_BYTE_OFFSET 10
-setenv TC_ACK_SSC_PARAM_BYTE_OFFSET 12
-setenv TM_TT_TIME_BYTE_OFFSET 9
-setenv TM_TT_FINE_TIME_BYTE_SIZE 3
-setenv TM_CYCLIC_MNEMO ZYCLIC
+setenv TC_ACK_ACCEPT_SUCC_MNEMO ACK1
+setenv TC_ACK_ACCEPT_FAIL_MNEMO NAK1
+setenv TC_ACK_EXESTA_SUCC_MNEMO ACK2
+setenv TC_ACK_EXESTA_FAIL_MNEMO NAK2
+setenv TC_ACK_EXEPRO_SUCC_MNEMO ACK3
+setenv TC_ACK_EXEPRO_FAIL_MNEMO NAK3
+setenv TC_ACK_EXECUT_SUCC_MNEMO ACK4
+setenv TC_ACK_EXECUT_FAIL_MNEMO NAK4
+setenv TC_ACK_APID_PARAM_BYTE_OFFSET 18
+setenv TC_ACK_SSC_PARAM_BYTE_OFFSET 20
+setenv TM_TT_TIME_BYTE_OFFSET 10
+setenv TM_TT_FINE_TIME_BYTE_SIZE 4
+setenv TM_CYCLIC_MNEMO TM_PKT1
 setenv scosii_homedir ${HOME}/Python/SpacePyLibrary/scosii_homedir
 setenv PYTHON python
 setenv PYTHONPATH ${HOME}/Python/SpacePyLibrary:${HOME}/Python/SpacePyLibrary/UnitTest
