@@ -16,7 +16,7 @@
 #******************************************************************************
 import os, sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import UTIL.TCP, UTIL.SYS
+import UTIL.SYS, UTIL.TASK, UTIL.TCP
 
 #############
 # constants #
@@ -30,8 +30,9 @@ LINEBUFFERLEN = 256
 class TCPreceivingClient(UTIL.TCP.SingleServerReceivingClient):
   """Subclass of UTIL.TCP.SingleServerReceivingClient"""
   # ---------------------------------------------------------------------------
-  def __init__(self, eventLoop):
-    UTIL.TCP.SingleServerReceivingClient.__init__(self, eventLoop)
+  def __init__(self):
+    modelTask = UTIL.TASK.s_processingTask
+    UTIL.TCP.SingleServerReceivingClient.__init__(self, modelTask)
     self.tcpLineBuffer = ""
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
@@ -99,22 +100,39 @@ class TCPreceivingClient(UTIL.TCP.SingleServerReceivingClient):
     LOG("line = " + line)
     return 0
 
-###########################
-# Initialisation sequence #
-###########################
-# register a console handler for termination
-consoleHandler = UTIL.SYS.ConsoleHandler()
-# create the TCP/IP cient
-LOG("Open the TCP client")
-client = TCPreceivingClient(UTIL.SYS.s_eventLoop)
-hostName = os.getenv("HOST")
-if hostName == None:
-  #hostName = "10.0.0.100"
-  hostName = "192.168.178.46"
-dataSocket = client.connectToServer(hostName, 1234)
-if not dataSocket:
-  sys.exit(-1)
-# start the event loop
-LOG("Start the event loop...")
-UTIL.SYS.s_eventLoop.start()
-sys.exit(0)
+#############
+# functions #
+#############
+# -----------------------------------------------------------------------------
+def initConfiguration():
+  """initialise the system configuration"""
+  UTIL.SYS.s_configuration.setDefaults([
+    ["HOST", "192.168.1.100"],
+    ["SERVER_PORT", "1234"]])
+# -----------------------------------------------------------------------------
+def createClient():
+  """create the TCP client"""
+  client = TCPreceivingClient()
+  if not client.connectToServer(
+    UTIL.SYS.s_configuration.HOST,
+    int(UTIL.SYS.s_configuration.SERVER_PORT)):
+    sys.exit(-1)
+
+########
+# main #
+########
+if __name__ == "__main__":
+  # initialise the system configuration
+  initConfiguration()
+  # initialise the console handler
+  consoleHandler = UTIL.TASK.ConsoleHandler()
+  # initialise the model
+  modelTask = UTIL.TASK.ProcessingTask(isParent=True)
+  # register the console handler
+  modelTask.registerConsoleHandler(consoleHandler)
+  # create the TCP client
+  LOG("Open the TCP client")
+  createClient()
+  # start the tasks
+  LOG("start modelTask...")
+  modelTask.start()

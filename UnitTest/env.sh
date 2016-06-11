@@ -1,6 +1,5 @@
-#!/usr/bin/env python
 #******************************************************************************
-# (C) 2014, Stefan Korner, Austria                                            *
+# (C) 2016, Stefan Korner, Austria                                            *
 #                                                                             *
 # The Space Python Library is free software; you can redistribute it and/or   *
 # modify it under the terms of the GNU Lesser General Public License as       *
@@ -12,21 +11,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser     *
 # General Public License for more details.                                    *
 #******************************************************************************
-# TASK framework - Unit Test: empty Model Task with default behaviour         *
+# Setup the sh Linux environment for Unit Tests, file needs to be sourced.    *
 #******************************************************************************
-from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import UTIL.TASK
-
-########
-# main #
-########
-if __name__ == "__main__":
-  # initialise the console handler
-  consoleHandler = UTIL.TASK.ConsoleHandler()
-  # initialise the model
-  modelTask = UTIL.TASK.ProcessingTask(isParent=True)
-  # register the console handler
-  modelTask.registerConsoleHandler(consoleHandler)
-  # start the tasks
-  LOG("start modelTask...")
-  modelTask.start()
+export PYTHONPATH=${HOME}/Python/SpacePyLibrary:${HOME}/Python/SpacePyLibrary/UnitTest

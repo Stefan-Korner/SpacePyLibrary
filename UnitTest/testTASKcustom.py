@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #******************************************************************************
-# (C) 2014, Stefan Korner, Austria                                            *
+# (C) 2016, Stefan Korner, Austria                                            *
 #                                                                             *
 # The Space Python Library is free software; you can redistribute it and/or   *
 # modify it under the terms of the GNU Lesser General Public License as       *
@@ -12,68 +12,58 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser     *
 # General Public License for more details.                                    *
 #******************************************************************************
-# Unit Tests                                                                  *
+# TASK framework - Unit Test: empty Model Task with default behaviour         *
 #******************************************************************************
-import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import UTIL.SYS, UTIL.TASK, UTIL.TCP
+import UTIL.TASK
 
 ###########
 # classes #
 ###########
 # =============================================================================
-class TCPsendingServer(UTIL.TCP.Server):
-  """Subclass of UTIL.TCP.Server"""
+class ModelTask(UTIL.TASK.ProcessingTask):
+  """Only one task: the processing model"""
   # ---------------------------------------------------------------------------
-  def __init__(self, portNr):
-    modelTask = UTIL.TASK.s_processingTask
-    UTIL.TCP.Server.__init__(self, modelTask, portNr)
-    self.clientSocket = None
+  def __init__(self):
+    """Initialise the Task as processing model"""
+    UTIL.TASK.ProcessingTask.__init__(self, isParent=True)
   # ---------------------------------------------------------------------------
-  def accepted(self, clientSocket):
-    """Client has connected"""
-    LOG("*** accepted ***")
-    self.clientSocket = clientSocket
-    self.clientSocket.send("connected\n")
-    # prepare a timer that calls the after method one second ago
-    UTIL.TASK.s_processingTask.createTimeHandler(1000, self.after)
+  def notifyCommand(self, argv):
+    """Entry point for processing"""
+    if len(argv) > 0:
+      # decode the command
+      cmd = argv[0].upper()
+      if cmd == "C" or cmd == "CUSTOM":
+        self.customCmd(argv)
+      else:
+        # delegate to the parent implementation (help & quit command)
+        return UTIL.TASK.ProcessingTask.notifyCommand(self, argv)
+    return 0
   # ---------------------------------------------------------------------------
-  def after(self):
-    """Called from a timer 1 second after connect"""
-    LOG("*** after ***")
-    self.clientSocket.send("quit\n")
-
-#############
-# functions #
-#############
-# -----------------------------------------------------------------------------
-def initConfiguration():
-  """initialise the system configuration"""
-  UTIL.SYS.s_configuration.setDefaults([
-    ["HOST", "192.168.1.100"],
-    ["SERVER_PORT", "1234"]])
-# -----------------------------------------------------------------------------
-def createServer():
-  """create the TCP server"""
-  server = TCPsendingServer(portNr=int(UTIL.SYS.s_configuration.SERVER_PORT))
-  if not server.openConnectPort(UTIL.SYS.s_configuration.HOST):
-    sys.exit(-1)
+  def helpCmd(self, argv):
+    """Decoded help command"""
+    # overloaded from UTIL.TASK.ProcessingTask
+    LOG_INFO("Available commands:")
+    LOG("")
+    LOG("h  | help .....provides this information")
+    LOG("q  | quit .....terminates TEST application")
+    LOG("c  | custom ...custom command, implemented in ModeTask")
+    LOG("")
+  # ---------------------------------------------------------------------------
+  def customCmd(self, argv):
+    """Decoded custom command"""
+    LOG_INFO("This is the custom command")
 
 ########
 # main #
 ########
 if __name__ == "__main__":
-  # initialise the system configuration
-  initConfiguration()
   # initialise the console handler
   consoleHandler = UTIL.TASK.ConsoleHandler()
   # initialise the model
-  modelTask = UTIL.TASK.ProcessingTask(isParent=True)
+  modelTask = ModelTask()
   # register the console handler
   modelTask.registerConsoleHandler(consoleHandler)
-  # create the TCP server
-  LOG("Open the TCP server")
-  createServer()
   # start the tasks
   LOG("start modelTask...")
   modelTask.start()

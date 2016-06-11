@@ -334,6 +334,33 @@ class ProcessingTask(Task):
   def logMethod(self, methodName, subsystem=None):
     """Logs a method name"""
     LOG_INFO(self.getAppMnemo() + "." + methodName, subsystem)
+  # ---------------------------------------------------------------------------
+  def notifyCommand(self, argv):
+    """Callback for processing the input arguments"""
+    if len(argv) > 0:
+      # decode the command
+      cmd = argv[0].upper()
+      if cmd == "H" or cmd == "HELP":
+        self.helpCmd(argv)
+      elif cmd == "Q" or cmd == "QUIT":
+        self.quitCmd(argv)
+      else:
+        LOG_WARNING("Invalid command " + argv[0])
+        self.helpCmd([])
+    return 0
+  # ---------------------------------------------------------------------------
+  def helpCmd(self, argv):
+    """Decoded help command"""
+    LOG_INFO("Available commands:")
+    LOG("")
+    LOG("h | help ........provides this information")
+    LOG("q | quit ........terminates the application")
+    LOG("")
+  # ---------------------------------------------------------------------------
+  def quitCmd(self, argv):
+    """Decoded quit command"""
+    global s_parentTask
+    s_parentTask.stop()
 
 # =============================================================================
 class ConsoleHandler(object):

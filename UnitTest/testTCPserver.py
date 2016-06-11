@@ -16,7 +16,7 @@
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import UTIL.TCP, UTIL.SYS
+import UTIL.SYS, UTIL.TASK, UTIL.TCP
 
 #############
 # constants #
@@ -30,8 +30,10 @@ LINEBUFFERLEN = 256
 class TCPserver(UTIL.TCP.SingleClientReceivingServer):
   """Subclass of UTIL.TCP.SingleClientReceivingServer"""
   # ---------------------------------------------------------------------------
-  def __init__(self, eventLoop, portNr):
-    UTIL.TCP.SingleClientReceivingServer.__init__(self, eventLoop, portNr)
+  def __init__(self, portNr):
+    """Initialise attributes only"""
+    modelTask = UTIL.TASK.s_processingTask
+    UTIL.TCP.SingleClientReceivingServer.__init__(self, modelTask, portNr)
     self.tcpLineBuffer = ""
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
@@ -114,23 +116,40 @@ class TCPserver(UTIL.TCP.SingleClientReceivingServer):
 #############
 # functions #
 #############
+# -----------------------------------------------------------------------------
+def initConfiguration():
+  """initialise the system configuration"""
+  UTIL.SYS.s_configuration.setDefaults([
+    ["HOST", "192.168.1.100"],
+    ["SERVER_PORT", "1234"]])
+# -----------------------------------------------------------------------------
+def createServer():
+  """create the TCP server"""
+  server = TCPserver(portNr=int(UTIL.SYS.s_configuration.SERVER_PORT))
+  if not server.openConnectPort(UTIL.SYS.s_configuration.HOST):
+    sys.exit(-1)
+  # activate zyclic idle function
+  idleFunction()
+# -----------------------------------------------------------------------------
 def idleFunction():
-  UTIL.SYS.s_eventLoop.createtimehandler(1000, idleFunction)
+  UTIL.TASK.s_processingTask.createTimeHandler(1000, idleFunction)
   LOG("--- idle ---")
 
-###########################
-# Initialisation sequence #
-###########################
-# register a console handler for termination
-consoleHandler = UTIL.SYS.ConsoleHandler()
-# create the TCP/IP receiver
-LOG("Open the TCP server")
-server = TCPserver(UTIL.SYS.s_eventLoop, portNr=1234)
-if not server.openConnectPort():
-  sys.exit(-1)
-# start the idle function
-idleFunction()
-# start the event loop
-LOG("Start the event loop...")
-UTIL.SYS.s_eventLoop.start()
-sys.exit(0)
+########
+# main #
+########
+if __name__ == "__main__":
+  # initialise the system configuration
+  initConfiguration()
+  # initialise the console handler
+  consoleHandler = UTIL.TASK.ConsoleHandler()
+  # initialise the model
+  modelTask = UTIL.TASK.ProcessingTask(isParent=True)
+  # register the console handler
+  modelTask.registerConsoleHandler(consoleHandler)
+  # create the TCP server
+  LOG("Open the TCP server")
+  createServer()
+  # start the tasks
+  LOG("start modelTask...")
+  modelTask.start()

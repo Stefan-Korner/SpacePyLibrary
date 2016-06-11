@@ -16,21 +16,38 @@
 #******************************************************************************
 import os, sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import UTIL.TCP, UTIL.SYS
+import UTIL.SYS, UTIL.TCP
 
-###########################
-# Initialisation sequence #
-###########################
-# create the TCP/IP cient
-LOG("Open the TCP client")
-client = UTIL.TCP.Client()
-hostName = os.getenv("HOST")
-if hostName == None:
-  #hostName = "10.0.0.100"
-  hostName = "192.168.178.46"
-dataSocket = client.connectToServer(hostName, 1234)
-if not dataSocket:
-  sys.exit(-1)
-dataSocket.send("quit\n")
-dataSocket.close()
-sys.exit(0)
+#############
+# functions #
+#############
+# -----------------------------------------------------------------------------
+def initConfiguration():
+  """initialise the system configuration"""
+  UTIL.SYS.s_configuration.setDefaults([
+    ["HOST", "192.168.1.100"],
+    ["SERVER_PORT", "1234"]])
+# -----------------------------------------------------------------------------
+def createClient():
+  """create the TCP client"""
+  client = UTIL.TCP.Client()
+  dataSocket = client.connectToServer(
+    UTIL.SYS.s_configuration.HOST,
+    int(UTIL.SYS.s_configuration.SERVER_PORT))
+  if not dataSocket:
+    sys.exit(-1)
+  return dataSocket
+
+########
+# main #
+########
+if __name__ == "__main__":
+  # initialise the system configuration
+  initConfiguration()
+  # create the TCP client
+  LOG("Open the TCP client")
+  dataSocket = createClient()
+  # force termination of the server
+  LOG("force server termination...")
+  dataSocket.send("quit\n")
+  dataSocket.close()

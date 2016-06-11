@@ -13,7 +13,7 @@
 #******************************************************************************
 # Utilities - TCP/IP Module                                                   *
 #******************************************************************************
-import select, socket, struct, sys
+import socket, struct, sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 
 ###########
@@ -23,9 +23,9 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 class Server(object):
   """TCP/IP server"""
   # ---------------------------------------------------------------------------
-  def __init__(self, eventLoop, portNr):
+  def __init__(self, task, portNr):
     """Initialise attributes only"""
-    self.eventLoop = eventLoop
+    self.task = task
     self.portNr = portNr
     self.connectSocket = None
   # ---------------------------------------------------------------------------
@@ -75,8 +75,8 @@ class Server(object):
       return False
     self.connectSocket = connectSocket
     # attach the server socket to the event loop
-    self.eventLoop.createFileHandler(self.connectSocket,
-                                     self.connectCallback)
+    self.task.createFileHandler(self.connectSocket,
+                                self.connectCallback)
     return True
   # ---------------------------------------------------------------------------
   def connectCallback(self, socket, stateMask):
@@ -135,9 +135,9 @@ class Client(object):
 class Receiver(object):
   """TCP/IP receiver"""
   # ---------------------------------------------------------------------------
-  def __init__(self, eventLoop):
+  def __init__(self, task):
     """Initialise attributes only"""
-    self.eventLoop = eventLoop
+    self.task = task
     self.dataSocket = None
   # ---------------------------------------------------------------------------
   def enableReceiveSocket(self, dataSocket):
@@ -147,8 +147,8 @@ class Receiver(object):
       return
     self.dataSocket = dataSocket
     # register the data socket
-    self.eventLoop.createFileHandler(self.dataSocket,
-                                     self.receiveCallback)
+    self.task.createFileHandler(self.dataSocket,
+                                self.receiveCallback)
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when data are received"""
@@ -162,7 +162,7 @@ class Receiver(object):
       LOG_ERROR("Receive socket not open!")
       return
     # unregister the receive socket
-    self.eventLoop.deleteFileHandler(self.dataSocket)
+    self.task.deleteFileHandler(self.dataSocket)
     # close the data socket
     try:
       self.dataSocket.close()
@@ -174,15 +174,15 @@ class Receiver(object):
 class SingleClientReceivingServer(Server, Receiver):
   """TCP/IP server that receives data from a single client"""
   # ---------------------------------------------------------------------------
-  def __init__(self, eventLoop, portNr):
+  def __init__(self, task, portNr):
     """Delegates to parent implementations"""
-    Server.__init__(self, eventLoop, portNr)
-    Receiver.__init__(self, eventLoop)
+    Server.__init__(self, task, portNr)
+    Receiver.__init__(self, task)
   # ---------------------------------------------------------------------------
   def accepted(self, clientSocket):
     """Overloaded from Server"""
     # unregister the connect socket
-    self.eventLoop.deleteFileHandler(self.connectSocket)
+    self.task.deleteFileHandler(self.connectSocket)
     # enable the client socket for data reception
     self.enableReceiveSocket(clientSocket)
   # ---------------------------------------------------------------------------
@@ -190,17 +190,17 @@ class SingleClientReceivingServer(Server, Receiver):
     """Disonnects the client"""
     self.disableReceiveSocket()
     # register the connect socket
-    self.eventLoop.createFileHandler(self.connectSocket,
-                                     self.connectCallback)
+    self.task.createFileHandler(self.connectSocket,
+                                self.connectCallback)
 
 # =============================================================================
 class SingleServerReceivingClient(Client, Receiver):
   """TCP/IP client that receives data from a single server"""
   # ---------------------------------------------------------------------------
-  def __init__(self, eventLoop):
+  def __init__(self, task):
     """Delegates to parent implementations"""
     Client.__init__(self)
-    Receiver.__init__(self, eventLoop)
+    Receiver.__init__(self, task)
   # ---------------------------------------------------------------------------
   def connectToServer(self, serverHost, serverPort):
     """Overloaded from Client"""
