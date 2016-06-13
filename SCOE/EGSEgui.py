@@ -45,13 +45,20 @@ class GUIview(UI.TKI.GUIwinView):
     # CCS interface port
     self.ccsPortField = UI.TKI.ValueField(self, row=1, label="CCS interface port:")
     self.ccsPortField.set(EGSE.IF.s_configuration.ccsPort)
+    # CCS interface status 2
+    self.ccsStatusField2 = UI.TKI.ValueField(self, row=2, label="CCS interface status 2:")
+    self.ccsStatusField2.set("INIT")
+    self.ccsStatusField2.setBackground(COLOR_INITIALISED)
+    # CCS interface port 2
+    self.ccsPortField2 = UI.TKI.ValueField(self, row=3, label="CCS interface port:")
+    self.ccsPortField2.set(EGSE.IF.s_configuration.ccsPort2)
     # log messages (default logger)
     self.messageLogger = UI.TKI.MessageLogger(self)
-    self.appGrid(self.messageLogger, row=2, columnspan=2)
+    self.appGrid(self.messageLogger, row=4, columnspan=2)
     # message line
     self.messageline = Tkinter.Message(self, relief=Tkinter.GROOVE)
     self.appGrid(self.messageline,
-                 row=3,
+                 row=5,
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,
@@ -71,8 +78,15 @@ class GUIview(UI.TKI.GUIwinView):
     """Generic callback when something changes in the model"""
     if status == "CCS_CONNECTED":
       self.ccsConnectedNotify()
+    elif status == "CCS_CONNECTED2":
+      self.ccsConnected2Notify()
   # ---------------------------------------------------------------------------
   def ccsConnectedNotify(self):
     """Called when the CCS connect function is successfully processed"""
     self.ccsStatusField.set("CONNECTED")
     self.ccsStatusField.setBackground(COLOR_CONNECTED)
+  # ---------------------------------------------------------------------------
+  def ccsConnected2Notify(self):
+    """Called when the CCS 2nd connect function is successfully processed"""
+    self.ccsStatusField2.set("CONNECTED")
+    self.ccsStatusField2.setBackground(COLOR_CONNECTED)

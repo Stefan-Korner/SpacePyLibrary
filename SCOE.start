@@ -15,6 +15,7 @@
 # Start scrip for the SCOE.                                                   *
 #******************************************************************************
 setenv HOST 192.168.1.100
+setenv EDEN_SERVER_PORT2 48570
 setenv TC_ACK_ACCEPT_SUCC_MNEMO ACK1
 setenv TC_ACK_ACCEPT_FAIL_MNEMO NAK1
 setenv TC_ACK_EXESTA_SUCC_MNEMO ACK2

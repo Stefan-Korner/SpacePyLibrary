@@ -32,12 +32,16 @@ class Configuration(object):
     """Initialise the connection relevant informations"""
     self.connected = False
     self.ccsPort = UTIL.SYS.s_configuration.EDEN_SERVER_PORT
+    self.connected2 = False
+    self.ccsPort2 = UTIL.SYS.s_configuration.EDEN_SERVER_PORT2
   # ---------------------------------------------------------------------------
   def dump(self):
     """Dumps the status of the configuration attributes"""
     LOG_INFO("EGSE interface configuration", "EGSE")
     LOG("CCS connected = " + str(self.connected), "EGSE")
     LOG("CCS interface port = " + str(self.ccsPort), "EGSE")
+    LOG("CCS connected 2 = " + str(self.connected2), "EGSE")
+    LOG("CCS interface port 2 = " + str(self.ccsPort2), "EGSE")
 
 ##############
 # interfaces #

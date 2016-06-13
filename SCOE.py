@@ -31,6 +31,7 @@ import UTIL.SYS, UTIL.TASK
 SYS_CONFIGURATION = [
   ["HOST", "192.168.1.100"],
   ["EDEN_SERVER_PORT", "48569"],
+  ["EDEN_SERVER_PORT2", "-1"],
   ["TC_ACK_ACCEPT_SUCC_MNEMO", "<<shall be passed as environment variable>>"],
   ["TC_ACK_ACCEPT_FAIL_MNEMO", "<<shall be passed as environment variable>>"],
   ["TC_ACK_EXESTA_SUCC_MNEMO", "<<shall be passed as environment variable>>"],
@@ -514,6 +515,13 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     """CCS connection established"""
     EGSE.IF.s_configuration.connected = True
     self.notifyGUItask("CCS_CONNECTED")
+    SPACE.IF.s_configuration.connected = True
+    self.notifyGUItask("TM_CONNECTED")
+  # ---------------------------------------------------------------------------
+  def setCCSconnected2(self):
+    """CCS 2nd connection established"""
+    EGSE.IF.s_configuration.connected2 = True
+    self.notifyGUItask("CCS_CONNECTED2")
     SPACE.IF.s_configuration.connected = True
     self.notifyGUItask("TM_CONNECTED")
 

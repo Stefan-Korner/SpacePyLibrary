@@ -26,6 +26,7 @@ import UTIL.SYS, UTIL.TASK
 # =============================================================================
 class Server(EGSE.EDEN.Server, EGSE.IF.CCSlink):
   """Subclass of GRND.NCTRS.TCreceiver"""
+  # this server only receives TC packets and sends TM packets
   # ---------------------------------------------------------------------------
   def __init__(self, portNr):
     """Initialise attributes only"""
@@ -68,11 +69,50 @@ class Server(EGSE.EDEN.Server, EGSE.IF.CCSlink):
     LOG_INFO("notifyCmdExec: message = " + message)
     self.sendCmdAnsw("this is a (CMD,ANSW) message")
 
+# =============================================================================
+class Server2(EGSE.EDEN.Server):
+  """Subclass of GRND.NCTRS.TCreceiver"""
+  # this server only receives TC packets
+  # ---------------------------------------------------------------------------
+  def __init__(self, portNr):
+    """Initialise attributes only"""
+    EGSE.EDEN.Server.__init__(self, portNr)
+  # ---------------------------------------------------------------------------
+  def clientAccepted(self):
+    """Overloaded from GRND.NCTRS.TCreceiver"""
+    LOG_INFO("CCS client accepted", "EGSE")
+    # notify the status change
+    UTIL.TASK.s_processingTask.setCCSconnected2()
+  # ---------------------------------------------------------------------------
+  def notifyError(self, errorMessage, data):
+    """error notification"""
+    LOG_ERROR(errorMessage)
+    try:
+      LOG(str(data))
+    except Exception, ex:
+      LOG_WARNING("data passed to notifyError are invalid: " + str(ex))
+  # ---------------------------------------------------------------------------
+  def notifyTcSpace(self, tcPacket):
+    """(TC,SPACE) received: overloaded from EGSE.EDEN.Server"""
+    tcPacketDu = CCSDS.PACKET.TCpacket(tcPacket)
+    return SPACE.IF.s_onboardComputer.pushTCpacket(tcPacketDu)
+  # ---------------------------------------------------------------------------
+  def notifyTcScoe(self, tcPacket):
+    """(TC,SCOE) received: overloaded from EGSE.EDEN.Server"""
+    tcPacketDu = CCSDS.PACKET.TCpacket(tcPacket)
+    return SPACE.IF.s_onboardComputer.pushTCpacket(tcPacketDu)
+  # ---------------------------------------------------------------------------
+  def notifyCmdExec(self, message):
+    """(CMD,EXEC) received: overloaded from EGSE.EDEN.Server"""
+    LOG_INFO("notifyCmdExec: message = " + message)
+    self.sendCmdAnsw("this is a (CMD,ANSW) message")
+
 ####################
 # global variables #
 ####################
 # EGSE server is a singleton
 s_server = None
+s_server2 = None
 
 #############
 # functions #
@@ -81,8 +121,14 @@ s_server = None
 # -----------------------------------------------------------------------------
 def createEGSEserver(hostName=None):
   """create the EGSE server"""
-  global s_server
+  global s_server, s_server2
   s_server = Server(portNr=int(UTIL.SYS.s_configuration.EDEN_SERVER_PORT))
   EGSE.IF.s_ccsLink = s_server
   if not s_server.openConnectPort(hostName):
     sys.exit(-1)
+  serverPort2 = int(UTIL.SYS.s_configuration.EDEN_SERVER_PORT2)
+  if serverPort2 >= 0:
+    # there is a second server port configured
+    s_server2 = Server2(portNr=serverPort2)
+    if not s_server2.openConnectPort(hostName):
+      sys.exit(-1)
