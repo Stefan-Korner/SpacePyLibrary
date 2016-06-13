@@ -20,8 +20,8 @@ import EGSE.EDEN
 import PUS.SERVICES
 import SCOE.EGSEserver, SCOE.EGSEgui
 import SCOS.ENV
-import SIM.SPACEgui
 import SPACE.DEF, SPACE.IF, SPACE.OBC, SPACE.TMGEN
+import SPACEUI.SPACEgui, SPACEUI.MILgui
 import UI.TKI
 import UTIL.SYS, UTIL.TASK
 
@@ -605,8 +605,10 @@ if guiMode:
   modelTask = ModelTask(isParent=False)
   win0 = UI.TKI.createWindow()
   win1 = UI.TKI.createWindow()
+  win2 = UI.TKI.createWindow()
   gui0view = SCOE.EGSEgui.GUIview(win0)
-  gui1view = SIM.SPACEgui.GUIview(win1)
+  gui1view = SPACEUI.SPACEgui.GUIview(win1)
+  gui2view = SPACEUI.MILgui.GUIview(win2)
   UI.TKI.finaliseGUIcreation()
 else:
   modelTask = ModelTask(isParent=True)

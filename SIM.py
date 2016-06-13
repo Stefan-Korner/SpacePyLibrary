@@ -21,8 +21,8 @@ import LINK.IF, LINK.TMGEN, LINK.TMTC
 import PUS.SERVICES
 import SCOS.ENV
 import SIM.TMserver, SIM.TCserver, SIM.AdminServer, SIM.GRNDgui, SIM.LINKgui
-import SIM.SPACEgui, SIM.OBQgui
 import SPACE.DEF, SPACE.IF, SPACE.OBC, SPACE.OBQ, SPACE.TMGEN
+import SPACEUI.SPACEgui, SPACEUI.OBQgui
 import UI.TKI
 import UTIL.SYS, UTIL.TASK, UTIL.TIME
 
@@ -1076,8 +1076,8 @@ if guiMode:
   win3 = UI.TKI.createWindow()
   gui0view = SIM.GRNDgui.GUIview(win0)
   gui1view = SIM.LINKgui.GUIview(win1)
-  gui2view = SIM.SPACEgui.GUIview(win2)
-  gui3view = SIM.OBQgui.GUIview(win3)
+  gui2view = SPACEUI.SPACEgui.GUIview(win2)
+  gui3view = SPACEUI.OBQgui.GUIview(win3)
   UI.TKI.finaliseGUIcreation()
 else:
   modelTask = ModelTask(isParent=True)

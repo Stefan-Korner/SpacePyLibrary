@@ -1,5 +1,5 @@
 #******************************************************************************
-# (C) 2014, Stefan Korner, Austria                                            *
+# (C) 2016, Stefan Korner, Austria                                            *
 #                                                                             *
 # The Space Python Library is free software; you can redistribute it and/or   *
 # modify it under the terms of the GNU Lesser General Public License as       *
@@ -11,6 +11,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser     *
 # General Public License for more details.                                    *
 #******************************************************************************
-# Ground, Link and Spacecraft simulator                                       *
+# Space Segment User Interfaces                                               *
 #******************************************************************************
-__all__ = ["AdminServer", "GRNDgui", "LINKgui", "TCserver", "TMserver"]
+__all__ = ["MILgui", "OBQgui", "SPACEgui"]
