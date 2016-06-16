@@ -20,7 +20,7 @@ import EGSE.EDEN
 import PUS.SERVICES
 import SCOE.EGSEserver, SCOE.EGSEgui
 import SCOS.ENV
-import SPACE.DEF, SPACE.IF, SPACE.OBC, SPACE.TMGEN
+import SPACE.ASW, SPACE.DEF, SPACE.IF, SPACE.MIL, SPACE.OBC, SPACE.TMGEN
 import SPACEUI.SPACEgui, SPACEUI.MILgui
 import UI.TKI
 import UTIL.SYS, UTIL.TASK
@@ -42,6 +42,8 @@ SYS_CONFIGURATION = [
   ["TC_ACK_EXECUT_FAIL_MNEMO", "<<shall be passed as environment variable>>"],
   ["TC_ACK_APID_PARAM_BYTE_OFFSET", "<<shall be passed as environment variable>>"],
   ["TC_ACK_SSC_PARAM_BYTE_OFFSET", "<<shall be passed as environment variable>>"],
+  ["TC_FKT_ID_BYTE_OFFSET", "<<shall be passed as environment variable>>"],
+  ["TC_FKT_ID_BYTE_SIZE", "<<shall be passed as environment variable>>"],
   ["TM_CYCLIC_MNEMO", "<<shall be passed as environment variable>>"],
   ["TM_CYCLIC_PERIOD_MS", "5000"],
   ["TM_TT_TIME_FORMAT", "CUC"],
@@ -628,6 +630,8 @@ if cmdPrompt:
 SPACE.DEF.init()
 SPACE.OBC.init(egseMode=True)
 SPACE.TMGEN.init()
+SPACE.ASW.init()
+SPACE.MIL.init()
 
 # create the EGSE server
 LOG("Open the EGSE server")

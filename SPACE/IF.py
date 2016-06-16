@@ -622,6 +622,15 @@ class OnboardQueue(object):
     """consumes a telecommand packet that shall be executed immediately"""
 
 # =============================================================================
+class ApplicationSoftware(object):
+  """Interface of the spacecraft's application software"""
+  # ---------------------------------------------------------------------------
+  def processTCpacket(self, tcPacketDu):
+    """processes a telecommand C&C packet from the CCS"""
+    # shall return True for successful processing, otherwise False
+    return True
+
+# =============================================================================
 class TMpacketGenerator(object):
   """Interface of the generator for telemetry packets"""
   # ---------------------------------------------------------------------------
@@ -641,6 +650,68 @@ class TMpacketGenerator(object):
     """creates a CCSDS TM packet with optional parameter values"""
     pass
 
+# =============================================================================
+class MILbus(object):
+  """Interface of the MIL Bus"""
+  # ---------------------------------------------------------------------------
+  def bcWriteSubAddress(self, rtAddress, subAddress, data):
+    """Bus Controller: writes data to a sub-address"""
+    pass
+  # ---------------------------------------------------------------------------
+  def bcReadSubAddress(self, rtAddress, subAddress):
+    """Bus Controller: reads data from a sub-address"""
+    pass
+  # ---------------------------------------------------------------------------
+  def bcDatablockDistribtionRequest(self, rtAddress, dataBlock):
+    """Bus Controller: initiate a datablock distribution"""
+    pass
+  # ---------------------------------------------------------------------------
+  def rtWriteSubAddress(self, rtAddress, subAddress, data):
+    """Remote Terminal: writes data to a sub-address"""
+    pass
+  # ---------------------------------------------------------------------------
+  def rtReadSubAddress(self, rtAddress, subAddress):
+    """Remote Terminal: reads data from a sub-address"""
+    pass
+  # ---------------------------------------------------------------------------
+  def rtDatablockAcquisitionRequest(self, rtAddress, dataBlock):
+    """Remote Terminal: initiate a datablock acquisition"""
+    pass
+
+# =============================================================================
+class MILbusController(object):
+  """Interface of the MIL Bus Controller"""
+  # ---------------------------------------------------------------------------
+  def processTCpacket(self, tcPacketDu):
+    """processes a telecommand C&C packet from the CCS"""
+    # shall return True for successful processing, otherwise False
+    return True
+  # ---------------------------------------------------------------------------
+  def notifyWriteSubAddress(self, rtAddress, subAddress, data):
+    """A Remote Terminal has writen data to a sub-address"""
+    pass
+  # ---------------------------------------------------------------------------
+  def notifyDatablockAcquisition(self, rtAddress, dataBlock):
+    """A Remote Terminal has performed a datablock acquisition"""
+    pass
+
+# =============================================================================
+class MILbusRemoteTerminals(object):
+  """Interface of the MIL Bus Remote Terminals"""
+  # ---------------------------------------------------------------------------
+  def processTCpacket(self, tcPacketDu):
+    """processes a telecommand C&C packet from the CCS"""
+    # shall return True for successful processing, otherwise False
+    return True
+  # ---------------------------------------------------------------------------
+  def notifyWriteSubAddress(self, rtAddress, subAddress, data):
+    """The Bus Controller has writen data to a sub-address"""
+    pass
+  # ---------------------------------------------------------------------------
+  def notifyDatablockDistribution(self, rtAddress, dataBlock):
+    """The Bus Controller has performed a datablock distribution"""
+    pass
+
 ####################
 # global variables #
 ####################
@@ -652,5 +723,13 @@ s_definitions = None
 s_onboardComputer = None
 # onboard queue is a singleton
 s_onboardQueue = None
+# applicaton software is a singleton
+s_applicatonSoftware = None
 # telemetry packet generator is a singleton
 s_tmPacketGenerator = None
+# MIL Bus is a singelton
+s_milBus = None
+# MIL Bus Controller is a singelton
+s_milBusController = None
+# MIL Bus Remote Terminals is a singelton
+s_milBusRemoteTerminals = None

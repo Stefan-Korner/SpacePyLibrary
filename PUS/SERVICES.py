@@ -30,7 +30,13 @@ TC_ACK_EXECUT_SUCC = 7
 TC_ACK_EXECUT_FAIL = 8
 
 # -----------------------------------------------------------------------------
+# PUS service 8: Function Management service
+# TYPE / SUBTYPES
+TC_FKT_TYPE = 8
+TC_FKT_PERFORM_FUNCITON = 1
+
+# -----------------------------------------------------------------------------
 # PUS service 11: Onboard Scheduling service
-# TYPES / SUBTYPES
+# TYPE / SUBTYPES
 TC_OBQ_TYPE = 11
 TC_OBQ_UPLINK_SUBTYPES = [4, 128]   # 128 is TET specific
