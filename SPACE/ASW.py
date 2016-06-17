@@ -36,18 +36,39 @@ class ApplicationSoftwareImpl(SPACE.IF.ApplicationSoftware):
     processes a telecommand C&C packet from the CCS
     implementation of SPACE.IF.ApplicationSoftware.processTCpacket
     """
+    LOG_INFO("ApplicationSoftwareImpl.processTCpacket", "SPACE")
     # packet is a PUS Function Management command
     if tcPacketDu.serviceType == PUS.SERVICES.TC_FKT_TYPE:
-      if tcPacketDu.serviceType == PUS.SERVICES.TC_FKT_PERFORM_FUNCITON:
-        tcFunctionId = tcPacketDu.getUnsigned(
-          self.tcFunctionIdBytePos, self.tcFunctionIdByteSize)
-        if tcFunctionId == 0:
+      if tcPacketDu.serviceSubType == PUS.SERVICES.TC_FKT_PERFORM_FUNCITON:
+#******************************************************************************
+# faked processing begin
+#******************************************************************************
+        apid = tcPacketDu.applicationProcessId
+        if apid == 1920:
           if SPACE.IF.s_milBusController != None:
             return SPACE.IF.s_milBusController.processTCpacket(tcPacketDu)
-        elif tcFunctionId == 1:
+        elif apid == 1922:
           if SPACE.IF.s_milBusRemoteTerminals != None:
             return SPACE.IF.s_milBusRemoteTerminals.processTCpacket(tcPacketDu)
+#******************************************************************************
+# faked processing end
+#******************************************************************************
+        tcFunctionId = tcPacketDu.getUnsigned(
+          self.tcFunctionIdBytePos, self.tcFunctionIdByteSize)
+        LOG("tcFunctionId = " + str(tcFunctionId), "SPACE")
     return True
+  # ---------------------------------------------------------------------------
+  def notifyMILdatablockAcquisition(self, rtAddress, dataBlock):
+    """
+    The BC has received on the MIL Bus a data block from a RT
+    """
+    LOG_INFO("ApplicationSoftwareImpl.notifyMILdatablockAcquisition", "SPACE")
+  # ---------------------------------------------------------------------------
+  def notifyMILdatablockDistribution(self, rtAddress, dataBlock):
+    """
+    The mRT has received on the MIL Bus a data block from the BC
+    """
+    LOG_INFO("ApplicationSoftwareImpl.notifyMILdatablockDistribution", "SPACE")
 
 #############
 # functions #

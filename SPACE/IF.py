@@ -629,6 +629,14 @@ class ApplicationSoftware(object):
     """processes a telecommand C&C packet from the CCS"""
     # shall return True for successful processing, otherwise False
     return True
+  # ---------------------------------------------------------------------------
+  def notifyMILdatablockAcquisition(self, rtAddress, dataBlock):
+    """The BC has received on the MIL Bus a data block from a RT"""
+    pass
+  # ---------------------------------------------------------------------------
+  def notifyMILdatablockDistribution(self, rtAddress, dataBlock):
+    """The mRT has received on the MIL Bus a data block from the BC"""
+    pass
 
 # =============================================================================
 class TMpacketGenerator(object):

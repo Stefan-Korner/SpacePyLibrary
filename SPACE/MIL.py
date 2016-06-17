@@ -47,7 +47,9 @@ class MILbusImpl(SPACE.IF.MILbus):
     Bus Controller: initiate a datablock distribution
     implementation of SPACE.IF.MILbus.bcDatablockDistribtionRequest
     """
-    pass
+    LOG_INFO("MILbusImpl.bcDatablockDistribtionRequest", "MIL")
+    rts = SPACE.IF.s_milBusRemoteTerminals
+    rts.notifyDatablockDistribution(rtAddress, dataBlock)
   # ---------------------------------------------------------------------------
   def rtWriteSubAddress(self, rtAddress, subAddress, data):
     """
@@ -68,7 +70,9 @@ class MILbusImpl(SPACE.IF.MILbus):
     Remote Terminal: initiate a datablock acquisition
     implementation of SPACE.IF.MILbus.rtDatablockAcquisitionRequest
     """
-    pass
+    LOG_INFO("MILbusImpl.rtDatablockAcquisitionRequest", "MIL")
+    bc = SPACE.IF.s_milBusController
+    bc.notifyDatablockAcquisition(rtAddress, dataBlock)
 
 # =============================================================================
 class MILbusControllerImpl(SPACE.IF.MILbusController):
@@ -83,8 +87,9 @@ class MILbusControllerImpl(SPACE.IF.MILbusController):
     consumes a telecommand C&C packet from the CCS
     implementation of SPACE.IF.MILbusController.processTCpacket
     """
-    # shall return True for successful processing, otherwise False
-    return False
+    LOG_INFO("MILbusControllerImpl.processTCpacket", "MIL")
+    SPACE.IF.s_milBus.bcDatablockDistribtionRequest(0, "*** BC ***")
+    return True
   # ---------------------------------------------------------------------------
   def notifyWriteSubAddress(self, rtAddress, subAddress, data):
     """
@@ -98,7 +103,9 @@ class MILbusControllerImpl(SPACE.IF.MILbusController):
     A Remote Terminal has performed a datablock acquisition
     implementation of SPACE.IF.MILbusController.notifyDatablockAcquisition
     """
-    pass
+    LOG_INFO("MILbusControllerImpl.notifyDatablockAcquisition", "MIL")
+    asw = SPACE.IF.s_applicatonSoftware
+    asw.notifyMILdatablockAcquisition(rtAddress, dataBlock)
 
 # =============================================================================
 class MILbusRemoteTerminalsImpl(SPACE.IF.MILbusRemoteTerminals):
@@ -113,8 +120,9 @@ class MILbusRemoteTerminalsImpl(SPACE.IF.MILbusRemoteTerminals):
     consumes a telecommand C&C packet from the CCS
     implementation of SPACE.IF.MILbusRemoteTerminalsImpl.processTCpacket
     """
-    # shall return True for successful processing, otherwise False
-    return False
+    LOG_INFO("MILbusRemoteTerminalsImpl.processTCpacket", "MIL")
+    SPACE.IF.s_milBus.rtDatablockAcquisitionRequest(0, "*** RT ***")
+    return True
   # ---------------------------------------------------------------------------
   def notifyWriteSubAddress(self, rtAddress, subAddress, data):
     """
@@ -128,7 +136,9 @@ class MILbusRemoteTerminalsImpl(SPACE.IF.MILbusRemoteTerminals):
     The Bus Controller has performed a datablock distribution
     implementation of SPACE.IF.MILbusRemoteTerminals.notifyDatablockDistribution
     """
-    pass
+    LOG_INFO("MILbusRemoteTerminalsImpl.notifyDatablockDistribution", "MIL")
+    asw = SPACE.IF.s_applicatonSoftware
+    asw.notifyMILdatablockDistribution(rtAddress, dataBlock)
 
 #############
 # functions #

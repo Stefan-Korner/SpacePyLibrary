@@ -83,7 +83,7 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
           SPACE.IF.s_onboardQueue.processTCpacket(tcPacketDu)
       # delegate other services to the spacecraft application software
       elif SPACE.IF.s_applicatonSoftware != None:
-        SPACE.IF.s_applicatonSoftware.pushMngPacket(tcPacketDu)
+        SPACE.IF.s_applicatonSoftware.processTCpacket(tcPacketDu)
       # send TC acknowledgements
       ok &= self.generateAcksFromTCpacket(tcPacketDu, ack1, ack2, ack3, ack4)
     else:
