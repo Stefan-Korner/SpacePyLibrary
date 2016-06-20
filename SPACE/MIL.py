@@ -15,6 +15,7 @@
 #******************************************************************************
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import SPACE.IF
+import UTIL.TASK
 
 ###########
 # classes #
@@ -47,7 +48,8 @@ class MILbusImpl(SPACE.IF.MILbus):
     Bus Controller: initiate a datablock distribution
     implementation of SPACE.IF.MILbus.bcDatablockDistribtionRequest
     """
-    LOG_INFO("MILbusImpl.bcDatablockDistribtionRequest", "MIL")
+    LOG_INFO("MILbusImpl.bcDatablockDistribtionRequest(" + str(rtAddress) + ")", "MIL")
+    UTIL.TASK.s_processingTask.notifyGUItask("RT " + str(rtAddress) + " DDB " + dataBlock)
     rts = SPACE.IF.s_milBusRemoteTerminals
     rts.notifyDatablockDistribution(rtAddress, dataBlock)
   # ---------------------------------------------------------------------------
@@ -70,7 +72,8 @@ class MILbusImpl(SPACE.IF.MILbus):
     Remote Terminal: initiate a datablock acquisition
     implementation of SPACE.IF.MILbus.rtDatablockAcquisitionRequest
     """
-    LOG_INFO("MILbusImpl.rtDatablockAcquisitionRequest", "MIL")
+    LOG_INFO("MILbusImpl.rtDatablockAcquisitionRequest(" + str(rtAddress) + ")", "MIL")
+    UTIL.TASK.s_processingTask.notifyGUItask("RT " + str(rtAddress) + " ADB " + dataBlock)
     bc = SPACE.IF.s_milBusController
     bc.notifyDatablockAcquisition(rtAddress, dataBlock)
 
@@ -88,7 +91,7 @@ class MILbusControllerImpl(SPACE.IF.MILbusController):
     implementation of SPACE.IF.MILbusController.processTCpacket
     """
     LOG_INFO("MILbusControllerImpl.processTCpacket", "MIL")
-    SPACE.IF.s_milBus.bcDatablockDistribtionRequest(0, "*** BC ***")
+    SPACE.IF.s_milBus.bcDatablockDistribtionRequest(0, "***BC***")
     return True
   # ---------------------------------------------------------------------------
   def notifyWriteSubAddress(self, rtAddress, subAddress, data):
@@ -103,7 +106,7 @@ class MILbusControllerImpl(SPACE.IF.MILbusController):
     A Remote Terminal has performed a datablock acquisition
     implementation of SPACE.IF.MILbusController.notifyDatablockAcquisition
     """
-    LOG_INFO("MILbusControllerImpl.notifyDatablockAcquisition", "MIL")
+    LOG_INFO("MILbusControllerImpl.notifyDatablockAcquisition(" + str(rtAddress) + ")", "MIL")
     asw = SPACE.IF.s_applicatonSoftware
     asw.notifyMILdatablockAcquisition(rtAddress, dataBlock)
 
@@ -121,7 +124,7 @@ class MILbusRemoteTerminalsImpl(SPACE.IF.MILbusRemoteTerminals):
     implementation of SPACE.IF.MILbusRemoteTerminalsImpl.processTCpacket
     """
     LOG_INFO("MILbusRemoteTerminalsImpl.processTCpacket", "MIL")
-    SPACE.IF.s_milBus.rtDatablockAcquisitionRequest(0, "*** RT ***")
+    SPACE.IF.s_milBus.rtDatablockAcquisitionRequest(1, "***RT***")
     return True
   # ---------------------------------------------------------------------------
   def notifyWriteSubAddress(self, rtAddress, subAddress, data):
@@ -136,7 +139,7 @@ class MILbusRemoteTerminalsImpl(SPACE.IF.MILbusRemoteTerminals):
     The Bus Controller has performed a datablock distribution
     implementation of SPACE.IF.MILbusRemoteTerminals.notifyDatablockDistribution
     """
-    LOG_INFO("MILbusRemoteTerminalsImpl.notifyDatablockDistribution", "MIL")
+    LOG_INFO("MILbusRemoteTerminalsImpl.notifyDatablockDistribution(" + str(rtAddress) + ")", "MIL")
     asw = SPACE.IF.s_applicatonSoftware
     asw.notifyMILdatablockDistribution(rtAddress, dataBlock)
 

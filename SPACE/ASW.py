@@ -62,13 +62,13 @@ class ApplicationSoftwareImpl(SPACE.IF.ApplicationSoftware):
     """
     The BC has received on the MIL Bus a data block from a RT
     """
-    LOG_INFO("ApplicationSoftwareImpl.notifyMILdatablockAcquisition", "SPACE")
+    LOG_INFO("ApplicationSoftwareImpl.notifyMILdatablockAcquisition(" + str(rtAddress) + ")", "SPACE")
   # ---------------------------------------------------------------------------
   def notifyMILdatablockDistribution(self, rtAddress, dataBlock):
     """
     The mRT has received on the MIL Bus a data block from the BC
     """
-    LOG_INFO("ApplicationSoftwareImpl.notifyMILdatablockDistribution", "SPACE")
+    LOG_INFO("ApplicationSoftwareImpl.notifyMILdatablockDistribution(" + str(rtAddress) + ")", "SPACE")
 
 #############
 # functions #
