@@ -500,7 +500,7 @@ class SubFrame(Tkinter.Frame, AppGrid):
 class ValueField:
   """Combines a fixed label field and a dynamic value field managed by a StringVar"""
   # ---------------------------------------------------------------------------
-  def __init__(self, master, row=0, column=0, label="", width=40):
+  def __init__(self, master, row=0, column=0, label="", width=40, fieldColumnspan=1):
     """Creates the static and dynamic label fields and places the widgets on the grid"""
     self.stringVar = Tkinter.StringVar()
     self.label = Tkinter.Label(master, text=label, anchor=Tkinter.W)
@@ -510,7 +510,12 @@ class ValueField:
                                anchor=Tkinter.W,
                                width=width,
                                relief=Tkinter.GROOVE)
-    master.appGrid(self.field, row=row, column=column+1, rowweight=0, columnweight=1)
+    master.appGrid(self.field,
+                   row=row,
+                   column=column+1,
+                   rowweight=0,
+                   columnweight=1,
+                   columnspan=fieldColumnspan)
   # ---------------------------------------------------------------------------
   def set(self, value):
     """Set a new value for the dynamic label field"""

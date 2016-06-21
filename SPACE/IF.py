@@ -690,9 +690,47 @@ class MILbus(object):
 class MILbusController(object):
   """Interface of the MIL Bus Controller"""
   # ---------------------------------------------------------------------------
-  def processTCpacket(self, tcPacketDu):
-    """processes a telecommand C&C packet from the CCS"""
-    # shall return True for successful processing, otherwise False
+  # external methods that are invoked via telecommands,
+  # shall return True for successful processing, otherwise False
+  def identify(self):
+    return True
+  def selfTest(self):
+    return True
+  def getSelfTestReport(self):
+    return True
+  def reset(self):
+    return True
+  def configure(self):
+    return True
+  def configureFrame(self):
+    return True
+  def addInterrogation(self):
+    return True
+  def discover(self):
+    return True
+  def setupDistDatablock(self):
+    return True
+  def start(self):
+    return True
+  def stop(self):
+    return True
+  def forceFrameSwitch(self):
+    return True
+  def send(self):
+    return True
+  def setData(self):
+    return True
+  def forceBusSwitch(self):
+    return True
+  def injectError(self):
+    return True
+  def clearError(self):
+    return True
+  def activate(self):
+    return True
+  def deactivate(self):
+    return True
+  def dtd(self):
     return True
   # ---------------------------------------------------------------------------
   def notifyWriteSubAddress(self, rtAddress, subAddress, data):
@@ -707,9 +745,37 @@ class MILbusController(object):
 class MILbusRemoteTerminals(object):
   """Interface of the MIL Bus Remote Terminals"""
   # ---------------------------------------------------------------------------
-  def processTCpacket(self, tcPacketDu):
-    """processes a telecommand C&C packet from the CCS"""
-    # shall return True for successful processing, otherwise False
+  # external methods that are invoked via telecommands,
+  # shall return True for successful processing, otherwise False
+  def identify(self):
+    return True
+  def selfTest(self):
+    return True
+  def getSelfTestReport(self):
+    return True
+  def configure(self):
+    return True
+  def addResponse(self):
+    return True
+  def reset(self):
+    return True
+  def saEnable(self):
+    return True
+  def setupAcquDatablock(self):
+    return True
+  def start(self):
+    return True
+  def stop(self):
+    return True
+  def injectError(self):
+    return True
+  def clearError(self):
+    return True
+  def activate(self):
+    return True
+  def deactivate(self):
+    return True
+  def atr(self):
     return True
   # ---------------------------------------------------------------------------
   def notifyWriteSubAddress(self, rtAddress, subAddress, data):
