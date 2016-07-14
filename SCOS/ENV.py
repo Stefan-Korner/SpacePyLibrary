@@ -21,8 +21,8 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 #############
 # size values in byte
 SCOS_PACKET_HEADER_SIZE = 64
-# reserved data space for variable packets
-VPD_DATA_SPACE = 4
+# reserved data space for packets when no size is defined in the MIB
+TM_PKT_DEFAULT_DATAFIELD_DATA_SPACE = 16
 # copied from MISCcontext.sta
 TPKT_PKT_IDLE_APID = 2047
 TPKT_PKT_IDLE_SPID = 5071

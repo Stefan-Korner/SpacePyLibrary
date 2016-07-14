@@ -131,7 +131,6 @@ class TMpktDef(object):
   # ---------------------------------------------------------------------------
   def __init__(self):
     self.pktSPID = None
-    self.pktIsVP = None
     self.pktName = None
     self.pktDescr = None
     self.pktAPID = None
@@ -281,7 +280,6 @@ class TMpktDef(object):
     """string representation"""
     retVal = "\n"
     retVal += " pktSPID = " + str(self.pktSPID) + "\n"
-    retVal += " pktIsVP = " + str(self.pktIsVP) + "\n"
     retVal += " pktName = " + str(self.pktName) + "\n"
     retVal += " pktDescr = " + str(self.pktDescr) + "\n"
     retVal += " pktAPID = " + str(self.pktAPID) + "\n"

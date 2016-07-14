@@ -45,24 +45,32 @@ class DefinitionsImpl(SPACE.IF.Definitions):
   def createTMpktDef(self, pidRecord, picRecord, tpcfRecord):
     """creates a TM packet definition"""
     tmPktDef = SPACE.IF.TMpktDef();
-    pktSize = None
     tmPktDef.pktSPID = pidRecord.pidSPID
-    tmPktDef.pktIsVP = True
     if tpcfRecord == None:
       tmPktDef.pktName = "SPID_" + str(pidRecord.pidSPID)
+      pktSize = 0
     else:
       # remove white spaces and "&"
       tmPktDef.pktName = tpcfRecord.tpcfName.replace(" ", "_").replace("&", "_").replace(".", "_").replace("-", "_")
-      if tpcfRecord.tpcfSize > 0:
-        # fixed packet
-        pktSize = tpcfRecord.tpcfSize
-        tmPktDef.pktIsVP = False
+      pktSize = tpcfRecord.tpcfSize
     tmPktDef.pktDescr = pidRecord.pidDescr
     tmPktDef.pktAPID = pidRecord.pidAPID
     tmPktDef.pktType = pidRecord.pidType
     tmPktDef.pktSType = pidRecord.pidSType
-    tmPktDef.pktDFHsize = pidRecord.pidDFHsize
-    tmPktDef.pktHasDFhdr = pidRecord.pidDFHsize > 6
+    if tmPktDef.pktAPID == 0:
+      tmPktDef.pktHasDFhdr = False
+      tmPktDef.pktDFHsize = 0
+    elif tmPktDef.pktType == 0 and tmPktDef.pktSType == 0:
+      tmPktDef.pktHasDFhdr = False
+      tmPktDef.pktDFHsize = 0
+    else:
+      tmPktDef.pktHasDFhdr = True
+      # pidRecord.pidDFHsize might be 0 even if there is a secondary header
+      #                      --> only rely on tmPktDef.pktHasDFhdr if it is > 0
+      if pidRecord.pidDFHsize > 0:
+        tmPktDef.pktDFHsize = pidRecord.pidDFHsize
+      else:
+        tmPktDef.pktDFHsize = PUS.PACKET.TM_PACKET_DATAFIELD_HEADER_BYTE_SIZE
     tmPktDef.pktCheck = pidRecord.pidCheck
     tmPktDef.pktPI1off = None
     tmPktDef.pktPI1wid = None
@@ -79,31 +87,40 @@ class DefinitionsImpl(SPACE.IF.Definitions):
         tmPktDef.pktPI2off = picRecord.picPI2off
         tmPktDef.pktPI2wid = picRecord.picPI2wid
         tmPktDef.pktPI2val = pidRecord.pidPI2
-    # calculate size values which are common for fixed and variable packets
-    if tmPktDef.pktIsVP:
-      # pure variable packet
-      tmPktDef.pktSPsize = CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE + tmPktDef.pktDFHsize + SCOS.ENV.VPD_DATA_SPACE
-      if tmPktDef.pktCheck:
-        tmPktDef.pktSPsize += CCSDS.PACKET.CRC_BYTE_SIZE
-      tmPktDef.pktS2Ksize = SCOS.ENV.SCOS_PACKET_HEADER_SIZE + tmPktDef.pktSPsize
-    else:
-      # fixed packet
-      # Anomaly in the DLR MIB: the SCOS packet size defined in TPCF_SIZE
-      # contains only the source packet size without the SCOS packet header.
-      # This can be identified in most cases if the SCOS packet header size
-      # is larger than the whole SCOS packet size
-      if SCOS.ENV.SCOS_PACKET_HEADER_SIZE > pktSize:
-        tmPktDef.pktSPsize = pktSize
-        tmPktDef.pktS2Ksize = tmPktDef.pktSPsize + SCOS.ENV.SCOS_PACKET_HEADER_SIZE
-      else:
+    # tpcfRecord.tpcfSize might be 0 even if there is a fixed packet
+    #                     --> only rely on tpcfRecord.tpcfSize if it is > 0
+    if pktSize > 0:
+      # packet size defined: take it
+      # tpcfRecord.tpcfSize optionally contains the size of the SCOS-2000
+      #                     packet header (ESA convention) or it does not
+      #                     contain this additional offset
+      #                     --> check the value of tpcfRecord.tpcfSize
+      #                         if it is > SCOS.ENV.SCOS_PACKET_HEADER_SIZE
+      #                         then we expect that the value contains
+      #                         the SCOS.ENV.SCOS_PACKET_HEADER_SIZE
+      if pktSize > SCOS.ENV.SCOS_PACKET_HEADER_SIZE:
+        # we expect that the size includes SCOS.ENV.SCOS_PACKET_HEADER_SIZE
         tmPktDef.pktS2Ksize = pktSize
-        tmPktDef.pktSPsize = tmPktDef.pktS2Ksize - SCOS.ENV.SCOS_PACKET_HEADER_SIZE
-    tmPktDef.pktSPDFsize = tmPktDef.pktSPsize - CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE
-    tmPktDef.pktSPDFdataSize = tmPktDef.pktSPDFsize
-    if tmPktDef.pktHasDFhdr:
-      tmPktDef.pktSPDFdataSize -= PUS.PACKET.TM_PACKET_DATAFIELD_HEADER_BYTE_SIZE
-    if tmPktDef.pktCheck:
-      tmPktDef.pktSPDFdataSize -= CCSDS.PACKET.CRC_BYTE_SIZE
+        tmPktDef.pktSPsize = pktSize - SCOS.ENV.SCOS_PACKET_HEADER_SIZE
+      else:
+        # the packet size only includes the CCSDS packet size
+        tmPktDef.pktS2Ksize = pktSize + SCOS.ENV.SCOS_PACKET_HEADER_SIZE
+        tmPktDef.pktSPsize = pktSize
+      tmPktDef.pktSPDFsize = tmPktDef.pktSPsize - \
+                             CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE
+      tmPktDef.pktSPDFdataSize = tmPktDef.pktSPDFsize - tmPktDef.pktDFHsize
+      if tmPktDef.pktCheck:
+        tmPktDef.pktSPDFdataSize -= CCSDS.PACKET.CRC_BYTE_SIZE
+    else:
+      # pktSize == 0
+      tmPktDef.pktSPDFdataSize = SCOS.ENV.TM_PKT_DEFAULT_DATAFIELD_DATA_SPACE
+      tmPktDef.pktSPDFsize = tmPktDef.pktDFHsize + tmPktDef.pktSPDFdataSize
+      if tmPktDef.pktCheck:
+        tmPktDef.pktSPDFsize += CCSDS.PACKET.CRC_BYTE_SIZE
+      tmPktDef.pktSPsize = tmPktDef.pktSPDFsize + \
+                           CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE
+      tmPktDef.pktS2Ksize = SCOS.ENV.SCOS_PACKET_HEADER_SIZE + \
+                            tmPktDef.pktSPsize
     # raw value extractions
     tmPktDef.paramLinks = {}
     return tmPktDef
@@ -152,13 +169,19 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     # pidMap is the driving map for the join
     for spid, pidRecord in pidMap.iteritems():
       picKey = pidRecord.picKey()
-      # ignore packets with invalid datafield header size (e.g. for EnMAP)
-      if pidRecord.pidDFHsize == 0:
-        continue
       if picKey in picMap:
+        statusMessage = "PI1/PI2 depends on (APID,TYPE,STYPE)"
         picRecord = picMap[picKey]
       else:
-        picRecord = None
+        # PICrecord with TYPE, SUBTYPE, APID not found (new MIB format)
+        # --> search for PICrecord with TYPE, SUBTYPE (old MIB format)
+        picKey = pidRecord.picAlternateKey()
+        if picKey in picMap:
+          statusMessage = "PI1/PI2 depends on (TYPE,STYPE)"
+          picRecord = picMap[picKey]
+        else:
+          statusMessage = "no PI1/PI2"
+          picRecord = None
       if spid in tpcfMap:
         tpcfRecord = tpcfMap[spid]
       else:
@@ -168,6 +191,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
       tmPktDefs.append(tmPktDef)
       tmPktDefsSpidMap[spid] = tmPktDef
       tmPktSpidNameMap[pktName.upper()] = spid
+      LOG("packet " + pktName + "(" + str(spid) + "), " + statusMessage, "SPACE")
     tmPktDefs.sort()
     # step 2) create parameter definitions
     # pcfMap is the driving map for the join
