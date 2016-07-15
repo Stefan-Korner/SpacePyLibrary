@@ -87,64 +87,64 @@ class MILbusControllerImpl(SPACE.IF.MILbusController):
   # ---------------------------------------------------------------------------
   # external methods that are invoked via telecommands,
   # implementation of SPACE.IF.MILbusController
-  def identify(self):
+  def identify(self, bus):
     LOG_INFO("MILbusControllerImpl.identify", "MIL")
     return True
-  def selfTest(self):
+  def selfTest(self, bus):
     LOG_INFO("MILbusControllerImpl.selfTest", "MIL")
     return True
-  def getSelfTestReport(self):
+  def getSelfTestReport(self, bus):
     LOG_INFO("MILbusControllerImpl.getSelfTestReport", "MIL")
     return True
-  def reset(self):
+  def reset(self, bus):
     LOG_INFO("MILbusControllerImpl.reset", "MIL")
     return True
-  def configure(self):
+  def configure(self, bus):
     LOG_INFO("MILbusControllerImpl.configure", "MIL")
     return True
-  def configureFrame(self):
+  def configureFrame(self, bus):
     LOG_INFO("MILbusControllerImpl.configureFrame", "MIL")
     return True
-  def addInterrogation(self):
+  def addInterrogation(self, bus):
     LOG_INFO("MILbusControllerImpl.addInterrogation", "MIL")
     return True
-  def discover(self):
+  def discover(self, bus):
     LOG_INFO("MILbusControllerImpl.discover", "MIL")
     return True
-  def setupDistDatablock(self):
+  def setupDistDatablock(self, bus):
     LOG_INFO("MILbusControllerImpl.setupDistDatablock", "MIL")
     return True
-  def start(self):
+  def start(self, bus):
     LOG_INFO("MILbusControllerImpl.start", "MIL")
     return True
-  def stop(self):
+  def stop(self, bus):
     LOG_INFO("MILbusControllerImpl.stop", "MIL")
     return True
-  def forceFrameSwitch(self):
+  def forceFrameSwitch(self, bus):
     LOG_INFO("MILbusControllerImpl.forceFrameSwitch", "MIL")
     return True
-  def send(self):
+  def send(self, bus):
     LOG_INFO("MILbusControllerImpl.send", "MIL")
     return True
-  def setData(self):
+  def setData(self, bus):
     LOG_INFO("MILbusControllerImpl.setData", "MIL")
     return True
-  def forceBusSwitch(self):
+  def forceBusSwitch(self, bus):
     LOG_INFO("MILbusControllerImpl.forceBusSwitch", "MIL")
     return True
-  def injectError(self):
+  def injectError(self, bus):
     LOG_INFO("MILbusControllerImpl.injectError", "MIL")
     return True
-  def clearError(self):
+  def clearError(self, bus):
     LOG_INFO("MILbusControllerImpl.clearError", "MIL")
     return True
-  def activate(self):
+  def activate(self, bus):
     LOG_INFO("MILbusControllerImpl.activate", "MIL")
     return True
-  def deactivate(self):
+  def deactivate(self, bus):
     LOG_INFO("MILbusControllerImpl.deactivate", "MIL")
     return True
-  def dtd(self):
+  def dtd(self, bus):
     LOG_INFO("MILbusControllerImpl.dtd", "MIL")
     return True
   # SPACE.IF.s_milBus.bcDatablockDistribtionRequest(0, "***BC***")
@@ -175,49 +175,49 @@ class MILbusRemoteTerminalsImpl(SPACE.IF.MILbusRemoteTerminals):
   # ---------------------------------------------------------------------------
   # external methods that are invoked via telecommands,
   # implementation of SPACE.IF.MILbusRemoteTerminals
-  def identify(self):
+  def identify(self, bus):
     LOG_INFO("MILbusRemoteTerminalsImpl.identify", "MIL")
     return True
-  def selfTest(self):
+  def selfTest(self, bus):
     LOG_INFO("MILbusRemoteTerminalsImpl.selfTest", "MIL")
     return True
-  def getSelfTestReport(self):
+  def getSelfTestReport(self, bus):
     LOG_INFO("MILbusRemoteTerminalsImpl.getSelfTestReport", "MIL")
     return True
-  def configure(self):
+  def configure(self, bus):
     LOG_INFO("MILbusRemoteTerminalsImpl.configure", "MIL")
     return True
-  def addResponse(self):
+  def addResponse(self, bus):
     LOG_INFO("MILbusRemoteTerminalsImpl.addResponse", "MIL")
     return True
-  def reset(self):
+  def reset(self, bus):
     LOG_INFO("MILbusRemoteTerminalsImpl.reset", "MIL")
     return True
-  def saEnable(self):
+  def saEnable(self, bus):
     LOG_INFO("MILbusRemoteTerminalsImpl.saEnable", "MIL")
     return True
-  def setupAcquDatablock(self):
+  def setupAcquDatablock(self, bus):
     LOG_INFO("MILbusRemoteTerminalsImpl.setupAcquDatablock", "MIL")
     return True
-  def start(self):
+  def start(self, bus):
     LOG_INFO("MILbusRemoteTerminalsImpl.start", "MIL")
     return True
-  def stop(self):
+  def stop(self, bus):
     LOG_INFO("MILbusRemoteTerminalsImpl.stop", "MIL")
     return True
-  def injectError(self):
+  def injectError(self, bus):
     LOG_INFO("MILbusRemoteTerminalsImpl.injectError", "MIL")
     return True
-  def clearError(self):
+  def clearError(self, bus):
     LOG_INFO("MILbusRemoteTerminalsImpl.clearError", "MIL")
     return True
-  def activate(self):
+  def activate(self, bus):
     LOG_INFO("MILbusRemoteTerminalsImpl.activate", "MIL")
     return True
-  def deactivate(self):
+  def deactivate(self, bus):
     LOG_INFO("MILbusRemoteTerminalsImpl.deactivate", "MIL")
     return True
-  def atr(self):
+  def atr(self, bus):
     LOG_INFO("MILbusRemoteTerminalsImpl.atr", "MIL")
     return True
   # SPACE.IF.s_milBus.rtDatablockAcquisitionRequest(1, "***RT***")

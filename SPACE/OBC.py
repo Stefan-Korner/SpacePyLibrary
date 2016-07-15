@@ -90,6 +90,44 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
       LOG("non-PUS packet", "SPACE")
       LOG("tcPacketDu = " + str(tcPacketDu), "SPACE")
     return ok
+
+
+
+  # ---------------------------------------------------------------------------
+  def generateEmptyTMpacket(self, pktMnemonic):
+    """
+    generates an empty TM packet (all parameters are zero):
+    implementation of SPACE.IF.OnboardComputer.generateTMpacket
+    """
+    params = ""
+    values = ""
+    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
+                                                                params,
+                                                                values)
+    # check the TM packet data
+    if tmPacketData == None:
+      LOG_ERROR("TM packet creation failed for " + pktMnemonic, "SPACE")
+      return False
+    # send the TM packet
+    return self.generateTMpacket(tmPacketData)
+  # ---------------------------------------------------------------------------
+  def generateEmptyTMpacketBySPID(self, spid):
+    """
+    generates an empty TM packet (all parameters are zero):
+    implementation of SPACE.IF.OnboardComputer.generateEmptyTMpacketBySPID
+    """
+    params = ""
+    values = ""
+    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectDataBySPID(spid,
+                                                                      params,
+                                                                      values)
+
+    # check the TM packet data
+    if tmPacketData == None:
+      LOG_ERROR("TM packet creation failed for SPID " + str(spid), "SPACE")
+      return False
+    # send the TM packet
+    return self.generateTMpacket(tmPacketData)
   # ---------------------------------------------------------------------------
   def generateTMpacket(self, tmPacketData):
     """

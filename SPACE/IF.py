@@ -25,6 +25,8 @@ ENABLE_ACK = 0
 ENABLE_NAK = 1
 DISABLE_ACK = 2
 ACK_STRS = ["ENABLE_ACK", "ENABLE_NAK", "DISABLE_ACK"]
+MIL_BUS_PF = 0   # MIL Platform Bus
+MIL_BUS_PL = 1   # MIL Payload Bus
 
 ###########
 # classes #
@@ -577,6 +579,16 @@ class OnboardComputer(object):
     # shall return True for successful processing, otherwise False
     return True
   # ---------------------------------------------------------------------------
+  def generateEmptyTMpacket(self, pktMnemonic):
+    """generates an empty TM packet (all parameters are zero)"""
+    # shall return True for successful processing, otherwise False
+    return True
+  # ---------------------------------------------------------------------------
+  def generateEmptyTMpacketBySPID(self, spid):
+    """generates an empty TM packet (all parameters are zero)"""
+    # shall return True for successful processing, otherwise False
+    return True
+  # ---------------------------------------------------------------------------
   def generateTMpacket(self, tmPacketData):
     """generates a TM packet"""
     # shall return True for successful processing, otherwise False
@@ -690,45 +702,45 @@ class MILbusController(object):
   # ---------------------------------------------------------------------------
   # external methods that are invoked via telecommands,
   # shall return True for successful processing, otherwise False
-  def identify(self):
+  def identify(self, bus):
     return True
-  def selfTest(self):
+  def selfTest(self, bus):
     return True
-  def getSelfTestReport(self):
+  def getSelfTestReport(self, bus):
     return True
-  def reset(self):
+  def reset(self, bus):
     return True
-  def configure(self):
+  def configure(self, bus):
     return True
-  def configureFrame(self):
+  def configureFrame(self, bus):
     return True
-  def addInterrogation(self):
+  def addInterrogation(self, bus):
     return True
-  def discover(self):
+  def discover(self, bus):
     return True
-  def setupDistDatablock(self):
+  def setupDistDatablock(self, bus):
     return True
-  def start(self):
+  def start(self, bus):
     return True
-  def stop(self):
+  def stop(self, bus):
     return True
-  def forceFrameSwitch(self):
+  def forceFrameSwitch(self, bus):
     return True
-  def send(self):
+  def send(self, bus):
     return True
-  def setData(self):
+  def setData(self, bus):
     return True
-  def forceBusSwitch(self):
+  def forceBusSwitch(self, bus):
     return True
-  def injectError(self):
+  def injectError(self, bus):
     return True
-  def clearError(self):
+  def clearError(self, bus):
     return True
-  def activate(self):
+  def activate(self, bus):
     return True
-  def deactivate(self):
+  def deactivate(self, bus):
     return True
-  def dtd(self):
+  def dtd(self, bus):
     return True
   # ---------------------------------------------------------------------------
   def notifyWriteSubAddress(self, rtAddress, subAddress, data):
@@ -745,35 +757,35 @@ class MILbusRemoteTerminals(object):
   # ---------------------------------------------------------------------------
   # external methods that are invoked via telecommands,
   # shall return True for successful processing, otherwise False
-  def identify(self):
+  def identify(self, bus):
     return True
-  def selfTest(self):
+  def selfTest(self, bus):
     return True
-  def getSelfTestReport(self):
+  def getSelfTestReport(self, bus):
     return True
-  def configure(self):
+  def configure(self, bus):
     return True
-  def addResponse(self):
+  def addResponse(self, bus):
     return True
-  def reset(self):
+  def reset(self, bus):
     return True
-  def saEnable(self):
+  def saEnable(self, bus):
     return True
-  def setupAcquDatablock(self):
+  def setupAcquDatablock(self, bus):
     return True
-  def start(self):
+  def start(self, bus):
     return True
-  def stop(self):
+  def stop(self, bus):
     return True
-  def injectError(self):
+  def injectError(self, bus):
     return True
-  def clearError(self):
+  def clearError(self, bus):
     return True
-  def activate(self):
+  def activate(self, bus):
     return True
-  def deactivate(self):
+  def deactivate(self, bus):
     return True
-  def atr(self):
+  def atr(self, bus):
     return True
   # ---------------------------------------------------------------------------
   def notifyWriteSubAddress(self, rtAddress, subAddress, data):

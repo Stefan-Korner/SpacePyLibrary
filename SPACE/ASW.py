@@ -21,7 +21,12 @@ import UTIL.SYS
 #############
 # constants #
 #############
+# MIL Bus general
+
 # MIL Bus Controller
+BC_PF_APID = 1920
+BC_PL_APID = 1921
+
 BC_Identify_FID = 0x4E21
 BC_SelfTest_FID = 0x4E22
 BC_GetSelfTestReport_FID = 0x4E23
@@ -44,6 +49,9 @@ E5013_BC_DEACTIVATE_FID = 0x4E36
 E5013_DTD_FID = 0x4E39
 
 # MIL Bus Remote Terminal
+RT_PF_APID = 1922
+RT_PL_APID = 1923
+
 RT_Identify_FID = 0x4E3E
 RT_SelfTest_FID = 0x4E3F
 RT_GetSelfTestReport_FID = 0x4E40
@@ -87,78 +95,102 @@ class ApplicationSoftwareImpl(SPACE.IF.ApplicationSoftware):
         tcFunctionId = tcPacketDu.getUnsigned(
           self.tcFunctionIdBytePos, self.tcFunctionIdByteSize)
         LOG("tcFunctionId = " + str(tcFunctionId), "SPACE")
-        if apid == 1920 and SPACE.IF.s_milBusController != None:
+        if apid == BC_PF_APID and SPACE.IF.s_milBusController != None:
           if tcFunctionId == BC_Identify_FID:
-            return SPACE.IF.s_milBusController.identify()
+            if SPACE.IF.s_milBusController.identify(SPACE.IF.MIL_BUS_PF):
+              # BC_Identity_PF
+              return SPACE.IF.s_onboardComputer.generateEmptyTMpacket("YD2TMPK00001")
+            return False
           elif tcFunctionId == BC_SelfTest_FID:
-            return SPACE.IF.s_milBusController.selfTest()
+            if SPACE.IF.s_milBusController.selfTest(SPACE.IF.MIL_BUS_PF):
+              # BC_SelfTestResponse_PF
+              return SPACE.IF.s_onboardComputer.generateEmptyTMpacket("YD2TMPK00002")
+            return False
           elif tcFunctionId == BC_GetSelfTestReport_FID:
-            return SPACE.IF.s_milBusController.getSelfTestReport()
+            if SPACE.IF.s_milBusController.getSelfTestReport(SPACE.IF.MIL_BUS_PF):
+              # BC_SelfTestReport_PF
+              return SPACE.IF.s_onboardComputer.generateEmptyTMpacket("YD2TMPK00003")
+            return False
           elif tcFunctionId == BC_Reset_FID:
-            return SPACE.IF.s_milBusController.reset()
+            if SPACE.IF.s_milBusController.reset(SPACE.IF.MIL_BUS_PF):
+              # BC_ResetResponse_PF
+              return SPACE.IF.s_onboardComputer.generateEmptyTMpacket("YD2TMPK00004")
+            return False
           elif tcFunctionId == BC_Configure_FID:
-            return SPACE.IF.s_milBusController.configure()
+            return SPACE.IF.s_milBusController.configure(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == BC_ConfigureFrame_FID:
-            return SPACE.IF.s_milBusController.configureFrame()
+            return SPACE.IF.s_milBusController.configureFrame(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == BC_AddInterrogation_FID:
-            return SPACE.IF.s_milBusController.addInterrogation()
+            return SPACE.IF.s_milBusController.addInterrogation(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == BC_Discover_FID:
-            return SPACE.IF.s_milBusController.discover()
+            return SPACE.IF.s_milBusController.discover(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == E5013_SETUP_DIST_DATABLOCK_FID:
-            return SPACE.IF.s_milBusController.setupDistDatablock()
+            return SPACE.IF.s_milBusController.setupDistDatablock(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == BC_Start_FID:
-            return SPACE.IF.s_milBusController.start()
+            return SPACE.IF.s_milBusController.start(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == BC_Stop_FID:
-            return SPACE.IF.s_milBusController.stop()
+            return SPACE.IF.s_milBusController.stop(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == BC_ForceFrameSwitch_FID:
-            return SPACE.IF.s_milBusController.forceFrameSwitch()
+            return SPACE.IF.s_milBusController.forceFrameSwitch(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == BC_Send_FID:
-            return SPACE.IF.s_milBusController.send()
+            return SPACE.IF.s_milBusController.send(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == BC_SetData_FID:
-            return SPACE.IF.s_milBusController.setData()
+            return SPACE.IF.s_milBusController.setData(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == BC_ForceBusSwitch_FID:
-            return SPACE.IF.s_milBusController.forceBusSwitch()
+            return SPACE.IF.s_milBusController.forceBusSwitch(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == BC_InjectError_FID:
-            return SPACE.IF.s_milBusController.injectError()
+            return SPACE.IF.s_milBusController.injectError(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == BC_ClearError_FID:
-            return SPACE.IF.s_milBusController.clearError()
+            return SPACE.IF.s_milBusController.clearError(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == E5013_BC_ACTIVATE_FID:
-            return SPACE.IF.s_milBusController.activate()
+            return SPACE.IF.s_milBusController.activate(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == E5013_BC_DEACTIVATE_FID:
-            return SPACE.IF.s_milBusController.deactivate()
+            return SPACE.IF.s_milBusController.deactivate(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == E5013_DTD_FID:
-            return SPACE.IF.s_milBusController.dtd()
-        elif apid == 1922 and SPACE.IF.s_milBusRemoteTerminals != None:
+            return SPACE.IF.s_milBusController.dtd(SPACE.IF.MIL_BUS_PF)
+        elif apid == RT_PF_APID and SPACE.IF.s_milBusRemoteTerminals != None:
           if tcFunctionId == RT_Identify_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.identify()
+            if SPACE.IF.s_milBusRemoteTerminals.identify(SPACE.IF.MIL_BUS_PF):
+              # RT_Identity_PF
+              return SPACE.IF.s_onboardComputer.generateEmptyTMpacket("YD2TMPK00030")
+            return False
           elif tcFunctionId == RT_SelfTest_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.selfTest()
+            if SPACE.IF.s_milBusRemoteTerminals.selfTest(SPACE.IF.MIL_BUS_PF):
+              # RT_SelfTestResponse_PF
+              return SPACE.IF.s_onboardComputer.generateEmptyTMpacket("YD2TMPK00031")
+            return False
           elif tcFunctionId == RT_GetSelfTestReport_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.getSelfTestReport()
+            if SPACE.IF.s_milBusRemoteTerminals.getSelfTestReport(SPACE.IF.MIL_BUS_PF):
+              # RT_SelfTestReport_PF
+              return SPACE.IF.s_onboardComputer.generateEmptyTMpacket("YD2TMPK00032")
+            return False
           elif tcFunctionId == RT_Configure_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.configure()
+            return SPACE.IF.s_milBusRemoteTerminals.configure(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == RT_AddResponse_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.addResponse()
+            return SPACE.IF.s_milBusRemoteTerminals.addResponse(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == RT_Reset_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.reset()
+            if SPACE.IF.s_milBusRemoteTerminals.reset(SPACE.IF.MIL_BUS_PF):
+              # RT_ResetResponse_PF
+              return SPACE.IF.s_onboardComputer.generateEmptyTMpacket("YD2TMPK00035")
+            return False
           elif tcFunctionId == RT_SAEnable_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.saEnable()
+            return SPACE.IF.s_milBusRemoteTerminals.saEnable(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == E5013_SETUP_ACQU_DATABLOCK_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.setupAcquDatablock()
+            return SPACE.IF.s_milBusRemoteTerminals.setupAcquDatablock(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == RT_Start_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.start()
+            return SPACE.IF.s_milBusRemoteTerminals.start(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == RT_Stop_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.stop()
+            return SPACE.IF.s_milBusRemoteTerminals.stop(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == RT_InjectError_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.injectError()
+            return SPACE.IF.s_milBusRemoteTerminals.injectError(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == RT_ClearError_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.clearError()
+            return SPACE.IF.s_milBusRemoteTerminals.clearError(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == E5013_RT_ACTIVATE_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.activate()
+            return SPACE.IF.s_milBusRemoteTerminals.activate(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == E5013_RT_DEACTIVATE_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.deactivate()
+            return SPACE.IF.s_milBusRemoteTerminals.deactivate(SPACE.IF.MIL_BUS_PF)
           elif tcFunctionId == E5013_ATR_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.atr()
+            return SPACE.IF.s_milBusRemoteTerminals.atr(SPACE.IF.MIL_BUS_PF)
     return True
   # ---------------------------------------------------------------------------
   def notifyMILdatablockAcquisition(self, rtAddress, dataBlock):
