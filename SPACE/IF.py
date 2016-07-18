@@ -799,6 +799,8 @@ class MILbusRemoteTerminals(object):
 ####################
 # global variables #
 ####################
+# to force behaviour for testing
+s_testMode = 0
 # configuration is a singleton
 s_configuration = None
 # definitions is a singleton
@@ -807,8 +809,8 @@ s_definitions = None
 s_onboardComputer = None
 # onboard queue is a singleton
 s_onboardQueue = None
-# applicaton software is a singleton
-s_applicatonSoftware = None
+# application software is a singleton
+s_applicationSoftware = None
 # telemetry packet generator is a singleton
 s_tmPacketGenerator = None
 # MIL Bus is a singelton

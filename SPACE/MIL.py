@@ -17,6 +17,16 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import SPACE.IF
 import UTIL.TASK
 
+#############
+# constants #
+#############
+
+# test modes
+NOMINAL = 0
+SELFTEST_BC_ERROR = 1
+SELFTEST_RT_ERROR = 2
+SELFTEST_BC_RT_ERROR = 3
+
 ###########
 # classes #
 ###########
@@ -92,6 +102,10 @@ class MILbusControllerImpl(SPACE.IF.MILbusController):
     return True
   def selfTest(self, bus):
     LOG_INFO("MILbusControllerImpl.selfTest", "MIL")
+    if SPACE.IF.s_testMode == SELFTEST_BC_ERROR or \
+       SPACE.IF.s_testMode == SELFTEST_BC_RT_ERROR:
+      LOG_WARNING("inject error", "MIL")
+      return False
     return True
   def getSelfTestReport(self, bus):
     LOG_INFO("MILbusControllerImpl.getSelfTestReport", "MIL")
@@ -162,7 +176,7 @@ class MILbusControllerImpl(SPACE.IF.MILbusController):
     implementation of SPACE.IF.MILbusController.notifyDatablockAcquisition
     """
     LOG_INFO("MILbusControllerImpl.notifyDatablockAcquisition(" + str(rtAddress) + ")", "MIL")
-    asw = SPACE.IF.s_applicatonSoftware
+    asw = SPACE.IF.s_applicationSoftware
     asw.notifyMILdatablockAcquisition(rtAddress, dataBlock)
 
 # =============================================================================
@@ -180,6 +194,10 @@ class MILbusRemoteTerminalsImpl(SPACE.IF.MILbusRemoteTerminals):
     return True
   def selfTest(self, bus):
     LOG_INFO("MILbusRemoteTerminalsImpl.selfTest", "MIL")
+    if SPACE.IF.s_testMode == SELFTEST_RT_ERROR or \
+       SPACE.IF.s_testMode == SELFTEST_BC_RT_ERROR:
+      LOG_WARNING("inject error", "MIL")
+      return False
     return True
   def getSelfTestReport(self, bus):
     LOG_INFO("MILbusRemoteTerminalsImpl.getSelfTestReport", "MIL")
@@ -235,7 +253,7 @@ class MILbusRemoteTerminalsImpl(SPACE.IF.MILbusRemoteTerminals):
     implementation of SPACE.IF.MILbusRemoteTerminals.notifyDatablockDistribution
     """
     LOG_INFO("MILbusRemoteTerminalsImpl.notifyDatablockDistribution(" + str(rtAddress) + ")", "MIL")
-    asw = SPACE.IF.s_applicatonSoftware
+    asw = SPACE.IF.s_applicationSoftware
     asw.notifyMILdatablockDistribution(rtAddress, dataBlock)
 
 #############

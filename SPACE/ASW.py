@@ -102,10 +102,18 @@ class ApplicationSoftwareImpl(SPACE.IF.ApplicationSoftware):
               return SPACE.IF.s_onboardComputer.generateEmptyTMpacket("YD2TMPK00001")
             return False
           elif tcFunctionId == BC_SelfTest_FID:
+            errorId = 1
             if SPACE.IF.s_milBusController.selfTest(SPACE.IF.MIL_BUS_PF):
-              # BC_SelfTestResponse_PF
-              return SPACE.IF.s_onboardComputer.generateEmptyTMpacket("YD2TMPK00002")
-            return False
+              errorId = 0
+            # BC_SelfTestResponse_PF
+            tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(
+              "YD2TMPK00002", "ZD2M182X", str(errorId))
+            # check the TM packet data
+            if tmPacketData == None:
+              LOG_ERROR("TM packet creation failed for " + pktMnemonic, "SPACE")
+              return False
+            # send the TM packet
+            return SPACE.IF.s_onboardComputer.generateTMpacket(tmPacketData)
           elif tcFunctionId == BC_GetSelfTestReport_FID:
             if SPACE.IF.s_milBusController.getSelfTestReport(SPACE.IF.MIL_BUS_PF):
               # BC_SelfTestReport_PF
@@ -155,10 +163,18 @@ class ApplicationSoftwareImpl(SPACE.IF.ApplicationSoftware):
               return SPACE.IF.s_onboardComputer.generateEmptyTMpacket("YD2TMPK00030")
             return False
           elif tcFunctionId == RT_SelfTest_FID:
+            errorId = 1
             if SPACE.IF.s_milBusRemoteTerminals.selfTest(SPACE.IF.MIL_BUS_PF):
-              # RT_SelfTestResponse_PF
-              return SPACE.IF.s_onboardComputer.generateEmptyTMpacket("YD2TMPK00031")
-            return False
+              errorId = 0
+            # BC_SelfTestResponse_PF
+            tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(
+              "YD2TMPK00031", "ZD2M198X", str(errorId))
+            # check the TM packet data
+            if tmPacketData == None:
+              LOG_ERROR("TM packet creation failed for " + pktMnemonic, "SPACE")
+              return False
+            # send the TM packet
+            return SPACE.IF.s_onboardComputer.generateTMpacket(tmPacketData)
           elif tcFunctionId == RT_GetSelfTestReport_FID:
             if SPACE.IF.s_milBusRemoteTerminals.getSelfTestReport(SPACE.IF.MIL_BUS_PF):
               # RT_SelfTestReport_PF
@@ -210,4 +226,4 @@ class ApplicationSoftwareImpl(SPACE.IF.ApplicationSoftware):
 #############
 def init():
   # initialise singleton(s)
-  SPACE.IF.s_applicatonSoftware = ApplicationSoftwareImpl()
+  SPACE.IF.s_applicationSoftware = ApplicationSoftwareImpl()

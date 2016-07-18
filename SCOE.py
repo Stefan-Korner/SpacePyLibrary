@@ -129,6 +129,8 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       retStatus = self.listPacketsCmd(argv)
     elif (cmd == "G") or (cmd == "GENERATE"):
       retStatus = self.generateCmd(argv)
+    elif (cmd == "T") or (cmd == "TEST"):
+      retStatus = self.testCmd(argv)
     else:
       LOG_WARNING("invalid command " + argv[0])
       return -1
@@ -173,7 +175,8 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("a  | sendAck <apid> <ssc> <stype> sends a TC acknowledgement", "SPACE")
     LOG("rp | replayPackets <replayFile> replays TM packets", "SPACE")
     LOG("l  | listPackets.........lists available packets", "SPACE")
-    LOG("g  | generate............generates the testdata.txt file in testbin directory", "SPACE")
+    LOG("g  | generate............generates the testdata.sim file in testbin directory", "SPACE")
+    LOG("t  | test <testMode>.....executes a test command", "SPACE")
     return True
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
@@ -513,6 +516,22 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       return False
     return True
   # ---------------------------------------------------------------------------
+  def testCmd(self, argv):
+    """Decoded test command"""
+    self.logMethod("test", "SPACE")
+    # consistency check
+    if len(argv) != 2:
+      LOG_WARNING("invalid parameters passed", "SPACE")
+      return False
+    # extract the arguments
+    testMode = int(argv[1])
+    if testMode == 0:
+      LOG_INFO("testmode set to nominal", "SPACE")
+    else:
+      LOG_WARNING("testmode set to " + str(testMode), "SPACE")
+    SPACE.IF.s_testMode = testMode
+    return True
+  # ---------------------------------------------------------------------------
   def setCCSconnected(self):
     """CCS connection established"""
     EGSE.IF.s_configuration.connected = True
@@ -554,6 +573,7 @@ def obcEnableNak4(*argv): UTIL.TASK.s_processingTask.obcEnableNak4Cmd(("", ) + a
 def obcDisableAck4(*argv): UTIL.TASK.s_processingTask.obcDisableAck4Cmd(("", ) + argv)
 def listPackets(*argv): UTIL.TASK.s_processingTask.listPacketsCmd(("", ) + argv)
 def generate(*argv): UTIL.TASK.s_processingTask.generateCmd(("", ) + argv)
+def testCmd(*argv): UTIL.TASK.s_processingTask.testCmd(("", ) + argv)
 # -----------------------------------------------------------------------------
 def printUsage(launchScriptName):
   """Prints the possible commandline options of the test driver"""

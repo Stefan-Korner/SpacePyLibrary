@@ -255,7 +255,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("a  | sendAck <apid> <ssc> <stype> sends a TC acknowledgement", "SPACE")
     LOG("rp | replayPackets <replayFile> replays TM packets", "SPACE")
     LOG("l  | listPackets.........lists available packets", "SPACE")
-    LOG("g  | generate............generates the testdata.txt file in testbin directory", "SPACE")
+    LOG("g  | generate............generates the testdata.sim file in testbin directory", "SPACE")
     LOG_INFO("Available onboard queue commands:", "OBQ")
     LOG("", "OBQ")
     LOG("x  | exit ...............terminates client connection (only for TCP/IP clients)", "OBQ")
