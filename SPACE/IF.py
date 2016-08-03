@@ -640,6 +640,20 @@ class ApplicationSoftware(object):
     # shall return True for successful processing, otherwise False
     return True
   # ---------------------------------------------------------------------------
+  # shall be overloaded in derived classes
+  def getBcPfAPID(self):
+    pass
+  def getBcPlAPID(self):
+    pass
+  def getRtPfAPID(self):
+    pass
+  def getRtPlAPID(self):
+    pass
+  # ---------------------------------------------------------------------------
+  def notifyMILdatablockDistribution(self, rtAddress, dataBlock):
+    """The mRT has received on the MIL Bus a data block from the BC"""
+    pass
+  # ---------------------------------------------------------------------------
   def notifyMILdatablockAcquisition(self, rtAddress, dataBlock):
     """The BC has received on the MIL Bus a data block from a RT"""
     pass
