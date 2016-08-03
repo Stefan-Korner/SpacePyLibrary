@@ -32,6 +32,7 @@ SYS_CONFIGURATION = [
   ["HOST", "192.168.1.100"],
   ["EDEN_SERVER_PORT", "48569"],
   ["EDEN_SERVER_PORT2", "-1"],
+  ["ASW_MISSION", "S4"],
   ["TC_ACK_ACCEPT_SUCC_MNEMO", "<<shall be passed as environment variable>>"],
   ["TC_ACK_ACCEPT_FAIL_MNEMO", "<<shall be passed as environment variable>>"],
   ["TC_ACK_EXESTA_SUCC_MNEMO", "<<shall be passed as environment variable>>"],

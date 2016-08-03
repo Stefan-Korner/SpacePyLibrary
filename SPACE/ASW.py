@@ -443,4 +443,10 @@ class S4applicationSoftwareImpl(ApplicationSoftwareImpl):
 #############
 def init():
   # initialise singleton(s)
-  SPACE.IF.s_applicationSoftware = S4applicationSoftwareImpl()
+  mission = UTIL.SYS.s_configuration.ASW_MISSION
+  if mission == "MTG":
+    SPACE.IF.s_applicationSoftware = MTGapplicationSoftwareImpl()
+  elif mission == "S4":
+    SPACE.IF.s_applicationSoftware = S4applicationSoftwareImpl()
+  else:
+    LOG_ERROR("No ASW implementation for mission " + mission + " present", "SPACE")
