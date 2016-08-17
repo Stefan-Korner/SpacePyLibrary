@@ -228,7 +228,7 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
       return False
     if pktMnemo == "None":
       LOG("no telemetry packet defined for acknowledgement(" + str(ackType) + ")", "SPACE")
-      return False
+      return True
     # create the TM packet
     params =  "PUS_TYPE1_APID,PUS_TYPE1_SSC"
     values =  str(tcAPID)
