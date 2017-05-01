@@ -506,28 +506,32 @@ class GUIview(UI.TKI.GUIwinView):
   # ---------------------------------------------------------------------------
   def updateReplayNotify(self):
     """Called when the replay state has changed"""
-    nrPackets = len(SPACE.IF.s_configuration.pendingTMpackets)
+    replayItems = SPACE.IF.s_tmPacketReplayer.getItems()
+    nrPackets = len(replayItems)
     if nrPackets == 0:
       txt = ""
     else:
       txt = str(nrPackets) + ": "
-      # entry 0
+      # item 0
+      item0 = replayItems[0]
       try:
-        txt += SPACE.IF.s_configuration.pendingTMpackets[0].pktName
+        txt += item0.pktName
       except:
-        txt += "sleep(" + str(SPACE.IF.s_configuration.pendingTMpackets[0]) + ")"
-      # entry 1
+        txt += "sleep(" + str(item0) + ")"
+      # item 1
       if nrPackets > 1:
+        item1 = replayItems[1]
         try:
-          txt += ", " + SPACE.IF.s_configuration.pendingTMpackets[1].pktName
+          txt += ", " + item1.pktName
         except:
-          txt += ", sleep(" + str(SPACE.IF.s_configuration.pendingTMpackets[1]) + ")"
-      # entry 2
+          txt += ", sleep(" + str(item1) + ")"
+      # item 2
       if nrPackets > 2:
+        item2 = replayItems[2]
         try:
-          txt += ", " + SPACE.IF.s_configuration.pendingTMpackets[2].pktName
+          txt += ", " + item2.pktName
         except:
-          txt += ", sleep(" + str(SPACE.IF.s_configuration.pendingTMpackets[2]) + ")"
+          txt += ", sleep(" + str(item2) + ")"
       if nrPackets > 3:
         txt += ", ..."
     self.replayTMpacketsField.set(txt)

@@ -41,7 +41,6 @@ class Configuration(object):
     self.tmPacketData = None
     self.sendCyclic = False
     self.cyclicPeriodMs = int(UTIL.SYS.s_configuration.TM_CYCLIC_PERIOD_MS)
-    self.pendingTMpackets = []
     self.obcAck1 = ENABLE_ACK
     self.obcAck2 = ENABLE_ACK
     self.obcAck3 = ENABLE_ACK
@@ -62,7 +61,6 @@ class Configuration(object):
       LOG("SPID = " + str(self.tmPacketData.pktSPID), "SPACE")
       LOG("Parameters and values = " + str(self.tmPacketData.parameterValuesList), "SPACE")
     LOG("Send cyclic TM = " + str(self.sendCyclic), "SPACE")
-    LOG("Pending TM packets= " + str(self.pendingTMpackets), "SPACE")
     LOG("TC Ack 1 = " + ACK_STRS[self.obcAck1], "SPACE")
     LOG("TC Ack 2 = " + ACK_STRS[self.obcAck2], "SPACE")
     LOG("TC Ack 3 = " + ACK_STRS[self.obcAck3], "SPACE")
@@ -683,6 +681,24 @@ class TMpacketGenerator(object):
     pass
 
 # =============================================================================
+class TMpacketReplayer(object):
+  """Interface of the replayer for telemetry packets"""
+  # ---------------------------------------------------------------------------
+  def readReplayFile(self, replayFileName):
+    """
+    reads TM packets and directives from a replay file
+    """
+    pass
+  # ---------------------------------------------------------------------------
+  def getItems(self):
+    """returns items from the replay list"""
+    pass
+  # ---------------------------------------------------------------------------
+  def getNextItem(self):
+    """returns next item from the replay list or None"""
+    pass
+
+# =============================================================================
 class MILbus(object):
   """Interface of the MIL Bus"""
   # ---------------------------------------------------------------------------
@@ -827,6 +843,8 @@ s_onboardQueue = None
 s_applicationSoftware = None
 # telemetry packet generator is a singleton
 s_tmPacketGenerator = None
+# telemetry packet replayer is a singelton
+s_tmPacketReplayer = None
 # MIL Bus is a singelton
 s_milBus = None
 # MIL Bus Controller is a singelton

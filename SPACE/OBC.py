@@ -90,9 +90,6 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
       LOG("non-PUS packet", "SPACE")
       LOG("tcPacketDu = " + str(tcPacketDu), "SPACE")
     return ok
-
-
-
   # ---------------------------------------------------------------------------
   def generateEmptyTMpacket(self, pktMnemonic):
     """
@@ -249,168 +246,38 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     sends TM packet from a replay file
     implementation of SPACE.IF.OnboardComputer.replayPackets
     """
-    LOG_WARNING("replayPackets(" + replayFileName + ")", "SPACE")
-    useSPIDasKey = (UTIL.SYS.s_configuration.TM_REPLAY_KEY == "SPID") 
-    # read the TM packets file
-    try:
-      tmPacketsFile = open(replayFileName)
-    except:
-      LOG_ERROR("cannot read " + replayFileName, "SPACE")
-      return
-    fileContents = tmPacketsFile.readlines()
-    tmPacketsFile.close()
-    # load pending TM packets: parse the file
-    lineNr = 0
-    segmentationFlags = CCSDS.PACKET.UNSEGMENTED
-    for line in fileContents:
-      lineNr += 1
-      if len(line) == 0:
-        # empty line
-        continue
-      if line[0] == "#":
-        # comment
-        continue
-      # parse the line
-      tokens = line.split("(")
-      token0 = tokens[0].strip()
-      sleepVal = -1
-      pktSPID = -1
-      pktMnemo = ""
-      params = ""
-      values = ""
-      dataField = None
-      if len(tokens) == 1:
-        if token0 == "":
-          # empty line (should be already handled above)
-          continue
-        if token0[0] == "#":
-          # comment (should be already handled above)
-          continue
-        if token0 == "firstSegment":
-          segmentationFlags = CCSDS.PACKET.FIRST_SEGMENT
-          continue
-        if token0 == "lastSegment":
-          segmentationFlags = CCSDS.PACKET.LAST_SEGMENT
-          continue
-        # TM packet without parameters
-        # could contain the datafield in hex
-        tokens = line.split("[")
-        token0 = tokens[0].strip()
-        if useSPIDasKey:
-          try:
-            pktSPID = int(token0)
-          except:
-            LOG_ERROR("syntax error in line " + str(lineNr) + " of " + replayFileName, "SPACE")
-            SPACE.IF.s_configuration.pendingTMpackets = []
-            return
-          pktMnemo = "?"
-        else:
-          pktMnemo = token0
-        if len(tokens) > 1:
-          # TM packet has a data field
-          # remove a close brake from the reminder
-          token1 = tokens[1].split("]")[0].strip()
-          dataFieldInfo = token1.split(None, 1)
-          if len(dataFieldInfo) < 2:
-            LOG_ERROR("syntax error in line " + str(lineNr) + " of " + replayFileName, "SPACE")
-          else:
-            dataFieldOffset = int(dataFieldInfo[0], 16)
-            dataFieldData = UTIL.DU.str2array(dataFieldInfo[1])
-            dataField = [dataFieldOffset, dataFieldData]
-      else:
-        # remove a close brake from the reminder
-        token1 = tokens[1].split(")")[0].strip()
-        if token0 == "sleep":
-          # sleep statement
-          try:
-            sleepVal = int(token1)
-          except:
-            LOG_ERROR("syntax error in line " + str(lineNr) + " of " + replayFileName, "SPACE")
-            SPACE.IF.s_configuration.pendingTMpackets = []
-            return
-        else:
-          # TM packet with parameters
-          if useSPIDasKey:
-            try:
-              pktSPID = int(token0)
-            except:
-              LOG_ERROR("syntax error in line " + str(lineNr) + " of " + replayFileName, "SPACE")
-              SPACE.IF.s_configuration.pendingTMpackets = []
-              return
-            pktMnemo = "?"
-          else:
-            pktMnemo = token0
-            pktSPID = -1
-          paramValueTokens = token1.split(",")
-          for paramValueToken in paramValueTokens:
-            paramValueSplit = paramValueToken.split("=")
-            if len(paramValueSplit) != 2:
-              LOG_ERROR("syntax error in line " + str(lineNr) + " of " + replayFileName, "SPACE")
-              SPACE.IF.s_configuration.pendingTMpackets = []
-              return
-            paramName = paramValueSplit[0].strip()
-            paramValue = paramValueSplit[1].strip()
-            if params == "":
-              params += paramName
-              values += paramValue
-            else:
-              params += "," + paramName
-              values += "," + paramValue
-      # line parsed
-      if sleepVal != -1:
-        # sleep statement
-        SPACE.IF.s_configuration.pendingTMpackets.append(sleepVal)
-      else:
-        # TM packet statement --> create the TM packet
-        if useSPIDasKey:
-          tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectDataBySPID(
-            pktSPID, params, values, dataField, segmentationFlags)
-        else:
-          tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(
-            pktMnemo, params, values, dataField, segmentationFlags)
-        # check the TM packet
-        if tmPacketData == None:
-          LOG_ERROR("error in line " + str(lineNr) + " of " + replayFileName, "SPACE")
-          SPACE.IF.s_configuration.pendingTMpackets = []
-          return
-        SPACE.IF.s_configuration.pendingTMpackets.append(tmPacketData)
-        # change the state of the segmentationFlags
-        # Note: this is global and not per APID
-        if segmentationFlags == CCSDS.PACKET.FIRST_SEGMENT:
-          segmentationFlags = CCSDS.PACKET.CONTINUATION_SEGMENT
-        elif segmentationFlags == CCSDS.PACKET.LAST_SEGMENT:
-          segmentationFlags = CCSDS.PACKET.UNSEGMENTED
-    # notify the GUI
-    UTIL.TASK.s_processingTask.notifyGUItask("UPDATE_REPLAY")
-    # start replay with sending of the first TM packet
-    self.sendReplayPacket()
+    if SPACE.IF.s_tmPacketReplayer.readReplayFile(replayFileName):
+      # notify the GUI
+      UTIL.TASK.s_processingTask.notifyGUItask("UPDATE_REPLAY")
+      # start replay with sending of the first TM packet
+      self.sendReplayPacket()
   # ---------------------------------------------------------------------------
   def sendReplayPacket(self):
     """timer triggered"""
-    while len(SPACE.IF.s_configuration.pendingTMpackets) > 0:
-      # get the next pending replay packet
-      pendingItem = SPACE.IF.s_configuration.pendingTMpackets.pop(0)
+    nextItem = SPACE.IF.s_tmPacketReplayer.getNextItem()
+    while nextItem != None:
       try:
-        pktMnemo = pendingItem.pktName
-        spid = pendingItem.pktSPID
-        if pendingItem.segmentationFlags == CCSDS.PACKET.FIRST_SEGMENT:
+        pktMnemo = nextItem.pktName
+        spid = nextItem.pktSPID
+        if nextItem.segmentationFlags == CCSDS.PACKET.FIRST_SEGMENT:
           LOG("firstSegment " + pktMnemo + ", SPID=" + str(spid), "SPACE")
-        elif pendingItem.segmentationFlags == CCSDS.PACKET.CONTINUATION_SEGMENT:
+        elif nextItem.segmentationFlags == CCSDS.PACKET.CONTINUATION_SEGMENT:
           LOG("continuationSegment " + pktMnemo + ", SPID=" + str(spid), "SPACE")
-        elif pendingItem.segmentationFlags == CCSDS.PACKET.LAST_SEGMENT:
+        elif nextItem.segmentationFlags == CCSDS.PACKET.LAST_SEGMENT:
           LOG("lastSegment " + pktMnemo + ", SPID=" + str(spid), "SPACE")
         else:
           LOG("sendPacket " + pktMnemo + ", SPID=" + str(spid), "SPACE")
         # send the TM packet
-        self.generateTMpacket(pendingItem)
+        self.generateTMpacket(nextItem)
       except:
-        sleepValue = pendingItem
+        sleepValue = nextItem
         LOG("sleep(" + str(sleepValue) + ")", "SPACE")
         UTIL.TASK.s_processingTask.createTimeHandler(sleepValue,
                                                      self.sendReplayPacket)
         # notify the GUI
         UTIL.TASK.s_processingTask.notifyGUItask("UPDATE_REPLAY")
         return
+      nextItem = SPACE.IF.s_tmPacketReplayer.getNextItem()
     # cyclic sending terminated
     LOG_WARNING("replay finished", "SPACE")
     # notify the GUI
