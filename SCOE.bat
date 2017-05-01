@@ -13,7 +13,7 @@
 ::*****************************************************************************
 :: Start scrip for the SCOE.                                                  *
 ::*****************************************************************************
-set HOST=192.168.1.105
+set HOST=127.0.0.1
 set EDEN_SERVER_PORT2=48570
 set TC_ACK_ACCEPT_SUCC_MNEMO=ACK1
 set TC_ACK_ACCEPT_FAIL_MNEMO=NAK1

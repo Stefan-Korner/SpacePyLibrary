@@ -29,7 +29,7 @@ import UTIL.SYS, UTIL.TASK
 # constants #
 #############
 SYS_CONFIGURATION = [
-  ["HOST", "192.168.1.100"],
+  ["HOST", "127.0.0.1"],
   ["EDEN_SERVER_PORT", "48569"],
   ["EDEN_SERVER_PORT2", "-1"],
   ["ASW_MISSION", "S4"],

@@ -30,7 +30,7 @@ import UTIL.SYS, UTIL.TASK, UTIL.TIME
 # constants #
 #############
 SYS_CONFIGURATION = [
-  ["HOST", "192.168.1.100"],
+  ["HOST", "127.0.0.1"],
   ["NCTRS_ADMIN_SERVER_PORT", "13006"],
   ["NCTRS_TC_SERVER_PORT", "13007"],
   ["NCTRS_TM_SERVER_PORT", "2502"],
