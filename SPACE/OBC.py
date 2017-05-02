@@ -19,7 +19,7 @@ import EGSE.IF
 import LINK.IF
 import PUS.PACKET, PUS.SERVICES
 import SPACE.IF
-import UTIL.SYS, UTIL.TASK
+import UTIL.SYS, UTIL.TASK, UTIL.TIME
 
 ###########
 # classes #
@@ -256,27 +256,37 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     """timer triggered"""
     nextItem = SPACE.IF.s_tmPacketReplayer.getNextItem()
     while nextItem != None:
-      try:
-        pktMnemo = nextItem.pktName
-        spid = nextItem.pktSPID
-        if nextItem.segmentationFlags == CCSDS.PACKET.FIRST_SEGMENT:
+      itemType = nextItem[0]
+      if itemType == SPACE.IF.RPLY_PKT:
+        # TM packet
+        tmPacketData = nextItem[1]
+        pktMnemo = tmPacketData.pktName
+        spid = tmPacketData.pktSPID
+        if tmPacketData.segmentationFlags == CCSDS.PACKET.FIRST_SEGMENT:
           LOG("firstSegment " + pktMnemo + ", SPID=" + str(spid), "SPACE")
-        elif nextItem.segmentationFlags == CCSDS.PACKET.CONTINUATION_SEGMENT:
+        elif tmPacketData.segmentationFlags == CCSDS.PACKET.CONTINUATION_SEGMENT:
           LOG("continuationSegment " + pktMnemo + ", SPID=" + str(spid), "SPACE")
-        elif nextItem.segmentationFlags == CCSDS.PACKET.LAST_SEGMENT:
+        elif tmPacketData.segmentationFlags == CCSDS.PACKET.LAST_SEGMENT:
           LOG("lastSegment " + pktMnemo + ", SPID=" + str(spid), "SPACE")
         else:
           LOG("sendPacket " + pktMnemo + ", SPID=" + str(spid), "SPACE")
         # send the TM packet
-        self.generateTMpacket(nextItem)
-      except:
-        sleepValue = nextItem
+        self.generateTMpacket(tmPacketData)
+      elif itemType == SPACE.IF.RPLY_SLEEP:
+        # sleep
+        sleepValue = nextItem[1]
         LOG("sleep(" + str(sleepValue) + ")", "SPACE")
         UTIL.TASK.s_processingTask.createTimeHandler(sleepValue,
                                                      self.sendReplayPacket)
         # notify the GUI
         UTIL.TASK.s_processingTask.notifyGUItask("UPDATE_REPLAY")
         return
+      else:
+        # earth reception time
+        ert = nextItem[1]
+        LOG("ert(" + UTIL.TIME.getASDtimeStr(ert) + ")", "SPACE")
+        # notify the GUI
+        UTIL.TASK.s_processingTask.notifyGUItask("UPDATE_REPLAY")
       nextItem = SPACE.IF.s_tmPacketReplayer.getNextItem()
     # cyclic sending terminated
     LOG_WARNING("replay finished", "SPACE")

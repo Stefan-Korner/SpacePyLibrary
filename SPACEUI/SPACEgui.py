@@ -18,6 +18,7 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import SCOS.ENV
 import SPACE.IF
 import UI.TKI
+import UTIL.TIME
 
 #############
 # constants #
@@ -514,24 +515,33 @@ class GUIview(UI.TKI.GUIwinView):
       txt = str(nrPackets) + ": "
       # item 0
       item0 = replayItems[0]
-      try:
-        txt += item0.pktName
-      except:
-        txt += "sleep(" + str(item0) + ")"
+      itemType0, itemVal0 = item0
+      if itemType0 == SPACE.IF.RPLY_PKT:
+        txt += itemVal0.pktName
+      elif itemType0 == SPACE.IF.RPLY_SLEEP:
+        txt += "sleep(" + str(itemVal0) + ")"
+      else:
+        txt += "ert(" + UTIL.TIME.getASDtimeStr(itemVal0) + ")"
       # item 1
       if nrPackets > 1:
         item1 = replayItems[1]
-        try:
-          txt += ", " + item1.pktName
-        except:
-          txt += ", sleep(" + str(item1) + ")"
+        itemType1, itemVal1 = item1
+        if itemType1 == SPACE.IF.RPLY_PKT:
+          txt += ", " + itemVal1.pktName
+        elif itemType1 == SPACE.IF.RPLY_SLEEP:
+          txt += ", sleep(" + str(itemVal1) + ")"
+        else:
+          txt += ", ert(" + UTIL.TIME.getASDtimeStr(itemVal1) + ")"
       # item 2
       if nrPackets > 2:
         item2 = replayItems[2]
-        try:
-          txt += ", " + item2.pktName
-        except:
-          txt += ", sleep(" + str(item2) + ")"
+        itemType2, itemVal2 = item2
+        if itemType2 == SPACE.IF.RPLY_PKT:
+          txt += ", " + itemVal2.pktName
+        elif itemType2 == SPACE.IF.RPLY_SLEEP:
+          txt += ", sleep(" + str(itemVal2) + ")"
+        else:
+          txt += ", ert(" + UTIL.TIME.getASDtimeStr(itemVal2) + ")"
       if nrPackets > 3:
         txt += ", ..."
     self.replayTMpacketsField.set(txt)

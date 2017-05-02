@@ -61,6 +61,7 @@ class TMpacketReplayerImpl(SPACE.IF.TMpacketReplayer):
       tokens = line.split("(")
       token0 = tokens[0].strip()
       sleepVal = -1
+      ertVal = ""
       pktSPID = -1
       pktMnemo = ""
       params = ""
@@ -115,6 +116,9 @@ class TMpacketReplayerImpl(SPACE.IF.TMpacketReplayer):
             LOG_ERROR("syntax error in line " + str(lineNr) + " of " + replayFileName, "SPACE")
             self.items = []
             return False
+        elif token0 == "ert":
+          # earth reception time
+          ertVal = token1
         else:
           # TM packet with parameters
           if useSPIDasKey:
@@ -146,7 +150,11 @@ class TMpacketReplayerImpl(SPACE.IF.TMpacketReplayer):
       # line parsed
       if sleepVal != -1:
         # sleep statement
-        self.items.append(sleepVal)
+        self.items.append((SPACE.IF.RPLY_SLEEP, sleepVal))
+      elif ertVal != "":
+        # ert statement
+        ertTime = UTIL.TIME.getTimeFromASDstr(ertVal)
+        self.items.append((SPACE.IF.RPLY_ERT, ertTime))
       else:
         # TM packet statement --> create the TM packet
         if useSPIDasKey:
@@ -160,7 +168,7 @@ class TMpacketReplayerImpl(SPACE.IF.TMpacketReplayer):
           LOG_ERROR("error in line " + str(lineNr) + " of " + replayFileName, "SPACE")
           self.items = []
           return False
-        self.items.append(tmPacketData)
+        self.items.append((SPACE.IF.RPLY_PKT, tmPacketData))
         # change the state of the segmentationFlags
         # Note: this is global and not per APID
         if segmentationFlags == CCSDS.PACKET.FIRST_SEGMENT:

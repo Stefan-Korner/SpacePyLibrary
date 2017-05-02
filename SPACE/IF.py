@@ -25,6 +25,9 @@ ENABLE_ACK = 0
 ENABLE_NAK = 1
 DISABLE_ACK = 2
 ACK_STRS = ["ENABLE_ACK", "ENABLE_NAK", "DISABLE_ACK"]
+RPLY_PKT = 0     # replay file TM packet entry
+RPLY_SLEEP = 1   # replay file sleep entry
+RPLY_ERT = 2     # replay file earth reception time entry
 MIL_BUS_PF = 0   # MIL Platform Bus
 MIL_BUS_PL = 1   # MIL Payload Bus
 
