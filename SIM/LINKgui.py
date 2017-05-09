@@ -195,8 +195,12 @@ class GUIview(UI.TKI.GUIwinView):
     receptionTimes = downlinkQueue.keys()
     receptionTimes.sort()
     for receptionTime in receptionTimes:
-      tmFrameDu = downlinkQueue[receptionTime]
-      rowText = QUEUE_ROW_FORMAT % (UTIL.TIME.getASDtimeStr(receptionTime),
+      tmFrameDu, ertUTC = downlinkQueue[receptionTime]
+      if ertUTC == None:
+        displayTime = receptionTime
+      else:
+        displayTime = ertUTC
+      rowText = QUEUE_ROW_FORMAT % (UTIL.TIME.getASDtimeStr(displayTime),
                                     tmFrameDu.masterChannelFrameCount)
       self.downlinkQueueContents.list().insert(entryPos, rowText)
       entryPos += 1

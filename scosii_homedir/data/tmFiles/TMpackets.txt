@@ -1,12 +1,21 @@
+##############################################
+# TM packet replay file with realtime delays #
+##############################################
+# packet 1
 12345
 sleep(1000)
+# packet 2
 12345
 sleep(500)
+# packet 3
 12345
 sleep(2000)
+# packet 4
 12345
 sleep(50)
+# packet 5
 12345
 sleep(1000)
+# packet 6
 12345
 

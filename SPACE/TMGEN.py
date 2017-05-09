@@ -77,6 +77,7 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
                   parameterValues=[],
                   dataField=None,
                   segmentationFlags=CCSDS.PACKET.UNSEGMENTED,
+                  obtUTC=None,
                   reuse=True):
     """
     creates a CCSDS TM packet with optional parameter values:
@@ -165,8 +166,9 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
           packet.setString(bytePos, byteLength, paramValue)
     # re-calculate the time stamp
     if tmPktDef.pktHasDFhdr and self.tmTTtimeByteOffset > 0:
-      timeStamp = UTIL.TIME.getActualTime()
-      obtTime = UTIL.TIME.correlateToOBTmissionEpoch(timeStamp)
+      if obtUTC == None:
+        obtUTC = UTIL.TIME.getActualTime()
+      obtTime = UTIL.TIME.correlateToOBTmissionEpoch(obtUTC)
       if self.tmTTtimeFormat == UTIL.TIME.TIME_FORMAT_CUC:
         timeDU = UTIL.TIME.convertToCUC(obtTime, self.tmTTfineTimeByteSize)
       else:

@@ -31,6 +31,8 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
   def __init__(self, egseMode):
     """Initialise attributes only"""
     self.egseMode = egseMode
+    self.replayOBT = None
+    self.replayERT = None
   # ---------------------------------------------------------------------------
   def pushTCpacket(self, tcPacketDu):
     """
@@ -126,7 +128,7 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     # send the TM packet
     return self.generateTMpacket(tmPacketData)
   # ---------------------------------------------------------------------------
-  def generateTMpacket(self, tmPacketData):
+  def generateTMpacket(self, tmPacketData, obtUTC=None, ertUTC=None):
     """
     generates a TM packet:
     implementation of SPACE.IF.OnboardComputer.generateTMpacket
@@ -139,7 +141,8 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     tmPacketDu = SPACE.IF.s_tmPacketGenerator.getTMpacket(spid,
                                                           paramValues,
                                                           dataField,
-                                                          segmentationFlags)
+                                                          segmentationFlags,
+                                                          obtUTC)
     if tmPacketDu.dataFieldHeaderFlag:
       LOG("PUS Packet:" + UTIL.DU.array2str(tmPacketDu.getBufferString()[0:min(16,len(tmPacketDu))]), "SPACE")
     else:
@@ -151,7 +154,7 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     if self.egseMode:
       EGSE.IF.s_ccsLink.pushTMpacket(tmPacketDu)
     else:
-      LINK.IF.s_packetLink.pushTMpacket(tmPacketDu)
+      LINK.IF.s_packetLink.pushTMpacket(tmPacketDu, ertUTC)
     return True
   # ---------------------------------------------------------------------------
   def generateAcksFromTCpacket(self, tcPacketDu, ack1, ack2, ack3, ack4):
@@ -246,6 +249,8 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     sends TM packet from a replay file
     implementation of SPACE.IF.OnboardComputer.replayPackets
     """
+    self.replayOBT = None
+    self.replayERT = None
     if SPACE.IF.s_tmPacketReplayer.readReplayFile(replayFileName):
       # notify the GUI
       UTIL.TASK.s_processingTask.notifyGUItask("UPDATE_REPLAY")
@@ -271,7 +276,7 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
         else:
           LOG("sendPacket " + pktMnemo + ", SPID=" + str(spid), "SPACE")
         # send the TM packet
-        self.generateTMpacket(tmPacketData)
+        self.generateTMpacket(tmPacketData, self.replayOBT, self.replayERT)
       elif itemType == SPACE.IF.RPLY_SLEEP:
         # sleep
         sleepValue = nextItem[1]
@@ -281,10 +286,16 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
         # notify the GUI
         UTIL.TASK.s_processingTask.notifyGUItask("UPDATE_REPLAY")
         return
+      elif itemType == SPACE.IF.RPLY_OBT:
+        # onboard time
+        self.replayOBT = nextItem[1]
+        LOG("obt(" + UTIL.TIME.getASDtimeStr(self.replayOBT) + ")", "SPACE")
+        # notify the GUI
+        UTIL.TASK.s_processingTask.notifyGUItask("UPDATE_REPLAY")
       else:
         # earth reception time
-        ert = nextItem[1]
-        LOG("ert(" + UTIL.TIME.getASDtimeStr(ert) + ")", "SPACE")
+        self.replayERT = nextItem[1]
+        LOG("ert(" + UTIL.TIME.getASDtimeStr(self.replayERT) + ")", "SPACE")
         # notify the GUI
         UTIL.TASK.s_processingTask.notifyGUItask("UPDATE_REPLAY")
       nextItem = SPACE.IF.s_tmPacketReplayer.getNextItem()

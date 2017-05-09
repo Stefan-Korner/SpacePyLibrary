@@ -61,6 +61,7 @@ class TMpacketReplayerImpl(SPACE.IF.TMpacketReplayer):
       tokens = line.split("(")
       token0 = tokens[0].strip()
       sleepVal = -1
+      obtVal = ""
       ertVal = ""
       pktSPID = -1
       pktMnemo = ""
@@ -116,6 +117,9 @@ class TMpacketReplayerImpl(SPACE.IF.TMpacketReplayer):
             LOG_ERROR("syntax error in line " + str(lineNr) + " of " + replayFileName, "SPACE")
             self.items = []
             return False
+        elif token0 == "obt":
+          # onboard time
+          obtVal = token1
         elif token0 == "ert":
           # earth reception time
           ertVal = token1
@@ -151,6 +155,10 @@ class TMpacketReplayerImpl(SPACE.IF.TMpacketReplayer):
       if sleepVal != -1:
         # sleep statement
         self.items.append((SPACE.IF.RPLY_SLEEP, sleepVal))
+      elif obtVal != "":
+        # obt statement
+        obtTime = UTIL.TIME.getTimeFromASDstr(obtVal)
+        self.items.append((SPACE.IF.RPLY_OBT, obtTime))
       elif ertVal != "":
         # ert statement
         ertTime = UTIL.TIME.getTimeFromASDstr(ertVal)

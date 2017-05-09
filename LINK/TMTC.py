@@ -78,7 +78,7 @@ class CCSDSgroundSpace(LINK.IF.SpaceLink, LINK.IF.PacketLink):
     self.uplinkQueue[receptionTime] = tcFrameDu
     UTIL.TASK.s_processingTask.notifyGUItask("TC_FRAME")
   # ---------------------------------------------------------------------------
-  def pushTMpacket(self, tmPacketDu):
+  def pushTMpacket(self, tmPacketDu, ertUTC):
     """
     consumes a telemetry packet:
     implementation of LINK.IF.PacketLink.pushTMpacket
@@ -88,7 +88,7 @@ class CCSDSgroundSpace(LINK.IF.SpaceLink, LINK.IF.PacketLink):
       LOG_ERROR("cannot determine frame for packet", "LINK")
     # put the TM frame into the downlink queue to simulate the downlink delay
     receptionTime = UTIL.TIME.getActualTime() + DOWNLINK_DELAY_SEC
-    self.downlinkQueue[receptionTime] = tmFrameDu
+    self.downlinkQueue[receptionTime] = (tmFrameDu, ertUTC)
     UTIL.TASK.s_processingTask.notifyGUItask("TM_FRAME")
   # ---------------------------------------------------------------------------
   def checkCyclicCallback(self):
@@ -122,8 +122,8 @@ class CCSDSgroundSpace(LINK.IF.SpaceLink, LINK.IF.PacketLink):
     for receptionTime in receptionTimes:
       if receptionTime <= actualTime:
         # reception time has expired ---> process TM frame
-        tmFrameDu = self.downlinkQueue[receptionTime]
-        self.receiveTMframe(tmFrameDu)
+        tmFrameDu, ertUTC = self.downlinkQueue[receptionTime]
+        self.receiveTMframe(tmFrameDu, ertUTC)
         # remove TM frame
         del self.downlinkQueue[receptionTime]
         tmFramesDeleted = True
@@ -205,9 +205,9 @@ class CCSDSgroundSpace(LINK.IF.SpaceLink, LINK.IF.PacketLink):
     tcPacketDu = CCSDS.PACKET.TCpacket(packetData)
     SPACE.IF.s_onboardComputer.pushTCpacket(tcPacketDu)
   # ---------------------------------------------------------------------------
-  def receiveTMframe(self, tmFrameDu):
+  def receiveTMframe(self, tmFrameDu, ertUTC):
     """TM frame received"""
-    GRND.IF.s_tmMcsLink.pushTMframe(tmFrameDu)
+    GRND.IF.s_tmMcsLink.pushTMframe(tmFrameDu, ertUTC)
 
 #############
 # functions #

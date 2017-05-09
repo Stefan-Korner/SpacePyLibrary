@@ -36,13 +36,15 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
     # notify the status change
     UTIL.TASK.s_processingTask.setTMconnected()
   # ---------------------------------------------------------------------------
-  def pushTMframe(self, tmFrameDu):
+  def pushTMframe(self, tmFrameDu, ertUTC):
     """
     consumes a telemetry frame:
     implementation of GROUND.IF.TMmcsLink.pushTMframe
     """
     recordFile = GRND.IF.s_configuration.frameRecordFile
     if recordFile:
+      if ertUTC == None:
+        ertUTC = UTIL.TIME.getActualTime()
       recordFormat = GRND.IF.s_configuration.frameRecordFormat
       try:
         if recordFormat == "NCTRS" or \
@@ -51,7 +53,7 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
           LOG_INFO(GRND.IF.s_configuration.frameRecordFormat + " Frame recorded", "GRND")
           # Prepare the TM frame for recording
           ertCCSDStimeDU = \
-            UTIL.TIME.getERTccsdsTimeDU(UTIL.TIME.getActualTime())
+            UTIL.TIME.getERTccsdsTimeDU(ertUTC)
           tmDu = GRND.NCTRSDU.TMdataUnit()
           tmDu.setFrame(tmFrameDu.getBufferString())
           tmDu.spacecraftId = self.nctrsTMfields.spacecraftId
@@ -75,7 +77,11 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
               recordFile.write("\ntmDu.dataStreamType = " + str(tmDu.dataStreamType))
               recordFile.write("\ntmDu.virtualChannelId = " + str(tmDu.virtualChannelId))
               recordFile.write("\ntmDu.routeId = " + str(tmDu.routeId))
-              recordFile.write("\ntmDu.earthReceptionTime = " + str(tmDu.earthReceptionTime))
+              ertTimeBuffer = tmDu.earthReceptionTime
+              ertTimeDu = UTIL.TIME.createCDS(ertTimeBuffer)
+              ertTime = UTIL.TIME.convertFromCDS(ertTimeDu)
+              ertTimeStr = UTIL.TIME.getASDtimeStr(ertTime)
+              recordFile.write("\ntmDu.earthReceptionTime = " + ertTimeStr)
               recordFile.write("\ntmDu.sequenceFlag = " + str(tmDu.sequenceFlag))
               recordFile.write("\ntmDu.qualityFlag = " + str(tmDu.qualityFlag))
             recordFile.write(UTIL.DU.array2str(tmDu.getBufferHeader()))
@@ -106,8 +112,7 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
           # Prepare the TM frame for recording
           tmDu = GRND.CRYOSATDU.TMframeDataUnit()
           tmDu.setFrame(tmFrameDu.getBufferString())
-          timeStamp = UTIL.TIME.getActualTime()
-          ertTime = UTIL.TIME.correlateToERTmissionEpoch(timeStamp)
+          ertTime = UTIL.TIME.correlateToERTmissionEpoch(ertUTC)
           coarseTime = int(ertTime)
           fineTime = int((ertTime - coarseTime) * 1000000)
           tmDu.downlinkTimeSec = coarseTime

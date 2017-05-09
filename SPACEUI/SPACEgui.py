@@ -520,6 +520,8 @@ class GUIview(UI.TKI.GUIwinView):
         txt += itemVal0.pktName
       elif itemType0 == SPACE.IF.RPLY_SLEEP:
         txt += "sleep(" + str(itemVal0) + ")"
+      elif itemType0 == SPACE.IF.RPLY_OBT:
+        txt += "obt(" + UTIL.TIME.getASDtimeStr(itemVal0) + ")"
       else:
         txt += "ert(" + UTIL.TIME.getASDtimeStr(itemVal0) + ")"
       # item 1
@@ -530,6 +532,8 @@ class GUIview(UI.TKI.GUIwinView):
           txt += ", " + itemVal1.pktName
         elif itemType1 == SPACE.IF.RPLY_SLEEP:
           txt += ", sleep(" + str(itemVal1) + ")"
+        elif itemType1 == SPACE.IF.RPLY_OBT:
+          txt += ", obt(" + UTIL.TIME.getASDtimeStr(itemVal1) + ")"
         else:
           txt += ", ert(" + UTIL.TIME.getASDtimeStr(itemVal1) + ")"
       # item 2
@@ -540,6 +544,8 @@ class GUIview(UI.TKI.GUIwinView):
           txt += ", " + itemVal2.pktName
         elif itemType2 == SPACE.IF.RPLY_SLEEP:
           txt += ", sleep(" + str(itemVal2) + ")"
+        elif itemType2 == SPACE.IF.RPLY_OBT:
+          txt += ", obt(" + UTIL.TIME.getASDtimeStr(itemVal2) + ")"
         else:
           txt += ", ert(" + UTIL.TIME.getASDtimeStr(itemVal2) + ")"
       if nrPackets > 3:

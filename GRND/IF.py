@@ -65,7 +65,7 @@ class Configuration(object):
 class TMmcsLink(object):
   """Telemetry interface to the mission control system"""
   # ---------------------------------------------------------------------------
-  def pushTMframe(self, tmFrameDu):
+  def pushTMframe(self, tmFrameDu, ertUTC):
     """consumes a telemetry frame"""
     pass
   # ---------------------------------------------------------------------------

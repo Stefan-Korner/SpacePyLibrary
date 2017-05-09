@@ -27,7 +27,8 @@ DISABLE_ACK = 2
 ACK_STRS = ["ENABLE_ACK", "ENABLE_NAK", "DISABLE_ACK"]
 RPLY_PKT = 0     # replay file TM packet entry
 RPLY_SLEEP = 1   # replay file sleep entry
-RPLY_ERT = 2     # replay file earth reception time entry
+RPLY_OBT = 2     # replay file onboard time entry
+RPLY_ERT = 3     # replay file earth reception time entry
 MIL_BUS_PF = 0   # MIL Platform Bus
 MIL_BUS_PL = 1   # MIL Payload Bus
 
@@ -590,7 +591,7 @@ class OnboardComputer(object):
     # shall return True for successful processing, otherwise False
     return True
   # ---------------------------------------------------------------------------
-  def generateTMpacket(self, tmPacketData):
+  def generateTMpacket(self, tmPacketData, obtUTC=None, ertUTC=None):
     """generates a TM packet"""
     # shall return True for successful processing, otherwise False
     return True
@@ -679,6 +680,7 @@ class TMpacketGenerator(object):
                   parameterValues=[],
                   dataField=None,
                   segmentationFlags=CCSDS.PACKET.UNSEGMENTED,
+                  obtTimeStamp=None,
                   reuse=True):
     """creates a CCSDS TM packet with optional parameter values"""
     pass

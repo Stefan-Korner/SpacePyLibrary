@@ -75,7 +75,7 @@ class SpaceLink(object):
 class PacketLink(object):
   """Interface to the packet link"""
   # ---------------------------------------------------------------------------
-  def pushTMpacket(self, tmPacketDu):
+  def pushTMpacket(self, tmPacketDu, ertUTC):
     """consumes a telemetry packet"""
     pass
 
