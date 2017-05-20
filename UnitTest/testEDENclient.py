@@ -117,8 +117,8 @@ class Client(EGSE.EDEN.Client):
 def initConfiguration():
   """initialise the system configuration"""
   UTIL.SYS.s_configuration.setDefaults([
-    ["HOST", "192.168.1.100"],
-    ["EDEN_SERVER_PORT", "48569"]])
+    ["HOST", "127.0.0.1"],
+    ["CCS_SERVER_PORT", "48569"]])
 # -----------------------------------------------------------------------------
 def createClient():
   """create the EDEN client"""
@@ -126,7 +126,7 @@ def createClient():
   s_client = Client()
   if not s_client.connectToServer(
     serverHost=UTIL.SYS.s_configuration.HOST,
-    serverPort=int(UTIL.SYS.s_configuration.EDEN_SERVER_PORT)):
+    serverPort=int(UTIL.SYS.s_configuration.CCS_SERVER_PORT)):
     sys.exit(-1)
 
 ########

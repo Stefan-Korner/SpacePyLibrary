@@ -31,9 +31,9 @@ class Configuration(object):
   def __init__(self):
     """Initialise the connection relevant informations"""
     self.connected = False
-    self.ccsPort = UTIL.SYS.s_configuration.EDEN_SERVER_PORT
+    self.ccsPort = UTIL.SYS.s_configuration.CCS_SERVER_PORT
     self.connected2 = False
-    self.ccsPort2 = UTIL.SYS.s_configuration.EDEN_SERVER_PORT2
+    self.ccsPort2 = UTIL.SYS.s_configuration.CCS_SERVER_PORT2
   # ---------------------------------------------------------------------------
   def dump(self):
     """Dumps the status of the configuration attributes"""

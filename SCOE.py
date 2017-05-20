@@ -30,8 +30,8 @@ import UTIL.SYS, UTIL.TASK
 #############
 SYS_CONFIGURATION = [
   ["HOST", "127.0.0.1"],
-  ["EDEN_SERVER_PORT", "48569"],
-  ["EDEN_SERVER_PORT2", "-1"],
+  ["CCS_SERVER_PORT", "48569"],
+  ["CCS_SERVER_PORT2", "-1"],
   ["ASW_MISSION", "S4"],
   ["TC_ACK_ACCEPT_SUCC_MNEMO", "<<shall be passed as environment variable>>"],
   ["TC_ACK_ACCEPT_FAIL_MNEMO", "<<shall be passed as environment variable>>"],

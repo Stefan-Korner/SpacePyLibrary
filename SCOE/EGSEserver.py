@@ -122,11 +122,11 @@ s_server2 = None
 def createEGSEserver(hostName=None):
   """create the EGSE server"""
   global s_server, s_server2
-  s_server = Server(portNr=int(UTIL.SYS.s_configuration.EDEN_SERVER_PORT))
+  s_server = Server(portNr=int(UTIL.SYS.s_configuration.CCS_SERVER_PORT))
   EGSE.IF.s_ccsLink = s_server
   if not s_server.openConnectPort(hostName):
     sys.exit(-1)
-  serverPort2 = int(UTIL.SYS.s_configuration.EDEN_SERVER_PORT2)
+  serverPort2 = int(UTIL.SYS.s_configuration.CCS_SERVER_PORT2)
   if serverPort2 >= 0:
     # there is a second server port configured
     s_server2 = Server2(portNr=serverPort2)
