@@ -1,5 +1,5 @@
 #******************************************************************************
-# (C) 2014, Stefan Korner, Austria                                            *
+# (C) 2017, Stefan Korner, Austria                                            *
 #                                                                             *
 # The Space Python Library is free software; you can redistribute it and/or   *
 # modify it under the terms of the GNU Lesser General Public License as       *
@@ -11,8 +11,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser     *
 # General Public License for more details.                                    *
 #******************************************************************************
-# EGSE interfaces - EDEN protocol Data Units Module                           *
-# implements Core_EGSE_AD03_GAL_REQ_ALS_SA_R_0002_EGSE_IRD_issue2.pdf         *
+# EGSE interfaces - CnC protocol Data Units Module                            *
+# implements CAIT-03474-ASTR_issue_3_EGSE_IRD.pdf                             *
 #******************************************************************************
 from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, BinaryUnit
 
@@ -168,7 +168,7 @@ TM_SCOE_STRUCTURE_TYPE = 3
 ###########
 # =============================================================================
 class PDU(BinaryUnit):
-  """Generic EDEN protocol data unit"""
+  """Generic CNC protocol data unit"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
     """default constructor: initialise with header size"""

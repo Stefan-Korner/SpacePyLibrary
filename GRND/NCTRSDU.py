@@ -12,6 +12,7 @@
 # General Public License for more details.                                    *
 #******************************************************************************
 # Ground Simulation - NCTRS Data Units Module                                 *
+# implements EGOS-NIS-NCTR-ICD-0002-i4r0.2 (Signed).pdf                       *
 #******************************************************************************
 from UTIL.DU import BITS, BYTES, UNSIGNED, BinaryUnit
 

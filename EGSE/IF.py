@@ -30,6 +30,7 @@ class Configuration(object):
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise the connection relevant informations"""
+    self.egseProtocol = UTIL.SYS.s_configuration.EGSE_PROTOCOL
     self.connected = False
     self.ccsPort = UTIL.SYS.s_configuration.CCS_SERVER_PORT
     self.connected2 = False

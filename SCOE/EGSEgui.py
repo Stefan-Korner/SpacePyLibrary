@@ -39,26 +39,29 @@ class GUIview(UI.TKI.GUIwinView):
     """Initialise all GUI elements"""
     UI.TKI.GUIwinView.__init__(self, master, "EGSE", "EGSE interface to CCS")
     # CCS interface status
-    self.ccsStatusField = UI.TKI.ValueField(self, row=0, label="CCS interface status:")
+    self.ccsStatusField = UI.TKI.ValueField(self, row=0, label="EGSE protocol:")
+    self.ccsStatusField.set(EGSE.IF.s_configuration.egseProtocol)
+    # CCS interface status
+    self.ccsStatusField = UI.TKI.ValueField(self, row=1, label="CCS interface status:")
     self.ccsStatusField.set("INIT")
     self.ccsStatusField.setBackground(COLOR_INITIALISED)
     # CCS interface port
-    self.ccsPortField = UI.TKI.ValueField(self, row=1, label="CCS interface port:")
+    self.ccsPortField = UI.TKI.ValueField(self, row=2, label="CCS interface port:")
     self.ccsPortField.set(EGSE.IF.s_configuration.ccsPort)
     # CCS interface status 2
-    self.ccsStatusField2 = UI.TKI.ValueField(self, row=2, label="CCS interface status 2:")
+    self.ccsStatusField2 = UI.TKI.ValueField(self, row=3, label="CCS interface status 2:")
     self.ccsStatusField2.set("INIT")
     self.ccsStatusField2.setBackground(COLOR_INITIALISED)
     # CCS interface port 2
-    self.ccsPortField2 = UI.TKI.ValueField(self, row=3, label="CCS interface port:")
+    self.ccsPortField2 = UI.TKI.ValueField(self, row=4, label="CCS interface port 2:")
     self.ccsPortField2.set(EGSE.IF.s_configuration.ccsPort2)
     # log messages (default logger)
     self.messageLogger = UI.TKI.MessageLogger(self)
-    self.appGrid(self.messageLogger, row=4, columnspan=2)
+    self.appGrid(self.messageLogger, row=5, columnspan=2)
     # message line
     self.messageline = Tkinter.Message(self, relief=Tkinter.GROOVE)
     self.appGrid(self.messageline,
-                 row=5,
+                 row=6,
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,

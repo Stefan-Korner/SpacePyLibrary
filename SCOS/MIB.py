@@ -12,6 +12,7 @@
 # General Public License for more details.                                    *
 #******************************************************************************
 # SCOS - Mission Database (MIB) handling                                      *
+# implements (partly) egos-mcs-s2k-icd-0001-version69_signed.pdf              *
 #******************************************************************************
 import SCOS.ENV
 

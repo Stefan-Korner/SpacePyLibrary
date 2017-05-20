@@ -12,6 +12,7 @@
 # General Public License for more details.                                    *
 #******************************************************************************
 # Ground Simulation - NCTRS Module                                            *
+# implements EGOS-NIS-NCTR-ICD-0002-i4r0.2 (Signed).pdf                       *
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR

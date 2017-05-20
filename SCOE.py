@@ -12,11 +12,14 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser     *
 # General Public License for more details.                                    *
 #******************************************************************************
-# SCOE reference implementation: uses EDEN interface for CCS connection       *
+# SCOE reference implementation                                               *
+# supports one of the following EGSE_PROTOCOLs for CCS connection:            *
+# - CNC:  implements CAIT-03474-ASTR_issue_3_EGSE_IRD.pdf                     *
+# - EDEN: implements Core_EGSE_AD03_GAL_REQ_ALS_SA_R_0002_EGSE_IRD_issue2.pdf *
 #******************************************************************************
 import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import EGSE.EDEN
+import EGSE.IF
 import PUS.SERVICES
 import SCOE.EGSEserver, SCOE.EGSEgui
 import SCOS.ENV
@@ -29,6 +32,7 @@ import UTIL.SYS, UTIL.TASK
 # constants #
 #############
 SYS_CONFIGURATION = [
+  ["EGSE_PROTOCOL", "EDEN"],
   ["HOST", "127.0.0.1"],
   ["CCS_SERVER_PORT", "48569"],
   ["CCS_SERVER_PORT2", "-1"],
