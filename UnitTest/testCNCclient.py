@@ -23,8 +23,9 @@ import testData
 ####################
 # global variables #
 ####################
-# CNC client is a singleton
+# CNC clients are singletons
 s_client = None
+s_client2 = None
 
 ###########
 # classes #
@@ -46,12 +47,8 @@ class ModelTask(UTIL.TASK.ProcessingTask):
         self.helpCmd(argv)
       elif cmd == "Q" or cmd == "QUIT":
         self.quitCmd(argv)
-      elif cmd == "1" or cmd == "TC_SPACE":
-        self.tcSpaceCmd(argv)
-      elif cmd == "2" or cmd == "TC_SCOE":
-        self.tcScoeCmd(argv)
-      elif cmd == "3" or cmd == "CMD_EXEC":
-        self.cmdExecCmd(argv)
+      elif cmd == "1" or cmd == "CNC_COMMAND":
+        self.cncCommand(argv)
       else:
         LOG_WARNING("Invalid command " + argv[0])
     return 0
@@ -61,54 +58,42 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("Available commands:")
     LOG("-------------------")
     LOG("")
-    LOG("h | help ........provides this information")
-    LOG("q | quit ........terminates the application")
-    LOG("1 | tc_space ....send TC via CNC (TC,SPACE)")
-    LOG("2 | tc_scoe .....send TC via CNC (TC,SCOE)")
-    LOG("3 | cmd_exec ....send message via CNC (CMD,EXEC)")
+    LOG("h | help ..........provides this information")
+    LOG("q | quit ..........terminates the application")
+    LOG("1 | cnc_command ...send TC via CNC (TC,SPACE)")
     LOG("")
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
     """Decoded quit command"""
     UTIL.TASK.s_parentTask.stop()
   # ---------------------------------------------------------------------------
-  def tcSpaceCmd(self, argv):
-    """Decoded (TC,SPACE) command"""
-    global s_client
-    if len(argv) != 1:
-      LOG_WARNING("Invalid command argument(s)")
-      LOG("usage: tc_space")
-      LOG("or:    1")
-      return
-    s_client.sendTcSpace(testData.TC_PACKET_01)
-  # ---------------------------------------------------------------------------
-  def tcScoeCmd(self, argv):
-    """Decoded (TC,SCOE) command"""
-    global s_client
-    if len(argv) != 1:
-      LOG_WARNING("Invalid command argument(s)")
-      LOG("usage: tc_scoe")
-      LOG("or:    2")
-      return
-    s_client.sendTcScoe(testData.TC_PACKET_01)
-  # ---------------------------------------------------------------------------
-  def cmdExecCmd(self, argv):
-    """Decoded (CMD,EXEC) command"""
+  def cncCommand(self, argv):
+    """CnC command"""
     global s_client
     if len(argv) != 2:
       LOG_WARNING("Invalid command argument(s)")
-      LOG("usage: cmd_exec <message>")
-      LOG("or:    3 <message>")
+      LOG("usage: cnc_command <message>")
+      LOG("or:    1 <message>")
       return
     message = argv[1]
-    s_client.sendCmdExec(message)
+    cncTCpacketDU = EGSE.CNCPDU.TCpacket()
+    cncTCpacketDU.applicationProcessId = 1234
+    cncTCpacketDU.setCNCmessage(message)
+    s_client.sendCNCpacket(cncTCpacketDU)
 
 # =============================================================================
-class Client(EGSE.CNC.Client):
-  """Subclass of EGSE.CNC.Client"""
+class TCclient(EGSE.CNC.TCclient):
+  """Subclass of EGSE.CNC.TCclient"""
   def __init__(self):
     """Initialise attributes only"""
-    EGSE.CNC.Client.__init__(self)
+    EGSE.CNC.TCclient.__init__(self)
+
+# =============================================================================
+class TMclient(EGSE.CNC.TMclient):
+  """Subclass of EGSE.CNC.TMclient"""
+  def __init__(self):
+    """Initialise attributes only"""
+    EGSE.CNC.TMclient.__init__(self)
 
 #############
 # functions #
@@ -118,15 +103,21 @@ def initConfiguration():
   """initialise the system configuration"""
   UTIL.SYS.s_configuration.setDefaults([
     ["HOST", "127.0.0.1"],
-    ["CCS_SERVER_PORT", "48569"]])
+    ["CCS_SERVER_PORT", "48569"],
+    ["CCS_SERVER_PORT2", "48570"]])
 # -----------------------------------------------------------------------------
-def createClient():
-  """create the CNC client"""
-  global s_client
-  s_client = Client()
+def createClients():
+  """create the CNC clients"""
+  global s_client, s_client2
+  s_client = TCclient()
   if not s_client.connectToServer(
     serverHost=UTIL.SYS.s_configuration.HOST,
     serverPort=int(UTIL.SYS.s_configuration.CCS_SERVER_PORT)):
+    sys.exit(-1)
+  s_client2 = TMclient()
+  if not s_client2.connectToServer(
+    serverHost=UTIL.SYS.s_configuration.HOST,
+    serverPort=int(UTIL.SYS.s_configuration.CCS_SERVER_PORT2)):
     sys.exit(-1)
 
 ########
@@ -141,9 +132,9 @@ if __name__ == "__main__":
   modelTask = ModelTask()
   # register the console handler
   modelTask.registerConsoleHandler(consoleHandler)
-  # create the CNC client
-  LOG("Open the CNC client")
-  createClient()
+  # create the CNC clients
+  LOG("Open the CNC clients")
+  createClients()
   # start the tasks
   LOG("start modelTask...")
   modelTask.start()

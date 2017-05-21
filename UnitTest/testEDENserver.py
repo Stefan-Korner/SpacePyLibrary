@@ -56,9 +56,9 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     """Decoded help command"""
     LOG_INFO("Available commands:")
     LOG("")
-    LOG("h | help ........provides this information")
-    LOG("q | quit ........terminates the application")
-    LOG("1 | cmd_answ ....send message via EDEN (CMD,ANSW)")
+    LOG("h | help .......provides this information")
+    LOG("q | quit .......terminates the application")
+    LOG("1 | cmd_answ ...send message via EDEN (CMD,ANSW)")
     LOG("")
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):

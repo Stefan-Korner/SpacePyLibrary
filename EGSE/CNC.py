@@ -16,6 +16,7 @@
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import CCSDS.PACKET
 import EGSE.CNCPDU
 import UTIL.TASK, UTIL.TCP, UTIL.TIME
 
@@ -24,8 +25,8 @@ import UTIL.TASK, UTIL.TCP, UTIL.TIME
 ###########
 
 # =============================================================================
-class Server(UTIL.TCP.SingleClientReceivingServer):
-  """CNC PDU interface - SCOE side"""
+class TCserver(UTIL.TCP.SingleClientReceivingServer):
+  """CNC TC interface - SCOE side"""
   # ---------------------------------------------------------------------------
   def __init__(self, portNr):
     """Initialise attributes only"""
@@ -37,182 +38,100 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
     UTIL.TCP.SingleClientReceivingServer.accepted(self, clientSocket)
     self.clientAccepted()
   # ---------------------------------------------------------------------------
-  def sendPDU(self, pdu):
-    """Send the PDU to CCS"""
-    # this operation does not verify the contents of the PDU
-    self.dataSocket.send(pdu.getBufferString())
+  def sendCNCpacket(self, cncTMpacketDU):
+    """Send a CnC TM packet to the CCS"""
+    # this operation does not verify the contents of the cncTMpacketDU
+    self.dataSocket.send(cncTMpacketDU.getBufferString())
   # ---------------------------------------------------------------------------
-  def sendTc_aSpace(self, status, tcIdentificationWord):
-    """Send a (TC_A,SPACE) PDU to the CCS"""
-    if status == 0:
-      LOG_INFO("CNC.Server.sendTc_aSpace(OK)")
-    else:
-      LOG_ERROR("CNC.Server.sendTc_aSpace(ERROR)")
-    pdu = EGSE.CNCPDU.PDU()
-    pdu.pduType = EGSE.CNCPDU.PDU_TYPE_TC_A
-    pdu.subType = EGSE.CNCPDU.SUB_TYPE_SPACE
-    pdu.field2 = status
-    pdu.field3 = tcIdentificationWord
-    self.sendPDU(pdu)
+  def sendACK(self, cncTCpacketDU):
+    """Send an ACK as response to a CnC TC packet to the CCS"""
+    # format the response message according to the cncTCpacketDU
+    # note: this violates the resposibility of the CCSDS packet processing
+    #       because this should be done in the SPACE module
+    # TODO: the recent implementation does not consider specific Cnc messages
+    #       but simply appends the message to the ACK token
+    apid = cncTCpacketDU.applicationProcessId
+    ackMessage = "ACK " + cncTCpacketDU.getCNCmessage()
+    responseDU = EGSE.CNCPDU.TMpacket()
+    responseDU.applicationProcessId = apid
+    responseDU.setCNCmessage(ackMessage)
+    self.sendCNCpacket(responseDU)
   # ---------------------------------------------------------------------------
-  def sendTc_aScoe(self, status, tcIdentificationWord):
-    """Send a (TC_A,SCOE) PDU to the CCS"""
-    if status == 0:
-      LOG_INFO("CNC.Server.sendTc_aScoe(OK)")
-    else:
-      LOG_ERROR("CNC.Server.sendTc_aScoe(ERROR)")
-    pdu = EGSE.CNCPDU.PDU()
-    pdu.pduType = EGSE.CNCPDU.PDU_TYPE_TC_A
-    pdu.subType = EGSE.CNCPDU.SUB_TYPE_SCOE
-    pdu.field2 = status
-    pdu.field3 = tcIdentificationWord
-    self.sendPDU(pdu)
-  # ---------------------------------------------------------------------------
-  def sendTc_eSpace(self, tcSpacePDU, telecommandEchoStatus):
-    """Send a (TC_E,SPACE) PDU to the CCS"""
-    if telecommandEchoStatus == 0:
-      LOG_INFO("CNC.Server.sendTc_eSpace(OK)")
-    else:
-      LOG_ERROR("CNC.Server.sendTc_eSpace(ERROR)")
-    tc_eSpacePDU = EGSE.CNCPDU.TC_Espace(tcSpacePDU.buffer)
-    tc_eSpacePDU.telecommandEchoStatus = telecommandEchoStatus
-    self.sendPDU(tc_eSpacePDU)
-  # ---------------------------------------------------------------------------
-  def sendTc_eScoe(self, tcSpacePDU, telecommandEchoStatus):
-    """Send a (TC_E,SCOE) PDU to the CCS"""
-    if telecommandEchoStatus == 0:
-      LOG_INFO("CNC.Server.sendTc_eScoe(OK)")
-    else:
-      LOG_ERROR("CNC.Server.sendTc_eScoe(ERROR)")
-    tc_eScoePDU = EGSE.CNCPDU.TC_Escoe(tcSpacePDU.buffer)
-    tc_eScoePDU.telecommandEchoStatus = telecommandEchoStatus
-    self.sendPDU(tc_eScoePDU)
-  # ---------------------------------------------------------------------------
-  def sendTmSpace(self, tmPacket):
-    """Send a (TM,SPACE) PDU to the CCS"""
-    LOG_INFO("CNC.Server.sendTmSpace")
-    tmSpacePDU = EGSE.CNCPDU.TMspace()
-    tmSpacePDU.setCCSDSpacket(tmPacket)
-    self.sendPDU(tmSpacePDU)
-  # ---------------------------------------------------------------------------
-  def sendTmScoe(self, tmPacket):
-    """Send a (TM,SCOE) PDU to the CCS"""
-    LOG_INFO("CNC.Server.sendTmScoe")
-    tmScoePDU = EGSE.CNCPDU.TMscoe()
-    tmScoePDU.setCCSDSpacket(tmPacket)
-    self.sendPDU(tmScoePDU)
-  # ---------------------------------------------------------------------------
-  def sendCmdAnsw(self, message):
-    """Send a (CMD,ANSW) PDU to the CCS"""
-    LOG_INFO("CNC.Server.sendCmdAnsw")
-    pdu = EGSE.CNCPDU.PDU()
-    pdu.pduType = EGSE.CNCPDU.PDU_TYPE_CMD
-    pdu.subType = EGSE.CNCPDU.SUB_TYPE_ANSW
-    pdu.setDataField(message)
-    self.sendPDU(pdu)
+  def sendNAK(self, cncTCpacketDU):
+    """Send a NAK as response to a CnC TC packet to the CCS"""
+    # format the response message according to the cncTCpacketDU
+    # note: this violates the resposibility of the CCSDS packet processing
+    #       because this should be done in the SPACE module
+    # TODO: the recent implementation does not consider specific Cnc messages
+    #       but simply appends the message to the NAK token
+    apid = cncTCpacketDU.applicationProcessId
+    nakMessage = "NAK " + cncTCpacketDU.getCNCmessage()
+    responseDU = EGSE.CNCPDU.TMpacket()
+    responseDU.applicationProcessId = apid
+    responseDU.setCNCmessage(ackMessage)
+    self.sendCNCpacket(responseDU)
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when the CCS has send data"""
-    # read the PDU header from the data socket
+    # read the packet header from the data socket
     try:
-      pduHeader = self.dataSocket.recv(EGSE.CNCPDU.PDU_HEADER_BYTE_SIZE);
+      packetHeader = self.dataSocket.recv(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE);
     except Exception, ex:
       self.disconnectClient()
       self.notifyConnectionClosed(str(ex))
       return
     # consistency check
-    pduHeaderLen = len(pduHeader)
-    if pduHeaderLen == 0:
+    packetHeaderLen = len(packetHeader)
+    if packetHeaderLen == 0:
       self.disconnectClient()
       self.notifyConnectionClosed("empty data read")
       return
-    if pduHeaderLen != EGSE.CNCPDU.PDU_HEADER_BYTE_SIZE:
-      LOG_ERROR("Read of PDU header failed: invalid size: " + str(pduHeaderLen))
+    if packetHeaderLen != CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE:
+      LOG_ERROR("Read of CnC header failed: invalid size: " + str(pduHeaderLen))
       return
-    pdu = EGSE.CNCPDU.PDU(pduHeader)
-    # read the data field for the PDU from the data socket
-    dataFieldLength = pdu.dataFieldLength
-    if dataFieldLength > 0:
-      try:
-        dataField = self.dataSocket.recv(dataFieldLength);
-      except Exception, ex:
-        LOG_ERROR("Read of PDU dataField failed: " + str(ex))
-        return
-      # consistency check
-      remainingSizeRead = len(dataField)
-      if remainingSizeRead != dataFieldLength:
-        LOG_ERROR("Read of remaining PDU failed: invalid remaining size: " + str(remainingSizeRead))
-        return
-      pdu.setDataField(dataField)
-    # dispatch depending on pduType and subType
+    cncTCpacketDU = EGSE.CNCPDU.TCpacket(packetHeader)
+    # read the data field for the packet from the data socket
+    dataFieldLength = cncTCpacketDU.packetLength + 1
     try:
-      if pdu.pduType == EGSE.CNCPDU.PDU_TYPE_TC:
-        if pdu.subType == EGSE.CNCPDU.SUB_TYPE_SPACE:
-          # (TC,SPACE)
-          LOG_INFO("CNC.Server.receiveCallback(TC,SPACE)")
-          tcSpacePDU = EGSE.CNCPDU.TCspace(pdu.buffer)
-          if self.notifyTcSpace(tcSpacePDU.getCCSDSpacket()):
-            # forwarding OK
-            self.sendTc_aSpace(0, tcSpacePDU.tcIdentificationWord)
-            self.sendTc_eSpace(tcSpacePDU, 0)
-          else:
-            # forwarding failed
-            self.sendTc_aSpace(1, tcSpacePDU.tcIdentificationWord)
-            self.sendTc_eSpace(tcSpacePDU, 1)
-        elif pdu.subType == EGSE.CNCPDU.SUB_TYPE_SCOE:
-          # (TC,SCOE)
-          LOG_INFO("CNC.Server.receiveCallback(TC,SCOE)")
-          tcScoePDU = EGSE.CNCPDU.TCscoe(pdu.buffer)
-          if self.notifyTcScoe(tcScoePDU.getCCSDSpacket()):
-            # forwarding OK
-            self.sendTc_aScoe(0, tcScoePDU.tcIdentificationWord)
-            self.sendTc_eScoe(tcScoePDU, 0)
-          else:
-            # forwarding failed
-            self.sendTc_aScoe(1, tcScoePDU.tcIdentificationWord)
-            self.sendTc_eScoe(tcScoePDU, 1)
-        else:
-          LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType))
-          LOG_INFO("PDU = " + str(pdu))
-      elif pdu.pduType == EGSE.CNCPDU.PDU_TYPE_CMD:
-        if pdu.subType == EGSE.CNCPDU.SUB_TYPE_EXEC:
-          # (CMD,EXEC)
-          LOG_INFO("CNC.Server.receiveCallback(CMD,EXEC)")
-          self.notifyCmdExec(pdu.getDataField().tostring())
-        else:
-          LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType))
-          LOG_INFO("PDU = " + str(pdu))
-      else:
-        LOG_ERROR("Read of PDU header failed: invalid pduType: " + str(pdu.pduType))
-        LOG_INFO("PDU = " + str(pdu))
+      dataField = self.dataSocket.recv(dataFieldLength);
     except Exception, ex:
-      LOG_ERROR("Processing of received PDU failed: " + str(ex))
+      LOG_ERROR("Read of packet dataField failed: " + str(ex))
+      return
+    # consistency check
+    remainingSizeRead = len(dataField)
+    if remainingSizeRead != dataFieldLength:
+      LOG_ERROR("Read of remaining packet failed: invalid remaining size: " + str(remainingSizeRead))
+      return
+    cncTCpacketDU.setCNCmessage(dataField)
+    # dispatch the CnC command
+    try:
+      LOG_INFO("CNC.TCserver.receiveCallback(CnC command)")
+      if self.notifyCNCcommand(cncTCpacketDU):
+        # forwarding OK
+        self.sendACK(cncTCpacketDU)
+      else:
+        # forwarding failed
+        self.sendNAK(cncTCpacketDU)
+    except Exception, ex:
+      LOG_ERROR("Processing of received CnC command failed: " + str(ex))
   # ---------------------------------------------------------------------------
   def notifyConnectionClosed(self, details):
-    """Connection closed by client"""
-    LOG_WARNING("Connection closed by CCS: " + details)
+    """TC connection closed by client"""
+    LOG_WARNING("TC connection closed by CCS: " + details)
   # ---------------------------------------------------------------------------
-  def notifyTcSpace(self, tcPacket):
-    """(TC,SPACE) received: hook for derived classes"""
-    LOG_INFO("notifyTcSpace: tcPacket = " + UTIL.DU.array2str(tcPacket))
+  def notifyCNCcommand(self, cncTCpacketDU):
+    """CnC command received: hook for derived classes"""
+    LOG_INFO("notifyCNCcommand: tcPacket = " + UTIL.DU.array2str(cncTCpacketDU.getBufferString()))
+    LOG_INFO("message = " + cncTCpacketDU.getCNCmessage())
     return True
-  # ---------------------------------------------------------------------------
-  def notifyTcScoe(self, tcPacket):
-    """(TC,SCOE) received: hook for derived classes"""
-    LOG_INFO("notifyTcScoe: tcPacket = " + UTIL.DU.array2str(tcPacket))
-    return True
-  # ---------------------------------------------------------------------------
-  def notifyCmdExec(self, message):
-    """(CMD,EXEC) received: hook for derived classes"""
-    LOG_INFO("notifyCmdExec: message = " + message)
   # ---------------------------------------------------------------------------
   def clientAccepted(self):
     """hook for derived classes"""
     pass
 
 # =============================================================================
-class Client(UTIL.TCP.SingleServerReceivingClient):
-  """CNC PDU interface - CCS side"""
+class TCclient(UTIL.TCP.SingleServerReceivingClient):
+  """CNC TC interface - CCS side"""
   # connectToServer and disconnectFromServer are inherited
   # and must be handled in a proper way from the application
   # ---------------------------------------------------------------------------
@@ -221,152 +140,148 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
     modelTask = UTIL.TASK.s_processingTask
     UTIL.TCP.SingleServerReceivingClient.__init__(self, modelTask)
   # ---------------------------------------------------------------------------
-  def sendPDU(self, pdu):
-    """Send the PDU to the SCOE"""
-    # this operation does not verify the contents of the DU
-    self.dataSocket.send(pdu.getBufferString())
-  # ---------------------------------------------------------------------------
-  def sendTcSpace(self, tcPacket):
-    """Send a (TC,SPACE) PDU to the SCOE"""
-    LOG_INFO("CNC.Client.sendTcSpace")
-    tcSpacePDU = EGSE.CNCPDU.TCspace()
-    tcSpacePDU.setCCSDSpacket(tcPacket)
-    self.sendPDU(tcSpacePDU)
-  # ---------------------------------------------------------------------------
-  def sendTcScoe(self, tcPacket):
-    """Send a (TC,SCOE) PDU to the SCOE"""
-    LOG_INFO("CNC.Client.sendTcScoe")
-    tcScoePDU = EGSE.CNCPDU.TCscoe()
-    tcScoePDU.setCCSDSpacket(tcPacket)
-    self.sendPDU(tcScoePDU)
-  # ---------------------------------------------------------------------------
-  def sendCmdExec(self, tcPacket):
-    """Send a (CMD,EXEC) PDU to the SCOE"""
-    LOG_INFO("CNC.Client.sendCmdExec")
-    pdu = EGSE.CNCPDU.PDU()
-    pdu.pduType = EGSE.CNCPDU.PDU_TYPE_CMD
-    pdu.subType = EGSE.CNCPDU.SUB_TYPE_EXEC
-    pdu.setDataField(tcPacket)
-    self.sendPDU(pdu)
+  def sendCNCpacket(self, cncTCpacketDU):
+    """Send a CnC TC packet to the SCOE"""
+    # this operation does not verify the contents of the cncTCpacketDU
+    self.dataSocket.send(cncTCpacketDU.getBufferString())
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when the SCOE has send data"""
-    # read the PDU header from the data socket
+    # read the packet header from the data socket
     try:
-      pduHeader = self.dataSocket.recv(EGSE.CNCPDU.PDU_HEADER_BYTE_SIZE);
+      packetHeader = self.dataSocket.recv(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE);
     except Exception, ex:
       self.disconnectFromServer()
       self.notifyConnectionClosed(str(ex))
       return
     # consistency check
-    pduHeaderLen = len(pduHeader)
-    if pduHeaderLen == 0:
+    packetHeaderLen = len(packetHeader)
+    if packetHeaderLen == 0:
       # client termination
       self.disconnectFromServer()
       self.notifyConnectionClosed("empty data read")
       return
-    if pduHeaderLen != EGSE.CNCPDU.PDU_HEADER_BYTE_SIZE:
-      LOG_ERROR("Read of PDU header failed: invalid size: " + str(pduHeaderLen))
+    if packetHeaderLen != CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE:
+      LOG_ERROR("Read of CnC header failed: invalid size: " + str(pduHeaderLen))
       return
-    pdu = EGSE.CNCPDU.PDU(pduHeader)
-    # read the data field for the PDU from the data socket
-    dataFieldLength = pdu.dataFieldLength
-    if dataFieldLength > 0:
-      try:
-        dataField = self.dataSocket.recv(dataFieldLength);
-      except Exception, ex:
-        LOG_ERROR("Read of PDU dataField failed: " + str(ex))
-        return
-      # consistency check
-      remainingSizeRead = len(dataField)
-      if remainingSizeRead != dataFieldLength:
-        LOG_ERROR("Read of remaining PDU failed: invalid remaining size: " + str(remainingSizeRead))
-        return
-      pdu.setDataField(dataField)
-    # dispatch depending on pduType and subType
+    cncTMpacketDU = EGSE.CNCPDU.TMpacket(packetHeader)
+    # read the data field for the packet from the data socket
+    dataFieldLength = cncTMpacketDU.packetLength + 1
     try:
-      if pdu.pduType == EGSE.CNCPDU.PDU_TYPE_TC_A:
-        if pdu.subType == EGSE.CNCPDU.SUB_TYPE_SPACE:
-          # (TC_A,SPACE)
-          LOG_INFO("CNC.Client.receiveCallback(TC_A,SPACE)")
-          self.notifyTc_aSpace(pdu.field2, pdu.field3)
-        elif pdu.subType == EGSE.CNCPDU.SUB_TYPE_SCOE:
-          # (TC_A,SCOE)
-          LOG_INFO("CNC.Client.receiveCallback(TC_A,SCOE)")
-          self.notifyTc_aScoe(pdu.field2, pdu.field3)
-        else:
-          LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType))
-          LOG_INFO("PDU = " + str(pdu))
-      elif pdu.pduType == EGSE.CNCPDU.PDU_TYPE_TC_E:
-        if pdu.subType == EGSE.CNCPDU.SUB_TYPE_SPACE:
-          # (TC_E,SPACE)
-          LOG_INFO("CNC.Client.receiveCallback(TC_E,SPACE)")
-          tc_eSpacePDU = EGSE.CNCPDU.TC_Espace(pdu.buffer)
-          self.notifyTc_eSpace(tc_eSpacePDU.getCCSDSpacket())
-        elif pdu.subType == EGSE.CNCPDU.SUB_TYPE_SCOE:
-          # (TC_E,SCOE)
-          LOG_INFO("CNC.Client.receiveCallback(TC_E,SCOE)")
-          tc_eScoePDU = EGSE.CNCPDU.TC_Escoe(pdu.buffer)
-          self.notifyTc_eScoe(tc_eScoePDU.getCCSDSpacket())
-        else:
-          LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType))
-          LOG_INFO("PDU = " + str(pdu))
-      elif pdu.pduType == EGSE.CNCPDU.PDU_TYPE_TM:
-        if pdu.subType == EGSE.CNCPDU.SUB_TYPE_SPACE:
-          # (TM,SPACE)
-          LOG_INFO("CNC.Client.receiveCallback(TM,SPACE)")
-          tmSpacePDU = EGSE.CNCPDU.TMspace(pdu.buffer)
-          self.notifyTmSpace(tmSpacePDU.getCCSDSpacket())
-        elif pdu.subType == EGSE.CNCPDU.SUB_TYPE_SCOE:
-          # (TM,SCOE)
-          LOG_INFO("CNC.Client.receiveCallback(TM,SCOE)")
-          tmScoePDU = EGSE.CNCPDU.TMscoe(pdu.buffer)
-          self.notifyTmScoe(tmScoePDU.getCCSDSpacket())
-        else:
-          LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType))
-          LOG_INFO("PDU = " + str(pdu))
-      elif pdu.pduType == EGSE.CNCPDU.PDU_TYPE_CMD:
-        if pdu.subType == EGSE.CNCPDU.SUB_TYPE_ANSW:
-          # (CMD,ANSW)
-          LOG_INFO("CNC.Client.receiveCallback(CMD,ANSW)")
-          self.notifyCmdAnsw(pdu.getDataField().tostring())
-        else:
-          LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType))
-          LOG_INFO("PDU = " + str(pdu))
-      else:
-        LOG_ERROR("Read of PDU header failed: invalid pduType: " + str(pdu.pduType))
-        LOG_INFO("PDU = " + str(pdu))
+      dataField = self.dataSocket.recv(dataFieldLength);
     except Exception, ex:
-      LOG_ERROR("Processing of received PDU failed: " + str(ex))
+      LOG_ERROR("Read of packet dataField failed: " + str(ex))
+      return
+    # consistency check
+    remainingSizeRead = len(dataField)
+    if remainingSizeRead != dataFieldLength:
+      LOG_ERROR("Read of remaining packet failed: invalid remaining size: " + str(remainingSizeRead))
+      return
+    cncTMpacketDU.setCNCmessage(dataField)
+    # dispatch the CnC response
+    try:
+      LOG_INFO("CNC.TCclient.receiveCallback(CnC response)")
+      self.notifyCNCresponse(cncTMpacketDU)
+    except Exception, ex:
+      LOG_ERROR("Processing of received CnC response failed: " + str(ex))
   # ---------------------------------------------------------------------------
   def notifyConnectionClosed(self, details):
     """Connection closed by server"""
     LOG_WARNING("Connection closed by SCOE: " + details)
   # ---------------------------------------------------------------------------
-  def notifyTc_aSpace(self, status, tcIdentificationWord):
-    """(TC_A,SPACE) received: hook for derived classes"""
-    LOG_INFO("notifyTc_aSpace: status = " + str(status) + ", tcIdentificationWord = " + str(tcIdentificationWord))
+  def notifyCNCresponse(self, cncTMpacketDU):
+    """CnC response received: hook for derived classes"""
+    LOG_INFO("notifyCNCresponse: cncTMpacketDU = " + UTIL.DU.array2str(cncTMpacketDU.getBufferString()))
+    LOG_INFO("message = " + cncTMpacketDU.getCNCmessage())
+    return True
+
+# =============================================================================
+class TMserver(UTIL.TCP.Server):
+  """CNC TM interface - SCOE side"""
   # ---------------------------------------------------------------------------
-  def notifyTc_aScoe(self, status, tcIdentificationWord):
-    """(TC_A,SCOE) received: hook for derived classes"""
-    LOG_INFO("notifyTc_aScoe: status = " + str(status) + ", tcIdentificationWord = " + str(tcIdentificationWord))
+  def __init__(self, portNr):
+    """Initialise attributes only"""
+    modelTask = UTIL.TASK.s_processingTask
+    UTIL.TCP.Server.__init__(self, modelTask, portNr)
+    self.clientSocket = None
   # ---------------------------------------------------------------------------
-  def notifyTc_eSpace(self, tcPacket):
-    """(TC_E,SPACE) received: hook for derived classes"""
-    LOG_INFO("notifyTc_eSpace: tcPacket = " + UTIL.DU.array2str(tcPacket))
+  def accepted(self, clientSocket):
+    """Overloaded from SingleClientReceivingServer"""
+    self.clientSocket = clientSocket
+    self.clientAccepted()
   # ---------------------------------------------------------------------------
-  def notifyTc_eScoe(self, tcPacket):
-    """(TC_E,SCOE) received: hook for derived classes"""
-    LOG_INFO("notifyTc_eScoe: tcPacket = " + UTIL.DU.array2str(tcPacket))
+  def sendTMpacket(self, tmPacket):
+    """Send a CCSDS TM packet to the CCS"""
+    # this operation does not verify the contents of the tmPacket
+    self.clientSocket.send(tmPacket)
   # ---------------------------------------------------------------------------
-  def notifyTmSpace(self, tmPacket):
-    """(TM,SPACE) received: hook for derived classes"""
-    LOG_INFO("notifyTmSpace: tmPacket = " + UTIL.DU.array2str(tmPacket))
+  def notifyConnectionClosed(self, details):
+    """TM connection closed by client"""
+    LOG_WARNING("TM connection closed by CCS: " + details)
   # ---------------------------------------------------------------------------
-  def notifyTmScoe(self, tmPacket):
-    """(TM,SCOE) received: hook for derived classes"""
-    LOG_INFO("notifyTmScoe: tmPacket = " + UTIL.DU.array2str(tmPacket))
+  def clientAccepted(self):
+    """hook for derived classes"""
+    pass
+
+# =============================================================================
+class TMclient(UTIL.TCP.SingleServerReceivingClient):
+  """CNC TM interface - CCS side"""
+  # connectToServer and disconnectFromServer are inherited
+  # and must be handled in a proper way from the application
   # ---------------------------------------------------------------------------
-  def notifyCmdAnsw(self, message):
-    """(CMD,ANSW) received: hook for derived classes"""
-    LOG_INFO("notifyCmdAnsw: message = " + message)
+  def __init__(self):
+    """Initialise attributes only"""
+    modelTask = UTIL.TASK.s_processingTask
+    UTIL.TCP.SingleServerReceivingClient.__init__(self, modelTask)
+  # ---------------------------------------------------------------------------
+  def receiveCallback(self, socket, stateMask):
+    """Callback when the SCOE has send data"""
+    # read the packet header from the data socket
+    try:
+      packetHeader = self.dataSocket.recv(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE);
+    except Exception, ex:
+      self.disconnectFromServer()
+      self.notifyConnectionClosed(str(ex))
+      return
+    # consistency check
+    packetHeaderLen = len(packetHeader)
+    if packetHeaderLen == 0:
+      # client termination
+      self.disconnectFromServer()
+      self.notifyConnectionClosed("empty data read")
+      return
+    if packetHeaderLen != CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE:
+      LOG_ERROR("Read of CCSDS packet header failed: invalid size: " + str(pduHeaderLen))
+      return
+    ccsdsTMpacketDU = CCSDS.PACKET.TMpacket(packetHeader)
+    # read the data field for the packet from the data socket
+    dataFieldLength = ccsdsTMpacketDU.packetLength + 1
+    try:
+      dataField = self.dataSocket.recv(dataFieldLength);
+    except Exception, ex:
+      LOG_ERROR("Read of packet dataField failed: " + str(ex))
+      return
+    # consistency check
+    remainingSizeRead = len(dataField)
+    if remainingSizeRead != dataFieldLength:
+      LOG_ERROR("Read of remaining packet failed: invalid remaining size: " + str(remainingSizeRead))
+      return
+    ccsdsTMpacketDU.append(dataField)
+    # dispatch the CCSDS tm packet
+    try:
+      LOG_INFO("CNC.TMclient.receiveCallback(TM packet)")
+      self.notifyTMpacket(ccsdsTMpacketDU.getBufferString())
+    except Exception, ex:
+      LOG_ERROR("Processing of received TM packet failed: " + str(ex))
+  # ---------------------------------------------------------------------------
+  def notifyConnectionClosed(self, details):
+    """Connection closed by server"""
+    LOG_WARNING("Connection closed by TMserver: " + details)
+  # ---------------------------------------------------------------------------
+  def notifyTMpacket(self, tmPacket):
+    """TM packet received: hook for derived classes"""
+    LOG_INFO("notifyTMpacket: tmPacket = " + UTIL.DU.array2str(tmPacket))
+  # ---------------------------------------------------------------------------
+  def notifyError(self, errorMessage, data):
+    """error notification: hook for derived classes"""
+    pass

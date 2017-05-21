@@ -61,11 +61,11 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("Available commands:")
     LOG("-------------------")
     LOG("")
-    LOG("h | help ........provides this information")
-    LOG("q | quit ........terminates the application")
-    LOG("1 | tc_space ....send TC via EDEN (TC,SPACE)")
-    LOG("2 | tc_scoe .....send TC via EDEN (TC,SCOE)")
-    LOG("3 | cmd_exec ....send message via EDEN (CMD,EXEC)")
+    LOG("h | help .......provides this information")
+    LOG("q | quit .......terminates the application")
+    LOG("1 | tc_space ...send TC via EDEN (TC,SPACE)")
+    LOG("2 | tc_scoe ....send TC via EDEN (TC,SCOE)")
+    LOG("3 | cmd_exec ...send message via EDEN (CMD,EXEC)")
     LOG("")
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
