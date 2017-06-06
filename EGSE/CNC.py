@@ -51,9 +51,12 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
     # TODO: the recent implementation does not consider specific Cnc messages
     #       but simply appends the message to the ACK token
     apid = cncTCpacketDU.applicationProcessId
+    ssc = cncTCpacketDU.sequenceControlCount
     ackMessage = "ACK " + cncTCpacketDU.getCNCmessage()
     responseDU = EGSE.CNCPDU.TMpacket()
     responseDU.applicationProcessId = apid
+    responseDU.sequenceControlCount = ssc
+    responseDU.segmentationFlags = CCSDS.PACKET.UNSEGMENTED
     responseDU.setCNCmessage(ackMessage)
     self.sendCNCpacket(responseDU)
   # ---------------------------------------------------------------------------
@@ -65,10 +68,13 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
     # TODO: the recent implementation does not consider specific Cnc messages
     #       but simply appends the message to the NAK token
     apid = cncTCpacketDU.applicationProcessId
+    ssc = cncTCpacketDU.sequenceControlCount
     nakMessage = "NAK " + cncTCpacketDU.getCNCmessage()
     responseDU = EGSE.CNCPDU.TMpacket()
     responseDU.applicationProcessId = apid
-    responseDU.setCNCmessage(ackMessage)
+    responseDU.sequenceControlCount = ssc
+    responseDU.segmentationFlags = CCSDS.PACKET.UNSEGMENTED
+    responseDU.setCNCmessage(nakMessage)
     self.sendCNCpacket(responseDU)
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):

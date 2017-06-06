@@ -13,16 +13,17 @@
 ::*****************************************************************************
 :: Start scrip for the SCOE.                                                  *
 ::*****************************************************************************
+set EGSE_PROTOCOL=CNC
 set HOST=127.0.0.1
 set CCS_SERVER_PORT2=48570
 set TC_ACK_ACCEPT_SUCC_MNEMO=ACK1
 set TC_ACK_ACCEPT_FAIL_MNEMO=NAK1
-set TC_ACK_EXESTA_SUCC_MNEMO=ACK1
-set TC_ACK_EXESTA_FAIL_MNEMO=NAK1
-set TC_ACK_EXEPRO_SUCC_MNEMO=ACK1
-set TC_ACK_EXEPRO_FAIL_MNEMO=NAK1
-set TC_ACK_EXECUT_SUCC_MNEMO=ACK1
-set TC_ACK_EXECUT_FAIL_MNEMO=NAK1
+set TC_ACK_EXESTA_SUCC_MNEMO=ACK2
+set TC_ACK_EXESTA_FAIL_MNEMO=NAK2
+set TC_ACK_EXEPRO_SUCC_MNEMO=ACK3
+set TC_ACK_EXEPRO_FAIL_MNEMO=NAK3
+set TC_ACK_EXECUT_SUCC_MNEMO=ACK4
+set TC_ACK_EXECUT_FAIL_MNEMO=NAK4
 set TC_ACK_APID_PARAM_BYTE_OFFSET=18
 set TC_ACK_SSC_PARAM_BYTE_OFFSET=20
 set TC_FKT_ID_BYTE_OFFSET=10
