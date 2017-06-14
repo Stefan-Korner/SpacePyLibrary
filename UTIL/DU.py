@@ -445,7 +445,12 @@ def array2str(binaryString, maxLen=65536):
   retStr += filler + retStr2
   return retStr
 
-def str2array(hexString):
+def str2array(hexString, withoutSpaces=False):
   """converts a hex string into a binaryString"""
   # e.g. "00 01 FF FE 64 12" converts to array('B', [0, 1, 255, 254, 100, 18])
-  return array.array('B', map((lambda x: int(x, 16)), hexString.split()))
+  # withoutSpaces=True: "0001FFFE6412" instead of "00 01 FF FE 64 12"
+  if withoutSpaces:
+    hexTuples = [hexString[i:i+2] for i in xrange(0, len(hexString), 2)]
+  else:
+    hexTuples = hexString.split()
+  return array.array('B', map((lambda x: int(x, 16)), hexTuples))

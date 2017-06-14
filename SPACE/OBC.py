@@ -151,11 +151,7 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
       LOG_ERROR("packet creation failed: SPID = " + str(spid), "SPACE")
       return False
     # send the TM packet
-    if self.egseMode:
-      EGSE.IF.s_ccsLink.pushTMpacket(tmPacketDu)
-    else:
-      LINK.IF.s_packetLink.pushTMpacket(tmPacketDu, ertUTC)
-    return True
+    return self.pushTMpacket(tmPacketDu, ertUTC)
   # ---------------------------------------------------------------------------
   def generateAcksFromTCpacket(self, tcPacketDu, ack1, ack2, ack3, ack4):
     """
@@ -244,6 +240,17 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     # send the TM packet
     return self.generateTMpacket(tmPacketData)
   # ---------------------------------------------------------------------------
+  def pushTMpacket(self, tmPacketDu, ertUTC):
+    """
+    sends TM packet DU to CCS or downlink
+    implementation of SPACE.IF.OnboardComputer.pushTMpacket
+    """
+    if self.egseMode:
+      EGSE.IF.s_ccsLink.pushTMpacket(tmPacketDu)
+    else:
+      LINK.IF.s_packetLink.pushTMpacket(tmPacketDu, ertUTC)
+    return True
+  # ---------------------------------------------------------------------------
   def replayPackets(self, replayFileName):
     """
     sends TM packet from a replay file
@@ -277,6 +284,14 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
           LOG("sendPacket " + pktMnemo + ", SPID=" + str(spid), "SPACE")
         # send the TM packet
         self.generateTMpacket(tmPacketData, self.replayOBT, self.replayERT)
+      elif itemType == SPACE.IF.RPLY_RAWPKT:
+        # TM raw packet
+        rawPkt = nextItem[1]
+        tmPacketDu = CCSDS.PACKET.TMpacket(rawPkt)
+        LOG("sendRawPacket APID=" + str(tmPacketDu.applicationProcessId) +
+            ", SSC=" + str(tmPacketDu.sequenceControlCount), "SPACE")
+        # send the TM packet
+        self.pushTMpacket(tmPacketDu, self.replayERT)
       elif itemType == SPACE.IF.RPLY_SLEEP:
         # sleep
         sleepValue = nextItem[1]

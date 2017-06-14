@@ -65,7 +65,12 @@ def test_DUoperations():
   print "b.getUnsigned(1, 2) =", ("%08X" % b.getUnsigned(1, 2))
   b.setUnsigned(0, 2, 0x00001234)
   print "b.setUnsigned(0, 2, 0x00001234) =", b
-  print UTIL.DU.str2array("00 01 FF FE 64 12")
+  a = UTIL.DU.str2array("00 01 FF FE 64 12")
+  print 'str2array("00 01 FF FE 64 12") =', a
+  a = UTIL.DU.str2array("0001FFFE6412", True)
+  print 'str2array("0001FFFE6412", True) =', a
+  h = UTIL.DU.array2str(a)
+  print "array2str([0, 1, 255, 254, 100, 18]) =", h
   return True
 
 ########

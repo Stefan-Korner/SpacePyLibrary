@@ -518,6 +518,8 @@ class GUIview(UI.TKI.GUIwinView):
       itemType0, itemVal0 = item0
       if itemType0 == SPACE.IF.RPLY_PKT:
         txt += itemVal0.pktName
+      elif itemType0 == SPACE.IF.RPLY_RAWPKT:
+        txt += "raw"
       elif itemType0 == SPACE.IF.RPLY_SLEEP:
         txt += "sleep(" + str(itemVal0) + ")"
       elif itemType0 == SPACE.IF.RPLY_OBT:
@@ -530,6 +532,8 @@ class GUIview(UI.TKI.GUIwinView):
         itemType1, itemVal1 = item1
         if itemType1 == SPACE.IF.RPLY_PKT:
           txt += ", " + itemVal1.pktName
+        elif itemType1 == SPACE.IF.RPLY_RAWPKT:
+          txt += ", raw"
         elif itemType1 == SPACE.IF.RPLY_SLEEP:
           txt += ", sleep(" + str(itemVal1) + ")"
         elif itemType1 == SPACE.IF.RPLY_OBT:
@@ -542,6 +546,8 @@ class GUIview(UI.TKI.GUIwinView):
         itemType2, itemVal2 = item2
         if itemType2 == SPACE.IF.RPLY_PKT:
           txt += ", " + itemVal2.pktName
+        elif itemType2 == SPACE.IF.RPLY_RAWPKT:
+          txt += ", raw"
         elif itemType2 == SPACE.IF.RPLY_SLEEP:
           txt += ", sleep(" + str(itemVal2) + ")"
         elif itemType2 == SPACE.IF.RPLY_OBT:

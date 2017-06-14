@@ -20,6 +20,11 @@ import SCOS.ENV
 import SPACE.IF
 import UTIL.SYS, UTIL.TIME
 
+#############
+# constants #
+#############
+MAX_PKT_NAME = 12
+
 ###########
 # classes #
 ###########
@@ -65,6 +70,7 @@ class TMpacketReplayerImpl(SPACE.IF.TMpacketReplayer):
       ertVal = ""
       pktSPID = -1
       pktMnemo = ""
+      rawPkt = None
       params = ""
       values = ""
       dataField = None
@@ -85,7 +91,10 @@ class TMpacketReplayerImpl(SPACE.IF.TMpacketReplayer):
         # could contain the datafield in hex
         tokens = line.split("[")
         token0 = tokens[0].strip()
-        if useSPIDasKey:
+        if len(token0) > MAX_PKT_NAME:
+          # raw packet defined in hex withoutSpaces
+          rawPkt = UTIL.DU.str2array(token0, True)
+        elif useSPIDasKey:
           try:
             pktSPID = int(token0)
           except:
@@ -165,18 +174,21 @@ class TMpacketReplayerImpl(SPACE.IF.TMpacketReplayer):
         self.items.append((SPACE.IF.RPLY_ERT, ertTime))
       else:
         # TM packet statement --> create the TM packet
-        if useSPIDasKey:
-          tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectDataBySPID(
-            pktSPID, params, values, dataField, segmentationFlags)
+        if rawPkt != None:
+          self.items.append((SPACE.IF.RPLY_RAWPKT, rawPkt))
         else:
-          tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(
-            pktMnemo, params, values, dataField, segmentationFlags)
-        # check the TM packet
-        if tmPacketData == None:
-          LOG_ERROR("error in line " + str(lineNr) + " of " + replayFileName, "SPACE")
-          self.items = []
-          return False
-        self.items.append((SPACE.IF.RPLY_PKT, tmPacketData))
+          if useSPIDasKey:
+            tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectDataBySPID(
+              pktSPID, params, values, dataField, segmentationFlags)
+          else:
+            tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(
+              pktMnemo, params, values, dataField, segmentationFlags)
+          # check the TM packet
+          if tmPacketData == None:
+            LOG_ERROR("error in line " + str(lineNr) + " of " + replayFileName, "SPACE")
+            self.items = []
+            return False
+          self.items.append((SPACE.IF.RPLY_PKT, tmPacketData))
         # change the state of the segmentationFlags
         # Note: this is global and not per APID
         if segmentationFlags == CCSDS.PACKET.FIRST_SEGMENT:

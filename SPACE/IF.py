@@ -26,9 +26,10 @@ ENABLE_NAK = 1
 DISABLE_ACK = 2
 ACK_STRS = ["ENABLE_ACK", "ENABLE_NAK", "DISABLE_ACK"]
 RPLY_PKT = 0     # replay file TM packet entry
-RPLY_SLEEP = 1   # replay file sleep entry
-RPLY_OBT = 2     # replay file onboard time entry
-RPLY_ERT = 3     # replay file earth reception time entry
+RPLY_RAWPKT = 1  # replay file raw TM packet entry
+RPLY_SLEEP = 2   # replay file sleep entry
+RPLY_OBT = 3     # replay file onboard time entry
+RPLY_ERT = 4     # replay file earth reception time entry
 MIL_BUS_PF = 0   # MIL Platform Bus
 MIL_BUS_PL = 1   # MIL Payload Bus
 
@@ -603,6 +604,11 @@ class OnboardComputer(object):
   # ---------------------------------------------------------------------------
   def generateAck(self, tcAPID, tcSSC, ackType):
     """generates a TC acknowledgement according to PUS service 1"""
+    # shall return True for successful processing, otherwise False
+    return True
+  # ---------------------------------------------------------------------------
+  def pushTMpacket(self, tmPacketDu, ertUTC):
+    """sends TM packet DU to CCS or downlink"""
     # shall return True for successful processing, otherwise False
     return True
   # ---------------------------------------------------------------------------
