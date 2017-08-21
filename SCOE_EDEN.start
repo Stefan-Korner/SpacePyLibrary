@@ -14,7 +14,7 @@
 #******************************************************************************
 # Start scrip for the SCOE.                                                   *
 #******************************************************************************
-setenv EGSE_PROTOCOL=EDEN
+setenv EGSE_PROTOCOL EDEN
 setenv HOST 127.0.0.1
 setenv CCS_SERVER_PORT2 48570
 setenv TC_ACK_ACCEPT_SUCC_MNEMO ACK1
