@@ -15,6 +15,7 @@
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import CCSDS.TIME
 import GRND.CRYOSATDU, GRND.IF, GRND.NCTRS, GRND.NCTRSDU
 import SPACE.OBC
 import UTIL.DU, UTIL.SYS, UTIL.TASK, UTIL.TIME
@@ -53,7 +54,7 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
           LOG_INFO(GRND.IF.s_configuration.frameRecordFormat + " Frame recorded", "GRND")
           # Prepare the TM frame for recording
           ertCCSDStimeDU = \
-            UTIL.TIME.getERTccsdsTimeDU(ertUTC)
+            CCSDS.TIME.getERTccsdsTimeDU(ertUTC)
           tmDu = GRND.NCTRSDU.TMdataUnit()
           tmDu.setFrame(tmFrameDu.getBufferString())
           tmDu.spacecraftId = self.nctrsTMfields.spacecraftId
@@ -78,8 +79,8 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
               recordFile.write("\ntmDu.virtualChannelId = " + str(tmDu.virtualChannelId))
               recordFile.write("\ntmDu.routeId = " + str(tmDu.routeId))
               ertTimeBuffer = tmDu.earthReceptionTime
-              ertTimeDu = UTIL.TIME.createCDS(ertTimeBuffer)
-              ertTime = UTIL.TIME.convertFromCDS(ertTimeDu)
+              ertTimeDu = CCSDS.TIME.createCDS(ertTimeBuffer)
+              ertTime = CCSDS.TIME.convertFromCDS(ertTimeDu)
               ertTimeStr = UTIL.TIME.getASDtimeStr(ertTime)
               recordFile.write("\ntmDu.earthReceptionTime = " + ertTimeStr)
               recordFile.write("\ntmDu.sequenceFlag = " + str(tmDu.sequenceFlag))
@@ -112,7 +113,7 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
           # Prepare the TM frame for recording
           tmDu = GRND.CRYOSATDU.TMframeDataUnit()
           tmDu.setFrame(tmFrameDu.getBufferString())
-          ertTime = UTIL.TIME.correlateToERTmissionEpoch(ertUTC)
+          ertTime = CCSDS.TIME.correlateToERTmissionEpoch(ertUTC)
           coarseTime = int(ertTime)
           fineTime = int((ertTime - coarseTime) * 1000000)
           tmDu.downlinkTimeSec = coarseTime

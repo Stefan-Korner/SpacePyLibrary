@@ -16,6 +16,7 @@
 #******************************************************************************
 import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import CCSDS.TIME
 import GRND.IF, GRND.NCTRSDU
 import LINK.IF, LINK.TMGEN, LINK.TMTC
 import PUS.SERVICES
@@ -24,7 +25,7 @@ import SIM.TMserver, SIM.TCserver, SIM.AdminServer, SIM.GRNDgui, SIM.LINKgui
 import SPACE.DEF, SPACE.IF, SPACE.OBC, SPACE.OBQ, SPACE.TMGEN, SPACE.TMRPLY
 import SPACEUI.SPACEgui, SPACEUI.OBQgui
 import UI.TKI
-import UTIL.SYS, UTIL.TASK, UTIL.TIME
+import UTIL.SYS, UTIL.TASK
 
 #############
 # constants #
@@ -58,10 +59,10 @@ SYS_CONFIGURATION = [
   ["TM_TT_FINE_TIME_BYTE_SIZE", "2"],
   ["TM_RECORD_FORMAT", "CRYOSAT"],
   ["TM_REPLAY_KEY", "SPID"],
-  ["OBT_MISSION_EPOCH_STR", UTIL.TIME.TAI_MISSION_EPOCH_STR],
-  ["OBT_LEAP_SECONDS", str(UTIL.TIME.GPS_LEAP_SECONDS_2015)],
-  ["ERT_MISSION_EPOCH_STR", UTIL.TIME.TAI_MISSION_EPOCH_STR],
-  ["ERT_LEAP_SECONDS", str(UTIL.TIME.GPS_LEAP_SECONDS_2015)],
+  ["OBT_MISSION_EPOCH_STR", CCSDS.TIME.TAI_MISSION_EPOCH_STR],
+  ["OBT_LEAP_SECONDS", str(CCSDS.TIME.GPS_LEAP_SECONDS_2015)],
+  ["ERT_MISSION_EPOCH_STR", CCSDS.TIME.TAI_MISSION_EPOCH_STR],
+  ["ERT_LEAP_SECONDS", str(CCSDS.TIME.GPS_LEAP_SECONDS_2015)],
   ["SYS_COLOR_LOG", "1"],
   ["SYS_APP_MNEMO", "SIM"],
   ["SYS_APP_NAME", "Simulator"],
@@ -1042,10 +1043,10 @@ else:
   launchScriptName = sys.argv[1]
 # initialise the system configuration
 UTIL.SYS.s_configuration.setDefaults(SYS_CONFIGURATION)
-UTIL.TIME.setOBTmissionEpochStr(UTIL.SYS.s_configuration.OBT_MISSION_EPOCH_STR)
-UTIL.TIME.setOBTleapSeconds(int(UTIL.SYS.s_configuration.OBT_LEAP_SECONDS))
-UTIL.TIME.setERTmissionEpochStr(UTIL.SYS.s_configuration.ERT_MISSION_EPOCH_STR)
-UTIL.TIME.setERTleapSeconds(int(UTIL.SYS.s_configuration.ERT_LEAP_SECONDS))
+CCSDS.TIME.setOBTmissionEpochStr(UTIL.SYS.s_configuration.OBT_MISSION_EPOCH_STR)
+CCSDS.TIME.setOBTleapSeconds(int(UTIL.SYS.s_configuration.OBT_LEAP_SECONDS))
+CCSDS.TIME.setERTmissionEpochStr(UTIL.SYS.s_configuration.ERT_MISSION_EPOCH_STR)
+CCSDS.TIME.setERTleapSeconds(int(UTIL.SYS.s_configuration.ERT_LEAP_SECONDS))
 GRND.IF.s_configuration = GRND.IF.Configuration()
 LINK.IF.s_configuration = LINK.IF.Configuration()
 SPACE.IF.s_configuration = SPACE.IF.Configuration()

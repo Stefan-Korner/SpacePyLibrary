@@ -14,7 +14,7 @@
 # Space Simulation - Onboard Queue                                            *
 #******************************************************************************
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CCSDS.PACKET
+import CCSDS.PACKET, CCSDS.TIME
 import PUS.PACKET, PUS.SERVICES
 import SPACE.IF
 import UTIL.SYS, UTIL.TASK, UTIL.TIME
@@ -33,7 +33,7 @@ class OnboardQueueImpl(SPACE.IF.OnboardQueue):
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise attributes only"""
-    self.ttTtimeFormat = UTIL.TIME.timeFormat(UTIL.SYS.s_configuration.TM_TT_TIME_FORMAT)
+    self.ttTtimeFormat = CCSDS.TIME.timeFormat(UTIL.SYS.s_configuration.TM_TT_TIME_FORMAT)
     self.ttTimeByteOffset = int(UTIL.SYS.s_configuration.TC_TT_TIME_BYTE_OFFSET)
     self.ttByteOffset = int(UTIL.SYS.s_configuration.TC_TT_PKT_BYTE_OFFSET)
     self.ttFineTimeByteSize = int(UTIL.SYS.s_configuration.TC_TT_FINE_TIME_BYTE_SIZE)
@@ -85,20 +85,20 @@ class OnboardQueueImpl(SPACE.IF.OnboardQueue):
         LOG(str(ttPacketDu), "OBQ")
         return
       # calculate the execution time
-      if self.ttTtimeFormat == UTIL.TIME.TIME_FORMAT_CUC:
-        byteSize = self.ttFineTimeByteSize + UTIL.TIME.CUC0_TIME_BYTE_SIZE
+      if self.ttTtimeFormat == CCSDS.TIME.TIME_FORMAT_CUC:
+        byteSize = self.ttFineTimeByteSize + CCSDS.TIME.CUC0_TIME_BYTE_SIZE
         ttExecTimeData = tcPacketDu.getBytes(self.ttTimeByteOffset, byteSize)
-        timeDU = UTIL.TIME.createCUC(ttExecTimeData)
-        obtExecTime = UTIL.TIME.convertFromCUC(timeDU)
+        timeDU = CCSDS.TIME.createCUC(ttExecTimeData)
+        obtExecTime = CCSDS.TIME.convertFromCUC(timeDU)
       else:
-        if self.ttTtimeFormat == UTIL.TIME.TIME_FORMAT_CDS1:
-          byteSize = UTIL.TIME.CDS1_TIME_BYTE_SIZE
+        if self.ttTtimeFormat == CCSDS.TIME.TIME_FORMAT_CDS1:
+          byteSize = CCSDS.TIME.CDS1_TIME_BYTE_SIZE
         else:
-          byteSize = UTIL.TIME.CDS2_TIME_BYTE_SIZE
+          byteSize = CCSDS.TIME.CDS2_TIME_BYTE_SIZE
         ttExecTimeData = tcPacketDu.getBytes(self.ttTimeByteOffset, byteSize)
-        timeDU = UTIL.TIME.createCDS(ttExecTimeData)
-        obtExecTime = UTIL.TIME.convertFromCDS(timeDU)
-      ttExecTime = UTIL.TIME.correlateFromOBTmissionEpoch(obtExecTime)
+        timeDU = CCSDS.TIME.createCDS(ttExecTimeData)
+        obtExecTime = CCSDS.TIME.convertFromCDS(timeDU)
+      ttExecTime = CCSDS.TIME.correlateFromOBTmissionEpoch(obtExecTime)
       SPACE.IF.s_onboardQueue.insertTTpacket(ttExecTime, ttPacketDu)
   # ---------------------------------------------------------------------------
   def insertTTpacket(self, ttExecTime, ttPacketDu):

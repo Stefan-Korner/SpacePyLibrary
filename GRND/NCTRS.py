@@ -16,6 +16,7 @@
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import CCSDS.TIME
 import GRND.IF, GRND.NCTRSDU
 import UTIL.TASK, UTIL.TCP, UTIL.TIME
 
@@ -133,7 +134,7 @@ class TMsender(UTIL.TCP.Server):
   # ---------------------------------------------------------------------------
   def sendFrame(self, tmFrame):
     """Send the TM frame to the TM receiver"""
-    ertCCSDStimeDU = UTIL.TIME.getERTccsdsTimeDU(UTIL.TIME.getActualTime())
+    ertCCSDStimeDU = CCSDS.TIME.getERTccsdsTimeDU(UTIL.TIME.getActualTime())
     tmDu = GRND.NCTRSDU.TMdataUnit()
     tmDu.setFrame(tmFrame)
     tmDu.spacecraftId = self.nctrsTMfields.spacecraftId
@@ -333,7 +334,7 @@ class TCreceiver(UTIL.TCP.SingleClientReceivingServer):
   # ---------------------------------------------------------------------------
   def sendResponseDataUnit(self, requestDataUnit, acknowledgement):
     """sends a response data unit from a request data unit"""
-    ertCCSDStimeDU = UTIL.TIME.getERTccsdsTimeDU(UTIL.TIME.getActualTime())
+    ertCCSDStimeDU = CCSDS.TIME.getERTccsdsTimeDU(UTIL.TIME.getActualTime())
     tcRespDu = requestDataUnit.createResponseDataUnit()
     tcRespDu.time = ertCCSDStimeDU.getBufferString()
     tcRespDu.serviceType = requestDataUnit.serviceType

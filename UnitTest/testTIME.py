@@ -14,6 +14,7 @@
 #******************************************************************************
 # Unit Tests                                                                  *
 #******************************************************************************
+import CCSDS.TIME
 import UTIL.TIME
 import testData
 
@@ -23,9 +24,58 @@ import testData
 # -----------------------------------------------------------------------------
 def correlateOBTcucPFC17(byteArray):
   """convenience function for backward compatibility"""
-  timeDU = UTIL.TIME.createCUC(byteArray)
-  pyTime = UTIL.TIME.convertFromCUC(timeDU)
-  return UTIL.TIME.correlateFromOBTmissionEpoch(pyTime)
+  timeDU = CCSDS.TIME.createCUC(byteArray)
+  pyTime = CCSDS.TIME.convertFromCUC(timeDU)
+  return CCSDS.TIME.correlateFromOBTmissionEpoch(pyTime)
+# -----------------------------------------------------------------------------
+def test_ERTandCDS2(missionEpochString, missionEpochDelta):
+  """tests ERT correlation and CDS2 data unit"""
+  CCSDS.TIME.setERTmissionEpochStr(missionEpochString)
+  zeroCCSDStime = missionEpochDelta
+  zeroCCSDStimeDU = CCSDS.TIME.getERTccsdsTimeDU(zeroCCSDStime)
+  if zeroCCSDStimeDU.days != 0:
+    print "Invalid zero CCSDS time days:", zeroCCSDStimeDU.days
+    return False
+  if zeroCCSDStimeDU.mils != 0:
+    print "Invalid zero CCSDS time milliseconds:", zeroCCSDStimeDU.mils
+    return False
+  if zeroCCSDStimeDU.mics != 0:
+    print "Invalid zero CCSDS time microsedonds:", zeroCCSDStimeDU.mics
+    return False
+  days1CCSDStime = zeroCCSDStime + (24 * 60 * 60)
+  days1CCSDStimeDU = CCSDS.TIME.getERTccsdsTimeDU(days1CCSDStime)
+  if days1CCSDStimeDU.days != 1:
+    print "Invalid days1 CCSDS time days:", days1CCSDStimeDU.days
+    return False
+  if days1CCSDStimeDU.mils != 0:
+    print "Invalid days1 CCSDS time milliseconds:", days1CCSDStimeDU.mils
+    return False
+  if days1CCSDStimeDU.mics != 0:
+    print "Invalid days1 CCSDS time microseconds:", days1CCSDStimeDU.mics
+    return False
+  mils1CCSDStime = zeroCCSDStime + 0.001
+  mils1CCSDStimeDU = CCSDS.TIME.getERTccsdsTimeDU(mils1CCSDStime)
+  if mils1CCSDStimeDU.days != 0:
+    print "Invalid mils1 CCSDS time days:", mils1CCSDStimeDU.days
+    return False
+  if mils1CCSDStimeDU.mils != 1:
+    print "Invalid mils1 CCSDS time milliseconds:", mils1CCSDStimeDU.mils
+    return False
+  if mils1CCSDStimeDU.mics != 0:
+    print "Invalid mils1 CCSDS time microseconds:", mils1CCSDStimeDU.mics
+    return False
+  mics1CCSDStime = zeroCCSDStime + 0.000001
+  mics1CCSDStimeDU = CCSDS.TIME.getERTccsdsTimeDU(mics1CCSDStime)
+  if mics1CCSDStimeDU.days != 0:
+    print "Invalid mics1 CCSDS time days:", mics1CCSDStimeDU.days
+    return False
+  if mics1CCSDStimeDU.mils != 0:
+    print "Invalid mics1 CCSDS time milliseconds:", mics1CCSDStimeDU.mils
+    return False
+  if mics1CCSDStimeDU.mics != 1:
+    print "Invalid mics1 CCSDS time microseconds:", mics1CCSDStimeDU.mics
+    return False
+  return True
 # -----------------------------------------------------------------------------
 def test_TIMEoperations():
   """function to test the TIME operations"""
@@ -47,52 +97,13 @@ def test_TIMEoperations():
   if zeroTimeStr2 != "1970.001.00.00.00.000000":
     print "Invalid ASD zero time 2:", zeroTimeStr2
     return False
-  UTIL.TIME.setERTmissionEpochStr(UTIL.TIME.TAI_MISSION_EPOCH_STR)
-  zeroCCSDStime = UTIL.TIME.TAI_MISSION_EPOCH_DELTA
-  zeroCCSDStimeDU = UTIL.TIME.getERTccsdsTimeDU(zeroCCSDStime)
-  if zeroCCSDStimeDU.days != 0:
-    print "Invalid zero CCSDS time days:", zeroCCSDStimeDU.days
+  if not test_ERTandCDS2(CCSDS.TIME.GPS_MISSION_EPOCH_STR,
+                         CCSDS.TIME.GPS_MISSION_EPOCH_DELTA):
     return False
-  if zeroCCSDStimeDU.mils != 0:
-    print "Invalid zero CCSDS time milliseconds:", zeroCCSDStimeDU.mils
-    return False
-  if zeroCCSDStimeDU.mics != 0:
-    print "Invalid zero CCSDS time microsedonds:", zeroCCSDStimeDU.mics
-    return False
-  days1CCSDStime = zeroCCSDStime + (24 * 60 * 60)
-  days1CCSDStimeDU = UTIL.TIME.getERTccsdsTimeDU(days1CCSDStime)
-  if days1CCSDStimeDU.days != 1:
-    print "Invalid days1 CCSDS time days:", days1CCSDStimeDU.days
-    return False
-  if days1CCSDStimeDU.mils != 0:
-    print "Invalid days1 CCSDS time milliseconds:", days1CCSDStimeDU.mils
-    return False
-  if days1CCSDStimeDU.mics != 0:
-    print "Invalid days1 CCSDS time microseconds:", days1CCSDStimeDU.mics
-    return False
-  mils1CCSDStime = zeroCCSDStime + 0.001
-  mils1CCSDStimeDU = UTIL.TIME.getERTccsdsTimeDU(mils1CCSDStime)
-  if mils1CCSDStimeDU.days != 0:
-    print "Invalid mils1 CCSDS time days:", mils1CCSDStimeDU.days
-    return False
-  if mils1CCSDStimeDU.mils != 1:
-    print "Invalid mils1 CCSDS time milliseconds:", mils1CCSDStimeDU.mils
-    return False
-  if mils1CCSDStimeDU.mics != 0:
-    print "Invalid mils1 CCSDS time microseconds:", mils1CCSDStimeDU.mics
-    return False
-  mics1CCSDStime = zeroCCSDStime + 0.000001
-  mics1CCSDStimeDU = UTIL.TIME.getERTccsdsTimeDU(mics1CCSDStime)
-  if mics1CCSDStimeDU.days != 0:
-    print "Invalid mics1 CCSDS time days:", mils1CCSDStimeDU.days
-    return False
-  if mics1CCSDStimeDU.mils != 0:
-    print "Invalid mics1 CCSDS time milliseconds:", mics1CCSDStimeDU.mils
-    return False
-  if mics1CCSDStimeDU.mics != 1:
-    print "Invalid mics1 CCSDS time microseconds:", mics1CCSDStimeDU.mics
-    return False
-  zeroEpochTime1 = UTIL.TIME.correlateFromOBTmissionEpoch(zeroTime)
+  if not test_ERTandCDS2(CCSDS.TIME.TAI_MISSION_EPOCH_STR,
+                         CCSDS.TIME.TAI_MISSION_EPOCH_DELTA):
+    print "!!! Warning: negative time values are not supported on this platform !!!"
+  zeroEpochTime1 = CCSDS.TIME.correlateFromOBTmissionEpoch(zeroTime)
   if zeroEpochTime1 != 0:
     zeroEpochTime1Str = UTIL.TIME.getASDtimeStr(zeroEpochTime1)
     print "Invalid zero epoch time:", zeroEpochTime1Str
@@ -102,8 +113,8 @@ def test_TIMEoperations():
     zeroEpochTime2Str = UTIL.TIME.getASDtimeStr(zeroEpochTime2)
     print "Invalid zero epoch time:", zeroEpochTime2Str
     return False
-  UTIL.TIME.setOBTmissionEpochStr(UTIL.TIME.GPS_MISSION_EPOCH_STR)
-  UTIL.TIME.setOBTleapSeconds(UTIL.TIME.GPS_LEAP_SECONDS_2009)
+  CCSDS.TIME.setOBTmissionEpochStr(CCSDS.TIME.GPS_MISSION_EPOCH_STR)
+  CCSDS.TIME.setOBTleapSeconds(CCSDS.TIME.GPS_LEAP_SECONDS_2009)
   cucTime1 = correlateOBTcucPFC17(testData.CUC_TIME1_FIELD)
   cucTime1Str = UTIL.TIME.getASDtimeStr(cucTime1, withMicros=True)
   if cucTime1Str != testData.CUC_TIME1_STR:

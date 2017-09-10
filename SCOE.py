@@ -19,6 +19,7 @@
 #******************************************************************************
 import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import CCSDS.TIME
 import EGSE.IF
 import PUS.SERVICES
 import SCOE.EGSEserver, SCOE.EGSEgui
@@ -55,7 +56,7 @@ SYS_CONFIGURATION = [
   ["TM_TT_TIME_BYTE_OFFSET", "<<shall be passed as environment variable>>"],
   ["TM_TT_FINE_TIME_BYTE_SIZE", "2"],
   ["TM_REPLAY_KEY", "SPID"],
-  ["OBT_MISSION_EPOCH_STR", UTIL.TIME.UNIX_MISSION_EPOCH_STR],
+  ["OBT_MISSION_EPOCH_STR", CCSDS.TIME.UNIX_MISSION_EPOCH_STR],
   ["OBT_LEAP_SECONDS", "0"],
   ["SYS_COLOR_LOG", "1"],
   ["SYS_APP_MNEMO", "SCOE"],
@@ -605,8 +606,8 @@ else:
   launchScriptName = sys.argv[1]
 # initialise the system configuration
 UTIL.SYS.s_configuration.setDefaults(SYS_CONFIGURATION)
-UTIL.TIME.setOBTmissionEpochStr(UTIL.SYS.s_configuration.OBT_MISSION_EPOCH_STR)
-UTIL.TIME.setOBTleapSeconds(int(UTIL.SYS.s_configuration.OBT_LEAP_SECONDS))
+CCSDS.TIME.setOBTmissionEpochStr(UTIL.SYS.s_configuration.OBT_MISSION_EPOCH_STR)
+CCSDS.TIME.setOBTleapSeconds(int(UTIL.SYS.s_configuration.OBT_LEAP_SECONDS))
 EGSE.IF.s_configuration = EGSE.IF.Configuration()
 SPACE.IF.s_configuration = SPACE.IF.Configuration()
 # initialise the request handler

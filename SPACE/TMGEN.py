@@ -14,7 +14,7 @@
 # Space Simulation - Telemetry Packet Generator                               *
 #******************************************************************************
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CCSDS.PACKET
+import CCSDS.PACKET, CCSDS.TIME
 import PUS.PACKET
 import SCOS.ENV
 import SPACE.IF
@@ -45,7 +45,7 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
     self.packetDefaults = TMpacketDefaults()
     self.tcAckAPIDparamByteOffset = int(UTIL.SYS.s_configuration.TC_ACK_APID_PARAM_BYTE_OFFSET)
     self.tcAckSSCparamByteOffset = int(UTIL.SYS.s_configuration.TC_ACK_SSC_PARAM_BYTE_OFFSET)
-    self.tmTTtimeFormat = UTIL.TIME.timeFormat(UTIL.SYS.s_configuration.TM_TT_TIME_FORMAT)
+    self.tmTTtimeFormat = CCSDS.TIME.timeFormat(UTIL.SYS.s_configuration.TM_TT_TIME_FORMAT)
     self.tmTTtimeByteOffset = int(UTIL.SYS.s_configuration.TM_TT_TIME_BYTE_OFFSET)
     self.tmTTfineTimeByteSize = int(UTIL.SYS.s_configuration.TM_TT_FINE_TIME_BYTE_SIZE)
   # ---------------------------------------------------------------------------
@@ -168,13 +168,13 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
     if tmPktDef.pktHasDFhdr and self.tmTTtimeByteOffset > 0:
       if obtUTC == None:
         obtUTC = UTIL.TIME.getActualTime()
-      obtTime = UTIL.TIME.correlateToOBTmissionEpoch(obtUTC)
-      if self.tmTTtimeFormat == UTIL.TIME.TIME_FORMAT_CUC:
-        timeDU = UTIL.TIME.convertToCUC(obtTime, self.tmTTfineTimeByteSize)
+      obtTime = CCSDS.TIME.correlateToOBTmissionEpoch(obtUTC)
+      if self.tmTTtimeFormat == CCSDS.TIME.TIME_FORMAT_CUC:
+        timeDU = CCSDS.TIME.convertToCUC(obtTime, self.tmTTfineTimeByteSize)
       else:
-        # self.tmTTtimeFormat == UTIL.TIME.TIME_FORMAT_CDS(1/2)
-        hasMicro = self.tmTTtimeFormat == UTIL.TIME.TIME_FORMAT_CDS2
-        timeDU = UTIL.TIME.convertToCDS(obtTime, hasMicro)
+        # self.tmTTtimeFormat == CCSDS.TIME.TIME_FORMAT_CDS(1/2)
+        hasMicro = self.tmTTtimeFormat == CCSDS.TIME.TIME_FORMAT_CDS2
+        timeDU = CCSDS.TIME.convertToCDS(obtTime, hasMicro)
       packet.setBytes(self.tmTTtimeByteOffset,
                       len(timeDU),
                       timeDU.getBufferString())
