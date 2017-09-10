@@ -113,7 +113,7 @@ class ApplicationSoftwareImpl(SPACE.IF.ApplicationSoftware):
     LOG_INFO("ApplicationSoftwareImpl.processTCpacke(" + str(apid) + ")t", "SPACE")
     # packet is a PUS Function Management command
     if tcPacketDu.serviceType == PUS.SERVICES.TC_FKT_TYPE:
-      if tcPacketDu.serviceSubType == PUS.SERVICES.TC_FKT_PERFORM_FUNCITON:
+      if tcPacketDu.serviceSubType == PUS.SERVICES.TC_FKT_PERFORM_FUNCTION:
         tcFunctionId = tcPacketDu.getUnsigned(
           self.tcFunctionIdBytePos, self.tcFunctionIdByteSize)
         LOG("tcFunctionId = " + str(tcFunctionId), "SPACE")

@@ -33,7 +33,7 @@ TC_ACK_EXECUT_FAIL = 8
 # PUS service 8: Function Management service
 # TYPE / SUBTYPES
 TC_FKT_TYPE = 8
-TC_FKT_PERFORM_FUNCITON = 1
+TC_FKT_PERFORM_FUNCTION = 1
 
 # -----------------------------------------------------------------------------
 # PUS service 11: Onboard Scheduling service
