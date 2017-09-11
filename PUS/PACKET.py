@@ -13,7 +13,7 @@
 #******************************************************************************
 # PUS Services - Packet Module                                                *
 #******************************************************************************
-from UTIL.DU import BITS, BYTES, UNSIGNED, BinaryUnit
+from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME, BinaryUnit
 import CCSDS.PACKET
 
 #############

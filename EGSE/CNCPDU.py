@@ -19,7 +19,6 @@
 # - with an ASCII string as datafield                                         *
 # - without a CRC                                                             *
 #******************************************************************************
-from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, BinaryUnit
 import CCSDS.PACKET
 
 #############

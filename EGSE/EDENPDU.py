@@ -14,7 +14,7 @@
 # EGSE interfaces - EDEN protocol Data Units Module                           *
 # implements Core_EGSE_AD03_GAL_REQ_ALS_SA_R_0002_EGSE_IRD_issue2.pdf         *
 #******************************************************************************
-from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, BinaryUnit
+from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME, BinaryUnit
 
 #############
 # constants #

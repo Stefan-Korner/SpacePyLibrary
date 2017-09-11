@@ -13,8 +13,8 @@
 #******************************************************************************
 # CCSDS Stack - CCSDS Packet Module                                           *
 #******************************************************************************
-from UTIL.DU import BITS, BYTES, UNSIGNED, BinaryUnit
-import UTIL.CRC
+from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME, BinaryUnit
+import CCSDS.DU
 
 #############
 # constants #
@@ -46,7 +46,7 @@ UNSEGMENTED = 3
 # classes #
 ###########
 # =============================================================================
-class Packet(BinaryUnit):
+class Packet(CCSDS.DU.DataUnit):
   """telemetry or telecommand packet"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
@@ -76,20 +76,16 @@ class Packet(BinaryUnit):
     """
     if not self.checkPacketLength():
       raise IndexError("inconsistent packetLength")
-    crcPos = self.usedBufferSize - 2
-    crc = UTIL.CRC.calculate(self.buffer[0:crcPos])
-    self.setUnsigned(crcPos, 2, crc)
+    CCSDS.DU.DataUnit.setChecksum(self)
   # ---------------------------------------------------------------------------
   def checkChecksum(self):
     """
     checks the checksum out of the binary data,
-    buffer and, packetLength must be correctly initialised
+    buffer and packetLength must be correctly initialised
     """
     if not self.checkPacketLength():
       return False
-    crcPos = self.usedBufferSize - 2
-    crc = UTIL.CRC.calculate(self.buffer[0:crcPos])
-    return self.getUnsigned(crcPos, 2) == crc
+    return CCSDS.DU.DataUnit.checkChecksum(self)
 
 # =============================================================================
 class TMpacket(Packet):

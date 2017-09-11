@@ -13,14 +13,9 @@
 #******************************************************************************
 # CCSDS Stack - Transfer Frame Module                                         *
 #******************************************************************************
-from UTIL.DU import BITS, BYTES, UNSIGNED, BinaryUnit
-import UTIL.CRC
+from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME, BinaryUnit
+import CCSDS.DU
 
-#############
-# constants #
-#############
-CRC_CHECK = True
-CRC_BYTE_SIZE = 2
 # =============================================================================
 # the attribute dictionaries contain for each transfer frame attribute:
 # - key: attribute name
@@ -83,37 +78,7 @@ TC_FRAME_HEADER_ATTRIBUTES = {
 # classes #
 ###########
 # =============================================================================
-class Frame(BinaryUnit):
-  """telemetry or telecommand transfer frame"""
-  # ---------------------------------------------------------------------------
-  def __init__(self, isTcFrame=True):
-    """default constructor: frame type"""
-    self.isTcFrame = isTcFrame
-  # ---------------------------------------------------------------------------
-  def setChecksum(self):
-    """
-    sets the checksum out of the binary data,
-    buffer must be correctly initialised
-    """
-    if not CRC_CHECK:
-      raise AttributeError("frame CRC checking not enabled")
-    crcPos = self.usedBufferSize - 2
-    crc = UTIL.CRC.calculate(self.buffer[0:crcPos])
-    self.setUnsigned(crcPos, 2, crc)
-  # ---------------------------------------------------------------------------
-  def checkChecksum(self):
-    """
-    checks the checksum out of the binary data,
-    buffer must be correctly initialised
-    """
-    if not CRC_CHECK:
-      return False
-    crcPos = self.usedBufferSize - 2
-    crc = UTIL.CRC.calculate(self.buffer[0:crcPos])
-    return self.getUnsigned(crcPos, 2) == crc
-
-# =============================================================================
-class TMframe(Frame):
+class TMframe(CCSDS.DU.DataUnit):
   """telemetry transfer frame"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None, enableSecondaryHeader=False):
@@ -161,7 +126,7 @@ class CLCW(BinaryUnit):
                         CLCW_ATTRIBUTES)
 
 # =============================================================================
-class TCframe(Frame):
+class TCframe(CCSDS.DU.DataUnit):
   """telecommand transfer frame"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):

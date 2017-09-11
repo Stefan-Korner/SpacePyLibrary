@@ -26,6 +26,7 @@ BITS = 0
 BYTES = 1
 UNSIGNED = 2
 STRING = 3
+TIME = 4
 
 # index = [firstBitInBytePos][lastBitInBytePos]
 BIT_FILTER = [
@@ -131,8 +132,11 @@ class BinaryUnit(object):
           retStr += str(self.getBytes(fieldOffset, fieldLength))
         elif fieldType == UNSIGNED:
           retStr += str(self.getUnsigned(fieldOffset, fieldLength))
-        else:
+        elif fieldType == STRING:
           retStr += str(self.getString(fieldOffset, fieldLength))
+        else:
+          timeFormat = fieldLength
+          retStr += str(self.getTime(fieldOffset, timeFormat))
     if self.attributeMap2 != None:
       for name, fieldSpec in self.attributeMap2.iteritems():
         retStr += "\n" + name + " = "
@@ -146,8 +150,11 @@ class BinaryUnit(object):
             retStr += str(self.getBytes(fieldOffset, fieldLength))
           elif fieldType == UNSIGNED:
             retStr += str(self.getUnsigned(fieldOffset, fieldLength))
-          else:
+          elif fieldType == STRING:
             retStr += str(self.getString(fieldOffset, fieldLength))
+          else:
+            timeFormat = fieldLength
+            retStr += str(self.getTime(fieldOffset, timeFormat))
     return retStr
   # ---------------------------------------------------------------------------
   def __len__(self):
@@ -331,6 +338,16 @@ class BinaryUnit(object):
     """set a string"""
     self.setBytes(bytePos, byteLength, byteArray)
   # ---------------------------------------------------------------------------
+  def getTime(self, bytePos, timeFormat):
+    """extracts a time"""
+    # must be implemented in derived class
+    raise AttributeError("time access not supported")
+  # ---------------------------------------------------------------------------
+  def setTime(self, bytePos, timeFormat, value):
+    """set a time"""
+    # must be implemented in derived class
+    raise AttributeError("time access not supported")
+  # ---------------------------------------------------------------------------
   def __getattr__(self, name):
     """read access to the data unit attributes"""
     # try first access to fields from attribute map 1
@@ -344,8 +361,11 @@ class BinaryUnit(object):
         return self.getBytes(fieldOffset, fieldLength)
       elif fieldType == UNSIGNED:
         return self.getUnsigned(fieldOffset, fieldLength)
-      else:
+      elif fieldType == STRING:
         return self.getString(fieldOffset, fieldLength)
+      else:
+        timeFormat = fieldLength
+        return self.getTime(fieldOffset, timeFormat)
     # attribute not in first attribute map ---> try the second one
     if self.attributeMap2 == None:
       raise AttributeError("attribute not found")
@@ -362,8 +382,11 @@ class BinaryUnit(object):
           return self.getBytes(fieldOffset, fieldLength)
         elif fieldType == UNSIGNED:
           return self.getUnsigned(fieldOffset, fieldLength)
-        else:
+        elif fieldType == STRING:
           return self.getString(fieldOffset, fieldLength)
+        else:
+          timeFormat = fieldLength
+          return self.getTime(fieldOffset, timeFormat)
     # attribute not in first and second attribute map
     raise AttributeError("attribute not found")
   # ---------------------------------------------------------------------------
@@ -380,8 +403,11 @@ class BinaryUnit(object):
         self.setBytes(fieldOffset, fieldLength, value)
       elif fieldType == UNSIGNED:
         self.setUnsigned(fieldOffset, fieldLength, value)
-      else:
+      elif fieldType == STRING:
         self.setString(fieldOffset, fieldLength, value)
+      else:
+        timeFormat = fieldLength
+        self.setTime(fieldOffset, timeFormat, value)
       return
     # attribute not in first attribute map ---> try the second one
     if self.attributeMap2 == None:
@@ -399,8 +425,11 @@ class BinaryUnit(object):
           self.setBytes(fieldOffset, fieldLength, value)
         elif fieldType == UNSIGNED:
           self.setUnsigned(fieldOffset, fieldLength, value)
-        else:
+        elif fieldType == STRING:
           self.setString(fieldOffset, fieldLength, value)
+        else:
+          timeFormat = fieldLength
+          self.setTime(fieldOffset, timeFormat, value)
       return
     # attribute not in first and second attribute map
     raise AttributeError("attribute not found")

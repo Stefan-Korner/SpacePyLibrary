@@ -14,7 +14,7 @@
 # Ground Simulation - NCTRS Data Units Module                                 *
 # implements EGOS-NIS-NCTR-ICD-0002-i4r0.2 (Signed).pdf                       *
 #******************************************************************************
-from UTIL.DU import BITS, BYTES, UNSIGNED, BinaryUnit
+from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME, BinaryUnit
 
 #############
 # constants #
@@ -172,7 +172,7 @@ TC_PAR_AD_FAILURE_REASON =    "%18s"
 # classes #
 ###########
 # =============================================================================
-class TMdataUnit(BinaryUnit):
+class TMdataUnit(CCSDS.DU.DataUnit):
   """NCTRS telemetry data unit"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
@@ -199,7 +199,7 @@ class TMdataUnit(BinaryUnit):
     self.packetSize = len(self)
 
 # =============================================================================
-class TCdataUnit(BinaryUnit):
+class TCdataUnit(CCSDS.DU.DataUnit):
   """NCTRS telecommand data unit"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
@@ -378,7 +378,7 @@ class TClinkStatusDataUnit(TCdataUnit):
       self.packetSize = len(self)
 
 # =============================================================================
-class AdminMessageDataUnit(BinaryUnit):
+class AdminMessageDataUnit(CCSDS.DU.DataUnit):
   """NCTRS admin message data unit"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):

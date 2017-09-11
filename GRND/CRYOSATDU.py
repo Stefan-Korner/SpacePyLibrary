@@ -13,7 +13,7 @@
 #******************************************************************************
 # Ground Simulation - CRYOSAT Data Units Module                               *
 #******************************************************************************
-from UTIL.DU import BITS, BYTES, UNSIGNED, BinaryUnit
+from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME, BinaryUnit
 
 #############
 # constants #
