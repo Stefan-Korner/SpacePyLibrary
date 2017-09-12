@@ -19,14 +19,21 @@ import CCSDS.DU
 #############
 # constants #
 #############
+TM_PACKET_TYPE = 0
+TC_PACKET_TYPE = 1
+MIN_DATA_FIELD_BYTE_SIZE = 0x0000 + 1
+MAX_DATA_FIELD_BYTE_SIZE = 0xFFFF + 1
+CRC_BYTE_SIZE = 2
+# packet segmentation
+FIRST_SEGMENT = 1
+CONTINUATION_SEGMENT = 0
+LAST_SEGMENT = 2
+UNSEGMENTED = 3
 # =============================================================================
 # the attribute dictionaries contain for each data unit attribute:
 # - key: attribute name
 # - value: fieldOffset, fieldLength, fieldType
 # -----------------------------------------------------------------------------
-TM_PACKET_TYPE = 0
-TC_PACKET_TYPE = 1
-CRC_BYTE_SIZE = 2
 PRIMARY_HEADER_BYTE_SIZE = 6
 PRIMARY_HEADER_ATTRIBUTES = {
   "versionNumber":        ( 0,  3, BITS),
@@ -37,10 +44,6 @@ PRIMARY_HEADER_ATTRIBUTES = {
   "segmentationFlags":    (16,  2, BITS),
   "sequenceControlCount": (18, 14, BITS),
   "packetLength":         ( 4,  2, UNSIGNED)}
-FIRST_SEGMENT = 1
-CONTINUATION_SEGMENT = 0
-LAST_SEGMENT = 2
-UNSEGMENTED = 3
 
 ###########
 # classes #
@@ -60,6 +63,27 @@ class Packet(CCSDS.DU.DataUnit):
                         PRIMARY_HEADER_ATTRIBUTES)
     if emptyData:
       self.setPacketLength()
+  # ---------------------------------------------------------------------------
+  def getDataField(self):
+    """extracts the data field"""
+    if not self.checkPacketLength():
+      raise AttributeError("inconsistent packetLength")
+    dataFieldLength = self.packetLength + 1
+    return self.getBytes(PRIMARY_HEADER_BYTE_SIZE, dataFieldLength)
+  # ---------------------------------------------------------------------------
+  def setDataField(self, dataField):
+    """sets the data field"""
+    dataFieldLength = len(dataField)
+    if dataFieldLength < MIN_DATA_FIELD_BYTE_SIZE:
+      raise AttributeError("data field must contain at least 1 character")
+    if dataFieldLength > MAX_DATA_FIELD_BYTE_SIZE:
+      raise AttributeError("data field must contain at most 65536 characters")
+    # resize according to the data field length
+    self.setLen(PRIMARY_HEADER_BYTE_SIZE + dataFieldLength)
+    # fill in the data field
+    self.setBytes(PRIMARY_HEADER_BYTE_SIZE, dataFieldLength, dataField)
+    # update CCSDS header
+    self.setPacketLength()
   # ---------------------------------------------------------------------------
   def setPacketLength(self):
     """sets the packetLength according to the data unit's buffer size"""

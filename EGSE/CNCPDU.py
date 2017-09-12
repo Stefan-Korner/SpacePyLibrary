@@ -25,8 +25,6 @@ import CCSDS.PACKET
 # constants #
 #############
 VERSION_NUMBER = 3
-MIN_MESSAGE_LENGTH = 0x0000 + 1
-MAX_MESSAGE_LENGTH = 0xFFFF + 1
 
 ###########
 # classes #
@@ -44,24 +42,11 @@ class TMpacket(CCSDS.PACKET.TMpacket):
   # ---------------------------------------------------------------------------
   def getCNCmessage(self):
     """extracts a string"""
-    if not self.checkPacketLength():
-      raise AttributeError("inconsistent packetLength")
-    stringLength = self.packetLength + 1
-    return self.getString(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE, stringLength)
+    return self.getDataField().tostring()
   # ---------------------------------------------------------------------------
   def setCNCmessage(self, message):
     """set a string"""
-    msgLength = len(message)
-    if msgLength < MIN_MESSAGE_LENGTH:
-      raise AttributeError("message must contain at least 1 character")
-    if msgLength > MAX_MESSAGE_LENGTH:
-      raise AttributeError("message must contain at most 65536 characters")
-    # resize according to the message length
-    self.setLen(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE + msgLength)
-    # fill in the message
-    self.setString(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE, msgLength, message)
-    # update CCSDS header
-    self.setPacketLength()
+    self.setDataField(message)
 
 # =============================================================================
 class TCpacket(CCSDS.PACKET.TCpacket):
@@ -76,21 +61,8 @@ class TCpacket(CCSDS.PACKET.TCpacket):
   # ---------------------------------------------------------------------------
   def getCNCmessage(self):
     """extracts a string"""
-    if not self.checkPacketLength():
-      raise AttributeError("inconsistent packetLength")
-    stringLength = self.packetLength + 1
-    return self.getString(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE, stringLength)
+    return self.getDataField().tostring()
   # ---------------------------------------------------------------------------
   def setCNCmessage(self, message):
     """set a string"""
-    msgLength = len(message)
-    if msgLength < MIN_MESSAGE_LENGTH:
-      raise AttributeError("message must contain at least 1 character")
-    if msgLength > MAX_MESSAGE_LENGTH:
-      raise AttributeError("message must contain at most 65536 characters")
-    # resize according to the message length
-    self.setLen(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE + msgLength)
-    # fill in the message
-    self.setString(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE, msgLength, message)
-    # update CCSDS header
-    self.setPacketLength()
+    self.setDataField(message)
