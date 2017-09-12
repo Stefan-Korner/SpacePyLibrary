@@ -47,7 +47,6 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
     self.tcAckSSCparamByteOffset = int(UTIL.SYS.s_configuration.TC_ACK_SSC_PARAM_BYTE_OFFSET)
     self.tmTTtimeFormat = CCSDS.TIME.timeFormat(UTIL.SYS.s_configuration.TM_TT_TIME_FORMAT)
     self.tmTTtimeByteOffset = int(UTIL.SYS.s_configuration.TM_TT_TIME_BYTE_OFFSET)
-    self.tmTTfineTimeByteSize = int(UTIL.SYS.s_configuration.TM_TT_FINE_TIME_BYTE_SIZE)
   # ---------------------------------------------------------------------------
   def getIdlePacket(self, packetSize):
     """
@@ -169,12 +168,7 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
       if obtUTC == None:
         obtUTC = UTIL.TIME.getActualTime()
       obtTime = CCSDS.TIME.correlateToOBTmissionEpoch(obtUTC)
-      if self.tmTTtimeFormat == CCSDS.TIME.TIME_FORMAT_CUC:
-        timeDU = CCSDS.TIME.convertToCUC(obtTime, self.tmTTfineTimeByteSize)
-      else:
-        # self.tmTTtimeFormat == CCSDS.TIME.TIME_FORMAT_CDS(1/2)
-        hasMicro = self.tmTTtimeFormat == CCSDS.TIME.TIME_FORMAT_CDS2
-        timeDU = CCSDS.TIME.convertToCDS(obtTime, hasMicro)
+      timeDU = CCSDS.TIME.convertToCCSDS(obtTime, self.tmTTtimeFormat)
       packet.setBytes(self.tmTTtimeByteOffset,
                       len(timeDU),
                       timeDU.getBufferString())

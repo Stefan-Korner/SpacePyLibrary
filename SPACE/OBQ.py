@@ -36,7 +36,6 @@ class OnboardQueueImpl(SPACE.IF.OnboardQueue):
     self.ttTtimeFormat = CCSDS.TIME.timeFormat(UTIL.SYS.s_configuration.TM_TT_TIME_FORMAT)
     self.ttTimeByteOffset = int(UTIL.SYS.s_configuration.TC_TT_TIME_BYTE_OFFSET)
     self.ttByteOffset = int(UTIL.SYS.s_configuration.TC_TT_PKT_BYTE_OFFSET)
-    self.ttFineTimeByteSize = int(UTIL.SYS.s_configuration.TC_TT_FINE_TIME_BYTE_SIZE)
     self.queue = {}
     self.checkCyclicCallback()
   # ---------------------------------------------------------------------------
@@ -85,19 +84,10 @@ class OnboardQueueImpl(SPACE.IF.OnboardQueue):
         LOG(str(ttPacketDu), "OBQ")
         return
       # calculate the execution time
-      if self.ttTtimeFormat == CCSDS.TIME.TIME_FORMAT_CUC:
-        byteSize = self.ttFineTimeByteSize + CCSDS.TIME.CUC0_TIME_BYTE_SIZE
-        ttExecTimeData = tcPacketDu.getBytes(self.ttTimeByteOffset, byteSize)
-        timeDU = CCSDS.TIME.createCUC(ttExecTimeData)
-        obtExecTime = CCSDS.TIME.convertFromCUC(timeDU)
-      else:
-        if self.ttTtimeFormat == CCSDS.TIME.TIME_FORMAT_CDS1:
-          byteSize = CCSDS.TIME.CDS1_TIME_BYTE_SIZE
-        else:
-          byteSize = CCSDS.TIME.CDS2_TIME_BYTE_SIZE
-        ttExecTimeData = tcPacketDu.getBytes(self.ttTimeByteOffset, byteSize)
-        timeDU = CCSDS.TIME.createCDS(ttExecTimeData)
-        obtExecTime = CCSDS.TIME.convertFromCDS(timeDU)
+      byteSize = CCSDS.TIME.byteArraySize(self.ttTtimeFormat)
+      ttExecTimeData = tcPacketDu.getBytes(self.ttTimeByteOffset, byteSize)
+      timeDU = CCSDS.TIME.createCCSDS(ttExecTimeData, self.ttTtimeFormat)
+      obtExecTime = CCSDS.TIME.convertFromCCSDS(timeDU, self.ttTtimeFormat)
       ttExecTime = CCSDS.TIME.correlateFromOBTmissionEpoch(obtExecTime)
       SPACE.IF.s_onboardQueue.insertTTpacket(ttExecTime, ttPacketDu)
   # ---------------------------------------------------------------------------
