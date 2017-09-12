@@ -16,6 +16,7 @@
 # and an optional CRC at the end of the data unit.                            *
 #******************************************************************************
 from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME, BinaryUnit
+import CCSDS.TIME
 import UTIL.CRC
 
 #############
@@ -31,13 +32,17 @@ class DataUnit(BinaryUnit):
   # ---------------------------------------------------------------------------
   def getTime(self, bytePos, timeFormat):
     """extracts a time"""
-    # must be implemented in derived class
-    raise AttributeError("time access not supported")
+    byteSize = CCSDS.TIME.byteArraySize(timeFormat)
+    timeData = self.getBytes(bytePos, byteSize)
+    timeDU = CCSDS.TIME.createCCSDS(timeData, timeFormat)
+    return CCSDS.TIME.convertFromCCSDS(timeDU, timeFormat)
   # ---------------------------------------------------------------------------
   def setTime(self, bytePos, timeFormat, value):
     """set a time"""
-    # must be implemented in derived class
-    raise AttributeError("time access not supported")
+    timeDU = CCSDS.TIME.convertToCCSDS(value, timeFormat)
+    byteSize = len(timeDU)
+    timeData = timeDU.getBufferString()
+    self.setBytes(bytePos, byteSize, timeData)
   # ---------------------------------------------------------------------------
   def setChecksum(self):
     """
