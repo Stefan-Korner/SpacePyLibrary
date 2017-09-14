@@ -18,7 +18,7 @@ import CCSDS.PACKET, CCSDS.TIME
 import PUS.PACKET
 import SCOS.ENV
 import SPACE.IF
-import UTIL.SYS, UTIL.TIME
+import UTIL.SYS, UTIL.TCO, UTIL.TIME
 
 ###########
 # classes #
@@ -167,7 +167,7 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
     if tmPktDef.pktHasDFhdr and self.tmTTtimeByteOffset > 0:
       if obtUTC == None:
         obtUTC = UTIL.TIME.getActualTime()
-      obtTime = CCSDS.TIME.correlateToOBTmissionEpoch(obtUTC)
+      obtTime = UTIL.TCO.correlateToOBTmissionEpoch(obtUTC)
       timeDU = CCSDS.TIME.convertToCCSDS(obtTime, self.tmTTtimeFormat)
       packet.setBytes(self.tmTTtimeByteOffset,
                       len(timeDU),

@@ -15,6 +15,7 @@
 # implements EGOS-NIS-NCTR-ICD-0002-i4r0.2 (Signed).pdf                       *
 #******************************************************************************
 from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME, BinaryUnit
+import CCSDS.DU
 
 #############
 # constants #

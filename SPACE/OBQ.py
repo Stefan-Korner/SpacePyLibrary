@@ -17,7 +17,7 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.PACKET, CCSDS.TIME
 import PUS.PACKET, PUS.SERVICES
 import SPACE.IF
-import UTIL.SYS, UTIL.TASK, UTIL.TIME
+import UTIL.SYS, UTIL.TASK, UTIL.TCO, UTIL.TIME
 
 #############
 # constants #
@@ -88,7 +88,7 @@ class OnboardQueueImpl(SPACE.IF.OnboardQueue):
       ttExecTimeData = tcPacketDu.getBytes(self.ttTimeByteOffset, byteSize)
       timeDU = CCSDS.TIME.createCCSDS(ttExecTimeData, self.ttTtimeFormat)
       obtExecTime = CCSDS.TIME.convertFromCCSDS(timeDU, self.ttTtimeFormat)
-      ttExecTime = CCSDS.TIME.correlateFromOBTmissionEpoch(obtExecTime)
+      ttExecTime = UTIL.TCO.correlateFromOBTmissionEpoch(obtExecTime)
       SPACE.IF.s_onboardQueue.insertTTpacket(ttExecTime, ttPacketDu)
   # ---------------------------------------------------------------------------
   def insertTTpacket(self, ttExecTime, ttPacketDu):

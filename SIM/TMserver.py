@@ -18,7 +18,7 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.TIME
 import GRND.CRYOSATDU, GRND.IF, GRND.NCTRS, GRND.NCTRSDU
 import SPACE.OBC
-import UTIL.DU, UTIL.SYS, UTIL.TASK, UTIL.TIME
+import UTIL.DU, UTIL.SYS, UTIL.TASK, UTIL.TCO, UTIL.TIME
 
 ###########
 # classes #
@@ -53,8 +53,8 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
            recordFormat == "NCTRS_ASCII_DETAILS":
           LOG_INFO(GRND.IF.s_configuration.frameRecordFormat + " Frame recorded", "GRND")
           # Prepare the TM frame for recording
-          ertTime = CCSDS.TIME.correlateToERTmissionEpoch(ertUTC)
-          ertCDStimeDU = CCSDS.TIME.convertToCDS(ertTime, CCSDS.TIME.TIME_FORMAT_CDS2))
+          ertTime = UTIL.TCO.correlateToERTmissionEpoch(ertUTC)
+          ertCDStimeDU = CCSDS.TIME.convertToCDS(ertTime, CCSDS.TIME.TIME_FORMAT_CDS2)
           tmDu = GRND.NCTRSDU.TMdataUnit()
           tmDu.setFrame(tmFrameDu.getBufferString())
           tmDu.spacecraftId = self.nctrsTMfields.spacecraftId
@@ -113,7 +113,7 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
           # Prepare the TM frame for recording
           tmDu = GRND.CRYOSATDU.TMframeDataUnit()
           tmDu.setFrame(tmFrameDu.getBufferString())
-          ertTime = CCSDS.TIME.correlateToERTmissionEpoch(ertUTC)
+          ertTime = UTIL.TCO.correlateToERTmissionEpoch(ertUTC)
           coarseTime = int(ertTime)
           fineTime = int((ertTime - coarseTime) * 1000000)
           tmDu.downlinkTimeSec = coarseTime

@@ -27,7 +27,7 @@ import SCOS.ENV
 import SPACE.ASW, SPACE.DEF, SPACE.IF, SPACE.MIL, SPACE.OBC, SPACE.TMGEN, SPACE.TMRPLY
 import SPACEUI.SPACEgui, SPACEUI.MILgui
 import UI.TKI
-import UTIL.SYS, UTIL.TASK
+import UTIL.SYS, UTIL.TCO, UTIL.TASK
 
 #############
 # constants #
@@ -55,7 +55,7 @@ SYS_CONFIGURATION = [
   ["TM_TT_TIME_FORMAT", "CUC4"],
   ["TM_TT_TIME_BYTE_OFFSET", "<<shall be passed as environment variable>>"],
   ["TM_REPLAY_KEY", "SPID"],
-  ["OBT_MISSION_EPOCH_STR", CCSDS.TIME.UNIX_MISSION_EPOCH_STR],
+  ["OBT_MISSION_EPOCH_STR", UTIL.TCO.UNIX_MISSION_EPOCH_STR],
   ["OBT_LEAP_SECONDS", "0"],
   ["SYS_COLOR_LOG", "1"],
   ["SYS_APP_MNEMO", "SCOE"],
@@ -605,8 +605,8 @@ else:
   launchScriptName = sys.argv[1]
 # initialise the system configuration
 UTIL.SYS.s_configuration.setDefaults(SYS_CONFIGURATION)
-CCSDS.TIME.setOBTmissionEpochStr(UTIL.SYS.s_configuration.OBT_MISSION_EPOCH_STR)
-CCSDS.TIME.setOBTleapSeconds(int(UTIL.SYS.s_configuration.OBT_LEAP_SECONDS))
+UTIL.TCO.setOBTmissionEpochStr(UTIL.SYS.s_configuration.OBT_MISSION_EPOCH_STR)
+UTIL.TCO.setOBTleapSeconds(int(UTIL.SYS.s_configuration.OBT_LEAP_SECONDS))
 EGSE.IF.s_configuration = EGSE.IF.Configuration()
 SPACE.IF.s_configuration = SPACE.IF.Configuration()
 # initialise the request handler

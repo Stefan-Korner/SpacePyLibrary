@@ -18,7 +18,7 @@ import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.TIME
 import GRND.IF, GRND.NCTRSDU
-import UTIL.TASK, UTIL.TCP, UTIL.TIME
+import UTIL.TASK, UTIL.TCO, UTIL.TCP, UTIL.TIME
 
 ###########
 # classes #
@@ -134,8 +134,8 @@ class TMsender(UTIL.TCP.Server):
   # ---------------------------------------------------------------------------
   def sendFrame(self, tmFrame):
     """Send the TM frame to the TM receiver"""
-    ertTime = CCSDS.TIME.correlateToERTmissionEpoch(UTIL.TIME.getActualTime())
-    ertCDStimeDU = CCSDS.TIME.convertToCDS(ertTime, CCSDS.TIME.TIME_FORMAT_CDS2))
+    ertTime = UTIL.TCO.correlateToERTmissionEpoch(UTIL.TIME.getActualTime())
+    ertCDStimeDU = CCSDS.TIME.convertToCDS(ertTime, CCSDS.TIME.TIME_FORMAT_CDS2)
     tmDu = GRND.NCTRSDU.TMdataUnit()
     tmDu.setFrame(tmFrame)
     tmDu.spacecraftId = self.nctrsTMfields.spacecraftId
@@ -335,8 +335,8 @@ class TCreceiver(UTIL.TCP.SingleClientReceivingServer):
   # ---------------------------------------------------------------------------
   def sendResponseDataUnit(self, requestDataUnit, acknowledgement):
     """sends a response data unit from a request data unit"""
-    ertTime = CCSDS.TIME.correlateToERTmissionEpoch(UTIL.TIME.getActualTime())
-    ertCDStimeDU = CCSDS.TIME.convertToCDS(ertTime, CCSDS.TIME.TIME_FORMAT_CDS2))
+    ertTime = UTIL.TCO.correlateToERTmissionEpoch(UTIL.TIME.getActualTime())
+    ertCDStimeDU = CCSDS.TIME.convertToCDS(ertTime, CCSDS.TIME.TIME_FORMAT_CDS2)
     tcRespDu = requestDataUnit.createResponseDataUnit()
     tcRespDu.time = ertCDStimeDU.getBufferString()
     tcRespDu.serviceType = requestDataUnit.serviceType

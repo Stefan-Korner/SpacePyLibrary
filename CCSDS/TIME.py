@@ -24,20 +24,6 @@ import UTIL.TIME
 #############
 # constants #
 #############
-TAI_MISSION_EPOCH_DELTA = -378691200
-TAI_MISSION_EPOCH_STR = "1958.001.00.00.00.000"
-UNIX_MISSION_EPOCH_STR = "1970.001.00.00.00.000"
-GPS_MISSION_EPOCH_DELTA = 315964800
-GPS_MISSION_EPOCH_STR = "1980.006.00.00.00.000"
-GPS_LEAP_SECONDS_1980 = 0
-GPS_LEAP_SECONDS_2009 = 15
-GPS_LEAP_SECONDS_2012 = 16
-GPS_LEAP_SECONDS_2015 = 17
-SECONDS_OF_DAY = (24 * 60 * 60)
-
-########################
-# CCSDS time constants #
-########################
 # the value of the time format maps to the CCSDS p-field
 # with agency defined epoch
 TIME_FORMAT_CDS1 = 0x48
@@ -78,75 +64,9 @@ CUC4_TIME_ATTRIBUTES = {
   "coarse": (0, 4, UNSIGNED),
   "fine":   (4, 4, UNSIGNED)}
 
-####################
-# global variables #
-####################
-# shall be initialised via setOBTmissionEpochStr()
-s_obtMissionEpochStr = ""
-s_obtMissionEpoch = 0
-s_obtMissionEpochWithLeapSeconds = 0
-# shall be initialised via setOBTleapSeconds()
-s_obtLeapSeconds = 0
-# shall be initialised via setERTmissionEpochStr()
-s_ertMissionEpochStr = ""
-s_ertMissionEpoch = 0
-s_ertMissionEpochWithLeapSeconds = 0
-# shall be initialised via setERTleapSeconds()
-s_ertLeapSeconds = 0
-
 #############
 # functions #
 #############
-# -----------------------------------------------------------------------------
-def setOBTmissionEpochStr(missionEpochStr):
-  """sets the OBT mission epoch string"""
-  global s_optMissionEpochStr, s_obtMissionEpoch
-  global s_obtLeapSeconds, s_obtMissionEpochWithLeapSeconds
-  s_obtMissionEpochStr = missionEpochStr
-  s_obtMissionEpoch = UTIL.TIME.getTimeFromASDstr(s_obtMissionEpochStr)
-  s_obtMissionEpochWithLeapSeconds = s_obtMissionEpoch - s_obtLeapSeconds
-# -----------------------------------------------------------------------------
-def setOBTleapSeconds(leapSeconds):
-  """sets the OBT leap seconds"""
-  global s_obtMissionEpoch
-  global s_obtLeapSeconds, s_obtMissionEpochWithLeapSeconds
-  s_obtLeapSeconds = leapSeconds
-  s_obtMissionEpochWithLeapSeconds = s_obtMissionEpoch - s_obtLeapSeconds
-# -----------------------------------------------------------------------------
-def correlateFromOBTmissionEpoch(pyEpochTime):
-  """correlate the OBT mission epoch time to the local time"""
-  return pyEpochTime + s_obtMissionEpochWithLeapSeconds
-# -----------------------------------------------------------------------------
-def correlateToOBTmissionEpoch(pyUTCtime):
-  """correlate the local time to OBT mission epoch time"""
-  return pyUTCtime - s_obtMissionEpochWithLeapSeconds
-# -----------------------------------------------------------------------------
-def setERTmissionEpochStr(missionEpochStr):
-  """sets the ERT mission epoch string"""
-  global s_ertMissionEpochStr, s_ertMissionEpoch
-  global s_ertLeapSeconds, s_ertMissionEpochWithLeapSeconds
-  s_ertMissionEpochStr = missionEpochStr
-  s_ertMissionEpoch = UTIL.TIME.getTimeFromASDstr(s_ertMissionEpochStr)
-  s_ertMissionEpochWithLeapSeconds = s_ertMissionEpoch - s_ertLeapSeconds
-# -----------------------------------------------------------------------------
-def setERTleapSeconds(leapSeconds):
-  """sets the ERT leap seconds"""
-  global s_ertMissionEpoch
-  global s_ertLeapSeconds, s_ertMissionEpochWithLeapSeconds
-  s_ertLeapSeconds = leapSeconds
-  s_ertMissionEpochWithLeapSeconds = s_ertMissionEpoch - s_ertLeapSeconds
-# -----------------------------------------------------------------------------
-def correlateFromERTmissionEpoch(pyEpochTime):
-  """correlate the ERT mission epoch time to the local time"""
-  return pyEpochTime + s_ertMissionEpochWithLeapSeconds
-# -----------------------------------------------------------------------------
-def correlateToERTmissionEpoch(pyUTCtime):
-  """correlate the local time to ERT mission epoch time"""
-  return pyUTCtime - s_ertMissionEpochWithLeapSeconds
-
-########################
-# CCSDS time functions #
-########################
 # -----------------------------------------------------------------------------
 def isCDStimeFormat(timeFormat):
   """returns True if CDS1 or CDS2"""
@@ -210,8 +130,8 @@ def convertToCDS(pyTime, timeFormat):
   secs = int(pyTime)
   mics = int(round((pyTime - secs) * 1000000))
   # convert into CDS components
-  days = secs / SECONDS_OF_DAY
-  secs %= SECONDS_OF_DAY
+  days = secs / UTIL.TIME.SECONDS_OF_DAY
+  secs %= UTIL.TIME.SECONDS_OF_DAY
   mils = (secs * 1000) + (mics / 1000)
   if timeFormat == TIME_FORMAT_CDS1:
     timeDU = BinaryUnit("\0" * CDS1_TIME_BYTE_SIZE,
@@ -231,7 +151,7 @@ def convertToCDS(pyTime, timeFormat):
 # -----------------------------------------------------------------------------
 def convertFromCDS(timeDU):
   """returns python time representation from CDS binary data unit"""
-  secs = timeDU.days * SECONDS_OF_DAY
+  secs = timeDU.days * UTIL.TIME.SECONDS_OF_DAY
   mils = timeDU.mils
   secs += (mils / 1000)
   mics = 0
