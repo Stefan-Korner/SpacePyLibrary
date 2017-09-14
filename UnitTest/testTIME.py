@@ -31,49 +31,57 @@ def correlateOBTcucPFC17(byteArray):
 def test_ERTandCDS2(missionEpochString, missionEpochDelta):
   """tests ERT correlation and CDS2 data unit"""
   CCSDS.TIME.setERTmissionEpochStr(missionEpochString)
-  zeroCCSDStime = missionEpochDelta
-  zeroCCSDStimeDU = CCSDS.TIME.getERTccsdsTimeDU(zeroCCSDStime)
-  if zeroCCSDStimeDU.days != 0:
-    print "Invalid zero CCSDS time days:", zeroCCSDStimeDU.days
+  zeroERTtime = missionEpochDelta
+  zeroERTtimeCorr = CCSDS.TIME.correlateToERTmissionEpoch(zeroERTtime)
+  zeroCDStimeDU = CCSDS.TIME.convertToCDS(zeroERTtimeCorr,
+                                          CCSDS.TIME.TIME_FORMAT_CDS2)
+  if zeroCDStimeDU.days != 0:
+    print "Invalid zero CCSDS time days:", zeroCDStimeDU.days
     return False
-  if zeroCCSDStimeDU.mils != 0:
-    print "Invalid zero CCSDS time milliseconds:", zeroCCSDStimeDU.mils
+  if zeroCDStimeDU.mils != 0:
+    print "Invalid zero CCSDS time milliseconds:", zeroCDStimeDU.mils
     return False
-  if zeroCCSDStimeDU.mics != 0:
-    print "Invalid zero CCSDS time microsedonds:", zeroCCSDStimeDU.mics
+  if zeroCDStimeDU.mics != 0:
+    print "Invalid zero CCSDS time microsedonds:", zeroCDStimeDU.mics
     return False
-  days1CCSDStime = zeroCCSDStime + (24 * 60 * 60)
-  days1CCSDStimeDU = CCSDS.TIME.getERTccsdsTimeDU(days1CCSDStime)
-  if days1CCSDStimeDU.days != 1:
-    print "Invalid days1 CCSDS time days:", days1CCSDStimeDU.days
+  days1ERTtime = zeroERTtime + (24 * 60 * 60)
+  days1ERTtimeCorr = CCSDS.TIME.correlateToERTmissionEpoch(days1ERTtime)
+  days1CDStimeDU = CCSDS.TIME.convertToCDS(days1ERTtimeCorr,
+                                           CCSDS.TIME.TIME_FORMAT_CDS2)
+  if days1CDStimeDU.days != 1:
+    print "Invalid days1 CCSDS time days:", days1CDStimeDU.days
     return False
-  if days1CCSDStimeDU.mils != 0:
-    print "Invalid days1 CCSDS time milliseconds:", days1CCSDStimeDU.mils
+  if days1CDStimeDU.mils != 0:
+    print "Invalid days1 CCSDS time milliseconds:", days1CDStimeDU.mils
     return False
-  if days1CCSDStimeDU.mics != 0:
-    print "Invalid days1 CCSDS time microseconds:", days1CCSDStimeDU.mics
+  if days1CDStimeDU.mics != 0:
+    print "Invalid days1 CCSDS time microseconds:", days1CDStimeDU.mics
     return False
-  mils1CCSDStime = zeroCCSDStime + 0.001
-  mils1CCSDStimeDU = CCSDS.TIME.getERTccsdsTimeDU(mils1CCSDStime)
-  if mils1CCSDStimeDU.days != 0:
-    print "Invalid mils1 CCSDS time days:", mils1CCSDStimeDU.days
+  mils1ERTtime = zeroERTtime + 0.001
+  mils1ERTtimeCorr = CCSDS.TIME.correlateToERTmissionEpoch(mils1ERTtime)
+  mils1CDStimeDU = CCSDS.TIME.convertToCDS(mils1ERTtimeCorr,
+                                           CCSDS.TIME.TIME_FORMAT_CDS2)
+  if mils1CDStimeDU.days != 0:
+    print "Invalid mils1 CCSDS time days:", mils1CDStimeDU.days
     return False
-  if mils1CCSDStimeDU.mils != 1:
-    print "Invalid mils1 CCSDS time milliseconds:", mils1CCSDStimeDU.mils
+  if mils1CDStimeDU.mils != 1:
+    print "Invalid mils1 CCSDS time milliseconds:", mils1CDStimeDU.mils
     return False
-  if mils1CCSDStimeDU.mics != 0:
-    print "Invalid mils1 CCSDS time microseconds:", mils1CCSDStimeDU.mics
+  if mils1CDStimeDU.mics != 0:
+    print "Invalid mils1 CCSDS time microseconds:", mils1CDStimeDU.mics
     return False
-  mics1CCSDStime = zeroCCSDStime + 0.000001
-  mics1CCSDStimeDU = CCSDS.TIME.getERTccsdsTimeDU(mics1CCSDStime)
-  if mics1CCSDStimeDU.days != 0:
-    print "Invalid mics1 CCSDS time days:", mics1CCSDStimeDU.days
+  mics1ERTtime = zeroERTtime + 0.000001
+  mics1ERTtimeCorr = CCSDS.TIME.correlateToERTmissionEpoch(mics1ERTtime)
+  mics1CDStimeDU = CCSDS.TIME.convertToCDS(mics1ERTtimeCorr,
+                                           CCSDS.TIME.TIME_FORMAT_CDS2)
+  if mics1CDStimeDU.days != 0:
+    print "Invalid mics1 CCSDS time days:", mics1CDStimeDU.days
     return False
-  if mics1CCSDStimeDU.mils != 0:
-    print "Invalid mics1 CCSDS time milliseconds:", mics1CCSDStimeDU.mils
+  if mics1CDStimeDU.mils != 0:
+    print "Invalid mics1 CCSDS time milliseconds:", mics1CDStimeDU.mils
     return False
-  if mics1CCSDStimeDU.mics != 1:
-    print "Invalid mics1 CCSDS time microseconds:", mics1CCSDStimeDU.mics
+  if mics1CDStimeDU.mics != 1:
+    print "Invalid mics1 CCSDS time microseconds:", mics1CDStimeDU.mics
     return False
   return True
 # -----------------------------------------------------------------------------

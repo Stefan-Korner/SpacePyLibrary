@@ -53,15 +53,15 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
            recordFormat == "NCTRS_ASCII_DETAILS":
           LOG_INFO(GRND.IF.s_configuration.frameRecordFormat + " Frame recorded", "GRND")
           # Prepare the TM frame for recording
-          ertCCSDStimeDU = \
-            CCSDS.TIME.getERTccsdsTimeDU(ertUTC)
+          ertTime = CCSDS.TIME.correlateToERTmissionEpoch(ertUTC)
+          ertCDStimeDU = CCSDS.TIME.convertToCDS(ertTime, CCSDS.TIME.TIME_FORMAT_CDS2))
           tmDu = GRND.NCTRSDU.TMdataUnit()
           tmDu.setFrame(tmFrameDu.getBufferString())
           tmDu.spacecraftId = self.nctrsTMfields.spacecraftId
           tmDu.dataStreamType = self.nctrsTMfields.dataStreamType
           tmDu.virtualChannelId = self.nctrsTMfields.virtualChannelId
           tmDu.routeId = self.nctrsTMfields.routeId
-          tmDu.earthReceptionTime = ertCCSDStimeDU.getBufferString()
+          tmDu.earthReceptionTime = ertCDStimeDU.getBufferString()
           tmDu.sequenceFlag = self.nctrsTMfields.sequenceFlag
           tmDu.qualityFlag = self.nctrsTMfields.qualityFlag
           # ensure a correct size attribute

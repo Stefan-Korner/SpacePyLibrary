@@ -349,12 +349,3 @@ def convertFromCCSDS(timeDU, timeFormat):
   if isCUCtimeFormat(timeFormat):
     return convertFromCUC(timeDU)
   return None
-
-##############################
-# convenience time functions #
-##############################
-# -----------------------------------------------------------------------------
-def getERTccsdsTimeDU(pyTime):
-  """convenience function for backward compatibility"""
-  pyTime = correlateToERTmissionEpoch(pyTime)
-  return convertToCDS(pyTime, TIME_FORMAT_CDS2)
