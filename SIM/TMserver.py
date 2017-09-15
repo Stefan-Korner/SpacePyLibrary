@@ -15,7 +15,6 @@
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CCSDS.TIME
 import GRND.CRYOSATDU, GRND.IF, GRND.NCTRS, GRND.NCTRSDU
 import SPACE.OBC
 import UTIL.DU, UTIL.SYS, UTIL.TASK, UTIL.TCO, UTIL.TIME
@@ -54,14 +53,13 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
           LOG_INFO(GRND.IF.s_configuration.frameRecordFormat + " Frame recorded", "GRND")
           # Prepare the TM frame for recording
           ertTime = UTIL.TCO.correlateToERTmissionEpoch(ertUTC)
-          ertCDStimeDU = CCSDS.TIME.convertToCDS(ertTime, CCSDS.TIME.TIME_FORMAT_CDS2)
           tmDu = GRND.NCTRSDU.TMdataUnit()
           tmDu.setFrame(tmFrameDu.getBufferString())
           tmDu.spacecraftId = self.nctrsTMfields.spacecraftId
           tmDu.dataStreamType = self.nctrsTMfields.dataStreamType
           tmDu.virtualChannelId = self.nctrsTMfields.virtualChannelId
           tmDu.routeId = self.nctrsTMfields.routeId
-          tmDu.earthReceptionTime = ertCDStimeDU.getBufferString()
+          tmDu.earthReceptionTime = ertTime
           tmDu.sequenceFlag = self.nctrsTMfields.sequenceFlag
           tmDu.qualityFlag = self.nctrsTMfields.qualityFlag
           # ensure a correct size attribute
@@ -78,9 +76,7 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
               recordFile.write("\ntmDu.dataStreamType = " + str(tmDu.dataStreamType))
               recordFile.write("\ntmDu.virtualChannelId = " + str(tmDu.virtualChannelId))
               recordFile.write("\ntmDu.routeId = " + str(tmDu.routeId))
-              ertTimeBuffer = tmDu.earthReceptionTime
-              ertTimeDu = CCSDS.TIME.createCDS(ertTimeBuffer)
-              ertTime = CCSDS.TIME.convertFromCDS(ertTimeDu)
+              ertTime = tmDu.earthReceptionTime
               ertTimeStr = UTIL.TIME.getASDtimeStr(ertTime)
               recordFile.write("\ntmDu.earthReceptionTime = " + ertTimeStr)
               recordFile.write("\ntmDu.sequenceFlag = " + str(tmDu.sequenceFlag))

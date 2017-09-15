@@ -84,10 +84,7 @@ class OnboardQueueImpl(SPACE.IF.OnboardQueue):
         LOG(str(ttPacketDu), "OBQ")
         return
       # calculate the execution time
-      byteSize = CCSDS.TIME.byteArraySize(self.ttTtimeFormat)
-      ttExecTimeData = tcPacketDu.getBytes(self.ttTimeByteOffset, byteSize)
-      timeDU = CCSDS.TIME.createCCSDS(ttExecTimeData, self.ttTtimeFormat)
-      obtExecTime = CCSDS.TIME.convertFromCCSDS(timeDU, self.ttTtimeFormat)
+      obtExecTime = tcPacketDu.getTime(self.ttTimeByteOffset, self.ttTtimeFormat)
       ttExecTime = UTIL.TCO.correlateFromOBTmissionEpoch(obtExecTime)
       SPACE.IF.s_onboardQueue.insertTTpacket(ttExecTime, ttPacketDu)
   # ---------------------------------------------------------------------------

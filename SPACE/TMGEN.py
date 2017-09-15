@@ -168,10 +168,7 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
       if obtUTC == None:
         obtUTC = UTIL.TIME.getActualTime()
       obtTime = UTIL.TCO.correlateToOBTmissionEpoch(obtUTC)
-      timeDU = CCSDS.TIME.convertToCCSDS(obtTime, self.tmTTtimeFormat)
-      packet.setBytes(self.tmTTtimeByteOffset,
-                      len(timeDU),
-                      timeDU.getBufferString())
+      packet.setTime(self.tmTTtimeByteOffset, self.tmTTtimeFormat, obtTime)
     # re-calculate the sequence counter (maintained per APID)
     if applicationProcessId in self.sequenceCounters:
       sequenceCounter = (self.sequenceCounters[applicationProcessId] + 1) % 16384

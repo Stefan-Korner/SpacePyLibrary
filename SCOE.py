@@ -19,7 +19,6 @@
 #******************************************************************************
 import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CCSDS.TIME
 import EGSE.IF
 import PUS.SERVICES
 import SCOE.EGSEserver, SCOE.EGSEgui

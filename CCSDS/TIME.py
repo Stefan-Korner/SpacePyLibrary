@@ -11,7 +11,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser     *
 # General Public License for more details.                                    *
 #******************************************************************************
-# CCSDS Stack - Time Conversions, enhancement of UTIL.TIME                    *
+# CCSDS Stack - Implements the CDS and CUC time formats                       *
+#               according to CCSDS 301.0-B-4                                  *
 #                                                                             *
 # Note: Time format CUC4 (4 bytes coarse time and 4 bytes fine time) can only *
 #       be represented in a CCSDS time p-field when the p-field extension is  *

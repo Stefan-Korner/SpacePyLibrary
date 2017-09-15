@@ -15,7 +15,7 @@
 # implements EGOS-NIS-NCTR-ICD-0002-i4r0.2 (Signed).pdf                       *
 #******************************************************************************
 from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME, BinaryUnit
-import CCSDS.DU
+import CCSDS.DU, CCSDS.TIME
 
 #############
 # constants #
@@ -32,7 +32,7 @@ TM_DU_ATTRIBUTES = {
   "dataStreamType":       ( 6, 1, UNSIGNED),
   "virtualChannelId":     ( 7, 1, UNSIGNED),
   "routeId":              ( 8, 2, UNSIGNED),
-  "earthReceptionTime":   (10, 8, BYTES),
+  "earthReceptionTime":   (10, CCSDS.TIME.TIME_FORMAT_CDS2, TIME),
   "sequenceFlag":         (18, 1, UNSIGNED),
   "qualityFlag":          (19, 1, UNSIGNED)}
 # -----------------------------------------------------------------------------
@@ -59,9 +59,9 @@ TC_CLTU_HEADER_ATTRIBUTES = {
   "mapId":                ( 6, 1, UNSIGNED),
   "aggregationFlag":      ( 7, 4, UNSIGNED),
   "earliestProdTimeFlag": (11, 4, UNSIGNED),
-  "earliestProdTime":     (15, 8, BYTES),
+  "earliestProdTime":     (15, CCSDS.TIME.TIME_FORMAT_CDS2, TIME),
   "latestProdTimeFlag":   (23, 4, UNSIGNED),
-  "latestProdTime":       (27, 8, BYTES),
+  "latestProdTime":       (27, CCSDS.TIME.TIME_FORMAT_CDS2, TIME),
   "delay":                (35, 4, UNSIGNED)}
 # -----------------------------------------------------------------------------
 TC_DIRECTIVES_DU_TYPE = 4
@@ -75,7 +75,7 @@ TC_DIRECTIVES_ATTRIBUTES = {
 TC_PACKET_RESPONSE_DU_TYPE = 1
 TC_PACKET_RESPONSE_BYTE_SIZE = 26
 TC_PACKET_RESPONSE_ATTRIBUTES = {
-  "time":                 ( 0, 8, BYTES),
+  "time":                 ( 0, CCSDS.TIME.TIME_FORMAT_CDS2, TIME),
   "serviceType":          ( 8, 1, UNSIGNED),
   "groundstationId":      ( 9, 2, UNSIGNED),
   "sequenceCounter":      (11, 4, UNSIGNED),
@@ -88,7 +88,7 @@ TC_PACKET_RESPONSE_ATTRIBUTES = {
 TC_CLTU_RESPONSE_DU_TYPE = 8
 TC_CLTU_RESPONSE_BYTE_SIZE = 26
 TC_CLTU_RESPONSE_ATTRIBUTES = {
-  "time":                 ( 0, 8, BYTES),
+  "time":                 ( 0, CCSDS.TIME.TIME_FORMAT_CDS2, TIME),
   "serviceType":          ( 8, 1, UNSIGNED),
   "groundstationId":      ( 9, 2, UNSIGNED),
   "sequenceCounter":      (11, 4, UNSIGNED),
@@ -107,7 +107,7 @@ TC_LINK_STATUS_ATTRIBUTES = {
 MESSAGE_HEADER_BYTE_SIZE = 20
 MESSAGE_HEADER_ATTRIBUTES = {
   "packetSize":           ( 0, 4, UNSIGNED),
-  "time":                 ( 4, 8, BYTES),
+  "time":                 ( 4, CCSDS.TIME.TIME_FORMAT_CDS2, TIME),
   "messageType":          (12, 2, UNSIGNED),
   "severity":             (14, 2, UNSIGNED),
   "eventId":              (16, 4, UNSIGNED)}
