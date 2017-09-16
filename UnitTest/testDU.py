@@ -27,7 +27,7 @@ def test_DUtimeOperations():
   """function to test time operations"""
   UTIL.TCO.setOBTmissionEpochStr(UTIL.TCO.UNIX_MISSION_EPOCH_STR)
   UTIL.TCO.setOBTleapSeconds(0)
-  b = CCSDS.DU.DataUnit(testData.ZERO_CUC_TIME_FIELD,
+  b = CCSDS.DU.DataUnit(testData.ZERO_CUC2_TIME_FIELD,
                         testData.CUC2_TIME_DU_BYTE_SIZE,
                         testData.CUC2_TIME_DU_ATTRIBUTES)
   zeroTime = b.time
@@ -38,52 +38,52 @@ def test_DUtimeOperations():
     return False
   UTIL.TCO.setOBTmissionEpochStr(UTIL.TCO.GPS_MISSION_EPOCH_STR)
   UTIL.TCO.setOBTleapSeconds(UTIL.TCO.GPS_LEAP_SECONDS_2009)
-  b = CCSDS.DU.DataUnit(testData.CUC_TIME1_FIELD,
+  b = CCSDS.DU.DataUnit(testData.CUC2_TIME1_FIELD,
                         testData.CUC2_TIME_DU_BYTE_SIZE,
                         testData.CUC2_TIME_DU_ATTRIBUTES)
   timeCorr = UTIL.TCO.correlateFromOBTmissionEpoch(b.time)
   timeStr = UTIL.TIME.getASDtimeStr(timeCorr, withMicros=True)
-  if timeStr != testData.CUC_TIME1_STR:
+  if timeStr != testData.CUC2_TIME1_STR:
     print "Invalid CUC time 1:", timeStr
     return False
-  b = CCSDS.DU.DataUnit(testData.CUC_TIME2_FIELD,
+  b = CCSDS.DU.DataUnit(testData.CUC2_TIME2_FIELD,
                         testData.CUC2_TIME_DU_BYTE_SIZE,
                         testData.CUC2_TIME_DU_ATTRIBUTES)
   timeCorr = UTIL.TCO.correlateFromOBTmissionEpoch(b.time)
   timeStr = UTIL.TIME.getASDtimeStr(timeCorr, withMicros=True)
-  if timeStr != testData.CUC_TIME2_STR:
+  if timeStr != testData.CUC2_TIME2_STR:
     print "Invalid CUC time 2:", timeStr
     return False
-  b = CCSDS.DU.DataUnit(testData.CUC_TIME3_FIELD,
+  b = CCSDS.DU.DataUnit(testData.CUC2_TIME3_FIELD,
                         testData.CUC2_TIME_DU_BYTE_SIZE,
                         testData.CUC2_TIME_DU_ATTRIBUTES)
   timeCorr = UTIL.TCO.correlateFromOBTmissionEpoch(b.time)
   timeStr = UTIL.TIME.getASDtimeStr(timeCorr, withMicros=True)
-  if timeStr != testData.CUC_TIME3_STR:
+  if timeStr != testData.CUC2_TIME3_STR:
     print "Invalid CUC time 3:", timeStr
     return False
-  b = CCSDS.DU.DataUnit(testData.CUC_TIME4_FIELD,
+  b = CCSDS.DU.DataUnit(testData.CUC2_TIME4_FIELD,
                         testData.CUC2_TIME_DU_BYTE_SIZE,
                         testData.CUC2_TIME_DU_ATTRIBUTES)
   timeCorr = UTIL.TCO.correlateFromOBTmissionEpoch(b.time)
   timeStr = UTIL.TIME.getASDtimeStr(timeCorr, withMicros=True)
-  if timeStr != testData.CUC_TIME4_STR:
+  if timeStr != testData.CUC2_TIME4_STR:
     print "Invalid CUC time 4:", timeStr
     return False
-  b = CCSDS.DU.DataUnit(testData.CUC_TIME5_FIELD,
+  b = CCSDS.DU.DataUnit(testData.CUC2_TIME5_FIELD,
                         testData.CUC2_TIME_DU_BYTE_SIZE,
                         testData.CUC2_TIME_DU_ATTRIBUTES)
   timeCorr = UTIL.TCO.correlateFromOBTmissionEpoch(b.time)
   timeStr = UTIL.TIME.getASDtimeStr(timeCorr, withMicros=True)
-  if timeStr != testData.CUC_TIME5_STR:
+  if timeStr != testData.CUC2_TIME5_STR:
     print "Invalid CUC time 5:", timeStr
     return False
-  b = CCSDS.DU.DataUnit(testData.CUC_TIME6_FIELD,
+  b = CCSDS.DU.DataUnit(testData.CUC2_TIME6_FIELD,
                         testData.CUC2_TIME_DU_BYTE_SIZE,
                         testData.CUC2_TIME_DU_ATTRIBUTES)
   timeCorr = UTIL.TCO.correlateFromOBTmissionEpoch(b.time)
   timeStr = UTIL.TIME.getASDtimeStr(timeCorr, withMicros=True)
-  if timeStr != testData.CUC_TIME6_STR:
+  if timeStr != testData.CUC2_TIME6_STR:
     print "Invalid CUC time 6:", timeStr
     return False
   return True
