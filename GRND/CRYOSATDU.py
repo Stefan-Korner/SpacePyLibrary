@@ -41,10 +41,6 @@ class TMframeDataUnit(BinaryUnit):
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
     """default constructor: initialise with header size"""
-    # note: correct packetSize is not forced!
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * TM_FRAME_DU_HEADER_BYTE_SIZE
     BinaryUnit.__init__(self,
                         binaryString,
                         TM_FRAME_DU_HEADER_BYTE_SIZE,
@@ -52,9 +48,8 @@ class TMframeDataUnit(BinaryUnit):
   # ---------------------------------------------------------------------------
   def getFrame(self):
     """returns the tranfer frame"""
-    # the packetSize must contain the correct size
     headerByteSize = TM_FRAME_DU_HEADER_BYTE_SIZE
-    return self.getBytes(headerByteSize, self.packetSize - headerByteSize)
+    return self.getBytes(headerByteSize, len(self) - headerByteSize)
   # ---------------------------------------------------------------------------
   def setFrame(self, frame):
     """set the transfer frame"""

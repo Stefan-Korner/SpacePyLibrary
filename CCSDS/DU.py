@@ -30,6 +30,10 @@ CRC_BYTE_SIZE = 2
 class DataUnit(BinaryUnit):
   """binary CCSDS data based unit"""
   # ---------------------------------------------------------------------------
+  def __init__(self, binaryString=None, attributesSize1=0, attributeMap1=None, attributesSize2=0, attributeMap2=None):
+    """initialise the date structure with binaryString and attribute maps"""
+    BinaryUnit.__init__(self, binaryString, attributesSize1, attributeMap1, attributesSize2, attributeMap2)
+  # ---------------------------------------------------------------------------
   def getTime(self, bytePos, timeFormat):
     """extracts a time"""
     byteSize = CCSDS.TIME.byteArraySize(timeFormat)

@@ -14,7 +14,7 @@
 # Ground Simulation - NCTRS Data Units Module                                 *
 # implements EGOS-NIS-NCTR-ICD-0002-i4r0.2 (Signed).pdf                       *
 #******************************************************************************
-from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME, BinaryUnit
+from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME
 import CCSDS.DU, CCSDS.TIME
 
 #############
@@ -176,16 +176,19 @@ TC_PAR_AD_FAILURE_REASON =    "%18s"
 class TMdataUnit(CCSDS.DU.DataUnit):
   """NCTRS telemetry data unit"""
   # ---------------------------------------------------------------------------
-  def __init__(self, binaryString=None):
-    """default constructor: initialise with header size"""
-    # note: correct packetSize is not forced!
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * TM_DU_HEADER_BYTE_SIZE
-    BinaryUnit.__init__(self,
-                        binaryString,
-                        TM_DU_HEADER_BYTE_SIZE,
-                        TM_DU_ATTRIBUTES)
+  def __init__(self, binaryString=None, attributesSize2=0, attributeMap2=None):
+    """default constructor: initialise data unit header"""
+    CCSDS.DU.DataUnit.__init__(self,
+                               binaryString,
+                               TM_DU_HEADER_BYTE_SIZE,
+                               TM_DU_ATTRIBUTES,
+                               attributesSize2,
+                               attributeMap2)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    CCSDS.DU.DataUnit.initAttributes(self)
+    self.packetSize = len(self)
   # ---------------------------------------------------------------------------
   def getFrame(self):
     """returns the transfer frame"""
@@ -203,16 +206,19 @@ class TMdataUnit(CCSDS.DU.DataUnit):
 class TCdataUnit(CCSDS.DU.DataUnit):
   """NCTRS telecommand data unit"""
   # ---------------------------------------------------------------------------
-  def __init__(self, binaryString=None):
-    """default constructor: initialise with header size"""
-    # note: correct packetSize is not forced!
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * TC_DU_HEADER_BYTE_SIZE
-    BinaryUnit.__init__(self,
-                        binaryString,
-                        TC_DU_HEADER_BYTE_SIZE,
-                        TC_DU_HEADER_ATTRIBUTES)
+  def __init__(self, binaryString=None, attributesSize2=0, attributeMap2=None):
+    """default constructor: initialise data unit header"""
+    CCSDS.DU.DataUnit.__init__(self,
+                               binaryString,
+                               TC_DU_HEADER_BYTE_SIZE,
+                               TC_DU_HEADER_ATTRIBUTES,
+                               attributesSize2,
+                               attributeMap2)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    CCSDS.DU.DataUnit.initAttributes(self)
+    self.packetSize = len(self)
   # ---------------------------------------------------------------------------
   def createResponseDataUnit(self):
     """creates a corresponding ResponseDataUnit"""
@@ -263,135 +269,118 @@ class TCpacketDataUnit(TCdataUnit):
   """NCTRS telecommand packet data unit"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
-    """default constructor: initialise with header size"""
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * (TC_DU_HEADER_BYTE_SIZE +
-                             TC_PACKET_HEADER_BYTE_SIZE)
-    BinaryUnit.__init__(self,
+    """default constructor: initialise TC packet header"""
+    TCdataUnit.__init__(self,
                         binaryString,
-                        TC_DU_HEADER_BYTE_SIZE,
-                        TC_DU_HEADER_ATTRIBUTES,
+                        TC_PACKET_HEADER_BYTE_SIZE,
                         TC_PACKET_HEADER_ATTRIBUTES)
-    if emptyData:
-      # AD packet / BD segment
-      self.dataUnitType = TC_PACKET_HEADER_DU_TYPE
-      self.packetSize = len(self)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    TCdataUnit.initAttributes(self)
+    # AD packet / BD segment
+    self.dataUnitType = TC_PACKET_HEADER_DU_TYPE
 
 # =============================================================================
 class TCcltuDataUnit(TCdataUnit):
   """NCTRS telecommand CLTU data unit"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
-    """default constructor: initialise with header size"""
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * (TC_DU_HEADER_BYTE_SIZE +
-                             TC_CLTU_HEADER_BYTE_SIZE)
-    BinaryUnit.__init__(self,
+    """default constructor: initialise TC CLTU header"""
+    TCdataUnit.__init__(self,
                         binaryString,
-                        TC_DU_HEADER_BYTE_SIZE,
-                        TC_DU_HEADER_ATTRIBUTES,
+                        TC_CLTU_HEADER_BYTE_SIZE;
                         TC_CLTU_HEADER_ATTRIBUTES)
-    if emptyData:
-      # CLTU
-      self.dataUnitType = TC_CLTU_HEADER_DU_TYPE
-      self.packetSize = len(self)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    TCdataUnit.initAttributes(self)
+    # CLTU
+    self.dataUnitType = TC_CLTU_HEADER_DU_TYPE
 
 # =============================================================================
 class TCdirectivesDataUnit(TCdataUnit):
   """NCTRS telecommand directives data unit"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
-    """default constructor: initialise with header size"""
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * (TC_DU_HEADER_BYTE_SIZE +
-                             TC_DIRECTIVES_BYTE_SIZE)
-    BinaryUnit.__init__(self,
+    """default constructor: initialise TC directives"""
+    TCdataUnit.__init__(self,
                         binaryString,
-                        TC_DU_HEADER_BYTE_SIZE,
-                        TC_DU_HEADER_ATTRIBUTES,
+                        TC_DIRECTIVES_BYTE_SIZE,
                         TC_DIRECTIVES_ATTRIBUTES)
-    if emptyData:
-      # COP1 directive
-      self.dataUnitType = TC_DIRECTIVES_DU_TYPE
-      self.packetSize = len(self)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    TCdataUnit.initAttributes(self)
+    # COP1 directive
+    self.dataUnitType = TC_DIRECTIVES_DU_TYPE
 
 # =============================================================================
 class TCpacketResponseDataUnit(TCdataUnit):
   """NCTRS telecommand packet response data unit"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
-    """default constructor: initialise with header size"""
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * (TC_DU_HEADER_BYTE_SIZE +
-                             TC_PACKET_RESPONSE_BYTE_SIZE)
-    BinaryUnit.__init__(self,
+    """default constructor: initialise TC packet response"""
+    TCdataUnit.__init__(self,
                         binaryString,
-                        TC_DU_HEADER_BYTE_SIZE,
-                        TC_DU_HEADER_ATTRIBUTES,
+                        TC_PACKET_RESPONSE_BYTE_SIZE,
                         TC_PACKET_RESPONSE_ATTRIBUTES)
-    if emptyData:
-      # AD packet / BD segment response
-      self.dataUnitType = TC_PACKET_RESPONSE_DU_TYPE
-      self.packetSize = len(self)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    TCdataUnit.initAttributes(self)
+    # AD packet / BD segment response
+    self.dataUnitType = TC_PACKET_RESPONSE_DU_TYPE
 
 # =============================================================================
 class TCcltuResponseDataUnit(TCdataUnit):
   """NCTRS telecommand CLTU response data unit"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
-    """default constructor: initialise with header size"""
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * (TC_DU_HEADER_BYTE_SIZE +
-                             TC_CLTU_RESPONSE_BYTE_SIZE)
-    BinaryUnit.__init__(self,
+    """default constructor: initialise TC CLTU response"""
+    TCdataUnit.__init__(self,
                         binaryString,
-                        TC_DU_HEADER_BYTE_SIZE,
-                        TC_DU_HEADER_ATTRIBUTES,
+                        TC_CLTU_RESPONSE_BYTE_SIZE,
                         TC_CLTU_RESPONSE_ATTRIBUTES)
-    if emptyData:
-      # CLTU response
-      self.dataUnitType = TC_CLTU_RESPONSE_DU_TYPE
-      self.packetSize = len(self)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    TCdataUnit.initAttributes(self)
+    # CLTU response
+    self.dataUnitType = TC_CLTU_RESPONSE_DU_TYPE
 
 # =============================================================================
 class TClinkStatusDataUnit(TCdataUnit):
   """NCTRS link status data unit"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
-    """default constructor: initialise with header size"""
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * (TC_DU_HEADER_BYTE_SIZE +
-                             TC_LINK_STATUS_BYTE_SIZE)
-    BinaryUnit.__init__(self,
+    """default constructor: initialise TC link status"""
+    TCdataUnit.__init__(self,
                         binaryString,
-                        TC_DU_HEADER_BYTE_SIZE,
-                        TC_DU_HEADER_ATTRIBUTES,
+                        TC_LINK_STATUS_BYTE_SIZE,
                         TC_LINK_STATUS_ATTRIBUTES)
-    if emptyData:
-      # Link status
-      self.dataUnitType = TC_LINK_STATUS_DU_TYPE
-      self.packetSize = len(self)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    TCdataUnit.initAttributes(self)
+    # Link status
+    self.dataUnitType = TC_LINK_STATUS_DU_TYPE
 
 # =============================================================================
 class AdminMessageDataUnit(CCSDS.DU.DataUnit):
   """NCTRS admin message data unit"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
-    """default constructor: initialise with header size"""
-    # note: correct packetSize is not forced!
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * MESSAGE_HEADER_BYTE_SIZE
-    BinaryUnit.__init__(self,
-                        binaryString,
-                        MESSAGE_HEADER_BYTE_SIZE,
-                        MESSAGE_HEADER_ATTRIBUTES)
+    """default constructor: initialise message header"""
+    CCSDS.DU.DataUnit.__init__(self,
+                               binaryString,
+                               MESSAGE_HEADER_BYTE_SIZE,
+                               MESSAGE_HEADER_ATTRIBUTES)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    CCSDS.DU.DataUnit.initAttributes(self)
+    self.packetSize = len(self)
   # ---------------------------------------------------------------------------
   def getMessage(self):
     """returns the admin message"""

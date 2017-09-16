@@ -13,7 +13,7 @@
 #******************************************************************************
 # CCSDS Stack - Telecommand Segmentation Module                               *
 #******************************************************************************
-from UTIL.DU import BITS, BYTES, UNSIGNED, BinaryUnit
+from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME, BinaryUnit
 
 #############
 # constants #
@@ -50,10 +50,7 @@ class TCsegment(BinaryUnit):
   """Telecommand segment"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
-    # default constructor: initialise with header size
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * TC_SEGMENT_HEADER_BYTE_SIZE
+    """default constructor"""
     BinaryUnit.__init__(self,
                         binaryString,
                         TC_SEGMENT_HEADER_BYTE_SIZE,

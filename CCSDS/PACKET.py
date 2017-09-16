@@ -13,7 +13,7 @@
 #******************************************************************************
 # CCSDS Stack - CCSDS Packet Module                                           *
 #******************************************************************************
-from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME, BinaryUnit
+from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME
 import CCSDS.DU
 
 #############
@@ -52,17 +52,20 @@ PRIMARY_HEADER_ATTRIBUTES = {
 class Packet(CCSDS.DU.DataUnit):
   """telemetry or telecommand packet"""
   # ---------------------------------------------------------------------------
-  def __init__(self, binaryString=None):
-    """default constructor: initialise with header size"""
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * PRIMARY_HEADER_BYTE_SIZE
-    BinaryUnit.__init__(self,
-                        binaryString,
-                        PRIMARY_HEADER_BYTE_SIZE,
-                        PRIMARY_HEADER_ATTRIBUTES)
-    if emptyData:
-      self.setPacketLength()
+  def __init__(self, binaryString=None, attributesSize2=0, attributeMap2=None):
+    """default constructor: initialise primary header"""
+    CCSDS.DU.DataUnit.__init__(self,
+                               binaryString,
+                               PRIMARY_HEADER_BYTE_SIZE,
+                               PRIMARY_HEADER_ATTRIBUTES,
+                               attributesSize2,
+                               attributeMap2)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    CCSDS.DU.DataUnit.initAttributes(self)
+    self.dataFieldHeaderFlag = 0
+    self.setPacketLength()
   # ---------------------------------------------------------------------------
   def getDataField(self):
     """extracts the data field"""
@@ -115,22 +118,24 @@ class Packet(CCSDS.DU.DataUnit):
 class TMpacket(Packet):
   """telemetry packet"""
   # ---------------------------------------------------------------------------
-  def __init__(self, binaryString=None):
+  def __init__(self, binaryString=None, attributesSize2=0, attributeMap2=None):
     """default constructor"""
-    emptyData = (binaryString == None)
-    Packet.__init__(self, binaryString)
-    if emptyData:
-      self.packetType = TM_PACKET_TYPE
-      self.dataFieldHeaderFlag = 0
+    Packet.__init__(self, binaryString, attributesSize2, attributeMap2)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    Packet.initAttributes(self)
+    self.packetType = TM_PACKET_TYPE
 
 # =============================================================================
 class TCpacket(Packet):
   """telecommand packet"""
   # ---------------------------------------------------------------------------
-  def __init__(self, binaryString=None):
+  def __init__(self, binaryString=None, attributesSize2=0, attributeMap2=None):
     """default constructor"""
-    emptyData = (binaryString == None)
-    Packet.__init__(self, binaryString)
-    if emptyData:
-      self.packetType = TC_PACKET_TYPE
-      self.dataFieldHeaderFlag = 0
+    Packet.__init__(self, binaryString, attributesSize2, attributeMap2)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    Packet.initAttributes(self)
+    self.packetType = TC_PACKET_TYPE

@@ -34,11 +34,13 @@ class TMpacket(CCSDS.PACKET.TMpacket):
   """telemetry CnC packet"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
-    """default constructor: initialise with header size"""
-    emptyData = (binaryString == None)
+    """default constructor"""
     CCSDS.PACKET.TMpacket.__init__(self, binaryString)
-    if emptyData:
-      self.versionNumber = VERSION_NUMBER
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    CCSDS.PACKET.TMpacket.initAttributes(self)
+    self.versionNumber = VERSION_NUMBER
   # ---------------------------------------------------------------------------
   def getCNCmessage(self):
     """extracts a string"""
@@ -53,11 +55,13 @@ class TCpacket(CCSDS.PACKET.TCpacket):
   """telecommand CnC packet"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
-    """default constructor: initialise with header size"""
-    emptyData = (binaryString == None)
+    """default constructor"""
     CCSDS.PACKET.TCpacket.__init__(self, binaryString)
-    if emptyData:
-      self.versionNumber = VERSION_NUMBER
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    CCSDS.PACKET.TCpacket.initAttributes(self)
+    self.versionNumber = VERSION_NUMBER
   # ---------------------------------------------------------------------------
   def getCNCmessage(self):
     """extracts a string"""

@@ -83,43 +83,33 @@ class TMframe(CCSDS.DU.DataUnit):
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None, enableSecondaryHeader=False):
     # default constructor: initialise with primary header size
-    emptyData = (binaryString == None)
-    if emptyData:
-      if enableSecondaryHeader:
-        binaryString = "\0" * (TM_FRAME_PRIMARY_HEADER_BYTE_SIZE +
-                               TM_FRAME_SECONDARY_HEADER_BYTE_SIZE)
-        BinaryUnit.__init__(self,
-                            binaryString,
-                            TM_FRAME_PRIMARY_HEADER_BYTE_SIZE,
-                            TM_FRAME_PRIMARY_HEADER_ATTRIBUTES,
-                            TM_FRAME_SECONDARY_HEADER_ATTRIBUTES)
-        self.secondaryHeaderFlag = 1
-      else:
-        binaryString = "\0" * TM_FRAME_PRIMARY_HEADER_BYTE_SIZE
-        BinaryUnit.__init__(self,
-                            binaryString,
-                            TM_FRAME_PRIMARY_HEADER_BYTE_SIZE,
-                            TM_FRAME_PRIMARY_HEADER_ATTRIBUTES)
-        self.secondaryHeaderFlag = 0
+    if enableSecondaryHeader:
+      CCSDS.DU.DataUnit.__init__(self,
+                                 binaryString,
+                                 TM_FRAME_PRIMARY_HEADER_BYTE_SIZE,
+                                 TM_FRAME_PRIMARY_HEADER_ATTRIBUTES,
+                                 TM_FRAME_SECONDARY_HEADER_BYTE_SIZE,
+                                 TM_FRAME_SECONDARY_HEADER_ATTRIBUTES)
     else:
-      BinaryUnit.__init__(self,
-                          binaryString,
-                          TM_FRAME_PRIMARY_HEADER_BYTE_SIZE,
-                          TM_FRAME_PRIMARY_HEADER_ATTRIBUTES)
-      # enable also the attributes of the secondary header
-      # if the corresponding flag is set
-      if self.secondaryHeaderFlag:
-        object.__setattr__(self, "attributeMap2", TM_FRAME_SECONDARY_HEADER_ATTRIBUTES)
+      CCSDS.DU.DataUnit.__init__(self,
+                                 binaryString,
+                                 TM_FRAME_PRIMARY_HEADER_BYTE_SIZE,
+                                 TM_FRAME_PRIMARY_HEADER_ATTRIBUTES)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    CCSDS.DU.DataUnit.initAttributes(self)
+    if object.__getattr__(self, "attributeMap2") == None:
+      self.secondaryHeaderFlag = 0
+    else:
+      self.secondaryHeaderFlag = 1
 
 # =============================================================================
 class CLCW(BinaryUnit):
   """Command link control word"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
-    # default constructor: initialise with CLCW size
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * CLCW_BYTE_SIZE
+    """default constructor"""
     BinaryUnit.__init__(self,
                         binaryString,
                         CLCW_BYTE_SIZE,
@@ -130,14 +120,15 @@ class TCframe(CCSDS.DU.DataUnit):
   """telecommand transfer frame"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
-    """default constructor: initialise with header size"""
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * TC_FRAME_HEADER_BYTE_SIZE
-    BinaryUnit.__init__(self,
-                        binaryString,
-                        TC_FRAME_HEADER_BYTE_SIZE,
-                        TC_FRAME_HEADER_ATTRIBUTES)
+    """default constructor"""
+    CCSDS.DU.DataUnit.__init__(self,
+                               binaryString,
+                               TC_FRAME_HEADER_BYTE_SIZE,
+                               TC_FRAME_HEADER_ATTRIBUTES)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    CCSDS.DU.DataUnit.initAttributes(self)
     self.clipToFrameLength()
   # ---------------------------------------------------------------------------
   def clipToFrameLength(self):

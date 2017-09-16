@@ -14,7 +14,8 @@
 # Test Data for Unit Tests                                                    *
 #******************************************************************************
 import array
-import CCSDS.PACKET, CCSDS.SEGMENT
+from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME
+import CCSDS.PACKET, CCSDS.SEGMENT, CCSDS.TIME
 
 #############
 # constants #
@@ -32,6 +33,10 @@ CUC_TIME3_STR = "1980.005.23.59.45.003906"
 CUC_TIME4_STR = "1980.005.23.59.45.999969"
 CUC_TIME5_STR = "1980.005.23.59.45.999985"
 CUC_TIME6_STR = "2011.108.16.20.09.000000"
+CUC_TIME_DU = [0x00, 0x00, 0x00, 0x00, 0x00, 0x01]
+CUC2_TIME_DU_BYTE_SIZE = 6
+CUC2_TIME_DU_ATTRIBUTES = {
+  "time": (0, CCSDS.TIME.TIME_FORMAT_CUC2, TIME)}
 TM_PACKET_01 = [
   0x08, 0x44, 0xC0, 0x00, 0x00, 0x0F, 0x10, 0x01,
   0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,

@@ -19,7 +19,7 @@
 #       used. This is only relevant when the p-field is transmitted.          *
 #******************************************************************************
 import time
-from UTIL.DU import BITS, BYTES, UNSIGNED, BinaryUnit
+from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME, BinaryUnit
 import UTIL.TIME
 
 #############

@@ -47,8 +47,11 @@ ARRAY_TYPE = type(array.array("B"))
 class BinaryUnit(object):
   """immutable binary data unit"""
   # ---------------------------------------------------------------------------
-  def __init__(self, binaryString="", attributesSize1=None, attributeMap1=None, attributeMap2=None):
+  def __init__(self, binaryString=None, attributesSize1=0, attributeMap1=None, attributesSize2=0, attributeMap2=None):
     """initialise the date structure with binaryString and attribute maps"""
+    emptyData = (binaryString == None)
+    if emptyData:
+      binaryString = "\0" * (attributesSize1 + attributesSize2)
     # special notation  to allow oberloading of __getattr__ and __setattr__
     if type(binaryString) == ARRAY_TYPE:
       object.__setattr__(self, "buffer", binaryString)
@@ -58,6 +61,12 @@ class BinaryUnit(object):
     object.__setattr__(self, "attributesSize1", attributesSize1)
     object.__setattr__(self, "attributeMap1", attributeMap1)
     object.__setattr__(self, "attributeMap2", attributeMap2)
+    if emptyData:
+      self.initAttributes()
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, can be overloaded in derived class"""
+    pass
   # ---------------------------------------------------------------------------
   def getBufferString(self):
     """returns the used elements of the buffer as binary string"""

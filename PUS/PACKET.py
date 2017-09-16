@@ -13,7 +13,7 @@
 #******************************************************************************
 # PUS Services - Packet Module                                                *
 #******************************************************************************
-from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME, BinaryUnit
+from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME
 import CCSDS.PACKET
 
 #############
@@ -48,37 +48,29 @@ class TMpacket(CCSDS.PACKET.TMpacket):
   """telemetry PUS packet (with datafield header)"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
-    """default constructor: initialise with header size"""
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * (CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE +
-                             TM_PACKET_DATAFIELD_HEADER_BYTE_SIZE)
-    BinaryUnit.__init__(self,
-                        binaryString,
-                        CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE,
-                        CCSDS.PACKET.PRIMARY_HEADER_ATTRIBUTES,
-                        TM_PACKET_DATAFIELD_HEADER_ATTRIBUTES)
-    if emptyData:
-      self.setPacketLength()
-      self.packetType = CCSDS.PACKET.TM_PACKET_TYPE
-      self.dataFieldHeaderFlag = 1
+    """default constructor: initialise datafield header"""
+    CCSDS.PACKET.TMpacket.__init__(self,
+                                   binaryString,
+                                   TM_PACKET_DATAFIELD_HEADER_BYTE_SIZE,
+                                   TM_PACKET_DATAFIELD_HEADER_ATTRIBUTES)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    CCSDS.PACKET.TMpacket.initAttributes(self)
+    self.dataFieldHeaderFlag = 1
 
 # =============================================================================
 class TCpacket(CCSDS.PACKET.TCpacket):
   """telecommand PUS packet (with datafield header)"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
-    """default constructor: initialise with header size"""
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * (CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE +
-                             TC_PACKET_DATAFIELD_HEADER_BYTE_SIZE)
-    BinaryUnit.__init__(self,
-                        binaryString,
-                        CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE,
-                        CCSDS.PACKET.PRIMARY_HEADER_ATTRIBUTES,
-                        TC_PACKET_DATAFIELD_HEADER_ATTRIBUTES)
-    if emptyData:
-      self.setPacketLength()
-      self.packetType = CCSDS.PACKET.TC_PACKET_TYPE
-      self.dataFieldHeaderFlag = 1
+    """default constructor: initialise datafield header"""
+    CCSDS.PACKET.TCpacket.__init__(self,
+                                   binaryString,
+                                   TC_PACKET_DATAFIELD_HEADER_BYTE_SIZE,
+                                   TC_PACKET_DATAFIELD_HEADER_ATTRIBUTES)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    CCSDS.PACKET.TCpacket.initAttributes(self)
+    self.dataFieldHeaderFlag = 1

@@ -170,20 +170,22 @@ TM_SCOE_STRUCTURE_TYPE = 3
 class PDU(BinaryUnit):
   """Generic EDEN protocol data unit"""
   # ---------------------------------------------------------------------------
-  def __init__(self, binaryString=None):
+  def __init__(self, binaryString=None, attributesSize2=0, attributeMap2=None):
     """default constructor: initialise with header size"""
-    # note: correct packetSize is not forced!
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * PDU_HEADER_BYTE_SIZE
     BinaryUnit.__init__(self,
                         binaryString,
                         PDU_HEADER_BYTE_SIZE,
-                        PDU_HEADER_ATTRIBUTES)
-    if emptyData:
-      self.pduType = PDU_TYPE_NULL
-      self.subType = SUB_TYPE_NULL
-      self.field1 = FIELD1_NULL
+                        PDU_HEADER_ATTRIBUTES,
+                        attributesSize2,
+                        attributeMap2)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    BinaryUnit.initAttributes(self)
+    self.pduType = PDU_TYPE_NULL
+    self.subType = SUB_TYPE_NULL
+    self.field1 = FIELD1_NULL
+    self.setDataFieldLength()
   # ---------------------------------------------------------------------------
   def getDataField(self):
     """returns the dataField"""
@@ -205,6 +207,13 @@ class PDU(BinaryUnit):
 class CCSDSpdu(PDU):
   """Superclass for different CCSDS PDUs"""
   # ---------------------------------------------------------------------------
+  def __init__(self, binaryString=None, attributesSize2=0, attributeMap2=None):
+    """default constructor"""
+    PDU.__init__(self,
+                 binaryString,
+                 attributesSize2,
+                 attributeMap2)
+  # ---------------------------------------------------------------------------
   def getCCSDSpacket(self):
     """returns the CCSDS packet from data field"""
     # the dataFieldSize must contain the correct size
@@ -223,28 +232,25 @@ class TCspace(CCSDSpdu):
   """(TC,SPACE) PDU"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
-    """default constructor: initialise with header size"""
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * (PDU_HEADER_BYTE_SIZE +
-                             TC_SPACE_SEC_HEADER_BYTE_SIZE)
-    BinaryUnit.__init__(self,
-                        binaryString,
-                        PDU_HEADER_BYTE_SIZE,
-                        PDU_HEADER_ATTRIBUTES,
-                        TC_SPACE_SEC_HEADER_ATTRIBUTES)
-    if emptyData:
-      self.setDataFieldLength()
-      self.pduType = PDU_TYPE_TC
-      self.subType = SUB_TYPE_SPACE
-      self.field1 = FIELD1_NULL
-      self.structureType = TC_SPACE_STRUCTURE_TYPE
-      self.telecommandType = TC_TYPE_PACKET
-      self.telecommandOrigin = TC_ORIGIN_CCS
-      self.telecommandProtMode = TC_PROT_MODE
-      self.ancillaryInformation = TC_ANCILLARY_INFORMATION
-      self.telecommandEchoStatus = TC_ECHO_STATUS_OK
-      self.sequenceFlags = TC_SEQUENCE_FLAGS_UN_SEGMENTED
+    """default constructor: initialise (TC,SPACE) secondary header"""
+    CCSDSpdu.__init__(self,
+                      binaryString,
+                      TC_SPACE_SEC_HEADER_BYTE_SIZE,
+                      TC_SPACE_SEC_HEADER_ATTRIBUTES)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    CCSDSpdu.initAttributes(self)
+    self.pduType = PDU_TYPE_TC
+    self.subType = SUB_TYPE_SPACE
+    self.field1 = FIELD1_NULL
+    self.structureType = TC_SPACE_STRUCTURE_TYPE
+    self.telecommandType = TC_TYPE_PACKET
+    self.telecommandOrigin = TC_ORIGIN_CCS
+    self.telecommandProtMode = TC_PROT_MODE
+    self.ancillaryInformation = TC_ANCILLARY_INFORMATION
+    self.telecommandEchoStatus = TC_ECHO_STATUS_OK
+    self.sequenceFlags = TC_SEQUENCE_FLAGS_UN_SEGMENTED
 
 # =============================================================================
 class TC_Espace(TCspace):
@@ -252,8 +258,11 @@ class TC_Espace(TCspace):
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
     """default constructor: delegates to TCspace"""
-    emptyData = (binaryString == None)
     TCspace.__init__(self, binaryString)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    TCspace.initAttributes(self)
     self.pduType = PDU_TYPE_TC_E
 
 # =============================================================================
@@ -261,24 +270,22 @@ class TCscoe(CCSDSpdu):
   """(TC,SCOE) PDU"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
-    """default constructor: initialise with header size"""
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * (PDU_HEADER_BYTE_SIZE +
-                             TC_SCOE_SEC_HEADER_BYTE_SIZE)
-    BinaryUnit.__init__(self,
-                        binaryString,
-                        PDU_HEADER_BYTE_SIZE,
-                        PDU_HEADER_ATTRIBUTES,
-                        TC_SCOE_SEC_HEADER_ATTRIBUTES)
-    if emptyData:
-      self.setDataFieldLength()
-      self.pduType = PDU_TYPE_TC
-      self.subType = SUB_TYPE_SCOE
-      self.field1 = FIELD1_NULL
-      self.structureType = TC_SCOE_STRUCTURE_TYPE
-      self.telecommandOrigin = TC_ORIGIN_CCS
-      self.telecommandEchoStatus = TC_ECHO_STATUS_OK
+    """default constructor: initialise (TC,SCOE) secondary header"""
+    CCSDSpdu.__init__(self,
+                      binaryString,
+                      TC_SCOE_SEC_HEADER_BYTE_SIZE,
+                      TC_SCOE_SEC_HEADER_ATTRIBUTES)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    CCSDSpdu.initAttributes(self)
+    self.setDataFieldLength()
+    self.pduType = PDU_TYPE_TC
+    self.subType = SUB_TYPE_SCOE
+    self.field1 = FIELD1_NULL
+    self.structureType = TC_SCOE_STRUCTURE_TYPE
+    self.telecommandOrigin = TC_ORIGIN_CCS
+    self.telecommandEchoStatus = TC_ECHO_STATUS_OK
 
 # =============================================================================
 class TC_Escoe(TCscoe):
@@ -286,8 +293,11 @@ class TC_Escoe(TCscoe):
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
     """default constructor: delegates to TCscoe"""
-    emptyData = (binaryString == None)
     TCscoe.__init__(self, binaryString)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    TCscoe.initAttributes(self)
     self.pduType = PDU_TYPE_TC_E
 
 # =============================================================================
@@ -295,41 +305,35 @@ class TMspace(CCSDSpdu):
   """(TM,SPACE) PDU"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
-    """default constructor: initialise with header size"""
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * (PDU_HEADER_BYTE_SIZE +
-                             TM_SPACE_SEC_HEADER_BYTE_SIZE)
-    BinaryUnit.__init__(self,
-                        binaryString,
-                        PDU_HEADER_BYTE_SIZE,
-                        PDU_HEADER_ATTRIBUTES,
-                        TM_SPACE_SEC_HEADER_ATTRIBUTES)
-    if emptyData:
-      self.setDataFieldLength()
-      self.pduType = PDU_TYPE_TM
-      self.subType = SUB_TYPE_SPACE
-      self.field1 = FIELD1_NULL
-      self.structureType = TM_SPACE_STRUCTURE_TYPE
+    """default constructor: initialise (TM,SPACE) secondary header"""
+    CCSDSpdu.__init__(self,
+                      binaryString,
+                      TM_SPACE_SEC_HEADER_BYTE_SIZE,
+                      TM_SPACE_SEC_HEADER_ATTRIBUTES)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    CCSDSpdu.initAttributes(self)
+    self.pduType = PDU_TYPE_TM
+    self.subType = SUB_TYPE_SPACE
+    self.field1 = FIELD1_NULL
+    self.structureType = TM_SPACE_STRUCTURE_TYPE
 
 # =============================================================================
 class TMscoe(CCSDSpdu):
   """(TM,SCOE) PDU"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
-    """default constructor: initialise with header size"""
-    emptyData = (binaryString == None)
-    if emptyData:
-      binaryString = "\0" * (PDU_HEADER_BYTE_SIZE +
-                             TM_SCOE_SEC_HEADER_BYTE_SIZE)
-    BinaryUnit.__init__(self,
-                        binaryString,
-                        PDU_HEADER_BYTE_SIZE,
-                        PDU_HEADER_ATTRIBUTES,
-                        TM_SCOE_SEC_HEADER_ATTRIBUTES)
-    if emptyData:
-      self.setDataFieldLength()
-      self.pduType = PDU_TYPE_TM
-      self.subType = SUB_TYPE_SCOE
-      self.field1 = FIELD1_NULL
-      self.structureType = TM_SCOE_STRUCTURE_TYPE
+    """default constructor: initialise (TM,SCOE) secondary header"""
+    CCSDSpdu.__init__(self,
+                      binaryString,
+                      TM_SCOE_SEC_HEADER_BYTE_SIZE,
+                      TM_SCOE_SEC_HEADER_ATTRIBUTES)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    CCSDSpdu.initAttributes(self)
+    self.pduType = PDU_TYPE_TM
+    self.subType = SUB_TYPE_SCOE
+    self.field1 = FIELD1_NULL
+    self.structureType = TM_SCOE_STRUCTURE_TYPE
