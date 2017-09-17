@@ -19,7 +19,10 @@ import UTIL.SYS
 #############
 # constants #
 #############
-#TBD
+ENABLE_ACK = 0
+ENABLE_NAK = 1
+DISABLE_ACK = 2
+ACK_STRS = ["ENABLE_ACK", "ENABLE_NAK", "DISABLE_ACK"]
 
 ###########
 # classes #
@@ -35,6 +38,8 @@ class Configuration(object):
     self.ccsPort = UTIL.SYS.s_configuration.CCS_SERVER_PORT
     self.connected2 = False
     self.ccsPort2 = UTIL.SYS.s_configuration.CCS_SERVER_PORT2
+    self.egseAck1 = ENABLE_ACK
+    self.egseAck2 = ENABLE_ACK
   # ---------------------------------------------------------------------------
   def dump(self):
     """Dumps the status of the configuration attributes"""
@@ -43,6 +48,8 @@ class Configuration(object):
     LOG("CCS interface port = " + str(self.ccsPort), "EGSE")
     LOG("CCS connected 2 = " + str(self.connected2), "EGSE")
     LOG("CCS interface port 2 = " + str(self.ccsPort2), "EGSE")
+    LOG("TC Ack 1 = " + ACK_STRS[self.egseAck1], "EGSE")
+    LOG("TC Ack 2 = " + ACK_STRS[self.egseAck2], "EGSE")
 
 ##############
 # interfaces #

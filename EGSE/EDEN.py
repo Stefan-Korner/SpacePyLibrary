@@ -16,7 +16,7 @@
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import EGSE.EDENPDU
+import EGSE.EDENPDU, EGSE.IF
 import UTIL.TASK, UTIL.TCP, UTIL.TIME
 
 ###########
@@ -42,12 +42,56 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
     # this operation does not verify the contents of the PDU
     self.dataSocket.send(pdu.getBufferString())
   # ---------------------------------------------------------------------------
+  def sendTc_eSpace(self, tcSpacePDU, telecommandEchoStatus):
+    """Send a (TC_E,SPACE) PDU to the CCS"""
+    if EGSE.IF.s_configuration.egseAck1 == EGSE.IF.ENABLE_ACK:
+      # normal processing
+      if telecommandEchoStatus == 0:
+        LOG_INFO("EDEN.Server.sendTc_eSpace(OK)")
+      else:
+        LOG_ERROR("EDEN.Server.sendTc_eSpace(ERROR)")
+    elif EGSE.IF.s_configuration.egseAck1 == EGSE.IF.ENABLE_NAK:
+      LOG_WARNING("force ERROR for (TC_E,SPACE)")
+      telecommandEchoStatus = 1
+    else:
+      LOG_WARNING("suppress (TC_E,SPACE)")
+      return
+    tc_eSpacePDU = EGSE.EDENPDU.TC_Espace(tcSpacePDU.buffer)
+    tc_eSpacePDU.telecommandEchoStatus = telecommandEchoStatus
+    self.sendPDU(tc_eSpacePDU)
+  # ---------------------------------------------------------------------------
+  def sendTc_eScoe(self, tcSpacePDU, telecommandEchoStatus):
+    """Send a (TC_E,SCOE) PDU to the CCS"""
+    if EGSE.IF.s_configuration.egseAck1 == EGSE.IF.ENABLE_ACK:
+      # normal processing
+      if telecommandEchoStatus == 0:
+        LOG_INFO("EDEN.Server.sendTc_eScoe(OK)")
+      else:
+        LOG_ERROR("EDEN.Server.sendTc_eScoe(ERROR)")
+    elif EGSE.IF.s_configuration.egseAck1 == EGSE.IF.ENABLE_NAK:
+      LOG_WARNING("force ERROR for (TC_E,SCOE)")
+      telecommandEchoStatus = 1
+    else:
+      LOG_WARNING("suppress (TC_E,SCOE)")
+      return
+    tc_eScoePDU = EGSE.EDENPDU.TC_Escoe(tcSpacePDU.buffer)
+    tc_eScoePDU.telecommandEchoStatus = telecommandEchoStatus
+    self.sendPDU(tc_eScoePDU)
+  # ---------------------------------------------------------------------------
   def sendTc_aSpace(self, status, tcIdentificationWord):
     """Send a (TC_A,SPACE) PDU to the CCS"""
-    if status == 0:
-      LOG_INFO("EDEN.Server.sendTc_aSpace(OK)")
+    if EGSE.IF.s_configuration.egseAck2 == EGSE.IF.ENABLE_ACK:
+      # normal processing
+      if status == 0:
+        LOG_INFO("EDEN.Server.sendTc_aSpace(OK)")
+      else:
+        LOG_ERROR("EDEN.Server.sendTc_aSpace(ERROR)")
+    elif EGSE.IF.s_configuration.egseAck2 == EGSE.IF.ENABLE_NAK:
+      LOG_WARNING("force ERROR for (TC_A,SPACE)")
+      status = 1
     else:
-      LOG_ERROR("EDEN.Server.sendTc_aSpace(ERROR)")
+      LOG_WARNING("suppress (TC_A,SPACE)")
+      return
     pdu = EGSE.EDENPDU.PDU()
     pdu.pduType = EGSE.EDENPDU.PDU_TYPE_TC_A
     pdu.subType = EGSE.EDENPDU.SUB_TYPE_SPACE
@@ -57,36 +101,24 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
   # ---------------------------------------------------------------------------
   def sendTc_aScoe(self, status, tcIdentificationWord):
     """Send a (TC_A,SCOE) PDU to the CCS"""
-    if status == 0:
-      LOG_INFO("EDEN.Server.sendTc_aScoe(OK)")
+    if EGSE.IF.s_configuration.egseAck2 == EGSE.IF.ENABLE_ACK:
+      # normal processing
+      if status == 0:
+        LOG_INFO("EDEN.Server.sendTc_aScoe(OK)")
+      else:
+        LOG_ERROR("EDEN.Server.sendTc_aScoe(ERROR)")
+    elif EGSE.IF.s_configuration.egseAck2 == EGSE.IF.ENABLE_NAK:
+      LOG_WARNING("force ERROR for (TC_A,SCOE)")
+      status = 1
     else:
-      LOG_ERROR("EDEN.Server.sendTc_aScoe(ERROR)")
+      LOG_WARNING("suppress (TC_A,SCOE)")
+      return
     pdu = EGSE.EDENPDU.PDU()
     pdu.pduType = EGSE.EDENPDU.PDU_TYPE_TC_A
     pdu.subType = EGSE.EDENPDU.SUB_TYPE_SCOE
     pdu.field2 = status
     pdu.field3 = tcIdentificationWord
     self.sendPDU(pdu)
-  # ---------------------------------------------------------------------------
-  def sendTc_eSpace(self, tcSpacePDU, telecommandEchoStatus):
-    """Send a (TC_E,SPACE) PDU to the CCS"""
-    if telecommandEchoStatus == 0:
-      LOG_INFO("EDEN.Server.sendTc_eSpace(OK)")
-    else:
-      LOG_ERROR("EDEN.Server.sendTc_eSpace(ERROR)")
-    tc_eSpacePDU = EGSE.EDENPDU.TC_Espace(tcSpacePDU.buffer)
-    tc_eSpacePDU.telecommandEchoStatus = telecommandEchoStatus
-    self.sendPDU(tc_eSpacePDU)
-  # ---------------------------------------------------------------------------
-  def sendTc_eScoe(self, tcSpacePDU, telecommandEchoStatus):
-    """Send a (TC_E,SCOE) PDU to the CCS"""
-    if telecommandEchoStatus == 0:
-      LOG_INFO("EDEN.Server.sendTc_eScoe(OK)")
-    else:
-      LOG_ERROR("EDEN.Server.sendTc_eScoe(ERROR)")
-    tc_eScoePDU = EGSE.EDENPDU.TC_Escoe(tcSpacePDU.buffer)
-    tc_eScoePDU.telecommandEchoStatus = telecommandEchoStatus
-    self.sendPDU(tc_eScoePDU)
   # ---------------------------------------------------------------------------
   def sendTmSpace(self, tmPacket):
     """Send a (TM,SPACE) PDU to the CCS"""
@@ -153,24 +185,24 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
           tcSpacePDU = EGSE.EDENPDU.TCspace(pdu.buffer)
           if self.notifyTcSpace(tcSpacePDU.getCCSDSpacket()):
             # forwarding OK
-            self.sendTc_aSpace(0, tcSpacePDU.tcIdentificationWord)
             self.sendTc_eSpace(tcSpacePDU, 0)
+            self.sendTc_aSpace(0, tcSpacePDU.tcIdentificationWord)
           else:
             # forwarding failed
-            self.sendTc_aSpace(1, tcSpacePDU.tcIdentificationWord)
             self.sendTc_eSpace(tcSpacePDU, 1)
+            self.sendTc_aSpace(1, tcSpacePDU.tcIdentificationWord)
         elif pdu.subType == EGSE.EDENPDU.SUB_TYPE_SCOE:
           # (TC,SCOE)
           LOG_INFO("EDEN.Server.receiveCallback(TC,SCOE)")
           tcScoePDU = EGSE.EDENPDU.TCscoe(pdu.buffer)
           if self.notifyTcScoe(tcScoePDU.getCCSDSpacket()):
             # forwarding OK
-            self.sendTc_aScoe(0, tcScoePDU.tcIdentificationWord)
             self.sendTc_eScoe(tcScoePDU, 0)
+            self.sendTc_aScoe(0, tcScoePDU.tcIdentificationWord)
           else:
             # forwarding failed
-            self.sendTc_aScoe(1, tcScoePDU.tcIdentificationWord)
             self.sendTc_eScoe(tcScoePDU, 1)
+            self.sendTc_aScoe(1, tcScoePDU.tcIdentificationWord)
         else:
           LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType))
           LOG_INFO("PDU = " + str(pdu))

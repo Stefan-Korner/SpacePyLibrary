@@ -93,6 +93,18 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       retStatus = self.quitCmd(argv)
     elif (cmd == "U") or (cmd == "DUMPCONFIGURATION"):
       retStatus = self.dumpConfigurationCmd(argv)
+    elif (cmd == "AA") or (cmd == "EGSEENABLEACK1"):
+      retStatus = self.egseEnableAck1Cmd(argv)
+    elif (cmd == "NA") or (cmd == "EGSEENABLENAK1"):
+      retStatus = self.egseEnableNak1Cmd(argv)
+    elif (cmd == "DA") or (cmd == "EGSEDISABLEACK1"):
+      retStatus = self.egseDisableAck1Cmd(argv)
+    elif (cmd == "AB") or (cmd == "EGSEENABLEACK2"):
+      retStatus = self.egseEnableAck2Cmd(argv)
+    elif (cmd == "NB") or (cmd == "EGSEENABLENAK2"):
+      retStatus = self.egseEnableNak2Cmd(argv)
+    elif (cmd == "DB") or (cmd == "EGSEDISABLEACK2"):
+      retStatus = self.egseDisableAck2Cmd(argv)
     elif (cmd == "P") or (cmd == "SETPACKETDATA"):
       retStatus = self.setPacketDataCmd(argv)
     elif (cmd == "S") or (cmd == "SENDPACKET"):
@@ -152,6 +164,12 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("h  | help ...............provides this information", "EGSE")
     LOG("q  | quit ...............terminates SIM application", "EGSE")
     LOG("u  | dumpConfiguration...dumps the configuration", "EGSE")
+    LOG("aa | egseEnableAck1......enables autom. sending of ACK1 for TCs", "EGSE")
+    LOG("na | egseEnableNak1......enables autom. sending of NAK1 for TCs", "EGSE")
+    LOG("da | egseDisableAck1.....disables autom. sending of ACK1 for TCs", "EGSE")
+    LOG("ab | egseEnableAck2......enables autom. sending of ACK2 for TCs", "EGSE")
+    LOG("nb | egseEnableNak2......enables autom. sending of NAK2 for TCs", "EGSE")
+    LOG("db | egseDisableAck2.....disables autom. sending of ACK2 for TCs", "EGSE")
     LOG_INFO("Available space segment commands:", "SPACE")
     LOG("", "SPACE")
     LOG("x  | exit ...............terminates client connection (only for TCP/IP clients)", "SPACE")
@@ -193,6 +211,80 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     """Decoded dumpConfiguration command"""
     self.logMethod("dumpConfigurationCmd")
     EGSE.IF.s_configuration.dump()
+    return True
+  # ---------------------------------------------------------------------------
+  def egseEnableAck1Cmd(self, argv):
+    """Decoded egseEnableAck1 command"""
+    self.logMethod("egseEnableAck1Cmd", "EGSE")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for egseEnableAck1", "EGSE")
+      return False
+    # enable the ack sending
+    EGSE.IF.s_configuration.egseAck1 = EGSE.IF.ENABLE_ACK
+    # notify the GUI
+    self.notifyGUItask("EGSE_ENABLED_ACK1")
+    return True
+  def egseEnableNak1Cmd(self, argv):
+    """Decoded egseEnableNak1 command"""
+    self.logMethod("egseEnableNak1Cmd", "EGSE")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for egseEnableNak1", "EGSE")
+      return False
+    # enable the ack sending
+    EGSE.IF.s_configuration.egseAck1 = EGSE.IF.ENABLE_NAK
+    # notify the GUI
+    self.notifyGUItask("EGSE_ENABLED_NAK1")
+    return True
+  def egseDisableAck1Cmd(self, argv):
+    """Decoded egseDisableAck1 command"""
+    self.logMethod("egseDisableAck1Cmd", "EGSE")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for egseDisableAck1", "EGSE")
+      return False
+    # enable the ack sending
+    EGSE.IF.s_configuration.egseAck1 = EGSE.IF.DISABLE_ACK
+    # notify the GUI
+    self.notifyGUItask("EGSE_DISABLED_ACK1")
+    return True
+  # ---------------------------------------------------------------------------
+  def egseEnableAck2Cmd(self, argv):
+    """Decoded egseEnableAck2 command"""
+    self.logMethod("egseEnableAck2Cmd", "EGSE")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for egseEnableAck2", "EGSE")
+      return False
+    # enable the ack sending
+    EGSE.IF.s_configuration.egseAck2 = EGSE.IF.ENABLE_ACK
+    # notify the GUI
+    self.notifyGUItask("EGSE_ENABLED_ACK2")
+    return True
+  def egseEnableNak2Cmd(self, argv):
+    """Decoded egseEnableNak2 command"""
+    self.logMethod("egseEnableNak2Cmd", "EGSE")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for egseEnableNak2", "EGSE")
+      return False
+    # enable the ack sending
+    EGSE.IF.s_configuration.egseAck2 = EGSE.IF.ENABLE_NAK
+    # notify the GUI
+    self.notifyGUItask("EGSE_ENABLED_NAK2")
+    return True
+  def egseDisableAck2Cmd(self, argv):
+    """Decoded egseDisableAck2 command"""
+    self.logMethod("egseDisableAck2Cmd", "EGSE")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for egseDisableAck2", "EGSE")
+      return False
+    # enable the ack sending
+    EGSE.IF.s_configuration.egseAck2 = EGSE.IF.DISABLE_ACK
+    # notify the GUI
+    self.notifyGUItask("EGSE_DISABLED_ACK2")
     return True
   # ---------------------------------------------------------------------------
   def setPacketDataCmd(self, argv):
