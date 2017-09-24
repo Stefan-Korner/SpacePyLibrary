@@ -1044,8 +1044,12 @@ UTIL.TCO.setOBTmissionEpochStr(UTIL.SYS.s_configuration.OBT_MISSION_EPOCH_STR)
 UTIL.TCO.setOBTleapSeconds(int(UTIL.SYS.s_configuration.OBT_LEAP_SECONDS))
 UTIL.TCO.setERTmissionEpochStr(UTIL.SYS.s_configuration.ERT_MISSION_EPOCH_STR)
 UTIL.TCO.setERTleapSeconds(int(UTIL.SYS.s_configuration.ERT_LEAP_SECONDS))
-PUS.PACKET.setTMttTimeProperties(UTIL.SYS.s_configuration.TM_TT_TIME_FORMAT,
-                                 int(UTIL.SYS.s_configuration.TM_TT_TIME_BYTE_OFFSET))
+PUS.PACKET.setTMttTimeProperties(
+  UTIL.SYS.s_configuration.TM_TT_TIME_FORMAT,
+  int(UTIL.SYS.s_configuration.TM_TT_TIME_BYTE_OFFSET))
+PUS.SERVICES.service1_setTCackParamsProperties(
+  int(UTIL.SYS.s_configuration.TC_ACK_APID_PARAM_BYTE_OFFSET),
+  int(UTIL.SYS.s_configuration.TC_ACK_SSC_PARAM_BYTE_OFFSET))
 GRND.IF.s_configuration = GRND.IF.Configuration()
 LINK.IF.s_configuration = LINK.IF.Configuration()
 SPACE.IF.s_configuration = SPACE.IF.Configuration()

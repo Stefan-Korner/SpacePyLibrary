@@ -698,8 +698,12 @@ else:
 UTIL.SYS.s_configuration.setDefaults(SYS_CONFIGURATION)
 UTIL.TCO.setOBTmissionEpochStr(UTIL.SYS.s_configuration.OBT_MISSION_EPOCH_STR)
 UTIL.TCO.setOBTleapSeconds(int(UTIL.SYS.s_configuration.OBT_LEAP_SECONDS))
-PUS.PACKET.setTMttTimeProperties(UTIL.SYS.s_configuration.TM_TT_TIME_FORMAT,
-                                 int(UTIL.SYS.s_configuration.TM_TT_TIME_BYTE_OFFSET))
+PUS.PACKET.setTMttTimeProperties(
+  UTIL.SYS.s_configuration.TM_TT_TIME_FORMAT,
+  int(UTIL.SYS.s_configuration.TM_TT_TIME_BYTE_OFFSET))
+PUS.SERVICES.service1_setTCackParamsProperties(
+  int(UTIL.SYS.s_configuration.TC_ACK_APID_PARAM_BYTE_OFFSET),
+  int(UTIL.SYS.s_configuration.TC_ACK_SSC_PARAM_BYTE_OFFSET))
 EGSE.IF.s_configuration = EGSE.IF.Configuration()
 SPACE.IF.s_configuration = SPACE.IF.Configuration()
 # initialise the request handler

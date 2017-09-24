@@ -15,7 +15,7 @@
 #******************************************************************************
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.PACKET, CCSDS.TIME
-import PUS.PACKET
+import PUS.PACKET, PUS.SERVICES
 import SCOS.ENV
 import SPACE.IF
 import UTIL.SYS, UTIL.TCO, UTIL.TIME
@@ -43,8 +43,6 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
     self.packetCache = {}
     self.sequenceCounters = {}
     self.packetDefaults = TMpacketDefaults()
-    self.tcAckAPIDparamByteOffset = int(UTIL.SYS.s_configuration.TC_ACK_APID_PARAM_BYTE_OFFSET)
-    self.tcAckSSCparamByteOffset = int(UTIL.SYS.s_configuration.TC_ACK_SSC_PARAM_BYTE_OFFSET)
     self.hasTmTT = (UTIL.SYS.s_configuration.TM_TT_TIME_BYTE_OFFSET > 0)
   # ---------------------------------------------------------------------------
   def getIdlePacket(self, packetSize):
@@ -136,16 +134,10 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
       paramName, paramValue = paramNameValue
       # special handling for PUS service 1 parameters for TC acknowledgement
       if paramName == "PUS_TYPE1_APID":
-        bytePos = self.tcAckAPIDparamByteOffset
-        byteLength = 2
-        value = int(paramValue) | 0x1800
-        packet.setUnsigned(bytePos, byteLength, value)
+        PUS.SERVICES.service1_setTCackAPID(packet, int(paramValue))
         continue
       if paramName == "PUS_TYPE1_SSC":
-        bytePos = self.tcAckSSCparamByteOffset
-        byteLength = 2
-        value = int(paramValue) | 0xC000
-        packet.setUnsigned(bytePos, byteLength, value)
+        PUS.SERVICES.service1_setTCackSSC(packet, int(paramValue))
         continue
       # search the definition of the parameter (TMparamExtraction)
       paramExtraction = tmPktDef.getParamExtraction(paramName)

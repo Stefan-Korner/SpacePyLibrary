@@ -28,6 +28,14 @@ TC_ACK_EXEPRO_SUCC = 5
 TC_ACK_EXEPRO_FAIL = 6
 TC_ACK_EXECUT_SUCC = 7
 TC_ACK_EXECUT_FAIL = 8
+# The position (offset) of the PUS service 1 attributes are global properties
+# that can be changed via service1_setTCackParamsProperties()
+DEFAULT_TC_ACK_APID_PARAM_BYTE_OFFSET = 10
+DEFAULT_TC_ACK_SSC_PARAM_BYTE_OFFSET = 12
+TC_ACK_APID_PARAM_BYTE_LENGTH = 2
+TC_ACK_SSC_PARAM_BYTE_LENGTH = 2
+TC_ACK_APID_PARAM_MASK = 0x1800
+TC_ACK_SSC_PARAM_MASK = 0xC000
 
 # -----------------------------------------------------------------------------
 # PUS service 8: Function Management service
@@ -40,3 +48,35 @@ TC_FKT_PERFORM_FUNCTION = 1
 # TYPE / SUBTYPES
 TC_OBQ_TYPE = 11
 TC_OBQ_UPLINK_SUBTYPES = [4, 128]   # 128 is TET specific
+
+####################
+# global variables #
+####################
+# The position (offset) of the PUS service 1 attributes are global properties
+# that can be changed via service1_setTCackParamsProperties()
+s_tcAckAPIDparamByteOffset = DEFAULT_TC_ACK_APID_PARAM_BYTE_OFFSET
+s_tcAckSSCparamByteOffset = DEFAULT_TC_ACK_SSC_PARAM_BYTE_OFFSET
+
+#############
+# functions #
+#############
+# -----------------------------------------------------------------------------
+def service1_setTCackParamsProperties(tcAckAPIDparamByteOffset,
+                                      tcAckSSCparamByteOffset):
+  """changes the global positions of the PUS service 1 attributes"""
+  s_tcAckAPIDparamByteOffset = tcAckAPIDparamByteOffset
+  s_tcAckSSCparamByteOffset = tcAckSSCparamByteOffset
+# -----------------------------------------------------------------------------
+def service1_setTCackAPID(pusTMpacketDU, apid):
+  """sets the APID of the related TC packet in the datafield attribute"""
+  # filters the relevant bits"""
+  packet.setUnsigned(s_tcAckAPIDparamByteOffset,
+                     TC_ACK_APID_PARAM_BYTE_LENGTH,
+                     apid | TC_ACK_APID_PARAM_MASK)
+# -----------------------------------------------------------------------------
+def service1_setTCackSSC(pusTMpacketDU, ssc):
+  """sets the SSC of the related TC packet in the datafield attribute"""
+  # filters the relevant bits"""
+  packet.setUnsigned(s_tcAckSSCparamByteOffset,
+                     TC_ACK_SSC_PARAM_BYTE_LENGTH,
+                     ssc | TC_ACK_SSC_PARAM_BYTE_LENGTH)
