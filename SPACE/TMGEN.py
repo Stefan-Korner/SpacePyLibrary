@@ -29,9 +29,9 @@ class TMpacketDefaults(object):
   # ---------------------------------------------------------------------------
   def __init__(self):
     """default constructor"""
-    self.versionNumber = 0
-    self.segmentationFlags = CCSDS.PACKET.UNSEGMENTED
-    self.pusVersionNumber = 1
+    # PUS packets already have these defaults
+    self.ccsdsPacketVersionNumber = 0
+    self.ccsdsPacketSegmentationFlags = CCSDS.PACKET.UNSEGMENTED
     self.idlePacketAPID = SCOS.ENV.TPKT_PKT_IDLE_APID
 
 # =============================================================================
@@ -45,8 +45,7 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
     self.packetDefaults = TMpacketDefaults()
     self.tcAckAPIDparamByteOffset = int(UTIL.SYS.s_configuration.TC_ACK_APID_PARAM_BYTE_OFFSET)
     self.tcAckSSCparamByteOffset = int(UTIL.SYS.s_configuration.TC_ACK_SSC_PARAM_BYTE_OFFSET)
-    self.tmTTtimeFormat = CCSDS.TIME.timeFormat(UTIL.SYS.s_configuration.TM_TT_TIME_FORMAT)
-    self.tmTTtimeByteOffset = int(UTIL.SYS.s_configuration.TM_TT_TIME_BYTE_OFFSET)
+    self.hasTmTT = (UTIL.SYS.s_configuration.TM_TT_TIME_BYTE_OFFSET > 0)
   # ---------------------------------------------------------------------------
   def getIdlePacket(self, packetSize):
     """
@@ -164,11 +163,11 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
           byteLength = bitLength / 8
           packet.setString(bytePos, byteLength, paramValue)
     # re-calculate the time stamp
-    if tmPktDef.pktHasDFhdr and self.tmTTtimeByteOffset > 0:
+    if tmPktDef.pktHasDFhdr and self.hasTmTT:
       if obtUTC == None:
         obtUTC = UTIL.TIME.getActualTime()
       obtTime = UTIL.TCO.correlateToOBTmissionEpoch(obtUTC)
-      packet.setTime(self.tmTTtimeByteOffset, self.tmTTtimeFormat, obtTime)
+      packet.setTimeTag(obtTime)
     # re-calculate the sequence counter (maintained per APID)
     if applicationProcessId in self.sequenceCounters:
       sequenceCounter = (self.sequenceCounters[applicationProcessId] + 1) % 16384
@@ -195,8 +194,9 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
       binaryString = "\0" * binarySize
       packet = CCSDS.PACKET.TMpacket(binaryString)
       packet.setPacketLength()
-      packet.packetType = CCSDS.PACKET.TM_PACKET_TYPE
+      packet.versionNumber = self.packetDefaults.ccsdsPacketVersionNumber
       packet.dataFieldHeaderFlag = 0
+      packet.segmentationFlags = self.packetDefaults.ccsdsPacketSegmentationFlags
     else:
       # PUS packet
       minimumSize = CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE + \
@@ -206,13 +206,9 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
       binaryString = "\0" * binarySize
       packet = PUS.PACKET.TMpacket(binaryString)
       packet.setPacketLength()
-      packet.packetType = CCSDS.PACKET.TM_PACKET_TYPE
       packet.dataFieldHeaderFlag = 1
-      packet.pusVersionNumber = self.packetDefaults.pusVersionNumber
       packet.serviceType = serviceType
       packet.serviceSubType = serviceSubType
-    packet.versionNumber = self.packetDefaults.versionNumber
-    packet.segmentationFlags = self.packetDefaults.segmentationFlags
     packet.applicationProcessId = applicationProcessId
     return packet
 

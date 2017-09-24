@@ -18,7 +18,7 @@ import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import GRND.IF, GRND.NCTRSDU
 import LINK.IF, LINK.TMGEN, LINK.TMTC
-import PUS.SERVICES
+import PUS.PACKET, PUS.SERVICES
 import SCOS.ENV
 import SIM.TMserver, SIM.TCserver, SIM.AdminServer, SIM.GRNDgui, SIM.LINKgui
 import SPACE.DEF, SPACE.IF, SPACE.OBC, SPACE.OBQ, SPACE.TMGEN, SPACE.TMRPLY
@@ -1044,6 +1044,8 @@ UTIL.TCO.setOBTmissionEpochStr(UTIL.SYS.s_configuration.OBT_MISSION_EPOCH_STR)
 UTIL.TCO.setOBTleapSeconds(int(UTIL.SYS.s_configuration.OBT_LEAP_SECONDS))
 UTIL.TCO.setERTmissionEpochStr(UTIL.SYS.s_configuration.ERT_MISSION_EPOCH_STR)
 UTIL.TCO.setERTleapSeconds(int(UTIL.SYS.s_configuration.ERT_LEAP_SECONDS))
+PUS.PACKET.setTMttTimeProperties(UTIL.SYS.s_configuration.TM_TT_TIME_FORMAT,
+                                 int(UTIL.SYS.s_configuration.TM_TT_TIME_BYTE_OFFSET))
 GRND.IF.s_configuration = GRND.IF.Configuration()
 LINK.IF.s_configuration = LINK.IF.Configuration()
 SPACE.IF.s_configuration = SPACE.IF.Configuration()

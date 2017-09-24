@@ -14,11 +14,28 @@
 # PUS Services - Packet Module                                                *
 #******************************************************************************
 from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME
-import CCSDS.PACKET
+import CCSDS.PACKET, CCSDS.TIME
 
 #############
 # constants #
 #############
+VERSION_NUMBER = 0
+PUS_VERSION_NUMBER = 1
+# default structure of the TM packet datafield header:
+#
+# abs.pos | rel.pos. | unit attribute
+# --------+----------+-----------------------------------------
+#    6    |    0     | pusSpare1 + pusVersionNumber + pusSpare2
+#    7    |    1     | serviceType
+#    8    |    2     | serviceSubType
+#    9    |    3     | spare
+#  10-13  |   4-7    | timeTag - CUC coarse time
+#  14-17  |   8-11   | timeTag - CUC fine time
+#
+# The position and format of the TM time tag are global properties
+# that can be changed via setTMttTimeProperties()
+DEFAULT_TM_TT_TIME_BYTE_OFFSET = 10
+DEFAULT_TM_TT_TIME_FORMAT = CCSDS.TIME.TIME_FORMAT_CUC4
 # =============================================================================
 # the attribute dictionaries contain for each data unit attribute:
 # - key: attribute name
@@ -40,6 +57,14 @@ TC_PACKET_DATAFIELD_HEADER_ATTRIBUTES = {
   "serviceType":          ( 1,  1, UNSIGNED),
   "serviceSubType":       ( 2,  1, UNSIGNED)}
 
+####################
+# global variables #
+####################
+# The position and format of the TM time tag are global properties
+# that can be changed via setTMttTimeProperties()
+s_tmTTtimeByteOffset = DEFAULT_TM_TT_TIME_BYTE_OFFSET
+s_tmTTtimeFormat = DEFAULT_TM_TT_TIME_FORMAT
+
 ###########
 # classes #
 ###########
@@ -57,7 +82,18 @@ class TMpacket(CCSDS.PACKET.TMpacket):
   def initAttributes(self):
     """hook for initializing attributes, delegates to parent class"""
     CCSDS.PACKET.TMpacket.initAttributes(self)
+    self.versionNumber = VERSION_NUMBER
     self.dataFieldHeaderFlag = 1
+    self.segmentationFlags = CCSDS.PACKET.UNSEGMENTED
+    self.pusVersionNumber = PUS_VERSION_NUMBER
+  # ---------------------------------------------------------------------------
+  def getTimeTag(self):
+    """extracts the time tag (onboard time, not correlated)"""
+    return self.getTime(s_tmTTtimeByteOffset, s_tmTTtimeFormat)
+  # ---------------------------------------------------------------------------
+  def setTimeTag(self, timeTag):
+    """sets the time tag (onboard time, not correlated)"""
+    self.setTime(s_tmTTtimeByteOffset, s_tmTTtimeFormat, timeTag)
 
 # =============================================================================
 class TCpacket(CCSDS.PACKET.TCpacket):
@@ -73,4 +109,16 @@ class TCpacket(CCSDS.PACKET.TCpacket):
   def initAttributes(self):
     """hook for initializing attributes, delegates to parent class"""
     CCSDS.PACKET.TCpacket.initAttributes(self)
+    self.versionNumber = VERSION_NUMBER
     self.dataFieldHeaderFlag = 1
+    self.segmentationFlags = CCSDS.PACKET.UNSEGMENTED
+    self.pusVersionNumber = PUS_VERSION_NUMBER
+
+#############
+# functions #
+#############
+# -----------------------------------------------------------------------------
+def setTMttTimeProperties(tmTTtimeByteOffset, tmTTtimeFormat):
+  """changes the global position and (stringified) format of the TM time tag"""
+  s_tmTTtimeByteOffset = tmTTtimeByteOffset
+  s_tmTTtimeFormat = CCSDS.TIME.timeFormat(tmTTtimeFormat)

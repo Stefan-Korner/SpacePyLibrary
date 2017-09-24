@@ -20,7 +20,7 @@
 import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import EGSE.IF
-import PUS.SERVICES
+import PUS.PACKET, PUS.SERVICES
 import SCOE.EGSEserver, SCOE.EGSEgui
 import SCOS.ENV
 import SPACE.ASW, SPACE.DEF, SPACE.IF, SPACE.MIL, SPACE.OBC, SPACE.TMGEN, SPACE.TMRPLY
@@ -698,6 +698,8 @@ else:
 UTIL.SYS.s_configuration.setDefaults(SYS_CONFIGURATION)
 UTIL.TCO.setOBTmissionEpochStr(UTIL.SYS.s_configuration.OBT_MISSION_EPOCH_STR)
 UTIL.TCO.setOBTleapSeconds(int(UTIL.SYS.s_configuration.OBT_LEAP_SECONDS))
+PUS.PACKET.setTMttTimeProperties(UTIL.SYS.s_configuration.TM_TT_TIME_FORMAT,
+                                 int(UTIL.SYS.s_configuration.TM_TT_TIME_BYTE_OFFSET))
 EGSE.IF.s_configuration = EGSE.IF.Configuration()
 SPACE.IF.s_configuration = SPACE.IF.Configuration()
 # initialise the request handler
