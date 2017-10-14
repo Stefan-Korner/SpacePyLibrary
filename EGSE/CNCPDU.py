@@ -19,7 +19,9 @@
 # - with an ASCII string as datafield                                         *
 # - without a CRC                                                             *
 #******************************************************************************
+from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME
 import CCSDS.PACKET
+import PUS.PACKET
 
 #############
 # constants #

@@ -14,10 +14,12 @@
 # EGSE interfaces - CnC protocol                                              *
 # implements CAIT-03474-ASTR_issue_3_EGSE_IRD.pdf                             *
 #******************************************************************************
+import array
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.PACKET
 import EGSE.CNCPDU
+import PUS.SERVICES
 import UTIL.TASK, UTIL.TCP, UTIL.TIME
 
 ###########
@@ -38,7 +40,7 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
     UTIL.TCP.SingleClientReceivingServer.accepted(self, clientSocket)
     self.clientAccepted()
   # ---------------------------------------------------------------------------
-  def sendCNCackNak(self, cncCommandDU):
+  def sendCNCackNak(self, cncCommandDU, okStatus):
     """Send a CnC ACK or NAK as response to a CnC TC packet to the CCS"""
     # format the response message according to the cncCommandDU
     # TODO: the recent implementation does not consider specific CnC messages
@@ -69,7 +71,7 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
     cncAckNakDU.setCNCmessage(responseMessage)
     self.dataSocket.send(cncAckNakDU.getBufferString())
   # ---------------------------------------------------------------------------
-  def sendTCackNak(self, ccsdsTCpacketDU):
+  def sendTCackNak(self, ccsdsTCpacketDU, okStatus):
     """Send a TC ACK or NAK as response to a CCSDSC TC packet to the CCS"""
     # format the response message according to the ccsdsTCpacketDU
     if EGSE.IF.s_configuration.egseAck2 == EGSE.IF.ENABLE_ACK:
@@ -90,16 +92,17 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
     if okStatus:
       tcAckNakDU.setACK()
     else:
-      tcAckNakDU.setACK()
-    PUS.service1_setTCackAPID(tcAckNakDU, apid)
-    PUS.service1_setTCackSSC(tcAckNakDU, ssc)
+      tcAckNakDU.setNAK()
+    PUS.SERVICES.service1_setTCackAPID(tcAckNakDU, apid)
+    PUS.SERVICES.service1_setTCackSSC(tcAckNakDU, ssc)
     self.dataSocket.send(tcAckNakDU.getBufferString())
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when the CCS has send data"""
     # read the packet header from the data socket
     try:
-      packetHeader = self.dataSocket.recv(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE);
+      strBuffer = self.dataSocket.recv(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE);
+      packetHeader = array.array("B", strBuffer)
     except Exception, ex:
       self.disconnectClient()
       self.notifyConnectionClosed(str(ex))
@@ -141,7 +144,7 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
         self.sendCNCackNak(tcPacketDU, okStatus)
       else:
         # normal CCSDS TC packet
-        okStatus = self.notifyCNCcommand(tcPacketDU)
+        okStatus = self.notifyCCSDScommand(tcPacketDU)
         self.sendTCackNak(tcPacketDU, okStatus)
     except Exception, ex:
       LOG_ERROR("Processing of received CnC command failed: " + str(ex))

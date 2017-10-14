@@ -13,6 +13,7 @@
 #******************************************************************************
 # PUS Services - Service Definition                                           *
 #******************************************************************************
+import CCSDS.PACKET
 
 #############
 # constants #
@@ -76,27 +77,27 @@ def service1_getTCackMinPacketSize():
 def service1_getTCackAPID(pusTMpacketDU):
   """retrieves the APID of the related TC packet in the datafield attribute"""
   # filters the relevant bits"""
-  return (packet.getUnsigned(s_tcAckAPIDparamByteOffset,
-                             TC_ACK_APID_PARAM_BYTE_LENGTH) |
+  return (pusTMpacketDU.getUnsigned(s_tcAckAPIDparamByteOffset,
+                                    TC_ACK_APID_PARAM_BYTE_LENGTH) |
           TC_ACK_APID_PARAM_MASK)
 # -----------------------------------------------------------------------------
 def service1_setTCackAPID(pusTMpacketDU, apid):
   """sets the APID of the related TC packet in the datafield attribute"""
   # filters the relevant bits"""
-  packet.setUnsigned(s_tcAckAPIDparamByteOffset,
-                     TC_ACK_APID_PARAM_BYTE_LENGTH,
-                     apid | TC_ACK_APID_PARAM_MASK)
+  pusTMpacketDU.setUnsigned(s_tcAckAPIDparamByteOffset,
+                            TC_ACK_APID_PARAM_BYTE_LENGTH,
+                            apid | TC_ACK_APID_PARAM_MASK)
 # -----------------------------------------------------------------------------
 def service1_getTCackSSC(pusTMpacketDU):
   """retrieves the SSC of the related TC packet in the datafield attribute"""
   # filters the relevant bits"""
-  return (packet.getUnsigned(s_tcAckSSCparamByteOffset,
-                             TC_ACK_SSC_PARAM_BYTE_LENGTH) |
+  return (pusTMpacketDU.getUnsigned(s_tcAckSSCparamByteOffset,
+                                    TC_ACK_SSC_PARAM_BYTE_LENGTH) |
           TC_ACK_SSC_PARAM_MASK)
 # -----------------------------------------------------------------------------
 def service1_setTCackSSC(pusTMpacketDU, ssc):
   """sets the SSC of the related TC packet in the datafield attribute"""
   # filters the relevant bits"""
-  packet.setUnsigned(s_tcAckSSCparamByteOffset,
-                     TC_ACK_SSC_PARAM_BYTE_LENGTH,
-                     ssc | TC_ACK_SSC_PARAM_BYTE_LENGTH)
+  pusTMpacketDU.setUnsigned(s_tcAckSSCparamByteOffset,
+                            TC_ACK_SSC_PARAM_BYTE_LENGTH,
+                            ssc | TC_ACK_SSC_PARAM_BYTE_LENGTH)
