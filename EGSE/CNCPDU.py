@@ -25,13 +25,49 @@ import CCSDS.PACKET
 # constants #
 #############
 VERSION_NUMBER = 3
+TC_ACK_NAK_TYPE = 1
+TC_ACK_SUBTYPE = 129
+TC_NAK_SUBTYPE = 130
+# =============================================================================
+# the attribute dictionaries contain for each data unit attribute:
+# - key: attribute name
+# - value: fieldOffset, fieldLength, fieldType
+# -----------------------------------------------------------------------------
+TC_ACKNAK_DATAFIELD_HEADER_BYTE_SIZE = 3
+TC_ACKNAK_DATAFIELD_HEADER_ATTRIBUTES = {
+  "pusSpare1":            ( 0,  1, BITS),
+  "pusVersionNumber":     ( 1,  3, BITS),
+  "pusSpare2":            ( 4,  4, BITS),
+  "serviceType":          ( 1,  1, UNSIGNED),
+  "serviceSubType":       ( 2,  1, UNSIGNED)}
 
 ###########
 # classes #
 ###########
 # =============================================================================
-class TMpacket(CCSDS.PACKET.TMpacket):
-  """telemetry CnC packet"""
+class CNCcommand(CCSDS.PACKET.TCpacket):
+  """CnC command"""
+  # ---------------------------------------------------------------------------
+  def __init__(self, binaryString=None):
+    """default constructor"""
+    CCSDS.PACKET.TCpacket.__init__(self, binaryString)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    CCSDS.PACKET.TCpacket.initAttributes(self)
+    self.versionNumber = VERSION_NUMBER
+  # ---------------------------------------------------------------------------
+  def getCNCmessage(self):
+    """extracts a string"""
+    return self.getDataField().tostring()
+  # ---------------------------------------------------------------------------
+  def setCNCmessage(self, message):
+    """set a string"""
+    self.setDataField(message)
+
+# =============================================================================
+class CNCackNak(CCSDS.PACKET.TMpacket):
+  """CnC command ACK/NAK response"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
     """default constructor"""
@@ -51,22 +87,32 @@ class TMpacket(CCSDS.PACKET.TMpacket):
     self.setDataField(message)
 
 # =============================================================================
-class TCpacket(CCSDS.PACKET.TCpacket):
-  """telecommand CnC packet"""
+class TCackNak(PUS.PACKET.TMpacket):
+  """generic TC ACK/NAK packet"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None):
-    """default constructor"""
-    CCSDS.PACKET.TCpacket.__init__(self, binaryString)
+    """default constructor: initialise with header size"""
+    PUS.PACKET.TMpacket.__init__(self, binaryString)
   # ---------------------------------------------------------------------------
   def initAttributes(self):
     """hook for initializing attributes, delegates to parent class"""
-    CCSDS.PACKET.TCpacket.initAttributes(self)
-    self.versionNumber = VERSION_NUMBER
+    # resize the packet in order that it can hold the TC APID, TC SSC and CRC
+    minPacketSize = PUS.SERVICES.service1_getTCackMinPacketSize()
+    self.setLen(minPacketSize)
+    PUS.PACKET.TMpacket.initAttributes(self)
   # ---------------------------------------------------------------------------
-  def getCNCmessage(self):
-    """extracts a string"""
-    return self.getDataField().tostring()
+  def setACK(self):
+    """sets ACK state"""
+    self.serviceSubType = TC_ACK_SUBTYPE
   # ---------------------------------------------------------------------------
-  def setCNCmessage(self, message):
-    """set a string"""
-    self.setDataField(message)
+  def setNAK(self):
+    """sets NAK state"""
+    self.serviceSubType = TC_NAK_SUBTYPE
+  # ---------------------------------------------------------------------------
+  def isACK(self):
+    """checks ACK state"""
+    return (self.serviceSubType == TC_ACK_SUBTYPE)
+  # ---------------------------------------------------------------------------
+  def isNAK(self):
+    """checks NAK state"""
+    return (self.serviceSubType == TC_NAK_SUBTYPE)

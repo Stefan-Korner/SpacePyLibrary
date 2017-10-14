@@ -67,6 +67,12 @@ def service1_setTCackParamsProperties(tcAckAPIDparamByteOffset,
   s_tcAckAPIDparamByteOffset = tcAckAPIDparamByteOffset
   s_tcAckSSCparamByteOffset = tcAckSSCparamByteOffset
 # -----------------------------------------------------------------------------
+def service1_getTCackMinPacketSize():
+  """returns the minimal size of a PUS service 1 packet"""
+  return (s_tcAckSSCparamByteOffset +
+          TC_ACK_SSC_PARAM_BYTE_LENGTH +
+          CCSDS.PACKET.CRC_BYTE_SIZE)
+# -----------------------------------------------------------------------------
 def service1_getTCackAPID(pusTMpacketDU):
   """retrieves the APID of the related TC packet in the datafield attribute"""
   # filters the relevant bits"""

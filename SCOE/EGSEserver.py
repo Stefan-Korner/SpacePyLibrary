@@ -50,9 +50,13 @@ class CNCtcServer(EGSE.CNC.TCserver):
     except Exception, ex:
       LOG_WARNING("data passed to notifyError are invalid: " + str(ex))
   # ---------------------------------------------------------------------------
-  def notifyCNCcommand(self, cncTCpacketDU):
+  def notifyCNCcommand(self, cncCommandDU):
     """CnC command received: overloaded from EGSE.CNC.TCServer"""
-    return SPACE.IF.s_onboardComputer.pushTCpacket(cncTCpacketDU)
+    return SPACE.IF.s_onboardComputer.pushTCpacket(cncCommandDU)
+  # ---------------------------------------------------------------------------
+  def notifyCCSDScommand(self, ccsdsTCpacketDU):
+    """CCSDS telecommand received: overloaded from EGSE.CNC.TCServer"""
+    return SPACE.IF.s_onboardComputer.pushTCpacket(ccsdsTCpacketDU)
 
 # =============================================================================
 class CNCtmServer(EGSE.CNC.TMserver, EGSE.IF.CCSlink):

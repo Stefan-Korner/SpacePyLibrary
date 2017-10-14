@@ -38,16 +38,9 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
     UTIL.TCP.SingleClientReceivingServer.accepted(self, clientSocket)
     self.clientAccepted()
   # ---------------------------------------------------------------------------
-  def sendCNCpacket(self, cncTMpacketDU):
-    """Send a CnC TM packet to the CCS"""
-    # this operation does not verify the contents of the cncTMpacketDU
-    self.dataSocket.send(cncTMpacketDU.getBufferString())
-  # ---------------------------------------------------------------------------
-  def sendCNCackNak(self, cncTCpacketDU):
+  def sendCNCackNak(self, cncCommandDU):
     """Send a CnC ACK or NAK as response to a CnC TC packet to the CCS"""
-    # format the response message according to the cncTCpacketDU
-    # note: this violates the resposibility of the CCSDS packet processing
-    #       because this should be done in the SPACE module
+    # format the response message according to the cncCommandDU
     # TODO: the recent implementation does not consider specific CnC messages
     #       but simply appends the message to the ACK/NAK token
     if EGSE.IF.s_configuration.egseAck2 == EGSE.IF.ENABLE_ACK:
@@ -62,36 +55,45 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
     else:
       LOG_WARNING("suppress CNC ACK/NAK")
       return
-    apid = cncTCpacketDU.applicationProcessId
-    ssc = cncTCpacketDU.sequenceControlCount
-    cncMessage = cncTCpacketDU.getCNCmessage()
+    apid = cncCommandDU.applicationProcessId
+    ssc = cncCommandDU.sequenceControlCount
+    cncMessage = cncCommandDU.getCNCmessage()
     if okStatus:
       responseMessage = "ACK " + cncMessage
     else:
       responseMessage = "NAK " + cncMessage
-    responseDU = EGSE.CNCPDU.TMpacket()
-    responseDU.applicationProcessId = apid
-    responseDU.sequenceControlCount = ssc
-    responseDU.segmentationFlags = CCSDS.PACKET.UNSEGMENTED
-    responseDU.setCNCmessage(responseMessage)
-    self.sendCNCpacket(responseDU)
+    cncAckNakDU = EGSE.CNCPDU.CNCackNak()
+    cncAckNakDU.applicationProcessId = apid
+    cncAckNakDU.sequenceControlCount = ssc
+    cncAckNakDU.segmentationFlags = CCSDS.PACKET.UNSEGMENTED
+    cncAckNakDU.setCNCmessage(responseMessage)
+    self.dataSocket.send(cncAckNakDU.getBufferString())
   # ---------------------------------------------------------------------------
-  def sendNAK(self, cncTCpacketDU):
-    """Send a NAK as response to a CnC TC packet to the CCS"""
-    # format the response message according to the cncTCpacketDU
-    # note: this violates the resposibility of the CCSDS packet processing
-    #       because this should be done in the SPACE module
-    # TODO: the recent implementation does not consider specific Cnc messages
-    #       but simply appends the message to the NAK token
-    apid = cncTCpacketDU.applicationProcessId
-    ssc = cncTCpacketDU.sequenceControlCount
-    nakMessage = "NAK " + cncTCpacketDU.getCNCmessage()
-    responseDU = EGSE.CNCPDU.TMpacket()
-    responseDU.applicationProcessId = apid
-    responseDU.sequenceControlCount = ssc
-    responseDU.segmentationFlags = CCSDS.PACKET.UNSEGMENTED
-    responseDU.setCNCmessage(nakMessage)
-    self.sendCNCpacket(responseDU)
+  def sendTCackNak(self, ccsdsTCpacketDU):
+    """Send a TC ACK or NAK as response to a CCSDSC TC packet to the CCS"""
+    # format the response message according to the ccsdsTCpacketDU
+    if EGSE.IF.s_configuration.egseAck2 == EGSE.IF.ENABLE_ACK:
+      # normal processing
+      if okStatus:
+        LOG_INFO("CNC.TCserver.sendTCackNak(ACK)")
+      else:
+        LOG_ERROR("CNC.TCserver.sendTCackNak(NAK)")
+    elif EGSE.IF.s_configuration.egseAck2 == EGSE.IF.ENABLE_NAK:
+      LOG_WARNING("force TC NAK")
+      okStatus = False
+    else:
+      LOG_WARNING("suppress TC ACK/NAK")
+      return
+    apid = ccsdsTCpacketDU.applicationProcessId
+    ssc = ccsdsTCpacketDU.sequenceControlCount
+    tcAckNakDU = EGSE.CNCPDU.TCackNak()
+    if okStatus:
+      tcAckNakDU.setACK()
+    else:
+      tcAckNakDU.setACK()
+    PUS.service1_setTCackAPID(tcAckNakDU, apid)
+    PUS.service1_setTCackSSC(tcAckNakDU, ssc)
+    self.dataSocket.send(tcAckNakDU.getBufferString())
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when the CCS has send data"""
@@ -114,7 +116,7 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
     packetVersionNumber = packetHeader[0] >> 5
     if packetVersionNumber == EGSE.CNCPDU.VERSION_NUMBER:
       LOG_INFO("CNC.TCserver.receiveCallback(CnC command)")
-      tcPacketDU = EGSE.CNCPDU.TCpacket(packetHeader)
+      tcPacketDU = EGSE.CNCPDU.CNCcommand(packetHeader)
     else:
       LOG_INFO("CNC.TCserver.receiveCallback(CCSDS telecommand)")
       tcPacketDU = CCSDS.PACKET.TCpacket(packetHeader)
@@ -131,11 +133,16 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
       LOG_ERROR("Read of remaining packet failed: invalid remaining size: " + str(remainingSizeRead))
       return
     tcPacketDU.setDataField(dataField)
-    # dispatch the CnC command
+    # dispatch the telecommand
     try:
-      LOG_INFO("CNC.TCserver.receiveCallback(CnC command)")
-      okStatus = self.notifyCNCcommand(tcPacketDU)
-      self.sendCNCackNak(tcPacketDU, okStatus)
+      if packetVersionNumber == EGSE.CNCPDU.VERSION_NUMBER:
+        # CnC command
+        okStatus = self.notifyCNCcommand(tcPacketDU)
+        self.sendCNCackNak(tcPacketDU, okStatus)
+      else:
+        # normal CCSDS TC packet
+        okStatus = self.notifyCNCcommand(tcPacketDU)
+        self.sendTCackNak(tcPacketDU, okStatus)
     except Exception, ex:
       LOG_ERROR("Processing of received CnC command failed: " + str(ex))
   # ---------------------------------------------------------------------------
@@ -143,10 +150,15 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
     """TC connection closed by client"""
     LOG_WARNING("TC connection closed by CCS: " + details)
   # ---------------------------------------------------------------------------
-  def notifyCNCcommand(self, cncTCpacketDU):
+  def notifyCNCcommand(self, cncCommandDU):
     """CnC command received: hook for derived classes"""
-    LOG_INFO("notifyCNCcommand: tcPacket = " + UTIL.DU.array2str(cncTCpacketDU.getBufferString()))
-    LOG_INFO("message = " + cncTCpacketDU.getCNCmessage())
+    LOG_INFO("notifyCNCcommand: tcPacket = " + UTIL.DU.array2str(cncCommandDU.getBufferString()))
+    LOG_INFO("message = " + cncCommandDU.getCNCmessage())
+    return True
+  # ---------------------------------------------------------------------------
+  def notifyCCSDScommand(self, ccsdsTCpacketDU):
+    """CCSDS telecommand received: hook for derived classes"""
+    LOG_INFO("notifyCCSDScommand: tcPacket = " + UTIL.DU.array2str(ccsdsTCpacketDU.getBufferString()))
     return True
   # ---------------------------------------------------------------------------
   def clientAccepted(self):
@@ -188,7 +200,7 @@ class TCclient(UTIL.TCP.SingleServerReceivingClient):
     if packetHeaderLen != CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE:
       LOG_ERROR("Read of CnC header failed: invalid size: " + str(pduHeaderLen))
       return
-    cncTMpacketDU = EGSE.CNCPDU.TMpacket(packetHeader)
+    cncTMpacketDU = EGSE.CNCPDU.CNCackNak(packetHeader)
     # read the data field for the packet from the data socket
     dataFieldLength = cncTMpacketDU.packetLength + 1
     try:
