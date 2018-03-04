@@ -289,7 +289,7 @@ class TCcltuDataUnit(TCdataUnit):
     """default constructor: initialise TC CLTU header"""
     TCdataUnit.__init__(self,
                         binaryString,
-                        TC_CLTU_HEADER_BYTE_SIZE;
+                        TC_CLTU_HEADER_BYTE_SIZE,
                         TC_CLTU_HEADER_ATTRIBUTES)
   # ---------------------------------------------------------------------------
   def initAttributes(self):
