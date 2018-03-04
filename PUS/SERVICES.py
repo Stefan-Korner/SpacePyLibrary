@@ -13,7 +13,7 @@
 #******************************************************************************
 # PUS Services - Service Definition                                           *
 #******************************************************************************
-import CCSDS.PACKET
+import CCSDS.DU, CCSDS.PACKET
 
 #############
 # constants #
@@ -72,7 +72,7 @@ def service1_getTCackMinPacketSize():
   """returns the minimal size of a PUS service 1 packet"""
   return (s_tcAckSSCparamByteOffset +
           TC_ACK_SSC_PARAM_BYTE_LENGTH +
-          CCSDS.PACKET.CRC_BYTE_SIZE)
+          CCSDS.DU.CRC_BYTE_SIZE)
 # -----------------------------------------------------------------------------
 def service1_getTCackAPID(pusTMpacketDU):
   """retrieves the APID of the related TC packet in the datafield attribute"""

@@ -16,6 +16,11 @@
 from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME, BinaryUnit
 import CCSDS.DU
 
+#############
+# constants #
+#############
+CRC_CHECK = True
+
 # =============================================================================
 # the attribute dictionaries contain for each transfer frame attribute:
 # - key: attribute name
@@ -99,7 +104,7 @@ class TMframe(CCSDS.DU.DataUnit):
   def initAttributes(self):
     """hook for initializing attributes, delegates to parent class"""
     CCSDS.DU.DataUnit.initAttributes(self)
-    if object.__getattr__(self, "attributeMap2") == None:
+    if self.attributeMap2 == None:
       self.secondaryHeaderFlag = 0
     else:
       self.secondaryHeaderFlag = 1

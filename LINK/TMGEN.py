@@ -14,7 +14,7 @@
 # Link Simulation - Telemetry Frame Generator                                 *
 #******************************************************************************
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CCSDS.FRAME
+import CCSDS.DU, CCSDS.FRAME
 import LINK.IF
 import PUS.PACKET
 import SCOS.ENV
@@ -147,7 +147,7 @@ class TMframeGeneratorImpl(LINK.IF.TMframeGenerator):
       tmFrame.append(tmIdlePacket.getBufferString())
     tmFrame.append(self.clcw.getBufferString())
     if CCSDS.FRAME.CRC_CHECK:
-      tmFrame.append("\0" * CCSDS.FRAME.CRC_BYTE_SIZE)
+      tmFrame.append("\0" * CCSDS.DU.CRC_BYTE_SIZE)
       tmFrame.setChecksum()
     return tmFrame
 

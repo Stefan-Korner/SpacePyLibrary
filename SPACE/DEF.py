@@ -15,7 +15,7 @@
 #******************************************************************************
 import os, cPickle, time
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CCSDS.PACKET
+import CCSDS.DU, CCSDS.PACKET
 import PUS.PACKET
 import SCOS.ENV, SCOS.MIB
 import SPACE.IF
@@ -110,13 +110,13 @@ class DefinitionsImpl(SPACE.IF.Definitions):
                              CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE
       tmPktDef.pktSPDFdataSize = tmPktDef.pktSPDFsize - tmPktDef.pktDFHsize
       if tmPktDef.pktCheck:
-        tmPktDef.pktSPDFdataSize -= CCSDS.PACKET.CRC_BYTE_SIZE
+        tmPktDef.pktSPDFdataSize -= CCSDS.DU.CRC_BYTE_SIZE
     else:
       # pktSize == 0
       tmPktDef.pktSPDFdataSize = SCOS.ENV.TM_PKT_DEFAULT_DATAFIELD_DATA_SPACE
       tmPktDef.pktSPDFsize = tmPktDef.pktDFHsize + tmPktDef.pktSPDFdataSize
       if tmPktDef.pktCheck:
-        tmPktDef.pktSPDFsize += CCSDS.PACKET.CRC_BYTE_SIZE
+        tmPktDef.pktSPDFsize += CCSDS.DU.CRC_BYTE_SIZE
       tmPktDef.pktSPsize = tmPktDef.pktSPDFsize + \
                            CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE
       tmPktDef.pktS2Ksize = SCOS.ENV.SCOS_PACKET_HEADER_SIZE + \

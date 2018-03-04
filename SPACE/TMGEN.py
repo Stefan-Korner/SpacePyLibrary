@@ -14,7 +14,7 @@
 # Space Simulation - Telemetry Packet Generator                               *
 #******************************************************************************
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CCSDS.PACKET, CCSDS.TIME
+import CCSDS.DU, CCSDS.PACKET, CCSDS.TIME
 import PUS.PACKET, PUS.SERVICES
 import SCOS.ENV
 import SPACE.IF
@@ -53,7 +53,7 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
     """
     # the idle packet is a TM packet without a secondary header (CCSDS)
     # but with a CRC (if an application expects a CRC)
-    if packetSize < (CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE + CCSDS.PACKET.CRC_BYTE_SIZE):
+    if packetSize < (CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE + CCSDS.DU.CRC_BYTE_SIZE):
       raise Error("no sufficient space for idle packet")
     applicationProcessId = self.packetDefaults.idlePacketAPID
     idlePacket = self.getTMpacketHelper(packetSize, applicationProcessId)

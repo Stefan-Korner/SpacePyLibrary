@@ -23,12 +23,12 @@ TM_PACKET_TYPE = 0
 TC_PACKET_TYPE = 1
 MIN_DATA_FIELD_BYTE_SIZE = 0x0000 + 1
 MAX_DATA_FIELD_BYTE_SIZE = 0xFFFF + 1
-CRC_BYTE_SIZE = 2
 # packet segmentation
 FIRST_SEGMENT = 1
 CONTINUATION_SEGMENT = 0
 LAST_SEGMENT = 2
 UNSEGMENTED = 3
+
 # =============================================================================
 # the attribute dictionaries contain for each data unit attribute:
 # - key: attribute name
