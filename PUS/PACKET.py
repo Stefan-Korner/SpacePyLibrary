@@ -118,7 +118,9 @@ class TCpacket(CCSDS.PACKET.TCpacket):
 # functions #
 #############
 # -----------------------------------------------------------------------------
-def setTMttTimeProperties(tmTTtimeByteOffset, tmTTtimeFormat):
-  """changes the global position and (stringified) format of the TM time tag"""
+def setTMttTimeProperties(tmTTtimeFormatStr, tmTTtimeByteOffset):
+  """changes the global (stringified) format and position of the TM time tag"""
+  global s_tmTTtimeFormat, s_tmTTtimeByteOffset
+  s_tmTTtimeFormat = CCSDS.TIME.timeFormat(tmTTtimeFormatStr)
   s_tmTTtimeByteOffset = tmTTtimeByteOffset
-  s_tmTTtimeFormat = CCSDS.TIME.timeFormat(tmTTtimeFormat)
+
