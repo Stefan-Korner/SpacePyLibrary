@@ -199,17 +199,17 @@ def createEGSEserver(hostName=None):
   if not s_server.openConnectPort(hostName):
     sys.exit(-1)
   serverPort2 = int(UTIL.SYS.s_configuration.CCS_SERVER_PORT2)
-  if serverPort2 == 0:
-    if egseProtocol == "CNC":
-      LOG_ERROR("CNC protocol requires 2 server ports (TC + TM) configured")
-      sys.exit(-1)
-  else:
+  if serverPort2 > 0:
     # there is a second server port configured
     if egseProtocol == "CNC":
       s_server2 = CNCtmServer(portNr=serverPort2)
     elif egseProtocol == "EDEN":
       s_server2 = EDENserver2(portNr=serverPort2)
     if not s_server2.openConnectPort(hostName):
+      sys.exit(-1)
+  else:
+    if egseProtocol == "CNC":
+      LOG_ERROR("CNC protocol requires 2 server ports (TC + TM) configured")
       sys.exit(-1)
   # the link where TM is sent to CCS
   if egseProtocol == "CNC":
