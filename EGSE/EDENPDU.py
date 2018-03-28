@@ -259,6 +259,9 @@ class TC_Espace(TCspace):
   def __init__(self, binaryString=None):
     """default constructor: delegates to TCspace"""
     TCspace.__init__(self, binaryString)
+    # force this type also when the type in the binaryString is differently
+    # this is needed when a (TC_E,SPACE) is cloned from a (TC,SPACE)
+    self.pduType = PDU_TYPE_TC_E
   # ---------------------------------------------------------------------------
   def initAttributes(self):
     """hook for initializing attributes, delegates to parent class"""
@@ -294,6 +297,9 @@ class TC_Escoe(TCscoe):
   def __init__(self, binaryString=None):
     """default constructor: delegates to TCscoe"""
     TCscoe.__init__(self, binaryString)
+    # force this type also when the type in the binaryString is differently
+    # this is needed when a (TC_E,SCOE) is cloned from a (TC,SCOE)
+    self.pduType = PDU_TYPE_TC_E
   # ---------------------------------------------------------------------------
   def initAttributes(self):
     """hook for initializing attributes, delegates to parent class"""

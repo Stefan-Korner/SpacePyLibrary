@@ -65,6 +65,7 @@ s_tcAckSSCparamByteOffset = DEFAULT_TC_ACK_SSC_PARAM_BYTE_OFFSET
 def service1_setTCackParamsProperties(tcAckAPIDparamByteOffset,
                                       tcAckSSCparamByteOffset):
   """changes the global positions of the PUS service 1 attributes"""
+  global s_tcAckAPIDparamByteOffset, s_tcAckSSCparamByteOffset
   s_tcAckAPIDparamByteOffset = tcAckAPIDparamByteOffset
   s_tcAckSSCparamByteOffset = tcAckSSCparamByteOffset
 # -----------------------------------------------------------------------------
@@ -100,4 +101,4 @@ def service1_setTCackSSC(pusTMpacketDU, ssc):
   # filters the relevant bits"""
   pusTMpacketDU.setUnsigned(s_tcAckSSCparamByteOffset,
                             TC_ACK_SSC_PARAM_BYTE_LENGTH,
-                            ssc | TC_ACK_SSC_PARAM_BYTE_LENGTH)
+                            ssc | TC_ACK_SSC_PARAM_MASK)
