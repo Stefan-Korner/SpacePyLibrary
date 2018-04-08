@@ -72,6 +72,75 @@ E5013_RT_ACTIVATE_FID = 0x4E49
 E5013_RT_DEACTIVATE_FID = 0x4E4A
 E5013_ATR_FID = 0x4E4B
 
+# EUCLID Power SCOEs
+BS_Initialize = 0x0302
+BS_SetLocal = 0x0314
+BS_SetRemote = 0x0315
+BS_LockInstruments = 0x0312
+BS_UnlockInstruments = 0x0313
+BS_SetOnline = 0x0307
+BS_SetOffline = 0x0306
+BS_SelfTest = 0x0311
+FTH_Initialize = 0x0403
+FTH_EnableGUI = 0x0435
+FTH_DisableGUI = 0x0436
+FTH_SetOnline = 0x0405
+FTH_SetOffline = 0x0406
+FTH_SelfTest = 0x0410
+LPS_Initialize = 0x0022
+LPS_SetLocal = 0x0041
+LPS_SetRemote = 0x0042
+LPS_LockInstruments = 0x0039
+LPS_UnlockInstruments = 0x0040
+LPS_SetOnLine = 0x0016
+LPS_SetOffLine = 0x0017
+LPS_SelfTest = 0x0035
+SAS_Initialize = 0x0210
+SAS_SetLocal = 0x0233
+SAS_SetRemote = 0x0234
+SAS_LockInstruments = 0x0229
+SAS_UnlockInstruments = 0x0230
+SAS_SetOnline = 0x0206
+SAS_SetOffline = 0x0208
+SAS_SelfTest = 0x0225
+# Commanding Mode
+EPWR_CMD_LOCAL = "0"
+EPWR_CMD_REMOTE = "1"
+# Operation Mode
+EPWR_OP_OFFLINE = "0"
+EPWR_OP_OFFLINE2 = "4"
+EPWR_OP_ONLINE = "8"
+EPWR_OP_ONLINE2 = "15"
+EPWR_OP_FTH_ONLINE = "1"
+EPWR_BS_OP = "CHSTAT1"
+EPWR_FTH_OP = "ONOFF"
+EPWR_LPS_OP_Section1P = "CHSTAT1"
+EPWR_LPS_OP_Section1S = "CHSTAT2"
+EPWR_LPS_OP_Section2P = "CHSTAT3"
+EPWR_LPS_OP_Section2S = "CHSTAT4"
+EPWR_LPS_OP_Section3P = "CHSTAT5"
+EPWR_LPS_OP_Section3S = "CHSTAT6"
+EPWR_SAS_OP_Section1 = "CHSTATSA1"
+EPWR_SAS_OP_Section2 = "CHSTATSA2"
+EPWR_SAS_OP_Section3 = "CHSTATSA3"
+EPWR_SAS_OP_Section4 = "CHSTATSA4"
+EPWR_SAS_OP_Section5 = "CHSTATSA5"
+EPWR_SAS_OP_Section6 = "CHSTATSA6"
+EPWR_SAS_OP_Section7 = "CHSTATSA7"
+EPWR_SAS_OP_Section8 = "CHSTATSA8"
+EPWR_SAS_OP_Section9 = "CHSTATSA9"
+EPWR_SAS_OP_Section10 = "CHSTATSA10"
+EPWR_SAS_OP_Section11 = "CHSTATSA11"
+EPWR_SAS_OP_Section12 = "CHSTATSA12"
+EPWR_SAS_OP_Section13 = "CHSTATSA13"
+EPWR_SAS_OP_Section14 = "CHSTATSA14"
+EPWR_SAS_OP_Section15 = "CHSTATSA15"
+# SCOE Running
+EPWR_SRUN_LPSN = "0,1"
+EPWR_SRUN_LPSR = "1,1"
+EPWR_SRUN_SAS = "0,0"
+EPWR_SRUN_PARAMS = "ONOFF11,ONOFF12"
+
 ###########
 # classes #
 ###########
@@ -110,7 +179,7 @@ class ApplicationSoftwareImpl(SPACE.IF.ApplicationSoftware):
     implementation of SPACE.IF.ApplicationSoftware.processTCpacket
     """
     apid = tcPacketDu.applicationProcessId
-    LOG_INFO("ApplicationSoftwareImpl.processTCpacke(" + str(apid) + ")t", "SPACE")
+    LOG_INFO("ApplicationSoftwareImpl.processTCpacket(" + str(apid) + ")", "SPACE")
     # packet is a PUS Function Management command
     if tcPacketDu.serviceType == PUS.SERVICES.TC_FKT_TYPE:
       if tcPacketDu.serviceSubType == PUS.SERVICES.TC_FKT_PERFORM_FUNCTION:
@@ -438,6 +507,315 @@ class S4applicationSoftwareImpl(ApplicationSoftwareImpl):
     else:
       return SPACE.IF.s_onboardComputer.generateEmptyTMpacket("XPSTMPK10635")
 
+# =============================================================================
+class EUCLIDpowerFEEsim_BS(ApplicationSoftwareImpl):
+  """Implementation of the EUCLID BS Power Frontend Simulation"""
+  # ---------------------------------------------------------------------------
+  def __init__(self):
+    """Initialise attributes only"""
+    ApplicationSoftwareImpl.__init__(self)
+    self.commandingMode = EPWR_CMD_LOCAL
+    self.operationMode = EPWR_OP_OFFLINE
+  # ---------------------------------------------------------------------------
+  def processTCpacket(self, tcPacketDu):
+    """
+    processes a telecommand C&C packet from the CCS
+    implementation of SPACE.IF.ApplicationSoftware.processTCpacket
+    """
+    apid = tcPacketDu.applicationProcessId
+    LOG_INFO("EUCLIDpowerFEEsim_BS.processTCpacket(" + str(apid) + ")", "SPACE")
+    # packet is a PUS Function Management command
+    if tcPacketDu.serviceType == PUS.SERVICES.TC_FKT_TYPE:
+      if tcPacketDu.serviceSubType == PUS.SERVICES.TC_FKT_PERFORM_FUNCTION:
+        tcFunctionId = tcPacketDu.getUnsigned(
+          self.tcFunctionIdBytePos, self.tcFunctionIdByteSize)
+        LOG("tcFunctionId = " + str(tcFunctionId), "SPACE")
+        if tcFunctionId == BS_Initialize:
+          LOG_INFO("*** BS_Initialize ***", "SPACE")
+          LOG("push HKTM", "SPACE")
+          return self.sendBS_Monitor()
+        elif tcFunctionId == BS_SetLocal:
+          LOG_INFO("*** BS_SetLocal ***", "SPACE")
+          LOG("set the SCOE into the LOCAL commanding mode", "SPACE")
+          self.commandingMode = EPWR_CMD_LOCAL
+        elif tcFunctionId == BS_SetRemote:
+          LOG_INFO("*** BS_SetRemote ***", "SPACE")
+          LOG("set the SCOE into the REMOTE commanding mode", "SPACE")
+          self.commandingMode = EPWR_CMD_REMOTE
+        elif tcFunctionId == BS_LockInstruments:
+          LOG_INFO("*** BS_LockInstruments ***", "SPACE")
+          LOG("not used for simulation", "SPACE")
+        elif tcFunctionId == BS_UnlockInstruments:
+          LOG_INFO("*** BS_UnlockInstruments ***", "SPACE")
+          LOG("not used for simulation", "SPACE")
+        elif tcFunctionId == BS_SetOnline:
+          LOG_INFO("*** BS_SetOnline ***", "SPACE")
+          LOG("set the SCOE into the ONLINE operation mode", "SPACE")
+          self.operationMode = EPWR_OP_ONLINE
+          return self.sendBS_Monitor()
+        elif tcFunctionId == BS_SetOffline:
+          LOG_INFO("*** BS_SetOffline ***", "SPACE")
+          LOG("set the SCOE into the OFFLINE operation mode", "SPACE")
+          self.operationMode = EPWR_OP_OFFLINE
+          return self.sendBS_Monitor()
+        elif tcFunctionId == BS_SelfTest:
+          LOG_INFO("*** BS_SelfTest ***", "SPACE")
+        else:
+          # unexpected Function ID
+          LOG_WARNING("no simulation for Function ID " + str(tcFunctionId) + " implemented", "SPACE")
+        return True
+    LOG_WARNING("TC ignored by simulation", "SPACE")
+    return True
+  # ---------------------------------------------------------------------------
+  def sendBS_Monitor(self):
+    """sends the LPS_Monitor TM packet to CCS"""
+    pktMnemonic = "BS_Monitor"
+    params = EPWR_BS_OP
+    values = self.operationMode
+    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
+                                                                params,
+                                                                values)
+    # check the TM packet data
+    if tmPacketData == None:
+      LOG_ERROR("TM packet creation failed for " + pktMnemonic, "SPACE")
+      return False
+    # send the TM packet
+    return SPACE.IF.s_onboardComputer.generateTMpacket(tmPacketData)
+
+# =============================================================================
+class EUCLIDpowerFEEsim_FTH(ApplicationSoftwareImpl):
+  """Implementation of the EUCLID FTH Power Frontend Simulation"""
+  # ---------------------------------------------------------------------------
+  def __init__(self):
+    """Initialise attributes only"""
+    ApplicationSoftwareImpl.__init__(self)
+    self.commandingMode = EPWR_CMD_LOCAL
+    self.operationMode = EPWR_OP_OFFLINE
+  # ---------------------------------------------------------------------------
+  def processTCpacket(self, tcPacketDu):
+    """
+    processes a telecommand C&C packet from the CCS
+    implementation of SPACE.IF.ApplicationSoftware.processTCpacket
+    """
+    apid = tcPacketDu.applicationProcessId
+    LOG_INFO("EUCLIDpowerFEEsim_BS.processTCpacket(" + str(apid) + ")", "SPACE")
+    # packet is a PUS Function Management command
+    if tcPacketDu.serviceType == PUS.SERVICES.TC_FKT_TYPE:
+      if tcPacketDu.serviceSubType == PUS.SERVICES.TC_FKT_PERFORM_FUNCTION:
+        tcFunctionId = tcPacketDu.getUnsigned(
+          self.tcFunctionIdBytePos, self.tcFunctionIdByteSize)
+        LOG("tcFunctionId = " + str(tcFunctionId), "SPACE")
+        if tcFunctionId == FTH_Initialize:
+          LOG_INFO("*** FTH_Initialize ***", "SPACE")
+          LOG("push HKTM", "SPACE")
+          return self.sendFTH_MonitorProUST()
+        elif tcFunctionId == FTH_EnableGUI:
+          LOG_INFO("*** FTH_EnableGUI ***", "SPACE")
+          LOG("set the SCOE into the REMOTE commanding mode", "SPACE")
+          self.commandingMode = EPWR_CMD_REMOTE
+        elif tcFunctionId == FTH_DisableGUI:
+          LOG_INFO("*** FTH_DisableGUI ***", "SPACE")
+          LOG("set the SCOE into the LOCAL commanding mode", "SPACE")
+          self.commandingMode = EPWR_CMD_LOCAL
+        elif tcFunctionId == FTH_SetOnline:
+          LOG_INFO("*** FTH_SetOnline ***", "SPACE")
+          LOG("set the SCOE into the ONLINE operation mode", "SPACE")
+          self.operationMode = EPWR_OP_FTH_ONLINE
+          return self.sendFTH_MonitorProUST()
+        elif tcFunctionId == FTH_SetOffline:
+          LOG_INFO("*** FTH_SetOffline ***", "SPACE")
+          LOG("set the SCOE into the OFFLINE operation mode", "SPACE")
+          self.operationMode = EPWR_OP_OFFLINE
+          return self.sendFTH_MonitorProUST()
+        elif tcFunctionId == FTH_SelfTest:
+          LOG_INFO("*** FTH_SelfTest ***", "SPACE")
+        else:
+          # unexpected Function ID
+          LOG_WARNING("no simulation for Function ID " + str(tcFunctionId) + " implemented", "SPACE")
+        return True
+    LOG_WARNING("TC ignored by simulation", "SPACE")
+    return True
+  # ---------------------------------------------------------------------------
+  def sendFTH_MonitorProUST(self):
+    """sends the FTH_MonitorProUST TM packet to CCS"""
+    pktMnemonic = "FTH_MonitorProUST"
+    params = EPWR_FTH_OP
+    values = self.operationMode
+    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
+                                                                params,
+                                                                values)
+    # check the TM packet data
+    if tmPacketData == None:
+      LOG_ERROR("TM packet creation failed for " + pktMnemonic, "SPACE")
+      return False
+    # send the TM packet
+    return SPACE.IF.s_onboardComputer.generateTMpacket(tmPacketData)
+
+# =============================================================================
+class EUCLIDpowerFEEsim_LPS_SAS(ApplicationSoftwareImpl):
+  """Implementation of the EUCLID LPS/SAS Power Frontend Simulation"""
+  # ---------------------------------------------------------------------------
+  def __init__(self, isNominal):
+    """Initialise attributes only"""
+    ApplicationSoftwareImpl.__init__(self)
+    self.isNominal = isNominal
+    self.commandingMode = EPWR_CMD_LOCAL
+    self.lpsOperationMode = EPWR_OP_OFFLINE
+    self.sasOperationMode = EPWR_OP_OFFLINE
+    self.scoeRunning = EPWR_SRUN_SAS
+  # ---------------------------------------------------------------------------
+  def processTCpacket(self, tcPacketDu):
+    """
+    processes a telecommand C&C packet from the CCS
+    implementation of SPACE.IF.ApplicationSoftware.processTCpacket
+    """
+    apid = tcPacketDu.applicationProcessId
+    LOG_INFO("EUCLIDpowerFEEsim_LPS_SAS.processTCpacket(" + str(apid) + ")", "SPACE")
+    # packet is a PUS Function Management command
+    if tcPacketDu.serviceType == PUS.SERVICES.TC_FKT_TYPE:
+      if tcPacketDu.serviceSubType == PUS.SERVICES.TC_FKT_PERFORM_FUNCTION:
+        tcFunctionId = tcPacketDu.getUnsigned(
+          self.tcFunctionIdBytePos, self.tcFunctionIdByteSize)
+        LOG("tcFunctionId = " + str(tcFunctionId), "SPACE")
+        if tcFunctionId == LPS_Initialize:
+          LOG_INFO("*** LPS_Initialize ***", "SPACE")
+          LOG("set the SCOE into the LPSN running mode", "SPACE")
+          if self.isNominal:
+            self.scoeRunning = EPWR_SRUN_LPSN
+          else:
+            self.scoeRunning = EPWR_SRUN_LPSR
+          return self.sendLPS_Monitor()
+        elif tcFunctionId == LPS_SetLocal:
+          LOG_INFO("*** LPS_SetLocal ***", "SPACE")
+          LOG("set the SCOE into the LOCAL commanding mode", "SPACE")
+          self.commandingMode = EPWR_CMD_LOCAL
+        elif tcFunctionId == LPS_SetRemote:
+          LOG_INFO("*** LPS_SetRemote ***", "SPACE")
+          LOG("set the SCOE into the REMOTE commanding mode", "SPACE")
+          self.commandingMode = EPWR_CMD_REMOTE
+        elif tcFunctionId == LPS_LockInstruments:
+          LOG_INFO("*** LPS_LockInstruments ***", "SPACE")
+          LOG("not used for simulation", "SPACE")
+        elif tcFunctionId == LPS_UnlockInstruments:
+          LOG_INFO("*** LPS_UnlockInstruments ***", "SPACE")
+          LOG("not used for simulation", "SPACE")
+        elif tcFunctionId == LPS_SetOnLine:
+          LOG_INFO("*** LPS_SetOnLine ***", "SPACE")
+          LOG("set the SCOE into the ONLINE operation mode", "SPACE")
+          self.lpsOperationMode = EPWR_OP_ONLINE
+          return self.sendLPS_Monitor()
+        elif tcFunctionId == LPS_SetOffLine:
+          LOG_INFO("*** LPS_SetOffLine ***", "SPACE")
+          LOG("set the SCOE into the OFFLINE operation mode", "SPACE")
+          self.lpsOperationMode = EPWR_OP_OFFLINE
+          return self.sendLPS_Monitor()
+        elif tcFunctionId == LPS_SelfTest:
+          LOG_INFO("*** LPS_SelfTest ***", "SPACE")
+        elif tcFunctionId == SAS_Initialize:
+          LOG_INFO("*** SAS_Initialize ***", "SPACE")
+          LOG("set the SCOE into the SAS running mode", "SPACE")
+          self.scoeRunning = EPWR_SRUN_SAS
+          return self.sendLPS_Monitor()
+        elif tcFunctionId == SAS_SetLocal:
+          LOG_INFO("*** SAS_SetLocal ***", "SPACE")
+          self.commandingMode = EPWR_CMD_LOCAL
+        elif tcFunctionId == SAS_SetRemote:
+          LOG_INFO("*** SAS_SetRemote ***", "SPACE")
+          self.commandingMode = EPWR_CMD_REMOTE
+        elif tcFunctionId == SAS_LockInstruments:
+          LOG_INFO("*** SAS_LockInstruments ***", "SPACE")
+          LOG("not used for simulation", "SPACE")
+        elif tcFunctionId == SAS_UnlockInstruments:
+          LOG_INFO("*** SAS_UnlockInstruments ***", "SPACE")
+          LOG("not used for simulation", "SPACE")
+        elif tcFunctionId == SAS_SetOnline:
+          LOG_INFO("*** SAS_SetOnline ***", "SPACE")
+          LOG("set the SCOE into the OFFLINE operation mode", "SPACE")
+          self.sasOperationMode = EPWR_OP_ONLINE
+          return self.sendSAS_Monitor()
+        elif tcFunctionId == SAS_SetOffline:
+          LOG_INFO("*** SAS_SetOffline ***", "SPACE")
+          self.sasOperationMode = EPWR_OP_OFFLINE
+          return self.sendSAS_Monitor()
+        elif tcFunctionId == SAS_SelfTest:
+          LOG_INFO("*** SAS_SelfTest ***", "SPACE")
+        else:
+          # unexpected Function ID
+          LOG_WARNING("no simulation for Function ID " + str(tcFunctionId) + " implemented", "SPACE")
+        return True
+    LOG_WARNING("TC ignored by simulation", "SPACE")
+    return True
+  # ---------------------------------------------------------------------------
+  def sendLPS_Monitor(self):
+    """sends the LPS_Monitor TM packet to CCS"""
+    pktMnemonic = "LPS_Monitor"
+    params = EPWR_SRUN_PARAMS + "," + \
+             EPWR_LPS_OP_Section1P + "," + \
+             EPWR_LPS_OP_Section1S + "," + \
+             EPWR_LPS_OP_Section2P + "," + \
+             EPWR_LPS_OP_Section2S + "," + \
+             EPWR_LPS_OP_Section3P + "," + \
+             EPWR_LPS_OP_Section3S
+    values = self.scoeRunning + "," + \
+             self.lpsOperationMode + "," + \
+             self.lpsOperationMode + "," + \
+             self.lpsOperationMode + "," + \
+             self.lpsOperationMode + "," + \
+             self.lpsOperationMode + "," + \
+             self.lpsOperationMode
+    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
+                                                                params,
+                                                                values)
+    # check the TM packet data
+    if tmPacketData == None:
+      LOG_ERROR("TM packet creation failed for " + pktMnemonic, "SPACE")
+      return False
+    # send the TM packet
+    return SPACE.IF.s_onboardComputer.generateTMpacket(tmPacketData)
+  # ---------------------------------------------------------------------------
+  def sendSAS_Monitor(self):
+    """sends the SAS_Monitor TM packet to CCS"""
+    pktMnemonic = "SAS_Monitor"
+    params = EPWR_SAS_OP_Section1 + "," + \
+             EPWR_SAS_OP_Section2 + "," + \
+             EPWR_SAS_OP_Section3 + "," + \
+             EPWR_SAS_OP_Section4 + "," + \
+             EPWR_SAS_OP_Section5 + "," + \
+             EPWR_SAS_OP_Section6 + "," + \
+             EPWR_SAS_OP_Section7 + "," + \
+             EPWR_SAS_OP_Section8 + "," + \
+             EPWR_SAS_OP_Section9 + "," + \
+             EPWR_SAS_OP_Section10 + "," + \
+             EPWR_SAS_OP_Section11 + "," + \
+             EPWR_SAS_OP_Section12 + "," + \
+             EPWR_SAS_OP_Section13 + "," + \
+             EPWR_SAS_OP_Section14 + "," + \
+             EPWR_SAS_OP_Section15
+    values = self.sasOperationMode + "," + \
+             self.sasOperationMode + "," + \
+             self.sasOperationMode + "," + \
+             self.sasOperationMode + "," + \
+             self.sasOperationMode + "," + \
+             self.sasOperationMode + "," + \
+             self.sasOperationMode + "," + \
+             self.sasOperationMode + "," + \
+             self.sasOperationMode + "," + \
+             self.sasOperationMode + "," + \
+             self.sasOperationMode + "," + \
+             self.sasOperationMode + "," + \
+             self.sasOperationMode + "," + \
+             self.sasOperationMode + "," + \
+             self.sasOperationMode
+    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
+                                                                params,
+                                                                values)
+    # check the TM packet data
+    if tmPacketData == None:
+      LOG_ERROR("TM packet creation failed for " + pktMnemonic, "SPACE")
+      return False
+    # send the TM packet
+    return SPACE.IF.s_onboardComputer.generateTMpacket(tmPacketData)
+
 #############
 # functions #
 #############
@@ -448,5 +826,13 @@ def init():
     SPACE.IF.s_applicationSoftware = MTGapplicationSoftwareImpl()
   elif mission == "S4":
     SPACE.IF.s_applicationSoftware = S4applicationSoftwareImpl()
+  elif mission == "EUCLID_BS":
+    SPACE.IF.s_applicationSoftware = EUCLIDpowerFEEsim_BS()
+  elif mission == "EUCLID_FTH":
+    SPACE.IF.s_applicationSoftware = EUCLIDpowerFEEsim_FTH()
+  elif mission == "EUCLID_LPSN":
+    SPACE.IF.s_applicationSoftware = EUCLIDpowerFEEsim_LPS_SAS(True)
+  elif mission == "EUCLID_LPSR":
+    SPACE.IF.s_applicationSoftware = EUCLIDpowerFEEsim_LPS_SAS(False)
   else:
     LOG_ERROR("No ASW implementation for mission " + mission + " present", "SPACE")
