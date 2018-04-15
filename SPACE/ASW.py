@@ -16,7 +16,7 @@
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import PUS.PACKET, PUS.SERVICES
 import SPACE.IF
-import UTIL.SYS
+import UTIL.DU, UTIL.SYS
 
 #############
 # constants #
@@ -87,6 +87,30 @@ FTH_DisableGUI = 0x0436
 FTH_SetOnline = 0x0405
 FTH_SetOffline = 0x0406
 FTH_SelfTest = 0x0410
+FTH_ConfigNEA = 0x0411
+FTH_ConfigNEA_NEA_ID_BYTE_OFFSET = 14
+FTH_ConfigNEA_NEA_ID_BYTE_SIZE = 64
+FTH_ConfigNEA_A_LO_BYTE_OFFSET = 78
+FTH_ConfigNEA_A_LO_BYTE_SIZE = 4
+FTH_ConfigNEA_A_HI_min_BYTE_OFFSET = 82
+FTH_ConfigNEA_A_HI_min_BYTE_SIZE = 4
+FTH_ConfigNEA_A_HI_max_BYTE_OFFSET = 86
+FTH_ConfigNEA_A_HI_max_BYTE_SIZE = 4
+FTH_ConfigNEA_Tmin_BYTE_OFFSET = 90
+FTH_ConfigNEA_Tmin_BYTE_SIZE = 1
+FTH_ConfigNEA_Tmax_BYTE_OFFSET = 91
+FTH_ConfigNEA_Tmax_BYTE_SIZE = 1
+FTH_ConfigNEA_NEA_TYPE_BYTE_OFFSET = 92
+FTH_ConfigNEA_NEA_TYPE_BYTE_SIZE = 64
+FTH_SelectNEA = 0x0434
+FTH_SelectNEA_NEA_ID_BYTE_OFFSET = 14
+FTH_SelectNEA_NEA_ID_BYTE_SIZE = 64
+FTH_SelectNEA_NEA_TYPE_BYTE_OFFSET = 78
+FTH_SelectNEA_NEA_TYPE_BYTE_SIZE = 64
+FTH_SelectNEA_select_BYTE_OFFSET = 142
+FTH_SelectNEA_select_BYTE_SIZE = 1
+FTH_NEA_Mask_BYTE_SIZE = 128
+FTH_NEA_Pulse_BYTE_SIZE = 128
 LPS_Initialize = 0x0022
 LPS_SetLocal = 0x0041
 LPS_SetRemote = 0x0042
@@ -629,6 +653,82 @@ class EUCLIDpowerFEEsim_FTH(ApplicationSoftwareImpl):
           return self.sendFTH_MonitorProUST()
         elif tcFunctionId == FTH_SelfTest:
           LOG_INFO("*** FTH_SelfTest ***", "SPACE")
+        elif tcFunctionId == FTH_ConfigNEA:
+          LOG_INFO("*** FTH_ConfigNEA ***", "SPACE")
+          pNEA_ID = tcPacketDu.getString(
+            FTH_ConfigNEA_NEA_ID_BYTE_OFFSET, FTH_ConfigNEA_NEA_ID_BYTE_SIZE).rstrip('\0')
+          pA_LO = tcPacketDu.getUnsigned(
+            FTH_ConfigNEA_A_LO_BYTE_OFFSET, FTH_ConfigNEA_A_LO_BYTE_SIZE)
+          pA_LO = UTIL.DU.unsigned2signed(pA_LO, FTH_ConfigNEA_A_LO_BYTE_SIZE) / 1000000.0
+          pA_HI_min = tcPacketDu.getUnsigned(
+            FTH_ConfigNEA_A_HI_min_BYTE_OFFSET, FTH_ConfigNEA_A_HI_min_BYTE_SIZE)
+          pA_HI_min = UTIL.DU.unsigned2signed(pA_HI_min, FTH_ConfigNEA_A_HI_min_BYTE_SIZE) / 1000000.0
+          pA_HI_max = tcPacketDu.getUnsigned(
+            FTH_ConfigNEA_A_HI_max_BYTE_OFFSET, FTH_ConfigNEA_A_HI_max_BYTE_SIZE)
+          pA_HI_max = UTIL.DU.unsigned2signed(pA_HI_max, FTH_ConfigNEA_A_HI_max_BYTE_SIZE) / 1000000.0
+          pA_Tmin = tcPacketDu.getUnsigned(
+            FTH_ConfigNEA_Tmin_BYTE_OFFSET, FTH_ConfigNEA_Tmin_BYTE_SIZE)
+          pA_Tmax = tcPacketDu.getUnsigned(
+            FTH_ConfigNEA_Tmax_BYTE_OFFSET, FTH_ConfigNEA_Tmax_BYTE_SIZE)
+          pNEA_TYPE = tcPacketDu.getString(
+            FTH_ConfigNEA_NEA_TYPE_BYTE_OFFSET, FTH_ConfigNEA_NEA_TYPE_BYTE_SIZE).rstrip('\0')
+          LOG_INFO("pNEA_ID = " + pNEA_ID, "SPACE")
+          LOG_INFO("pA_LO = " + str(pA_LO), "SPACE")
+          LOG_INFO("pA_HI_min = " + str(pA_HI_min), "SPACE")
+          LOG_INFO("pA_HI_max = " + str(pA_HI_max), "SPACE")
+          LOG_INFO("pA_Tmin = " + str(pA_Tmin), "SPACE")
+          LOG_INFO("pA_Tmax = " + str(pA_Tmax), "SPACE")
+          LOG_INFO("pNEA_TYPE = " + pNEA_TYPE, "SPACE")
+          neaMask = str(str(pA_LO) + "," + str(pA_HI_min) + "," + str(pA_HI_max) + "," + str(pA_Tmin) + ".0," + str(pA_Tmax) + ".0")
+          if pNEA_ID == "NEA1" and pNEA_TYPE == "N":
+            paramName = "NEA_MASK_1N"
+          elif pNEA_ID == "NEA1" and pNEA_TYPE == "R":
+            paramName = "NEA_MASK_1R"
+          elif pNEA_ID == "NEA2" and pNEA_TYPE == "N":
+            paramName = "NEA_MASK_1N"
+          elif pNEA_ID == "NEA2" and pNEA_TYPE == "R":
+            paramName = "NEA_MASK_1R"
+          elif pNEA_ID == "NEA3" and pNEA_TYPE == "N":
+            paramName = "NEA_MASK_1N"
+          elif pNEA_ID == "NEA3" and pNEA_TYPE == "R":
+            paramName = "NEA_MASK_1R"
+          else:
+            # unexpected NEA_Mask identifiers
+            LOG_WARNING("invalid NEA_ID " + pNEA_ID + " or NEA_TYPE " + pNEA_TYPE, "SPACE")
+            return False
+          return self.sendFTH_MonitorProUST_withStringParam(paramName, neaMask, FTH_NEA_Mask_BYTE_SIZE)
+        elif tcFunctionId == FTH_SelectNEA:
+          LOG_INFO("*** FTH_SelectNEA ***", "SPACE")
+          pNEA_ID = tcPacketDu.getString(
+            FTH_SelectNEA_NEA_ID_BYTE_OFFSET, FTH_SelectNEA_NEA_ID_BYTE_SIZE).rstrip('\0')
+          pNEA_TYPE = tcPacketDu.getString(
+            FTH_SelectNEA_NEA_TYPE_BYTE_OFFSET, FTH_SelectNEA_NEA_TYPE_BYTE_SIZE).rstrip('\0')
+          pSelect = tcPacketDu.getUnsigned(
+            FTH_SelectNEA_select_BYTE_OFFSET, FTH_SelectNEA_select_BYTE_SIZE)
+          LOG_INFO("pNEA_ID = " + pNEA_ID, "SPACE")
+          LOG_INFO("pNEA_TYPE = " + pNEA_TYPE, "SPACE")
+          LOG_INFO("pSelect = " + str(pSelect), "SPACE")
+          if pSelect == 1:
+            neaPulse = "0,0.0,0.0,None,Selected"
+          else:
+            neaPulse = "0,0.0,0.0,None,Unselected"
+          if pNEA_ID == "NEA1" and pNEA_TYPE == "N":
+            paramName = "NEA_PULSE_1N"
+          elif pNEA_ID == "NEA1" and pNEA_TYPE == "R":
+            paramName = "NEA_PULSE_1R"
+          elif pNEA_ID == "NEA2" and pNEA_TYPE == "N":
+            paramName = "NEA_PULSE_1N"
+          elif pNEA_ID == "NEA2" and pNEA_TYPE == "R":
+            paramName = "NEA_PULSE_1R"
+          elif pNEA_ID == "NEA3" and pNEA_TYPE == "N":
+            paramName = "NEA_PULSE_1N"
+          elif pNEA_ID == "NEA3" and pNEA_TYPE == "R":
+            paramName = "NEA_PULSE_1R"
+          else:
+            # unexpected NEA_Pulse identifiers
+            LOG_WARNING("invalid NEA_ID " + pNEA_ID + " or NEA_TYPE " + pNEA_TYPE, "SPACE")
+            return False
+          return self.sendFTH_MonitorProUST_withStringParam(paramName, neaPulse, FTH_NEA_Pulse_BYTE_SIZE)
         else:
           # unexpected Function ID
           LOG_WARNING("no simulation for Function ID " + str(tcFunctionId) + " implemented", "SPACE")
@@ -648,6 +748,24 @@ class EUCLIDpowerFEEsim_FTH(ApplicationSoftwareImpl):
     if tmPacketData == None:
       LOG_ERROR("TM packet creation failed for " + pktMnemonic, "SPACE")
       return False
+    # send the TM packet
+    return SPACE.IF.s_onboardComputer.generateTMpacket(tmPacketData)
+  # ---------------------------------------------------------------------------
+  def sendFTH_MonitorProUST_withStringParam(self, paramName, paramValue, paramSize):
+    """sends the FTH_MonitorProUST TM packet to CCS"""
+    pktMnemonic = "FTH_MonitorProUST"
+    params = ""
+    values = ""
+    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
+                                                                params,
+                                                                values)
+    # check the TM packet data
+    if tmPacketData == None:
+      LOG_ERROR("TM packet creation failed for " + pktMnemonic, "SPACE")
+      return False
+    # force the correct parameter size and add the parameter
+    paramValue = (paramValue + (' ' * paramSize))[0:paramSize]
+    tmPacketData.parameterValuesList.append([paramName,paramValue])
     # send the TM packet
     return SPACE.IF.s_onboardComputer.generateTMpacket(tmPacketData)
 

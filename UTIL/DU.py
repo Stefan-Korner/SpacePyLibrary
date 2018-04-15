@@ -492,3 +492,31 @@ def str2array(hexString, withoutSpaces=False):
   else:
     hexTuples = hexString.split()
   return array.array('B', map((lambda x: int(x, 16)), hexTuples))
+
+def unsigned2signed(value, byteSize):
+  """convers an unsigned integer into a signed integer"""
+  if byteSize == 1:
+    if value > 0x7F:
+      return (value - 0x100)
+  elif byteSize == 2:
+    if value > 0x7FFF:
+      return (value - 0x10000)
+  elif byteSize == 4:
+    if value > 0x7FFFFFFF:
+      return (value - 0x100000000)
+  # positive (or invalid byte size)
+  return value
+
+def signed2unsigned(value, byteSize):
+  """convers a signed integer into an unsigned integer"""
+  if byteSize == 1:
+    if value < 0:
+      return (value + 0x100)
+  elif byteSize == 2:
+    if value < 0:
+      return (value + 0x10000)
+  elif byteSize == 4:
+    if value < 0:
+      return (value + 0x100000000)
+  # positive (or invalid byte size)
+  return value
