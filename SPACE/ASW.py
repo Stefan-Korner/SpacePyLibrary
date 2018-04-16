@@ -685,13 +685,13 @@ class EUCLIDpowerFEEsim_FTH(ApplicationSoftwareImpl):
           elif pNEA_ID == "NEA1" and pNEA_TYPE == "R":
             paramName = "NEA_MASK_1R"
           elif pNEA_ID == "NEA2" and pNEA_TYPE == "N":
-            paramName = "NEA_MASK_1N"
+            paramName = "NEA_MASK_2N"
           elif pNEA_ID == "NEA2" and pNEA_TYPE == "R":
-            paramName = "NEA_MASK_1R"
+            paramName = "NEA_MASK_2R"
           elif pNEA_ID == "NEA3" and pNEA_TYPE == "N":
-            paramName = "NEA_MASK_1N"
+            paramName = "NEA_MASK_3N"
           elif pNEA_ID == "NEA3" and pNEA_TYPE == "R":
-            paramName = "NEA_MASK_1R"
+            paramName = "NEA_MASK_3R"
           else:
             # unexpected NEA_Mask identifiers
             LOG_WARNING("invalid NEA_ID " + pNEA_ID + " or NEA_TYPE " + pNEA_TYPE, "SPACE")
@@ -717,13 +717,13 @@ class EUCLIDpowerFEEsim_FTH(ApplicationSoftwareImpl):
           elif pNEA_ID == "NEA1" and pNEA_TYPE == "R":
             paramName = "NEA_PULSE_1R"
           elif pNEA_ID == "NEA2" and pNEA_TYPE == "N":
-            paramName = "NEA_PULSE_1N"
+            paramName = "NEA_PULSE_2N"
           elif pNEA_ID == "NEA2" and pNEA_TYPE == "R":
-            paramName = "NEA_PULSE_1R"
+            paramName = "NEA_PULSE_2R"
           elif pNEA_ID == "NEA3" and pNEA_TYPE == "N":
-            paramName = "NEA_PULSE_1N"
+            paramName = "NEA_PULSE_3N"
           elif pNEA_ID == "NEA3" and pNEA_TYPE == "R":
-            paramName = "NEA_PULSE_1R"
+            paramName = "NEA_PULSE_3R"
           else:
             # unexpected NEA_Pulse identifiers
             LOG_WARNING("invalid NEA_ID " + pNEA_ID + " or NEA_TYPE " + pNEA_TYPE, "SPACE")
