@@ -584,6 +584,10 @@ class EUCLIDpowerFEEsim_BS(ApplicationSoftwareImpl):
           return self.sendBS_Monitor()
         elif tcFunctionId == BS_SelfTest:
           LOG_INFO("*** BS_SelfTest ***", "SPACE")
+          # the SELFTEST is only allowed in OFFLINE mode
+          if self.operationMode == EPWR_OP_ONLINE:
+            LOG_ERROR("SELFTEST not allowed when system is ONLINE", "SPACE")
+            return False
         else:
           # unexpected Function ID
           LOG_WARNING("no simulation for Function ID " + str(tcFunctionId) + " implemented", "SPACE")
@@ -653,6 +657,10 @@ class EUCLIDpowerFEEsim_FTH(ApplicationSoftwareImpl):
           return self.sendFTH_MonitorProUST()
         elif tcFunctionId == FTH_SelfTest:
           LOG_INFO("*** FTH_SelfTest ***", "SPACE")
+          # the SELFTEST is only allowed in OFFLINE mode
+          if self.operationMode == EPWR_OP_FTH_ONLINE:
+            LOG_ERROR("SELFTEST not allowed when system is ONLINE", "SPACE")
+            return False
         elif tcFunctionId == FTH_ConfigNEA:
           LOG_INFO("*** FTH_ConfigNEA ***", "SPACE")
           pNEA_ID = tcPacketDu.getString(

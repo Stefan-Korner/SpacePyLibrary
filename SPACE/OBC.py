@@ -80,14 +80,15 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
       if tcPacketDu.serviceType == PUS.SERVICES.TC_OBQ_TYPE:
         if SPACE.IF.s_onboardQueue == None:
           LOG_ERROR("No OBQ implementation for OBQ management command", "SPACE")
-          okStatus = False
+          ok = False
         else:
           SPACE.IF.s_onboardQueue.processTCpacket(tcPacketDu)
       # delegate other services to the spacecraft application software
       elif SPACE.IF.s_applicationSoftware != None:
-        SPACE.IF.s_applicationSoftware.processTCpacket(tcPacketDu)
+        ok = SPACE.IF.s_applicationSoftware.processTCpacket(tcPacketDu)
       # send TC acknowledgements
-      ok &= self.generateAcksFromTCpacket(tcPacketDu, ack1, ack2, ack3, ack4)
+      if ok:
+        ok &= self.generateAcksFromTCpacket(tcPacketDu, ack1, ack2, ack3, ack4)
     else:
       LOG("non-PUS packet", "SPACE")
       LOG("tcPacketDu = " + str(tcPacketDu), "SPACE")
