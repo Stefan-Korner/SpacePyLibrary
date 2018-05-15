@@ -165,7 +165,13 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
     """
     # open the TM frame recording file
     try:
-      recordingFile = open(recordFileName, "w")
+      recordFormat = GRND.IF.s_configuration.frameRecordFormat
+      if recordFormat == "NCTRS" or recordFormat == "CRYOSAT":
+        # recording file has binary format
+        recordingFile = open(recordFileName, "wb")
+      else:
+        # recording file has ASCII format
+        recordingFile = open(recordFileName, "w")
     except:
       LOG_ERROR("cannot open " + recordFileName, "GRND")
       return
