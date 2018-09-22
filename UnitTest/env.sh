@@ -14,3 +14,4 @@
 # Setup the sh Linux environment for Unit Tests, file needs to be sourced.    *
 #******************************************************************************
 export PYTHONPATH=${HOME}/Python/SpacePyLibrary:${HOME}/Python/SpacePyLibrary/UnitTest
+export scosii_homedir=../scosii_homedir

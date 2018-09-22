@@ -13,5 +13,5 @@
 ::*****************************************************************************
 :: Setup the csh Linux environment for Unit Tests, file needs to be sourced.  *
 ::*****************************************************************************
-set HOST=192.168.1.105
 set PYTHONPATH=D:\Programming\SpacePyLibrary;D:\Programming\SpacePyLibrary\UnitTest
+set scosii_homedir=..\scosii_homedir

@@ -14,3 +14,4 @@
 # Setup the csh Linux environment for Unit Tests, file needs to be sourced.   *
 #******************************************************************************
 setenv PYTHONPATH ${HOME}/Python/SpacePyLibrary:${HOME}/Python/SpacePyLibrary/UnitTest
+setenv scosii_homedir ../scosii_homedir
