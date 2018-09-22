@@ -17,6 +17,7 @@
 # sending of the buffer over the network.                                     * 
 #******************************************************************************
 import array
+import struct
 
 #############
 # constants #
@@ -25,8 +26,9 @@ import array
 BITS = 0
 BYTES = 1
 UNSIGNED = 2
-STRING = 3
+FLOAT = 3
 TIME = 4
+STRING = 5
 
 # index = [firstBitInBytePos][lastBitInBytePos]
 BIT_FILTER = [
@@ -141,11 +143,14 @@ class BinaryUnit(object):
           retStr += str(self.getBytes(fieldOffset, fieldLength))
         elif fieldType == UNSIGNED:
           retStr += str(self.getUnsigned(fieldOffset, fieldLength))
-        elif fieldType == STRING:
-          retStr += str(self.getString(fieldOffset, fieldLength))
-        else:
+        elif fieldType == FLOAT:
+          retStr += str(self.getFloat(fieldOffset, fieldLength))
+        elif fieldType == TIME:
           timeFormat = fieldLength
           retStr += str(self.getTime(fieldOffset, timeFormat))
+        else:
+          # fieldType == STRING
+          retStr += str(self.getString(fieldOffset, fieldLength))
     if self.attributeMap2 != None:
       for name, fieldSpec in self.attributeMap2.iteritems():
         retStr += "\n" + name + " = "
@@ -159,11 +164,14 @@ class BinaryUnit(object):
             retStr += str(self.getBytes(fieldOffset, fieldLength))
           elif fieldType == UNSIGNED:
             retStr += str(self.getUnsigned(fieldOffset, fieldLength))
-          elif fieldType == STRING:
-            retStr += str(self.getString(fieldOffset, fieldLength))
-          else:
+          elif fieldType == FLOAT:
+            retStr += str(self.getFloat(fieldOffset, fieldLength))
+          elif fieldType == TIME:
             timeFormat = fieldLength
             retStr += str(self.getTime(fieldOffset, timeFormat))
+          else:
+            # fieldType == STRING
+            retStr += str(self.getString(fieldOffset, fieldLength))
     return retStr
   # ---------------------------------------------------------------------------
   def __len__(self):
@@ -339,13 +347,41 @@ class BinaryUnit(object):
       value >>= 8
       bytePos -= 1
   # ---------------------------------------------------------------------------
-  def getString(self, bytePos, byteLength):
-    """extracts a string"""
-    return self.getBytes(bytePos, byteLength).tostring()
+  def getFloat(self, bytePos, byteLength):
+    """extracts a float value"""
+    # single precission float 32 and double precision float 64 are supported
+    # consistency checks
+    if bytePos < 0:
+      raise IndexError("invalid bytePos")
+    if byteLength != 4 and byteLength != 8:
+      raise IndexError("invalid byteLength")
+    if bytePos + byteLength > self.usedBufferSize:
+      raise IndexError("bytePos/byteLength out of buffer")
+    # extract value from buffer
+    # note: unpack_from returns a list of values - we use only the first one
+    #       the de-coding uses network byte order
+    if byteLength == 4:
+      return struct.unpack_from('!f', self.buffer, bytePos)[0]
+    else:
+      # byteLength == 8
+      return struct.unpack_from('!d', self.buffer, bytePos)[0]
   # ---------------------------------------------------------------------------
-  def setString(self, bytePos, byteLength, byteArray):
-    """set a string"""
-    self.setBytes(bytePos, byteLength, byteArray)
+  def setFloat(self, bytePos, byteLength, value):
+    """set a float value"""
+    # single precission float 32 and double precision float 64 are supported
+    if bytePos < 0:
+      raise IndexError("invalid bytePos")
+    if byteLength != 4 and byteLength != 8:
+      raise IndexError("invalid byteLength")
+    if bytePos + byteLength > self.usedBufferSize:
+      raise IndexError("bytePos/byteLength out of buffer")
+    # copy value into buffer
+    # note: the en-coding uses network byte order
+    if byteLength == 4:
+      struct.pack_into('!f', self.buffer, bytePos, value)
+    else:
+      # byteLength == 8
+      struct.pack_into('!d', self.buffer, bytePos, value)
   # ---------------------------------------------------------------------------
   def getTime(self, bytePos, timeFormat):
     """extracts a time"""
@@ -356,6 +392,14 @@ class BinaryUnit(object):
     """set a time"""
     # must be implemented in derived class
     raise AttributeError("time access not supported")
+  # ---------------------------------------------------------------------------
+  def getString(self, bytePos, byteLength):
+    """extracts a string"""
+    return self.getBytes(bytePos, byteLength).tostring()
+  # ---------------------------------------------------------------------------
+  def setString(self, bytePos, byteLength, byteArray):
+    """set a string"""
+    self.setBytes(bytePos, byteLength, byteArray)
   # ---------------------------------------------------------------------------
   def __getattr__(self, name):
     """read access to the data unit attributes"""
@@ -370,11 +414,14 @@ class BinaryUnit(object):
         return self.getBytes(fieldOffset, fieldLength)
       elif fieldType == UNSIGNED:
         return self.getUnsigned(fieldOffset, fieldLength)
-      elif fieldType == STRING:
-        return self.getString(fieldOffset, fieldLength)
-      else:
+      elif fieldType == FLOAT:
+        return self.getFloat(fieldOffset, fieldLength)
+      elif fieldType == TIME:
         timeFormat = fieldLength
         return self.getTime(fieldOffset, timeFormat)
+      else:
+        # fieldType == STRING
+        return self.getString(fieldOffset, fieldLength)
     # attribute not in first attribute map ---> try the second one
     if self.attributeMap2 == None:
       raise AttributeError("attribute not found")
@@ -391,11 +438,14 @@ class BinaryUnit(object):
           return self.getBytes(fieldOffset, fieldLength)
         elif fieldType == UNSIGNED:
           return self.getUnsigned(fieldOffset, fieldLength)
-        elif fieldType == STRING:
-          return self.getString(fieldOffset, fieldLength)
-        else:
+        elif fieldType == FLOAT:
+          return self.getFloat(fieldOffset, fieldLength)
+        elif fieldType == TIME:
           timeFormat = fieldLength
           return self.getTime(fieldOffset, timeFormat)
+        else:
+          # fieldType == STRING
+          return self.getString(fieldOffset, fieldLength)
     # attribute not in first and second attribute map
     raise AttributeError("attribute not found")
   # ---------------------------------------------------------------------------
@@ -412,11 +462,14 @@ class BinaryUnit(object):
         self.setBytes(fieldOffset, fieldLength, value)
       elif fieldType == UNSIGNED:
         self.setUnsigned(fieldOffset, fieldLength, value)
-      elif fieldType == STRING:
-        self.setString(fieldOffset, fieldLength, value)
-      else:
+      elif fieldType == FLOAT:
+        self.setFloat(fieldOffset, fieldLength, value)
+      elif fieldType == TIME:
         timeFormat = fieldLength
         self.setTime(fieldOffset, timeFormat, value)
+      else:
+        # fieldType == STRING
+        self.setString(fieldOffset, fieldLength, value)
       return
     # attribute not in first attribute map ---> try the second one
     if self.attributeMap2 == None:
@@ -434,11 +487,14 @@ class BinaryUnit(object):
           self.setBytes(fieldOffset, fieldLength, value)
         elif fieldType == UNSIGNED:
           self.setUnsigned(fieldOffset, fieldLength, value)
-        elif fieldType == STRING:
-          self.setString(fieldOffset, fieldLength, value)
-        else:
+        elif fieldType == FLOAT:
+          self.setFloat(fieldOffset, fieldLength, value)
+        elif fieldType == TIME:
           timeFormat = fieldLength
           self.setTime(fieldOffset, timeFormat, value)
+        else:
+          # fieldType == STRING
+          self.setString(fieldOffset, fieldLength, value)
       return
     # attribute not in first and second attribute map
     raise AttributeError("attribute not found")

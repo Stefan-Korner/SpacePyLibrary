@@ -133,6 +133,29 @@ def test_DUoperations():
   print "b.getUnsigned(1, 2) =", ("%08X" % b.getUnsigned(1, 2))
   b.setUnsigned(0, 2, 0x00001234)
   print "b.setUnsigned(0, 2, 0x00001234) =", b
+  b = UTIL.DU.BinaryUnit(16 * 'w')
+  print "b =", b
+  value = 10.0
+  b.setFloat(0, 4, value)
+  print "b =", b
+  if str(b) != "\n0000 41 20 00 00 77 77 77 77 77 77 77 77 77 77 77 77 A ..wwwwwwwwwwww":
+    print "unexpected float encoding"
+    return False
+  b.setFloat(6, 8, value)
+  print "b =", b
+  if str(b) != "\n0000 41 20 00 00 77 77 40 24 00 00 00 00 00 00 77 77 A ..ww@$......ww":
+    print "unexpected float encoding"
+    return False
+  value1 = b.getFloat(0, 4)
+  print "value1 =", value1
+  if value1 != value:
+    print "unexpected float32 decoding"
+    return False
+  value2 = b.getFloat(6, 8)
+  print "value2 =", value2
+  if value2 != value:
+    print "unexpected float64 decoding"
+    return False
   a = UTIL.DU.str2array("00 01 FF FE 64 12")
   print 'str2array("00 01 FF FE 64 12") =', a
   a = UTIL.DU.str2array("0001FFFE6412", True)
