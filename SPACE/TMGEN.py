@@ -148,8 +148,13 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
         bitPos = paramExtraction.bitPos
         bitLength = paramExtraction.bitWidth
         isInteger = paramExtraction.isInteger
+        isFloat = paramExtraction.isFloat
         if isInteger:
           packet.setBits(bitPos, bitLength, paramValue)
+        elif isFloat:
+          bytePos = bitPos / 8
+          byteLength = bitLength / 8
+          packet.setFloat(bytePos, byteLength, paramValue)
         else:
           bytePos = bitPos / 8
           byteLength = bitLength / 8
@@ -199,6 +204,7 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
       packet = PUS.PACKET.TMpacket(binaryString)
       packet.setPacketLength()
       packet.dataFieldHeaderFlag = 1
+      packet.pusVersionNumber = PUS.PACKET.PUS_VERSION_NUMBER
       packet.serviceType = serviceType
       packet.serviceSubType = serviceSubType
     packet.applicationProcessId = applicationProcessId
