@@ -112,12 +112,13 @@ class TMparamToPkt(object):
 class TMparamExtraction(object):
   """Defines a dedicated parameter extraction in a packet"""
   # ---------------------------------------------------------------------------
-  def __init__(self, bitPos, bitWidth, name, descr, isInteger, piValue=False):
+  def __init__(self, bitPos, bitWidth, name, descr, isInteger, isFloat, piValue=False):
     self.bitPos = bitPos
     self.bitWidth = bitWidth
     self.name = name
     self.descr = descr
     self.isInteger = isInteger
+    self.isFloat = isFloat
     self.piValue = piValue
   # ---------------------------------------------------------------------------
   def __cmp__(self, other):
@@ -187,6 +188,7 @@ class TMpktDef(object):
     paramDef = paramToPacket.paramDef
     paramDescr = paramDef.paramDescr
     isInteger = paramDef.isInteger()
+    isFloat = paramDef.isFloat()
     pktSPID = paramToPacket.pktSPID
     locOffby = paramToPacket.locOffby
     locOffbi =  paramToPacket.locOffbi
@@ -202,7 +204,7 @@ class TMpktDef(object):
     nameElements = paramName.split("#")
     if len(nameElements) == 1:
       # normal parameter
-      paramExtraction = TMparamExtraction(bitStartPos, bitWidth, paramName, paramDescr, isInteger)
+      paramExtraction = TMparamExtraction(bitStartPos, bitWidth, paramName, paramDescr, isInteger, isFloat)
     else:
       # supercommutated parameter
       commutation = int(nameElements[1])
@@ -210,7 +212,7 @@ class TMpktDef(object):
         LOG_WARNING("param " + nameElements[0] + " has invalid commutation " + nameElements[1], "SPACE")
         return None
       bitPos = bitStartPos + (locLgocc * (commutation - 1))
-      paramExtraction = TMparamExtraction(bitPos, bitWidth, fieldName, paramDescr, isInteger)
+      paramExtraction = TMparamExtraction(bitPos, bitWidth, fieldName, paramDescr, isInteger, isFloat)
     return paramExtraction
   # ---------------------------------------------------------------------------
   def getParamExtractions(self):
@@ -224,7 +226,7 @@ class TMpktDef(object):
       pi1BitWidth = self.pktPI1wid
       pi1ValueName = self.pktName + "_PI1VAL"
       pi1ValueDescr = "PI1 Value"
-      paramExtraction = TMparamExtraction(pi1BitPos, pi1BitWidth, pi1ValueName, pi1ValueDescr, True, True)
+      paramExtraction = TMparamExtraction(pi1BitPos, pi1BitWidth, pi1ValueName, pi1ValueDescr, True, False, True)
       retVal.append(paramExtraction)
     pi2BitPos = None
     pi2BitWidth = None
@@ -236,13 +238,14 @@ class TMpktDef(object):
       else:
         pi2ValueName = self.pktName + "_PI2VAL"
         pi2ValueDescr = "PI2 Value"
-        paramExtraction = TMparamExtraction(pi2BitPos, pi2BitWidth, pi2ValueName, pi2ValueDescr, True, True)
+        paramExtraction = TMparamExtraction(pi2BitPos, pi2BitWidth, pi2ValueName, pi2ValueDescr, True, False, True)
         retVal.append(paramExtraction)
     # insert other parameters
     for paramName, paramToPacket in self.paramLinks.iteritems():
       paramDef = paramToPacket.paramDef
       paramDescr = paramDef.paramDescr
       isInteger = paramDef.isInteger()
+      isFloat = paramDef.isFloat()
       pktSPID = paramToPacket.pktSPID
       locOffby = paramToPacket.locOffby
       locOffbi =  paramToPacket.locOffbi
@@ -263,7 +266,7 @@ class TMpktDef(object):
         if self.rangeOverlap(pi2BitPos, pi2BitWidth, bitStartPos, bitWidth):
           LOG_WARNING("param " + paramName + " overlaps PI2 ---> ignored", "SPACE")
           continue
-        paramExtraction = TMparamExtraction(bitStartPos, bitWidth, paramName, paramDescr, isInteger)
+        paramExtraction = TMparamExtraction(bitStartPos, bitWidth, paramName, paramDescr, isInteger, isFloat)
         retVal.append(paramExtraction)
       else:
         # supercommutated parameter
@@ -276,7 +279,7 @@ class TMpktDef(object):
           if self.rangeOverlap(pi2BitPos, pi2BitWidth, bitPos, bitWidth):
             LOG_WARNING("param " + fieldName + " overlaps PI2 ---> ignored", "SPACE")
             continue
-          paramExtraction = TMparamExtraction(bitPos, bitWidth, fieldName, paramDescr, isInteger)
+          paramExtraction = TMparamExtraction(bitPos, bitWidth, fieldName, paramDescr, isInteger, isFloat)
           retVal.append(paramExtraction)
     retVal.sort()
     return retVal
@@ -339,6 +342,10 @@ class TMparamDef(object):
     if (self.paramPtc <= 4) or (self.paramPtc == 6):
       return True
     return False
+  # ---------------------------------------------------------------------------
+  def isFloat(self):
+    """tells if the parameter is floar"""
+    return (self.paramPtc == 5)
   # ---------------------------------------------------------------------------
   def getBitWidth(self):
     if self.paramPtc == 1:
