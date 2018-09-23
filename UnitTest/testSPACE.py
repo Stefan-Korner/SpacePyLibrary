@@ -15,6 +15,7 @@
 # Space Segment - Unit Tests                                                  *
 #******************************************************************************
 import testData
+import CCSDS.PACKET
 import SPACE.DEF, SPACE.TMGEN
 import UTIL.SYS
 
@@ -48,10 +49,10 @@ SYS_CONFIGURATION = [
   ["TM_TT_TIME_BYTE_OFFSET", "10"],
   ["TM_RECORD_FORMAT", "NCTRS"],
   ["TM_REPLAY_KEY", "SPID"],
-  ["OBT_MISSION_EPOCH_STR", UTIL.TCO.TAI_MISSION_EPOCH_STR],
-  ["OBT_LEAP_SECONDS", str(UTIL.TCO.GPS_LEAP_SECONDS_2017)],
-  ["ERT_MISSION_EPOCH_STR", UTIL.TCO.TAI_MISSION_EPOCH_STR],
-  ["ERT_LEAP_SECONDS", str(UTIL.TCO.GPS_LEAP_SECONDS_2017)],
+  ["OBT_MISSION_EPOCH_STR", UTIL.TCO.UNIX_MISSION_EPOCH_STR],
+  ["OBT_LEAP_SECONDS", "0"],
+  ["ERT_MISSION_EPOCH_STR", UTIL.TCO.UNIX_MISSION_EPOCH_STR],
+  ["ERT_LEAP_SECONDS", "0"],
   ["SYS_COLOR_LOG", "1"],
   ["SYS_APP_MNEMO", "SIM"],
   ["SYS_APP_NAME", "Simulator"],
@@ -82,9 +83,21 @@ def test_DEFoperations():
 def test_TMGENoperations():
   """function to test the TMGEN telemetry generator"""
   SPACE.TMGEN.init()
-  # TM_PACKET_03 has a checksum
-  tmPacket = SPACE.IF.s_tmPacketGenerator.getTMpacket(testData.TM_PACKET_03_SPID)
+  # create TM packet without TM parameters
+  tmPacket = SPACE.IF.s_tmPacketGenerator.getTMpacket(
+    spid=testData.TM_PACKET_03_SPID,
+    parameterValues=[],
+    dataField=None,
+    segmentationFlags=CCSDS.PACKET.UNSEGMENTED,
+    obtUTC=0.0,
+    reuse=True)
   print "tmPacket =", tmPacket
+  if UTIL.DU.array2str(tmPacket.getBufferString()) != "\n" + \
+    "0000 0C D2 C0 00 00 26 10 03 19 00 00 00 00 00 00 00 .....&..........\n" + \
+    "0010 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n" + \
+    "0020 00 00 00 00 00 00 00 00 00 00 00 A9 07          .............":
+    print "unexpected TM packet encoding"
+    return False
   if tmPacket.versionNumber != testData.TM_PACKET_03_versionNumber:
     print "tmPacket versionNumber wrong:", tmPacket.versionNumber, "- should be", testData.TM_PACKET_03_versionNumber
     return False
@@ -120,6 +133,29 @@ def test_TMGENoperations():
     return False
   if not tmPacket.checkChecksum():
     print "tmPacket has invalid checksum"
+    return False
+  # create TM packet with initialized TM parameters
+  parameterValuesList = []
+  parameterValuesList.append(["PAR1", 1])
+  parameterValuesList.append(["PAR3", 1])
+  parameterValuesList.append(["PAR5", 1])
+  parameterValuesList.append(["PAR7", 1])
+  parameterValuesList.append(["PAR9", 0x12345678])
+  parameterValuesList.append(["PAR11", 10.0])
+  parameterValuesList.append(["PAR12", 10.0])
+  tmPacket = SPACE.IF.s_tmPacketGenerator.getTMpacket(
+    spid=testData.TM_PACKET_03_SPID,
+    parameterValues=parameterValuesList,
+    dataField=None,
+    segmentationFlags=CCSDS.PACKET.UNSEGMENTED,
+    obtUTC=0.0,
+    reuse=True)
+  print "tmPacket =", tmPacket
+  if UTIL.DU.array2str(tmPacket.getBufferString()) != "\n" + \
+    "0000 0C D2 C0 01 00 26 10 03 19 00 00 00 00 00 00 00 .....&..........\n" + \
+    "0010 00 00 AA 12 34 56 78 00 00 00 00 00 00 00 00 41 ....4Vx........A\n" + \
+    "0020 20 00 00 40 24 00 00 00 00 00 00 BC 77           ..@$.......w":
+    print "unexpected TM packet encoding"
     return False
   return True
 
