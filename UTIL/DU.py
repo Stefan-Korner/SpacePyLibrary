@@ -326,6 +326,10 @@ class BinaryUnit(object):
   # ---------------------------------------------------------------------------
   def setUnsigned(self, bytePos, byteLength, value):
     """set a numerical value byte aligned"""
+    try:
+      value = long(value)
+    except:
+      raise ValueError("value is not an integer/long")
     # performance optimizations:
     # - multiply with 8 is replaced by << 3 (performance)
     # consistency checks
@@ -349,7 +353,7 @@ class BinaryUnit(object):
   # ---------------------------------------------------------------------------
   def getFloat(self, bytePos, byteLength):
     """extracts a float value"""
-    # single precission float 32 and double precision float 64 are supported
+    # single precision float 32 and double precision float 64 are supported
     # consistency checks
     if bytePos < 0:
       raise IndexError("invalid bytePos")
@@ -368,7 +372,11 @@ class BinaryUnit(object):
   # ---------------------------------------------------------------------------
   def setFloat(self, bytePos, byteLength, value):
     """set a float value"""
-    # single precission float 32 and double precision float 64 are supported
+    try:
+      value = float(value)
+    except:
+      raise ValueError("value is not a float")
+    # single precision float 32 and double precision float 64 are supported
     if bytePos < 0:
       raise IndexError("invalid bytePos")
     if byteLength != 4 and byteLength != 8:
