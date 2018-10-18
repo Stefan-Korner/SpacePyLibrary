@@ -42,26 +42,6 @@ class Environment(object):
     if self.runtimeRoot == None:
       LOG_ERROR("TESTENV not initialised")
       sys.exit(-1)
-    # read essential information from TPKTconnTable.dat
-    tpktConnTableFileName = self.mibDir() + "/TPKTconnTable.dat"
-    try:
-      tpktConnTableFile = open(tpktConnTableFileName);
-    except:
-      LOG_WARNING("cannot read " + tpktConnTableFileName)
-      return
-    fileContents = tpktConnTableFile.readlines()
-    tpktConnTableFile.close()
-    # parse the file to find the entry with connection ID 1
-    self.pktDefaultPort = None
-    for line in fileContents:
-      tokens = line.split()
-      if len(tokens) >= 4 and tokens[0] == "1" and tokens[1].upper() == self.hostName.upper():
-        # line found
-        self.pktDefaultPort = int(tokens[3])
-        break
-    if self.pktDefaultPort == None:
-      LOG_WARNING("no entry for connection 1 found in " + tpktConnTableFileName)
-      return
     # read essential information from TPKTconfigTable.dat
     tpktConfigTableFileName = self.mibDir() + "/TPKTconfigTable.dat"
     try:
@@ -103,10 +83,6 @@ class Environment(object):
   def definitionFileName(self):
     """Get the testdata.sim file name"""
     return self.runtimeRoot + "/testbin/testdata.sim"
-  # ---------------------------------------------------------------------------
-  def getPKTdefaultPort(self):
-    """Returns the packetiser port of connection 1"""
-    return self.pktDefaultPort
   # ---------------------------------------------------------------------------
   def getSpacecraftID(self):
     """Returns the spacecraft ID"""
