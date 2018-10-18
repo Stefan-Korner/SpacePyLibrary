@@ -36,6 +36,6 @@ set TM_TT_TIME_FORMAT=CUC4
 set TM_TT_TIME_BYTE_OFFSET=10
 set TM_RECORD_FORMAT=NCTRS
 set SYS_COLOR_LOG=1
-set scosii_homedir=C:\Programming\SpacePyLibrary\scosii_homedir
+set TESTENV=C:\Programming\SpacePyLibrary\TESTENV
 set PYTHONPATH=C:\Programming\SpacePyLibrary;C:\Programming\SpacePyLibrary\UnitTest
 python SIM.py dummy

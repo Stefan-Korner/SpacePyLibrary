@@ -38,12 +38,9 @@ class Environment(object):
   def __init__(self):
     """initialise from TPKTconnTable.dat and TPKTconfigTable.dat"""
     self.hostName = os.getenv("HOST")
-    # the change between old SCOS (Release 3.1 or older) and new SCOS
-    # (Release 4.0 or younger) can be identified through a change in
-    # the CORBA Naming Service configuration
-    self.runtimeRoot = os.getenv("scosii_homedir")
+    self.runtimeRoot = os.getenv("TESTENV")
     if self.runtimeRoot == None:
-      LOG_ERROR("scosii_homedir not initialised")
+      LOG_ERROR("TESTENV not initialised")
       sys.exit(-1)
     # read essential information from TPKTconnTable.dat
     tpktConnTableFileName = self.mibDir() + "/TPKTconnTable.dat"

@@ -15,4 +15,4 @@
 ::*****************************************************************************
 set PYTHONPATH=C:\Programming\SpacePyLibrary;C:\Programming\SpacePyLibrary\UnitTest
 set HOST=127.0.0.1
-set scosii_homedir=..\scosii_homedir
+set TESTENV=..\TESTENV

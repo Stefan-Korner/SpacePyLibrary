@@ -15,4 +15,4 @@
 # Deletes temporary files that are created during runtime.                    *
 #******************************************************************************
 rm -f */*.pyc
-rm -f scosii_homedir/testbin/testdata.sim
+rm -f TESTENV/testbin/testdata.sim
