@@ -1,10 +1,6 @@
 Backlog of features that shall be implemented
 ==============================================
 
-001 Remove the dependency to MIB files TPKTconnTable.dat, TPKTconfigTable.dat:
-    The related information in the files shall be exclusively taken from
-    UTIL.SYS.Configuration.
-
 002 Calculate the TM packet size from plf.dat, pcf.dat, pid.dat when the size
     information in tpcf.dat is empty.
 
@@ -14,6 +10,10 @@ Backlog of features that shall be implemented
     a repitition cycle time.
 
 --------------------------------- implemented ---------------------------------
+
+001 Remove the dependency to MIB files TPKTconnTable.dat, TPKTconfigTable.dat:
+    The related information in the files shall be exclusively taken from
+    UTIL.SYS.Configuration.
 
 003 Rename scosii_homedir directory and environment variable to TESTENV. With
     this change the directory name will be compatible to the TESTENV.git
