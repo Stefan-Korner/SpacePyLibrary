@@ -7,3 +7,12 @@ Backlog of features that shall be implemented
 
 002 Calculate the TM packet size from plf.dat, pcf.dat, pid.dat when the size
     information in tpcf.dat is empty.
+
+003 Rename scosii_homedir directory and environment variable to TESTENV. With
+    this change the directory name will be compatible to the TESTENV.git
+    repository on github (https://github.com/Stefan-Korner/SpacePyLibrary.git).
+
+004 Support signed integers from the MIB.
+
+005 Support cyclic packet replay definitions where packet are defined with
+    a repitition cycle time.
