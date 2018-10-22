@@ -14,6 +14,7 @@
 # CCSDS Stack - CCSDS Packet Module                                           *
 #******************************************************************************
 from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME
+from UTIL.SYS import Error
 import CCSDS.DU
 
 #############
@@ -44,6 +45,20 @@ PRIMARY_HEADER_ATTRIBUTES = {
   "segmentationFlags":    (16,  2, BITS),
   "sequenceControlCount": (18, 14, BITS),
   "packetLength":         ( 4,  2, UNSIGNED)}
+
+#############
+# functions #
+#############
+# -----------------------------------------------------------------------------
+def getPacketLength(binaryString, startPos):
+  """returns the packet length field"""
+  if (len(binaryString) - startPos) < PRIMARY_HEADER_BYTE_SIZE:
+    raise Error("packet header is too small")
+  return ((binaryString[startPos + 4] * 256) + binaryString[startPos + 5])
+# -----------------------------------------------------------------------------
+def getPacketSize(binaryString, startPos):
+  """returns the packet size derived from the packet length field"""
+  return (getPacketLength(binaryString, startPos) + 7)
 
 ###########
 # classes #

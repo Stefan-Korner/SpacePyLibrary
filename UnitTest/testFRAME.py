@@ -21,10 +21,58 @@ import CCSDS.FRAME, testData
 #############
 def test_FRAME_DUoperations():
   """function to test the transfer frame data units"""
-  tmFrame = CCSDS.FRAME.TMframe()
-  print "tmFrame =", tmFrame
+  tmFrame0 = CCSDS.FRAME.TMframe()
+  print "tmFrame0 =", tmFrame0
+  print ""
+  tmFrame1 = CCSDS.FRAME.TMframe(testData.TM_FRAME_01)
+  print "tmFrame1 =", tmFrame1
+  if tmFrame1.versionNumber != testData.TM_FRAME_01_versionNumber:
+    print "tmFrame1 versionNumber wrong:", tmFrame1.versionNumber, "- should be", testData.TM_FRAME_01_versionNumber
+    return False
+  if tmFrame1.spacecraftId != testData.TM_FRAME_01_spacecraftId:
+    print "tmFrame1 spacecraftId wrong:", tmFrame1.spacecraftId, "- should be", testData.TM_FRAME_01_spacecraftId
+    return False
+  if tmFrame1.virtualChannelId != testData.TM_FRAME_01_virtualChannelId:
+    print "tmFrame1 virtualChannelId wrong:", tmFrame1.virtualChannelId, "- should be", testData.TM_FRAME_01_virtualChannelId
+    return False
+  if tmFrame1.operationalControlField != testData.TM_FRAME_01_operationalControlField:
+    print "tmFrame1 operationalControlField wrong:", tmFrame1.operationalControlField, "- should be", testData.TM_FRAME_01_operationalControlField
+    return False
+  if tmFrame1.masterChannelFrameCount != testData.TM_FRAME_01_masterChannelFrameCount:
+    print "tmFrame1 masterChannelFrameCount wrong:", tmFrame1.masterChannelFrameCount, "- should be", testData.TM_FRAME_01_masterChannelFrameCount
+    return False
+  if tmFrame1.virtualChannelFCountLow != testData.TM_FRAME_01_virtualChannelFCountLow:
+    print "tmFrame1 virtualChannelFCountLow wrong:", tmFrame1.virtualChannelFCountLow, "- should be", testData.TM_FRAME_01_virtualChannelFCountLow
+    return False
+  if tmFrame1.secondaryHeaderFlag != testData.TM_FRAME_01_secondaryHeaderFlag:
+    print "tmFrame1 secondaryHeaderFlag wrong:", tmFrame1.secondaryHeaderFlag, "- should be", testData.TM_FRAME_01_secondaryHeaderFlag
+    return False
+  if tmFrame1.synchronisationFlag != testData.TM_FRAME_01_synchronisationFlag:
+    print "tmFrame1 synchronisationFlag wrong:", tmFrame1.synchronisationFlag, "- should be", testData.TM_FRAME_01_synchronisationFlag
+    return False
+  if tmFrame1.packetOrderFlag != testData.TM_FRAME_01_packetOrderFlag:
+    print "tmFrame1 packetOrderFlag wrong:", tmFrame1.packetOrderFlag, "- should be", testData.TM_FRAME_01_packetOrderFlag
+    return False
+  if tmFrame1.segmentLengthId != testData.TM_FRAME_01_segmentLengthId:
+    print "tmFrame1 segmentLengthId wrong:", tmFrame1.segmentLengthId, "- should be", testData.TM_FRAME_01_segmentLengthId
+    return False
+  if tmFrame1.firstHeaderPointer != testData.TM_FRAME_01_firstHeaderPointer:
+    print "tmFrame1 firstHeaderPointer wrong:", tmFrame1.firstHeaderPointer, "- should be", testData.TM_FRAME_01_firstHeaderPointer
+    return False
+  # extract packets and check it
+  leadingFragment, packets, trailingFragment = tmFrame1.getPackets()
+  if leadingFragment != testData.TM_FRAME_01_leadingFragment:
+    print "tmFrame1 leadingFragment wrong:", leadingFragment, "- should be", testData.TM_FRAME_01_leadingFragment
+    return False
+  if len(packets) != testData.TM_FRAME_01_nrPackets:
+    print "tmFrame1 nr. of packets wrong:", len(packets), "- should be", testData.TM_FRAME_01_nrPackets
+    return False
+  if trailingFragment != testData.TM_FRAME_01_trailingFragment:
+    print "tmFrame1 trailingFragment wrong:", trailingFragment, "- should be", testData.TM_FRAME_01_trailingFragment
+    return False
   print ""
   tcFrame1 = CCSDS.FRAME.TCframe(testData.TC_FRAME_01)
+  print "tcFrame1 =", tcFrame1
   if tcFrame1.versionNumber != testData.TC_FRAME_01_versionNumber:
     print "tcFrame1 versionNumber wrong:", tcFrame1.versionNumber, "- should be", testData.TC_FRAME_01_versionNumber
     return False

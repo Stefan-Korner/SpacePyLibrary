@@ -14,12 +14,16 @@
 # CCSDS Stack - Transfer Frame Module                                         *
 #******************************************************************************
 from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME, BinaryUnit
-import CCSDS.DU
+from UTIL.SYS import Error
+import CCSDS.DU, CCSDS.PACKET
 
 #############
 # constants #
 #############
 CRC_CHECK = True
+CRC_BYTE_SIZE = 2
+IDLE_FRAME_PATTERN = 0x07FE
+NO_FIRST_PACKET_PATTERN = 0x07FF
 
 # =============================================================================
 # the attribute dictionaries contain for each transfer frame attribute:
@@ -108,6 +112,57 @@ class TMframe(CCSDS.DU.DataUnit):
       self.secondaryHeaderFlag = 0
     else:
       self.secondaryHeaderFlag = 1
+  # ---------------------------------------------------------------------------
+  def getPackets(self):
+    """return packets and packet fragments in a tuple"""
+    # - leading fragment: binary array
+    # - packets: list of binary arrays
+    # - trailing fragment: binary array
+    # calculate data field start position
+    dataFieldStartBytePos = TM_FRAME_PRIMARY_HEADER_BYTE_SIZE
+    if self.secondaryHeaderFlag == 1:
+      dataFieldStartBytePos += TM_FRAME_SECONDARY_HEADER_BYTE_SIZE
+    # calculate data field stop position
+    dataFieldStopBytePos = len(self)
+    if CRC_CHECK:
+      dataFieldStopBytePos -= CRC_BYTE_SIZE
+    if self.operationalControlField == 1:
+      dataFieldStopBytePos -= CLCW_BYTE_SIZE
+    # default initializations
+    leadingFragment = None
+    packets = []
+    trailingFragment = None
+    # extract the leading fragment
+    firstHeaderPointer = self.firstHeaderPointer
+    if firstHeaderPointer == IDLE_FRAME_PATTERN:
+      # idle frame does not contain packets
+      return (leadingFragment, packets, trailingFragment)
+    elif firstHeaderPointer == NO_FIRST_PACKET_PATTERN:
+      # the fragment fills the whole data field
+      fragmentSize = dataFieldStopBytePos - dataFieldStartBytePos
+      leadingFragment = self.getBytes(dataFieldStartBytePos, fragmentSize)
+      return (leadingFragment, packets, trailingFragment)
+    # there is at least one packet start
+    fragmentSize = firstHeaderPointer
+    if fragmentSize > 0:
+      leadingFragment = self.getBytes(dataFieldStartBytePos, fragmentSize)
+    # extract the complete packets and the trailing fragment
+    packetsFieldStartBytePos = dataFieldStartBytePos + fragmentSize
+    packetsFieldSize = dataFieldStopBytePos - packetsFieldStartBytePos
+    packetsField = self.getBytes(packetsFieldStartBytePos, packetsFieldSize)
+    nextPacketBytePos = 0
+    while nextPacketBytePos < packetsFieldSize:
+      # check for the next packet if there is at least size for a CCSDS header
+      packetSize = CCSDS.PACKET.getPacketSize(packetsField, nextPacketBytePos)
+      remainingPacketSize = packetsFieldSize - nextPacketBytePos
+      if packetSize > remainingPacketSize:
+        trailingFragment = packetsField[nextPacketBytePos:remainingPacketSize]
+        break
+      nextPacket = packetsField[nextPacketBytePos:packetSize]
+      packets.append(nextPacket)
+      nextPacketBytePos += packetSize
+    # packet extraction finished
+    return (leadingFragment, packets, trailingFragment)
 
 # =============================================================================
 class CLCW(BinaryUnit):
