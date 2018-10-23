@@ -24,6 +24,7 @@ TM_PACKET_TYPE = 0
 TC_PACKET_TYPE = 1
 MIN_DATA_FIELD_BYTE_SIZE = 0x0000 + 1
 MAX_DATA_FIELD_BYTE_SIZE = 0xFFFF + 1
+IDLE_PKT_APID = 2047
 # packet segmentation
 FIRST_SEGMENT = 1
 CONTINUATION_SEGMENT = 0
@@ -50,13 +51,19 @@ PRIMARY_HEADER_ATTRIBUTES = {
 # functions #
 #############
 # -----------------------------------------------------------------------------
-def getPacketLength(binaryString, startPos):
+def getApplicationProcessId(binaryString, startPos=0):
+  """returns the application process id field"""
+  if (len(binaryString) - startPos) < PRIMARY_HEADER_BYTE_SIZE:
+    raise Error("packet header is too small")
+  return (((binaryString[startPos + 0] * 256) + binaryString[startPos + 1]) & 0x07FF)
+# -----------------------------------------------------------------------------
+def getPacketLength(binaryString, startPos=0):
   """returns the packet length field"""
   if (len(binaryString) - startPos) < PRIMARY_HEADER_BYTE_SIZE:
     raise Error("packet header is too small")
   return ((binaryString[startPos + 4] * 256) + binaryString[startPos + 5])
 # -----------------------------------------------------------------------------
-def getPacketSize(binaryString, startPos):
+def getPacketSize(binaryString, startPos=0):
   """returns the packet size derived from the packet length field"""
   return (getPacketLength(binaryString, startPos) + 7)
 

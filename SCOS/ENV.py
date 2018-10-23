@@ -25,7 +25,6 @@ SCOS_PACKET_HEADER_SIZE = 64
 # reserved data space for packets when no size is defined in the MIB
 TM_PKT_DEFAULT_DATAFIELD_DATA_SPACE = 16
 # default value from the CCSDS standard
-TPKT_PKT_IDLE_APID = 2047
 TRANSFER_FRAME_SECONDARY_HEADER_SIZE = 4
 
 ###########
@@ -36,7 +35,7 @@ class Environment(object):
   """Manager for environment data"""
   # ---------------------------------------------------------------------------
   def __init__(self):
-    """initialise from TPKTconnTable.dat and TPKTconfigTable.dat"""
+    """initialise from environment variables"""
     self.hostName = os.getenv("HOST")
     self.runtimeRoot = os.getenv("TESTENV")
     if self.runtimeRoot == None:

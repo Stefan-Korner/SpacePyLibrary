@@ -16,7 +16,6 @@
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.DU, CCSDS.PACKET, CCSDS.TIME
 import PUS.PACKET, PUS.SERVICES
-import SCOS.ENV
 import SPACE.IF
 import UTIL.SYS, UTIL.TCO, UTIL.TIME
 
@@ -32,7 +31,7 @@ class TMpacketDefaults(object):
     # PUS packets already have these defaults
     self.ccsdsPacketVersionNumber = 0
     self.ccsdsPacketSegmentationFlags = CCSDS.PACKET.UNSEGMENTED
-    self.idlePacketAPID = SCOS.ENV.TPKT_PKT_IDLE_APID
+    self.idlePacketAPID = CCSDS.PACKET.IDLE_PKT_APID
 
 # =============================================================================
 class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):

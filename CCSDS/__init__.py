@@ -13,4 +13,4 @@
 #******************************************************************************
 # CCSDS Stack                                                                 *
 #******************************************************************************
-__all__ = ["DU", "CLTU", "FRAME", "PACKET", "SEGMENT", "SEGMENThelpers", "TIME"]
+__all__ = ["DU", "CLTU", "FRAME", "PACKET", "PACKETIZER", "SEGMENT", "SEGMENThelpers", "TIME"]
