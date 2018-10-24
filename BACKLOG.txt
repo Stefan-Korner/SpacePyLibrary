@@ -17,8 +17,6 @@ Backlog of features that shall be implemented
 
 009 Support clean dis-connect for NCTRS/EDEN/CnC interfaces.
 
-011 Change the license to MIT.
-
 --------------------------------- implemented ---------------------------------
 
 001 Remove the dependency to MIB files TPKTconnTable.dat, TPKTconfigTable.dat:
@@ -30,3 +28,5 @@ Backlog of features that shall be implemented
     repository on github (https://github.com/Stefan-Korner/SpacePyLibrary.git).
 
 010 Port to Python3 and create a maintenance branch for Python2.
+
+011 Change the license to MIT.
