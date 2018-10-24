@@ -17,8 +17,6 @@ Backlog of features that shall be implemented
 
 009 Support clean dis-connect for NCTRS/EDEN/CnC interfaces.
 
-010 Port to Python3 and create a maintenance branch for Python2.
-
 011 Change the license to MIT.
 
 --------------------------------- implemented ---------------------------------
@@ -30,3 +28,5 @@ Backlog of features that shall be implemented
 003 Rename scosii_homedir directory and environment variable to TESTENV. With
     this change the directory name will be compatible to the TESTENV.git
     repository on github (https://github.com/Stefan-Korner/SpacePyLibrary.git).
+
+010 Port to Python3 and create a maintenance branch for Python2.
