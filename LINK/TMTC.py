@@ -101,7 +101,7 @@ class CCSDSgroundSpace(LINK.IF.SpaceLink, LINK.IF.PacketLink):
                                                  self.checkCyclicCallback)
     # check if uplink times in the uplink queue are expired
     receptionTimes = self.uplinkQueue.keys()
-    receptionTimes = sorted(receptionTimes)
+    receptionTimes.sort()
     tcFramesDeleted = False
     for receptionTime in receptionTimes:
       if receptionTime <= actualTime:
@@ -117,7 +117,7 @@ class CCSDSgroundSpace(LINK.IF.SpaceLink, LINK.IF.PacketLink):
       UTIL.TASK.s_processingTask.notifyGUItask("TC_FRAME")
     # check if downlink times in the downlink queue are expired
     receptionTimes = self.downlinkQueue.keys()
-    receptionTimes = sorted(receptionTimes)
+    receptionTimes.sort()
     tmFramesDeleted = False
     for receptionTime in receptionTimes:
       if receptionTime <= actualTime:
@@ -145,7 +145,7 @@ class CCSDSgroundSpace(LINK.IF.SpaceLink, LINK.IF.PacketLink):
     # extract the segment from the frame
     try:
       segment = tcFrameDu.getSegment()
-    except Exception as ex:
+    except Exception, ex:
       LOG_ERROR("segment extraction failed: " + str(ex), "LINK")
       return
     self.receiveTCsegment(segment)
@@ -196,7 +196,7 @@ class CCSDSgroundSpace(LINK.IF.SpaceLink, LINK.IF.PacketLink):
       # extract the packet data from the segment
       try:
         packetData += segmentDu.getTCpacketData()
-      except Exception as ex:
+      except Exception, ex:
         LOG_ERROR("TC packet data extraction failed: " + str(ex), "LINK")
         self.segmentDus = []
         return

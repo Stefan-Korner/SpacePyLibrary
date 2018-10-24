@@ -13,7 +13,7 @@
 #******************************************************************************
 # MIL Bus Simulation GUI                                                      *
 #******************************************************************************
-import tkinter
+import Tkinter
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import UI.TKI
 
@@ -82,14 +82,14 @@ class GUIview(UI.TKI.GUIwinView):
     self.messageLogger = UI.TKI.MessageLogger(self, "MIL")
     self.appGrid(self.messageLogger, row=10, columnspan=8)
     # message line
-    self.messageline = tkinter.Message(self, relief=tkinter.GROOVE)
+    self.messageline = Tkinter.Message(self, relief=Tkinter.GROOVE)
     self.appGrid(self.messageline,
                  row=11,
                  columnspan=8,
                  rowweight=0,
                  columnweight=0,
-                 sticky=tkinter.EW)
-    self.grid(row=0, column=0, sticky=tkinter.EW+tkinter.NS)
+                 sticky=Tkinter.EW)
+    self.grid(row=0, column=0, sticky=Tkinter.EW+Tkinter.NS)
     self.master.rowconfigure(0, weight=1)
     self.master.columnconfigure(0, weight=1)
   # ---------------------------------------------------------------------------

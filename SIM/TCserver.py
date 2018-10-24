@@ -60,7 +60,7 @@ class NCTRStcReceiver(GRND.NCTRS.TCreceiver):
     LOG_ERROR(errorMessage)
     try:
       LOG(str(data))
-    except Exception as ex:
+    except Exception, ex:
       LOG_WARNING("data passed to notifyError are invalid: " + str(ex))
   # ---------------------------------------------------------------------------
   def notifyTCpacket(self, packetData):

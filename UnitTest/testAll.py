@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 #******************************************************************************
 # (C) 2014, Stefan Korner, Austria                                            *
 #                                                                             *
@@ -23,9 +23,9 @@ import testPACKET, testSPACE, testTIME
 # -----------------------------------------------------------------------------
 def testOne(testFkt):
   """invocation of a single unit test"""
-  print("-----", str(testFkt), "start")
+  print "-----", str(testFkt), "start"
   retVal = testFkt()
-  print("-----", str(testFkt), "done:", retVal)
+  print "-----", str(testFkt), "done:", retVal
   return retVal
 # -----------------------------------------------------------------------------
 def testAll():
@@ -58,6 +58,6 @@ def testAll():
 # main #
 ########
 if __name__ == "__main__":
-  print("***** testAll() start")
+  print "***** testAll() start"
   retVal = testAll()
-  print("***** testAll() done:", retVal)
+  print "***** testAll() done:", retVal

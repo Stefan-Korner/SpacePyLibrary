@@ -13,8 +13,7 @@
 #******************************************************************************
 # Space Segment Simulation GUI                                                *
 #******************************************************************************
-import tkinter
-from tkinter import filedialog, simpledialog
+import Tkinter, tkFileDialog, tkSimpleDialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import SCOS.ENV
 import SPACE.IF
@@ -35,13 +34,13 @@ COLOR_ON_NOK = "#FF0000"
 # classes #
 ###########
 # =============================================================================
-class TMpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
-  """Displays the packet details, implemented as tkinter.Frame"""
+class TMpacketDetails(Tkinter.Frame, UI.TKI.AppGrid):
+  """Displays the packet details, implemented as Tkinter.Frame"""
   # ---------------------------------------------------------------------------
   def __init__(self, master):
-    tkinter.Frame.__init__(self, master, relief=tkinter.GROOVE, borderwidth=1)
+    Tkinter.Frame.__init__(self, master, relief=Tkinter.GROOVE, borderwidth=1)
     # --- filler ---
-    filler = tkinter.Label(self)
+    filler = Tkinter.Label(self)
     self.appGrid(filler, row=0, columnspan=2, rowweight=0)
     # packet name
     self.pktNameField = UI.TKI.ValueField(self, row=1, label="Packet name:")
@@ -60,12 +59,12 @@ class TMpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
     # PI2
     self.pktPI2field = UI.TKI.ValueField(self, row=8, label="Packet PI2:")
     # --- parameter listbox ---
-    label = tkinter.Label(self, text="Parameters")
+    label = Tkinter.Label(self, text="Parameters")
     self.appGrid(label, row=0, column=2, rowweight=0)
-    self.parametersListbox = UI.TKI.ScrolledListbox(self, selectmode=tkinter.SINGLE)
+    self.parametersListbox = UI.TKI.ScrolledListbox(self, selectmode=Tkinter.SINGLE)
     self.appGrid(self.parametersListbox, row=1, column=2, rowspan=8, rowweight=0, columnweight=1)
     # --- filler ---
-    filler = tkinter.Label(self)
+    filler = Tkinter.Label(self)
     self.appGrid(filler, row=9, columnspan=3, rowweight=0)
     # parameter names
     self.parameterNamesField = UI.TKI.InputField(self, row=10, label="Parameter names: optional")
@@ -74,7 +73,7 @@ class TMpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
     self.parameterValuesField = UI.TKI.InputField(self, row=11, label="Parameter value: optional")
     self.appGrid(self.parameterValuesField.field, row=11, column=1, columnspan=2, rowweight=0)
     # --- filler ---
-    filler = tkinter.Label(self)
+    filler = Tkinter.Label(self)
     self.appGrid(filler, row=12, columnspan=3, rowweight=0)
   # ---------------------------------------------------------------------------
   def update(self, tmPktDef):
@@ -111,7 +110,7 @@ class TMpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
     self.pktPI1field.set(pktPI1val)
     self.pktPI2field.set(pktPI2val)
     lrow = 0
-    self.parametersListbox.list().delete(0, tkinter.END)
+    self.parametersListbox.list().delete(0, Tkinter.END)
     for tmParamExtraction in tmParamExtractions:
       if tmParamExtraction.piValue:
         continue
@@ -120,7 +119,7 @@ class TMpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
       lrow += 1
 
 # =============================================================================
-class TMpacketBrowser(simpledialog.Dialog, UI.TKI.AppGrid):
+class TMpacketBrowser(tkSimpleDialog.Dialog, UI.TKI.AppGrid):
   """Browser for TM packets"""
   # ---------------------------------------------------------------------------
   def __init__(self, master, title, prompt=""):
@@ -129,7 +128,7 @@ class TMpacketBrowser(simpledialog.Dialog, UI.TKI.AppGrid):
     self.prompt = prompt
     self.listboxCurrent = None
     self.afterID = None
-    simpledialog.Dialog.__init__(self, master, title=title)
+    tkSimpleDialog.Dialog.__init__(self, master, title=title)
     if self.afterID != None:
       self.after_cancel(self.afterID)
   # ---------------------------------------------------------------------------
@@ -137,14 +136,14 @@ class TMpacketBrowser(simpledialog.Dialog, UI.TKI.AppGrid):
     """Intialise the dialog"""
     row=0
     if self.prompt != "":
-      label = tkinter.Label(master, text=self.prompt)
+      label = Tkinter.Label(master, text=self.prompt)
       label.grid(row=row, column=0, columnspan=4)
       row += 1
-      label = tkinter.Label(master)
+      label = Tkinter.Label(master)
       label.grid(row=row, column=0, columnspan=4)
       row += 1
     # scrolled list box
-    self.slistbox = UI.TKI.ScrolledListbox(master, selectmode=tkinter.SINGLE)
+    self.slistbox = UI.TKI.ScrolledListbox(master, selectmode=Tkinter.SINGLE)
     self.appGrid(self.slistbox, row=row, column=0, columnweight=1)
     lrow = 0
     for tmPktDef in SPACE.IF.s_definitions.getTMpktDefs():
@@ -195,17 +194,17 @@ class GUIview(UI.TKI.GUIwinView):
     UI.TKI.GUIwinView.__init__(self, master, "SPACE", "Space Segment")
     # menu buttons
     self.menuButtons = UI.TKI.MenuButtons(self,
-      [["PKT", self.setPacketDataCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, tkinter.DISABLED],
-       ["SND", self.sendPacketCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, tkinter.DISABLED],
-       ["ACK", self.sendAckCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, tkinter.DISABLED],
-       ["RPLY", self.replayPacketsCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, tkinter.DISABLED],
+      [["PKT", self.setPacketDataCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, Tkinter.DISABLED],
+       ["SND", self.sendPacketCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, Tkinter.DISABLED],
+       ["ACK", self.sendAckCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, Tkinter.DISABLED],
+       ["RPLY", self.replayPacketsCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, Tkinter.DISABLED],
        ["LIST", self.listPacketsCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
        ["GEN", self.generateCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG]])
     self.appGrid(self.menuButtons,
                  row=0,
                  columnspan=2,
                  rowweight=0,
-                 sticky=tkinter.EW)
+                 sticky=Tkinter.EW)
     # checkbuttons
     self.checkButtons = UI.TKI.Checkbuttons(self,
       [["TM", self.cyclicCallback, False, COLOR_ON_OK],
@@ -222,7 +221,7 @@ class GUIview(UI.TKI.GUIwinView):
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,
-                 sticky=tkinter.W)
+                 sticky=Tkinter.W)
     # tm status
     self.tmStatusField = UI.TKI.ValueField(self, row=2, label="TM status:")
     self.tmStatusField.set("INIT")
@@ -239,14 +238,14 @@ class GUIview(UI.TKI.GUIwinView):
     self.messageLogger = UI.TKI.MessageLogger(self, "SPACE")
     self.appGrid(self.messageLogger, row=7, columnspan=2)
     # message line
-    self.messageline = tkinter.Message(self, relief=tkinter.GROOVE)
+    self.messageline = Tkinter.Message(self, relief=Tkinter.GROOVE)
     self.appGrid(self.messageline,
                  row=8,
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,
-                 sticky=tkinter.EW)
-    self.grid(row=0, column=0, sticky=tkinter.EW+tkinter.NS)
+                 sticky=Tkinter.EW)
+    self.grid(row=0, column=0, sticky=Tkinter.EW+Tkinter.NS)
     self.master.rowconfigure(0, weight=1)
     self.master.columnconfigure(0, weight=1)
   # ---------------------------------------------------------------------------
@@ -417,8 +416,8 @@ class GUIview(UI.TKI.GUIwinView):
   # ---------------------------------------------------------------------------
   def replayPacketsCallback(self):
     """Called when the ReplayPackets menu entry is selected"""
-    fileName = filedialog.askopenfilename(title="Open TM Packet Replay File",
-                                          initialdir=SCOS.ENV.s_environment.tmFilesDir())
+    fileName = tkFileDialog.askopenfilename(title="Open TM Packet Replay File",
+                                            initialdir=SCOS.ENV.s_environment.tmFilesDir())
     if fileName != "" and fileName != ():
       self.notifyModelTask(["REPLAYPACKETS", fileName])
   # ---------------------------------------------------------------------------
@@ -426,17 +425,17 @@ class GUIview(UI.TKI.GUIwinView):
     """Called when the ListPackets menu entry is selected"""
     # disable the button during generation,
     # because generation could take some time
-    self.menuButtons.setState("LIST", tkinter.DISABLED)
+    self.menuButtons.setState("LIST", Tkinter.DISABLED)
     self.notifyModelTask(["LISTPACKETS"])
-    self.menuButtons.setState("LIST", tkinter.NORMAL)
+    self.menuButtons.setState("LIST", Tkinter.NORMAL)
   # ---------------------------------------------------------------------------
   def generateCallback(self):
     """Called when the Generate menu entry is selected"""
     # disable the button during generation,
     # because generation could take some time
-    self.menuButtons.setState("GEN", tkinter.DISABLED)
+    self.menuButtons.setState("GEN", Tkinter.DISABLED)
     self.notifyModelTask(["GENERATE"])
-    self.menuButtons.setState("GEN", tkinter.NORMAL)
+    self.menuButtons.setState("GEN", Tkinter.NORMAL)
   # ---------------------------------------------------------------------------
   def notifyStatus(self, status):
     """Generic callback when something changes in the model"""
@@ -487,15 +486,15 @@ class GUIview(UI.TKI.GUIwinView):
     self.enableCommandMenuItem("EnableCyclic")
     self.enableCommandMenuItem("SendAck")
     self.enableCommandMenuItem("ReplayPackets")
-    self.menuButtons.setState("PKT", tkinter.NORMAL)
-    self.menuButtons.setState("ACK", tkinter.NORMAL)
-    self.menuButtons.setState("RPLY", tkinter.NORMAL)
+    self.menuButtons.setState("PKT", Tkinter.NORMAL)
+    self.menuButtons.setState("ACK", Tkinter.NORMAL)
+    self.menuButtons.setState("RPLY", Tkinter.NORMAL)
     self.updateTMstatusField()
   # ---------------------------------------------------------------------------
   def packetDataSetNotify(self):
     """Called when the setPacketData function is succsssfully processed"""
     self.enableCommandMenuItem("SendPacket")
-    self.menuButtons.setState("SND", tkinter.NORMAL)
+    self.menuButtons.setState("SND", Tkinter.NORMAL)
     self.updateTMstatusField()
     self.packetField.set(SPACE.IF.s_configuration.tmPacketData.pktName)
     self.spidField.set(SPACE.IF.s_configuration.tmPacketData.pktSPID)
@@ -664,9 +663,9 @@ class GUIview(UI.TKI.GUIwinView):
     self.enableCommandMenuItem("EnableCyclic")
     self.enableCommandMenuItem("SendAck")
     self.enableCommandMenuItem("ReplayPackets")
-    self.menuButtons.setState("PKT", tkinter.NORMAL)
-    self.menuButtons.setState("ACK", tkinter.NORMAL)
-    self.menuButtons.setState("RPLY", tkinter.NORMAL)
+    self.menuButtons.setState("PKT", Tkinter.NORMAL)
+    self.menuButtons.setState("ACK", Tkinter.NORMAL)
+    self.menuButtons.setState("RPLY", Tkinter.NORMAL)
   # ---------------------------------------------------------------------------
   def frameRecStopped(self):
     """Called when the stopFrameRecorder function is succsssfully processed"""
@@ -675,17 +674,17 @@ class GUIview(UI.TKI.GUIwinView):
       self.enableCommandMenuItem("EnableCyclic")
       self.enableCommandMenuItem("SendAck")
       self.enableCommandMenuItem("ReplayPackets")
-      self.menuButtons.setState("PKT", tkinter.NORMAL)
-      self.menuButtons.setState("ACK", tkinter.NORMAL)
-      self.menuButtons.setState("RPLY", tkinter.NORMAL)
+      self.menuButtons.setState("PKT", Tkinter.NORMAL)
+      self.menuButtons.setState("ACK", Tkinter.NORMAL)
+      self.menuButtons.setState("RPLY", Tkinter.NORMAL)
     else:
       self.disableCommandMenuItem("SetPacketData")
       self.disableCommandMenuItem("EnableCyclic")
       self.disableCommandMenuItem("SendAck")
       self.disableCommandMenuItem("ReplayPackets")
-      self.menuButtons.setState("PKT", tkinter.DISABLED)
-      self.menuButtons.setState("ACK", tkinter.DISABLED)
-      self.menuButtons.setState("RPLY", tkinter.DISABLED)
+      self.menuButtons.setState("PKT", Tkinter.DISABLED)
+      self.menuButtons.setState("ACK", Tkinter.DISABLED)
+      self.menuButtons.setState("RPLY", Tkinter.DISABLED)
   # ---------------------------------------------------------------------------
   def updateTMstatusField(self):
     """updated the TM status field depending on the SPACE.IF.s_configuration"""

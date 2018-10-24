@@ -58,7 +58,7 @@ class BinaryUnit(object):
     if type(binaryString) == ARRAY_TYPE:
       object.__setattr__(self, "buffer", binaryString)
     else:
-      object.__setattr__(self, "buffer", array.array("B", binaryString.encode()))
+      object.__setattr__(self, "buffer", array.array("B", binaryString))
     object.__setattr__(self, "usedBufferSize", len(self.buffer))
     object.__setattr__(self, "attributesSize1", attributesSize1)
     object.__setattr__(self, "attributeMap1", attributeMap1)
@@ -134,7 +134,7 @@ class BinaryUnit(object):
     """returns a read-able representation"""
     retStr = array2str(self.buffer, self.usedBufferSize)
     if self.attributeMap1 != None:
-      for name, fieldSpec in self.attributeMap1.items():
+      for name, fieldSpec in self.attributeMap1.iteritems():
         retStr += "\n" + name + " = "
         fieldOffset, fieldLength, fieldType = fieldSpec
         if fieldType == BITS:
@@ -152,7 +152,7 @@ class BinaryUnit(object):
           # fieldType == STRING
           retStr += str(self.getString(fieldOffset, fieldLength))
     if self.attributeMap2 != None:
-      for name, fieldSpec in self.attributeMap2.items():
+      for name, fieldSpec in self.attributeMap2.iteritems():
         retStr += "\n" + name + " = "
         fieldOffset, fieldLength, fieldType = fieldSpec
         if fieldType == BITS:
@@ -184,7 +184,7 @@ class BinaryUnit(object):
     if byteSize > bufferSize:
       # buffer must be enlarged
       enlargeSize = byteSize - bufferSize
-      self.buffer.extend(array.array("B", ("\0" * enlargeSize).encode()))
+      self.buffer.extend(array.array("B", "\0" * enlargeSize))
     object.__setattr__(self, "usedBufferSize", byteSize)
   # ---------------------------------------------------------------------------
   def append(self, binaryString, attributeMap2=None):
@@ -195,7 +195,7 @@ class BinaryUnit(object):
     if type(binaryString) == ARRAY_TYPE:
       self.buffer.extend(binaryString)
     else:
-      self.buffer.extend(array.array("B", binaryString.encode()))
+      self.buffer.extend(array.array("B", binaryString))
     object.__setattr__(self, "usedBufferSize", len(self.buffer))
     if attributeMap2 != None:
       object.__setattr__(self, "attributeMap2", attributeMap2)
@@ -235,9 +235,9 @@ class BinaryUnit(object):
   def setBits(self, bitPos, bitLength, value):
     """sets bits as numerical unsigned value"""
     try:
-      value = int(value)
+      value = long(value)
     except:
-      raise ValueError("value is not an integer")
+      raise ValueError("value is not an integer/long")
     # performance optimizations:
     # - divide by 8 is replaced by >> 3 (performance)
     # - modulo 8 is replaced by & 7 (performance)
@@ -246,7 +246,7 @@ class BinaryUnit(object):
       raise IndexError("invalid bitPos")
     if bitLength <= 0:
       raise IndexError("invalid bitLength")
-    maxValue = (1 << bitLength) - 1
+    maxValue = (1L << bitLength) - 1
     if value > maxValue:
       raise ValueError("value out of range")
     lastBitPos = bitPos + bitLength - 1
@@ -291,7 +291,7 @@ class BinaryUnit(object):
   def setBytes(self, bytePos, byteLength, byteArray):
     """set bytes"""
     if type(byteArray) != ARRAY_TYPE:
-      byteArray = array.array("B", byteArray.encode())
+      byteArray = array.array("B", byteArray)
     # consistency checks
     if bytePos < 0:
       raise IndexError("invalid bytePos")
@@ -327,9 +327,9 @@ class BinaryUnit(object):
   def setUnsigned(self, bytePos, byteLength, value):
     """set a numerical value byte aligned"""
     try:
-      value = int(value)
+      value = long(value)
     except:
-      raise ValueError("value is not an integer")
+      raise ValueError("value is not an integer/long")
     # performance optimizations:
     # - multiply with 8 is replaced by << 3 (performance)
     # consistency checks
@@ -337,7 +337,7 @@ class BinaryUnit(object):
       raise IndexError("invalid bytePos")
     if byteLength <= 0:
       raise IndexError("invalid byteLength")
-    if value > ((1 << (byteLength << 3)) - 1):
+    if value > ((1L << (byteLength << 3)) - 1):
       raise ValueError("value out of range")
     if bytePos + byteLength > self.usedBufferSize:
       raise IndexError("bytePos/byteLength out of buffer")
@@ -513,7 +513,7 @@ class BinaryUnit(object):
 def array2str(binaryString, maxLen=65536):
   """converts a binaryString into a readable data dump"""
   if type(binaryString) != ARRAY_TYPE:
-    binaryString = array.array("B", binaryString.encode())
+    binaryString = array.array("B", binaryString)
   binaryStringSize = len(binaryString)
   if binaryStringSize == 0:
     # special output format if binaryString is empty
@@ -555,7 +555,7 @@ def str2array(hexString, withoutSpaces=False):
     hexTuples = [hexString[i:i+2] for i in xrange(0, len(hexString), 2)]
   else:
     hexTuples = hexString.split()
-  return array.array('B', map((lambda x: int(x, 16)), hexTuples).encode())
+  return array.array('B', map((lambda x: int(x, 16)), hexTuples))
 
 def unsigned2signed(value, byteSize):
   """convers an unsigned integer into a signed integer"""

@@ -52,7 +52,7 @@
 #              The kind of sources that are processed from a Task can be      *
 #              enhanced or restricted in derived classes. This is needed to   *
 #              provide a transparent integration of a GUI library             *
-#              (e.g. tkinter). In this case the GUI occupies the ParentTask.  *
+#              (e.g. Tkinter). In this case the GUI occupies the ParentTask.  *
 #******************************************************************************
 import os, signal, select, socket, struct, sys, threading, time
 if sys.platform == "win32":
@@ -163,7 +163,7 @@ class Task(threading.Thread):
       else:
         try:
           status = select.select(readers, [], [], timeout)
-        except Exception as ex:
+        except Exception, ex:
           LOG_ERROR("Select terminated unexcepted: " + str(ex))
           sys.exit(-1)
       # --- process readers ---
@@ -385,7 +385,7 @@ class ConsoleHandler(object):
       nextChar = msvcrt.getche()
       if nextChar == "\r":
         completeLineRead = True
-        print("")
+        print ""
         break
       self.inputLine += nextChar
     if completeLineRead:

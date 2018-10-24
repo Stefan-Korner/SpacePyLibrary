@@ -42,7 +42,7 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
     self.packetCache = {}
     self.sequenceCounters = {}
     self.packetDefaults = TMpacketDefaults()
-    self.hasTmTT = (int(UTIL.SYS.s_configuration.TM_TT_TIME_BYTE_OFFSET) > 0)
+    self.hasTmTT = (UTIL.SYS.s_configuration.TM_TT_TIME_BYTE_OFFSET > 0)
   # ---------------------------------------------------------------------------
   def getIdlePacket(self, packetSize):
     """

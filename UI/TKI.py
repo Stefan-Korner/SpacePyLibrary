@@ -11,9 +11,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser     *
 # General Public License for more details.                                    *
 #******************************************************************************
-# User Interface infrastructure - tkinter support classes                     *
+# User Interface infrastructure - Tkinter support classes                     *
 #                                                                             *
-# Description: Depending on the available version of tkinter either the       *
+# Description: Depending on the available version of Tkinter either the       *
 #              original "old" Tk widgets are created of a mix of original     *
 #              and "new" Tkk widgets are used:                                *
 #              - The GUI based on the old widget set provides for each view a *
@@ -22,15 +22,14 @@
 #                window and for each view a separate notebook tab.            *
 #                Note: The usage of Tkk is completely encapsulated here.      *
 #******************************************************************************
-import tkinter, os, sys
-from tkinter import filedialog, messagebox, simpledialog
+import Tkinter, tkFileDialog, tkMessageBox, tkSimpleDialog, os, sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import UTIL.SYS, UTIL.TASK
 try:
-  from tkinter import ttk
+  import ttk
   GUITYPE = "ttk"
 except:
-  GUITYPE = "tkinter"
+  GUITYPE = "Tkinter"
 
 ####################
 # global variables #
@@ -54,7 +53,7 @@ class AppGrid(object):
               columnspan=1,
               rowweight=1,
               columnweight=1,
-              sticky=tkinter.EW+tkinter.NS):
+              sticky=Tkinter.EW+Tkinter.NS):
     """Places a widget into the embedded application grid"""
     widget.grid(row=row,
                 column=column,
@@ -66,7 +65,7 @@ class AppGrid(object):
 
 # =============================================================================
 class GUItask(UTIL.TASK.Task):
-  """tkinter based task, is the parent task (in the main thread)"""
+  """Tkinter based task, is the parent task (in the main thread)"""
   # ---------------------------------------------------------------------------
   def __init__(self):
     """initialise attributes"""
@@ -89,8 +88,8 @@ class GUItask(UTIL.TASK.Task):
     register a file descriptor handler - only works on single threaded UNIX,
     overloaded from UTIL.TASK.Task.createFileHandler
     """
-    tkinter.tkinter.createfilehandler(socket,
-                                      tkinter.tkinter.READABLE,
+    Tkinter.tkinter.createfilehandler(socket,
+                                      Tkinter.tkinter.READABLE,
                                       handler)
   # ---------------------------------------------------------------------------
   def deleteFileHandler(self, socket):
@@ -98,7 +97,7 @@ class GUItask(UTIL.TASK.Task):
     unregister a file descriptor handler - only works on single threaded UNIX,
     overloaded from UTIL.TASK.Task.deleteFileHandler
     """
-    tkinter.tkinter.deletefilehandler(socket)
+    Tkinter.tkinter.deletefilehandler(socket)
   # ---------------------------------------------------------------------------
   def createTimeHandler(self, ms, handler):
     """
@@ -108,20 +107,20 @@ class GUItask(UTIL.TASK.Task):
     s_gui.after(ms, handler)
 
 # =============================================================================
-class GUIview(tkinter.Frame, AppGrid, UTIL.TASK.View):
+class GUIview(Tkinter.Frame, AppGrid, UTIL.TASK.View):
   """Frame with grid layout that consumes status updates"""
   # ---------------------------------------------------------------------------
   def __init__(self, master):
     """register the frame for the reception of status changes"""
     global s_views
-    tkinter.Frame.__init__(self, master)
+    Tkinter.Frame.__init__(self, master)
     self.guiTask().registerView(self)
     s_views.append(self)
   # ---------------------------------------------------------------------------
   def destroy(self):
     """unregister from the GUI task"""
     self.guiTask().unregisterView(self)
-    tkinter.Tk.destroy(self.master)
+    Tkinter.Tk.destroy(self.master)
     s_views.remove(self)
   # ---------------------------------------------------------------------------
   def guiTask(self):
@@ -159,27 +158,27 @@ class GUIwinView(GUIview):
     GUIview.__init__(self, master)
     self.viewMnemo = viewMnemo
     self.viewName = viewName
-    # with old tkinter there are separate windows with dedicated menues
-    if GUITYPE == "tkinter":
+    # with old Tkinter there are separate windows with dedicated menues
+    if GUITYPE == "Tkinter":
       self.master.protocol("WM_DELETE_WINDOW", self.quitCallback)
       self.master.title(self.getAppMnemo() + " " + self.viewName + " " + self.getAppName() + " " + self.getVersion())
       # menu bar
-      self.menubar = tkinter.Menu(self)
+      self.menubar = Tkinter.Menu(self)
       # file menu
-      self.filemenu = tkinter.Menu(self.menubar, tearoff=0)
+      self.filemenu = Tkinter.Menu(self.menubar, tearoff=0)
       self.filemenu.add_command(label="Save " + viewMnemo + " Log", command=self.saveLogCallback)
       self.filemenu.add_command(label="Quit", command=self.quitCallback)
       self.menubar.add_cascade(label="File", menu=self.filemenu)
       # edit menu
-      self.editmenu = tkinter.Menu(self.menubar, tearoff=0)
+      self.editmenu = Tkinter.Menu(self.menubar, tearoff=0)
       self.editmenu.add_command(label="Clear " + viewMnemo + " Log", command=self.clearLogCallback)
       self.menubar.add_cascade(label="Edit", menu=self.editmenu)
       # command menu
-      self.commandmenu = tkinter.Menu(self.menubar, tearoff=0)
+      self.commandmenu = Tkinter.Menu(self.menubar, tearoff=0)
       self.menubar.add_cascade(label="Command", menu=self.commandmenu)
       self.fillCommandMenuItems()
       # help menu
-      self.helpmenu = tkinter.Menu(self.menubar, tearoff=0)
+      self.helpmenu = Tkinter.Menu(self.menubar, tearoff=0)
       self.helpmenu.add_command(label="Help", command=self.helpCallback)
       self.helpmenu.add_command(label="About", command=self.aboutCallback)
       self.helpmenu.add_command(label="DumpConfiguration", command=self.dumpConfigurationCallback)
@@ -196,38 +195,38 @@ class GUIwinView(GUIview):
   def addCommandMenuItem(self, label, command, enabled=True):
     """add an item to the command menu"""
     if enabled:
-      self.commandmenu.add_command(label=label, command=command, state=tkinter.NORMAL)
+      self.commandmenu.add_command(label=label, command=command, state=Tkinter.NORMAL)
     else:
-      self.commandmenu.add_command(label=label, command=command, state=tkinter.DISABLED)
+      self.commandmenu.add_command(label=label, command=command, state=Tkinter.DISABLED)
   # ---------------------------------------------------------------------------
   def enableCommandMenuItem(self, index):
     """config an item to the command menu"""
-    self.commandmenu.entryconfig(index=index, state=tkinter.NORMAL)
+    self.commandmenu.entryconfig(index=index, state=Tkinter.NORMAL)
   # ---------------------------------------------------------------------------
   def disableCommandMenuItem(self, index):
     """config an item to the command menu"""
-    self.commandmenu.entryconfig(index=index, state=tkinter.DISABLED)
+    self.commandmenu.entryconfig(index=index, state=Tkinter.DISABLED)
   # ---------------------------------------------------------------------------
   def saveLogCallback(self):
     """Saves the log to a file"""
-    fileName = filedialog.asksaveasfilename(title="Save " + self.viewMnemo + " Log to File")
+    fileName = tkFileDialog.asksaveasfilename(title="Save " + self.viewMnemo + " Log to File")
     if fileName != "":
       try:
         logFile = open(fileName, "w")
-        logFile.write(self.messageLogger.text.get(1.0, tkinter.END))
+        logFile.write(self.messageLogger.text.get(1.0, Tkinter.END))
         LOG_INFO("Log file saved to " + fileName, self.viewMnemo)
       except:
         LOG_WARNING("Can not write log to " + fileName, self.viewMnemo)
   # ---------------------------------------------------------------------------
   def clearLogCallback(self):
     """Clears the log"""
-    self.messageLogger.text.delete(1.0, tkinter.END)
+    self.messageLogger.text.delete(1.0, Tkinter.END)
   # ---------------------------------------------------------------------------
   def quitCallback(self):
     """Called when the Quit menu entry is selected"""
     try:
-      if messagebox.askyesno(title="Quit Dialog",
-                             message="Terminate " + self.getAppName() + "?"):
+      if tkMessageBox.askyesno(title="Quit Dialog",
+                               message="Terminate " + self.getAppName() + "?"):
         self.notifyModelTask(["QUIT"])
     except:
       pass
@@ -239,7 +238,7 @@ class GUIwinView(GUIview):
   def aboutCallback(self):
     """Called when the About menu entry is selected"""
     try:
-      messagebox.showinfo(title="About Dialog",
+      tkMessageBox.showinfo(title="About Dialog",
         message=self.viewName + " " + self.getAppName() + " " + self.getVersion() + "\n" +
                 "\n" +
                 "(C) Stefan Korner, Austria")
@@ -251,33 +250,33 @@ class GUIwinView(GUIview):
     self.notifyModelTask(["DUMPCONFIGURATION"])
 
 # =============================================================================
-class NotebookWindow(tkinter.Tk):
+class NotebookWindow(Tkinter.Tk):
   """
   Application window with a notebook for embedded views.
-  An object of this class is only created if there is a new tkinter (ttk)
+  An object of this class is only created if there is a new Tkinter (ttk)
   """
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Creates the application window with a menu bar and a notebook"""
-    tkinter.Tk.__init__(self)
+    Tkinter.Tk.__init__(self)
     self.protocol("WM_DELETE_WINDOW", self.quitCallback)
     self.title(self.getAppMnemo() + " " + self.getAppName() + " " + self.getVersion())
     # create the menu bar with an empty file menu
     # - the menu entries in the file menu are added later
     # - the command menus for the embedded views are added later
     # - the help menu is added later
-    self.menubar = tkinter.Menu(self)
+    self.menubar = Tkinter.Menu(self)
     # file menu
-    self.filemenu = tkinter.Menu(self.menubar, tearoff=0)
+    self.filemenu = Tkinter.Menu(self.menubar, tearoff=0)
     self.menubar.add_cascade(label="File", menu=self.filemenu)
     # edit menu
-    self.editmenu = tkinter.Menu(self.menubar, tearoff=0)
+    self.editmenu = Tkinter.Menu(self.menubar, tearoff=0)
     self.menubar.add_cascade(label="Edit", menu=self.editmenu)
     self.config(menu=self.menubar)
     # create the notebook
     if GUITYPE == "ttk":
       self.notebook = ttk.Notebook(self)
-      self.notebook.grid(column=0, row=0, sticky=(tkinter.N, tkinter.W, tkinter.E, tkinter.S))
+      self.notebook.grid(column=0, row=0, sticky=(Tkinter.N, Tkinter.W, Tkinter.E, Tkinter.S))
   # ---------------------------------------------------------------------------
   def finaliseCreation(self):
     """finalise the creation of the notebook window"""
@@ -294,14 +293,14 @@ class NotebookWindow(tkinter.Tk):
       # create the clear log menu item
       self.editmenu.add_command(label="Clear " + viewMnemo + " Log", command=view.clearLogCallback)
       # create the command menu
-      commandmenu = tkinter.Menu(self.menubar, tearoff=0)
+      commandmenu = Tkinter.Menu(self.menubar, tearoff=0)
       view.commandmenu = commandmenu
       view.fillCommandMenuItems()
       self.menubar.add_cascade(label=viewMnemo, menu=commandmenu)
     # finalise the file menu
     self.filemenu.add_command(label="Quit", command=self.quitCallback)
     # create the help menu
-    helpmenu = tkinter.Menu(self.menubar, tearoff=0)
+    helpmenu = Tkinter.Menu(self.menubar, tearoff=0)
     helpmenu.add_command(label="Help", command=self.helpCallback)
     helpmenu.add_command(label="About", command=self.aboutCallback)
     helpmenu.add_command(label="DumpConfiguration", command=self.dumpConfigurationCallback)
@@ -317,8 +316,8 @@ class NotebookWindow(tkinter.Tk):
   def quitCallback(self):
     """Called when the Quit menu entry is selected"""
     try:
-      if messagebox.askyesno(title="Quit Dialog",
-                             message="Terminate " + self.getAppName() + "?"):
+      if tkMessageBox.askyesno(title="Quit Dialog",
+                               message="Terminate " + self.getAppName() + "?"):
         self.notifyModelTask(["QUIT"])
     except:
       pass
@@ -330,7 +329,7 @@ class NotebookWindow(tkinter.Tk):
   def aboutCallback(self):
     """Called when the About menu entry is selected"""
     try:
-      messagebox.showinfo(title="About Dialog",
+      tkMessageBox.showinfo(title="About Dialog",
         message=self.getAppName() + " " + self.getVersion() + "\n" +
                 "\n" +
                 "(C) Stefan Korner, Austria")
@@ -364,27 +363,27 @@ class NotebookWindow(tkinter.Tk):
     return UTIL.SYS.s_configuration.SYS_APP_VERSION
 
 # =============================================================================
-class ScrolledListbox(tkinter.Frame):
-  """tkinter.Listbox with scroll bars, implemented as tkinter.Frame"""
+class ScrolledListbox(Tkinter.Frame):
+  """Tkinter.Listbox with scroll bars, implemented as Tkinter.Frame"""
   # ---------------------------------------------------------------------------
   def __init__(self, master, selectmode):
     """Attaches the scrollbars to the embedded listbox"""
-    tkinter.Frame.__init__(self, master, relief=tkinter.GROOVE, borderwidth=1)
+    Tkinter.Frame.__init__(self, master, relief=Tkinter.GROOVE, borderwidth=1)
     # listbox
-    self.listbox = tkinter.Listbox(self, selectmode=selectmode)
-    self.listbox.grid(row=0, column=0, sticky=tkinter.EW+tkinter.NS)
+    self.listbox = Tkinter.Listbox(self, selectmode=selectmode)
+    self.listbox.grid(row=0, column=0, sticky=Tkinter.EW+Tkinter.NS)
     self.rowconfigure(0, weight=1)
     self.columnconfigure(0, weight=1)
     # horizontal scrollbar
-    self.hscrollbar = tkinter.Scrollbar(self,
-                                        orient=tkinter.HORIZONTAL,
+    self.hscrollbar = Tkinter.Scrollbar(self,
+                                        orient=Tkinter.HORIZONTAL,
                                         command=self.listbox.xview)
-    self.hscrollbar.grid(row=1, column=0, sticky=tkinter.EW)
+    self.hscrollbar.grid(row=1, column=0, sticky=Tkinter.EW)
     # vertival scrollbar
-    self.vscrollbar = tkinter.Scrollbar(self,
-                                        orient=tkinter.VERTICAL,
+    self.vscrollbar = Tkinter.Scrollbar(self,
+                                        orient=Tkinter.VERTICAL,
                                         command=self.listbox.yview)
-    self.vscrollbar.grid(row=0, column=1, sticky=tkinter.NS)
+    self.vscrollbar.grid(row=0, column=1, sticky=Tkinter.NS)
     self.listbox.config(xscrollcommand=self.hscrollbar.set,
                         yscrollcommand=self.vscrollbar.set)
   # ---------------------------------------------------------------------------
@@ -393,26 +392,26 @@ class ScrolledListbox(tkinter.Frame):
     return self.listbox
 
 # =============================================================================
-class ScrolledText(tkinter.Frame):
-  """tkinter.Text with scroll bars, implemented as tkinter.Frame"""
+class ScrolledText(Tkinter.Frame):
+  """Tkinter.Text with scroll bars, implemented as Tkinter.Frame"""
   # ---------------------------------------------------------------------------
   def __init__(self, master):
-    tkinter.Frame.__init__(self, master, relief=tkinter.GROOVE, borderwidth=1)
+    Tkinter.Frame.__init__(self, master, relief=Tkinter.GROOVE, borderwidth=1)
     # listbox
-    self.text = tkinter.Text(self)
-    self.text.grid(row=0, column=0, sticky=tkinter.EW+tkinter.NS)
+    self.text = Tkinter.Text(self)
+    self.text.grid(row=0, column=0, sticky=Tkinter.EW+Tkinter.NS)
     self.rowconfigure(0, weight=1)
     self.columnconfigure(0, weight=1)
     # horizontal scrollbar
-    self.hscrollbar = tkinter.Scrollbar(self,
-                                        orient=tkinter.HORIZONTAL,
+    self.hscrollbar = Tkinter.Scrollbar(self,
+                                        orient=Tkinter.HORIZONTAL,
                                         command=self.text.xview)
-    self.hscrollbar.grid(row=1, column=0, sticky=tkinter.EW)
+    self.hscrollbar.grid(row=1, column=0, sticky=Tkinter.EW)
     # vertival scrollbar
-    self.vscrollbar = tkinter.Scrollbar(self,
-                                        orient=tkinter.VERTICAL,
+    self.vscrollbar = Tkinter.Scrollbar(self,
+                                        orient=Tkinter.VERTICAL,
                                         command=self.text.yview)
-    self.vscrollbar.grid(row=0, column=1, sticky=tkinter.NS)
+    self.vscrollbar.grid(row=0, column=1, sticky=Tkinter.NS)
     self.text.config(xscrollcommand=self.hscrollbar.set,
                      yscrollcommand=self.vscrollbar.set)
   # ---------------------------------------------------------------------------
@@ -449,7 +448,7 @@ class MessageLogger(ScrolledText, UTIL.SYS.Logger):
   def insertLineCallback(self, text, style):
     """Appends a line at the end of the message window"""
     # this message must be invoked in the gui task
-    self.text.insert(tkinter.END, text + "\n", style)
+    self.text.insert(Tkinter.END, text + "\n", style)
     self.text.yview_moveto(1)
   # ---------------------------------------------------------------------------
   def _log(self, message, subsystem):
@@ -490,12 +489,12 @@ class LogEvent(UTIL.TASK.TaskEvent):
     self.messageLogger.insertLineCallback(self.text, self.style)
 
 # =============================================================================
-class SubFrame(tkinter.Frame, AppGrid):
+class SubFrame(Tkinter.Frame, AppGrid):
   """Maintains a frame with grid layout"""
   # ---------------------------------------------------------------------------
   def __init__(self, master):
     """Initialise the frame"""
-    tkinter.Frame.__init__(self, master, relief=tkinter.GROOVE, borderwidth=1)
+    Tkinter.Frame.__init__(self, master, relief=Tkinter.GROOVE, borderwidth=1)
 
 # =============================================================================
 class ValueField:
@@ -503,14 +502,14 @@ class ValueField:
   # ---------------------------------------------------------------------------
   def __init__(self, master, row=0, column=0, label="", width=40, fieldColumnspan=1):
     """Creates the static and dynamic label fields and places the widgets on the grid"""
-    self.stringVar = tkinter.StringVar()
-    self.label = tkinter.Label(master, text=label, anchor=tkinter.W)
+    self.stringVar = Tkinter.StringVar()
+    self.label = Tkinter.Label(master, text=label, anchor=Tkinter.W)
     master.appGrid(self.label, row=row, column=column, rowweight=0, columnweight=0)
-    self.field = tkinter.Label(master,
+    self.field = Tkinter.Label(master,
                                textvariable=self.stringVar,
-                               anchor=tkinter.W,
+                               anchor=Tkinter.W,
                                width=width,
-                               relief=tkinter.GROOVE)
+                               relief=Tkinter.GROOVE)
     master.appGrid(self.field,
                    row=row,
                    column=column+1,
@@ -538,9 +537,9 @@ class InputField:
     """Creates the label and entry field and places the widgets on the grid"""
     if appGridMaster == None:
       appGridMaster = master
-    self.label = tkinter.Label(master, text=label, anchor=tkinter.W)
+    self.label = Tkinter.Label(master, text=label, anchor=Tkinter.W)
     appGridMaster.appGrid(self.label, row=row, column=column, rowweight=0)
-    self.field = tkinter.Entry(master, width=40)
+    self.field = Tkinter.Entry(master, width=40)
     appGridMaster.appGrid(self.field, row=row, column=column+1, rowweight=0)
     self.field.insert(0, initVal)
   # ---------------------------------------------------------------------------
@@ -556,13 +555,13 @@ class CheckbuttonField(object):
     """Creates the label and checkbutton and places the widgets on the grid"""
     if appGridMaster == None:
       appGridMaster = master
-    self.stringVar = tkinter.StringVar()
-    self.label = tkinter.Label(master, text=label, anchor=tkinter.W)
+    self.stringVar = Tkinter.StringVar()
+    self.label = Tkinter.Label(master, text=label, anchor=Tkinter.W)
     appGridMaster.appGrid(self.label, row=row, column=column, rowweight=0)
-    self.button = tkinter.Checkbutton(master,
+    self.button = Tkinter.Checkbutton(master,
                                       variable=self.stringVar,
                                       selectcolor=selectcolor,
-                                      anchor=tkinter.W)
+                                      anchor=Tkinter.W)
     appGridMaster.appGrid(self.button, row=row, column=column+1)
   # ---------------------------------------------------------------------------
   def get(self):
@@ -577,16 +576,16 @@ class RadiobuttonsField:
     """Creates the labels and radiobuttons and places the widgets on the grid"""
     if appGridMaster == None:
       appGridMaster = master
-    self.intVar = tkinter.IntVar(0)
+    self.intVar = Tkinter.IntVar(0)
     self.firstButton = None
     self.nrButtons = 0
     for buttonTxt in labels.split("|"):
-      label = tkinter.Label(master, text=buttonTxt, anchor=tkinter.W)
+      label = Tkinter.Label(master, text=buttonTxt, anchor=Tkinter.W)
       appGridMaster.appGrid(label, row=(row+self.nrButtons), column=column, rowweight=0)
-      button = tkinter.Radiobutton(master,
+      button = Tkinter.Radiobutton(master,
                                    variable=self.intVar,
                                    value=self.nrButtons,
-                                   anchor=tkinter.W)
+                                   anchor=Tkinter.W)
       if self.firstButton == None:
         self.firstButton = button
       appGridMaster.appGrid(button, row=(row+self.nrButtons), column=column+1)
@@ -597,7 +596,7 @@ class RadiobuttonsField:
     return (self.intVar.get())
 
 # =============================================================================
-class InputDialog(simpledialog.Dialog, AppGrid):
+class InputDialog(tkSimpleDialog.Dialog, AppGrid):
   """Input dialog with text field and checkbox entries"""
   # ---------------------------------------------------------------------------
   def __init__(self, master, title, fieldsSpec=[], prompt=""):
@@ -605,16 +604,16 @@ class InputDialog(simpledialog.Dialog, AppGrid):
     self.prompt = prompt
     self.fieldsSpec = fieldsSpec
     self.fields = []
-    simpledialog.Dialog.__init__(self, master, title=title)
+    tkSimpleDialog.Dialog.__init__(self, master, title=title)
   # ---------------------------------------------------------------------------
   def body(self, master):
     """Initialise the dialog fields"""
     row=0
     if self.prompt != "":
-      label = tkinter.Label(master, text=self.prompt)
+      label = Tkinter.Label(master, text=self.prompt)
       label.grid(row=row, column=0, columnspan=2)
       row += 1
-      label = tkinter.Label(master)
+      label = Tkinter.Label(master)
       label.grid(row=row, column=0, columnspan=2)
       row += 1
     firstField = None
@@ -680,25 +679,25 @@ class MenuButtons(SubFrame):
         continue
       label = str(fieldSpec[0])
       if len(fieldSpec) == 1:
-        button = tkinter.Button(self,
+        button = Tkinter.Button(self,
                                 text=label)
       elif len(fieldSpec) == 2:
-        button = tkinter.Button(self,
+        button = Tkinter.Button(self,
                                 text=label,
                                 command=fieldSpec[1])
       elif len(fieldSpec) == 3:
-        button = tkinter.Button(self,
+        button = Tkinter.Button(self,
                                 text=label,
                                 command=fieldSpec[1],
                                 foreground=str(fieldSpec[2]))
       elif len(fieldSpec) == 4:
-        button = tkinter.Button(self,
+        button = Tkinter.Button(self,
                                 text=label,
                                 command=fieldSpec[1],
                                 foreground=str(fieldSpec[2]),
                                 background=str(fieldSpec[3]))
       else:
-        button = tkinter.Button(self,
+        button = Tkinter.Button(self,
                                 text=label,
                                 command=fieldSpec[1],
                                 foreground=str(fieldSpec[2]),
@@ -708,14 +707,14 @@ class MenuButtons(SubFrame):
       self.buttons[label] = button
       column += 1
     # add a label as filler
-    filler = tkinter.Label(self)
-    self.appGrid(filler, column=column, sticky=tkinter.EW)
+    filler = Tkinter.Label(self)
+    self.appGrid(filler, column=column, sticky=Tkinter.EW)
   # ---------------------------------------------------------------------------
   def setState(self, label, state):
     """
     Sets the state of a button:
-    tkinter.ENABLED....active
-    tkinter.DISABLED...disabled
+    Tkinter.ENABLED....active
+    Tkinter.DISABLED...disabled
     """
     if label in self.buttons:
       self.buttons[label].config(state=state)
@@ -764,27 +763,27 @@ class Checkbuttons(SubFrame):
 # functions #
 #############
 # these functions encapsulate platform specific creation of windows:
-# - on old tkinter each GUIview gets its separate window
-# - on new tkinter (ttk) each GUIview gets a notebook tab
+# - on old Tkinter each GUIview gets its separate window
+# - on new Tkinter (ttk) each GUIview gets a notebook tab
 # -----------------------------------------------------------------------------
 def createGUI():
   """create the GUI layer"""
   global s_gui
-  if GUITYPE == "tkinter":
-    s_gui = tkinter.Tk()
+  if GUITYPE == "Tkinter":
+    s_gui = Tkinter.Tk()
   else:
     s_gui = NotebookWindow()
 # -----------------------------------------------------------------------------
 def createWindow():
   """creates a window for a frame"""
   global s_gui, s_windows
-  if GUITYPE == "tkinter":
+  if GUITYPE == "Tkinter":
     if len(s_windows) == 0:
       # use the main window
       window = s_gui
     else:
       # create a child window
-      window = tkinter.Toplevel()
+      window = Tkinter.Toplevel()
   else:
     # create a tab for the notebook window
     title = "win" + str(len(s_windows))

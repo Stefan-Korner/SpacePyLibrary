@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 #******************************************************************************
 # (C) 2014, Stefan Korner, Austria                                            *
 #                                                                             *
@@ -46,7 +46,7 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
         self.frame2Cmd(argv)
       else:
         LOG_WARNING("Invalid command " + argv[0])
-    print("> ",  end='')
+    print "> ",
   # ---------------------------------------------------------------------------
   def helpCmd(self, argv):
     """Decoded help command"""
@@ -75,7 +75,7 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
     tmDu.earthReceptionTime = testData.NCTRS_TM_FRAME_01_earthReceptionTime
     tmDu.sequenceFlag = testData.NCTRS_TM_FRAME_01_sequenceFlag
     tmDu.qualityFlag = testData.NCTRS_TM_FRAME_01_qualityFlag
-    print("tmDu =", tmDu)
+    print "tmDu =", tmDu
     self.tmSender.sendTmDataUnit(tmDu)
   # ---------------------------------------------------------------------------
   def frame2Cmd(self, argv):

@@ -195,6 +195,6 @@ def readTable(tableName, uniqueKeys = True):
           tableMap[key] = []
         tableMap[key].append(record)
       lineNr += 1
-    except Exception as ex:
+    except Exception, ex:
       raise Exception(tableName + ": line " + str(lineNr) + ": " + str(ex))
   return tableMap

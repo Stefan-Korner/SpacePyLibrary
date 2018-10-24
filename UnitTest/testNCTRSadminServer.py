@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 #******************************************************************************
 # (C) 2014, Stefan Korner, Austria                                            *
 #                                                                             *
@@ -65,7 +65,7 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
         self.tcMessage15Cmd(argv)
       else:
         LOG_WARNING("Invalid command " + argv[0])
-    print("> ",  end='')
+    print "> ",
   # ---------------------------------------------------------------------------
   def helpCmd(self, argv):
     """Decoded help command"""

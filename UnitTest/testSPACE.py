@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 #******************************************************************************
 # (C) 2014, Stefan Korner, Austria                                            *
 #                                                                             *
@@ -65,16 +65,16 @@ SYS_CONFIGURATION = [
 def test_DEFoperations():
   """function to test the DEF definition module"""
   SPACE.DEF.init()
-  print("----- TM packet definitions -----")
+  print "----- TM packet definitions -----"
   tmPktDefs = SPACE.IF.s_definitions.getTMpktDefs()
   for tmPktDef in tmPktDefs:
-    print(tmPktDef.pktSPID, )
-  print("")
-  print("----- TM parameter definitions -----")
+    print tmPktDef.pktSPID,
+  print ""
+  print "----- TM parameter definitions -----"
   tmParamDefs = SPACE.IF.s_definitions.getTMparamDefs()
   for tmParamDef in tmParamDefs:
-    print(tmParamDef.paramName, end='')
-  print("")
+    print tmParamDef.paramName,
+  print ""
   # force a re-creation of the persistent definitions
   # (for the next test run)
   SPACE.IF.s_definitions.createDefinitions()
@@ -91,48 +91,48 @@ def test_TMGENoperations():
     segmentationFlags=CCSDS.PACKET.UNSEGMENTED,
     obtUTC=0.0,
     reuse=True)
-  print("tmPacket =", tmPacket)
+  print "tmPacket =", tmPacket
   if UTIL.DU.array2str(tmPacket.getBufferString()) != "\n" + \
     "0000 0C D2 C0 00 00 26 10 03 19 00 00 00 00 00 00 00 .....&..........\n" + \
     "0010 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n" + \
     "0020 00 00 00 00 00 00 00 00 00 00 00 A9 07          .............":
-    print("unexpected TM packet encoding")
+    print "unexpected TM packet encoding"
     return False
   if tmPacket.versionNumber != testData.TM_PACKET_03_versionNumber:
-    print("tmPacket versionNumber wrong:", tmPacket.versionNumber, "- should be", testData.TM_PACKET_03_versionNumber)
+    print "tmPacket versionNumber wrong:", tmPacket.versionNumber, "- should be", testData.TM_PACKET_03_versionNumber
     return False
   if tmPacket.packetType != testData.TM_PACKET_03_packetType:
-    print("tmPacket packetType wrong:", tmPacket.packetType, "- should be", testData.TM_PACKET_03_packetType)
+    print "tmPacket packetType wrong:", tmPacket.packetType, "- should be", testData.TM_PACKET_03_packetType
     return False
   if tmPacket.dataFieldHeaderFlag != testData.TM_PACKET_03_dataFieldHeaderFlag:
-    print("tmPacket dataFieldHeaderFlag wrong:", tmPacket.dataFieldHeaderFlag, "- should be", testData.TM_PACKET_03_dataFieldHeaderFlag)
+    print "tmPacket dataFieldHeaderFlag wrong:", tmPacket.dataFieldHeaderFlag, "- should be", testData.TM_PACKET_03_dataFieldHeaderFlag
     return False
   if tmPacket.applicationProcessId != testData.TM_PACKET_03_applicationProcessId:
-    print("tmPacket applicationProcessId wrong:", tmPacket.applicationProcessId, "- should be", testData.TM_PACKET_03_applicationProcessId)
+    print "tmPacket applicationProcessId wrong:", tmPacket.applicationProcessId, "- should be", testData.TM_PACKET_03_applicationProcessId
     return False
   if tmPacket.segmentationFlags != testData.TM_PACKET_03_segmentationFlags:
-    print("tmPacket segmentationFlags wrong:", tmPacket.segmentationFlags, "- should be", testData.TM_PACKET_03_segmentationFlags)
+    print "tmPacket segmentationFlags wrong:", tmPacket.segmentationFlags, "- should be", testData.TM_PACKET_03_segmentationFlags
     return False
   if tmPacket.sequenceControlCount != testData.TM_PACKET_03_sequenceControlCount:
-    print("tmPacket sequenceControlCount wrong:", tmPacket.sequenceControlCount, "- should be", testData.TM_PACKET_03_sequenceControlCount)
+    print "tmPacket sequenceControlCount wrong:", tmPacket.sequenceControlCount, "- should be", testData.TM_PACKET_03_sequenceControlCount
     return False
   if tmPacket.packetLength != testData.TM_PACKET_03_packetLength:
-    print("tmPacket packetLength wrong:", tmPacket.packetLength, "- should be", testData.TM_PACKET_03_packetLength)
+    print "tmPacket packetLength wrong:", tmPacket.packetLength, "- should be", testData.TM_PACKET_03_packetLength
     return False
   if tmPacket.pusVersionNumber != testData.TM_PACKET_03_pusVersionNumber:
-    print("tmPacket pusVersionNumber wrong:", tmPacket.pusVersionNumber, "- should be", testData.TM_PACKET_03_pusVersionNumber)
+    print "tmPacket pusVersionNumber wrong:", tmPacket.pusVersionNumber, "- should be", testData.TM_PACKET_03_pusVersionNumber
     return False
   if tmPacket.serviceType != testData.TM_PACKET_03_serviceType:
-    print("tmPacket serviceType wrong:", tmPacket.serviceType, "- should be", testData.TM_PACKET_03_serviceType)
+    print "tmPacket serviceType wrong:", tmPacket.serviceType, "- should be", testData.TM_PACKET_03_serviceType
     return False
   if tmPacket.serviceSubType != testData.TM_PACKET_03_serviceSubType:
-    print("tmPacket serviceSubType wrong:", tmPacket.serviceSubType, "- should be", testData.TM_PACKET_03_serviceSubType)
+    print "tmPacket serviceSubType wrong:", tmPacket.serviceSubType, "- should be", testData.TM_PACKET_03_serviceSubType
     return False
   if not tmPacket.checkPacketLength():
-    print("tmPacket has inconsistent packetLength")
+    print "tmPacket has inconsistent packetLength"
     return False
   if not tmPacket.checkChecksum():
-    print("tmPacket has invalid checksum")
+    print "tmPacket has invalid checksum"
     return False
   # create TM packet with initialized TM parameters
   parameterValuesList = []
@@ -150,12 +150,12 @@ def test_TMGENoperations():
     segmentationFlags=CCSDS.PACKET.UNSEGMENTED,
     obtUTC=0.0,
     reuse=True)
-  print("tmPacket =", tmPacket)
+  print "tmPacket =", tmPacket
   if UTIL.DU.array2str(tmPacket.getBufferString()) != "\n" + \
     "0000 0C D2 C0 01 00 26 10 03 19 00 00 00 00 00 00 00 .....&..........\n" + \
     "0010 00 00 AA 12 34 56 78 00 00 00 00 00 00 00 00 41 ....4Vx........A\n" + \
     "0020 20 00 00 40 24 00 00 00 00 00 00 BC 77           ..@$.......w":
-    print("unexpected TM packet encoding")
+    print "unexpected TM packet encoding"
     return False
   return True
 
@@ -165,9 +165,9 @@ def test_TMGENoperations():
 if __name__ == "__main__":
   # initialise the system configuration
   UTIL.SYS.s_configuration.setDefaults(SYS_CONFIGURATION)
-  print("***** test_DEFoperations() start")
+  print "***** test_DEFoperations() start"
   retVal = test_DEFoperations()
-  print("***** test_DEFoperations() done:", retVal)
-  print("***** test_TMGENoperations() start")
+  print "***** test_DEFoperations() done:", retVal
+  print "***** test_TMGENoperations() start"
   retVal = test_TMGENoperations()
-  print("***** test_TMGENoperations() done:", retVal)
+  print "***** test_TMGENoperations() done:", retVal

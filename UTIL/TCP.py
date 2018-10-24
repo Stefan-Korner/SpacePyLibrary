@@ -38,7 +38,7 @@ class Server(object):
     # create the server socket
     try:
       connectSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    except Exception as ex:
+    except Exception, ex:
       LOG_ERROR("Can't create server socket: " + str(ex))
       return False
     # set the socket linger
@@ -46,14 +46,14 @@ class Server(object):
       connectSocket.setsockopt(socket.SOL_SOCKET,
                                socket.SO_LINGER,
                                struct.pack('ii', 1, 10))
-    except Exception as ex:
+    except Exception, ex:
       LOG_ERROR("Can't set socket linger: " + str(ex))
       connectSocket.close()
       return False
     # set the socket reuse address
     try:
       connectSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    except Exception as ex:
+    except Exception, ex:
       LOG_ERROR("Can't set socket reuse address: " + str(ex))
       connectSocket.close()
       return False
@@ -62,14 +62,14 @@ class Server(object):
       hostName = socket.gethostname()
     try:
       connectSocket.bind((hostName, self.portNr))
-    except Exception as ex:
+    except Exception, ex:
       LOG_ERROR("Bind the server socket: " + str(ex))
       connectSocket.close()
       return False
     # listen on the server socket
     try:
       connectSocket.listen(5)
-    except Exception as ex:
+    except Exception, ex:
       LOG_ERROR("Listen on the server socket: " + str(ex))
       connectSocket.close()
       return False
@@ -84,7 +84,7 @@ class Server(object):
     # accept the client connection
     try:
       clientSocket,clientHost = self.connectSocket.accept()
-    except Exception as ex:
+    except Exception, ex:
       LOG_ERROR("Accept of the client connection failed: " + str(ex))
       return
     # delegate the remaing processing
@@ -102,7 +102,7 @@ class Server(object):
       return
     try:
       self.connectSocket.close()
-    except Exception as ex:
+    except Exception, ex:
       LOG_ERROR("Close of connect port failed: " + str(ex))
       self.connectSocket = None
       return
@@ -120,13 +120,13 @@ class Client(object):
     # create the data socket
     try:
       dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    except Exception as ex:
+    except Exception, ex:
       LOG_ERROR("Creation of data socket failed: " + str(ex))
       return None
     # connect the data socket to the server
     try:
       dataSocket.connect((serverHost, serverPort))
-    except Exception as ex:
+    except Exception, ex:
       LOG_ERROR("Connection to server " + str(serverPort) + "@" + serverHost + " failed: " + str(ex))
       return None
     return dataSocket
@@ -166,7 +166,7 @@ class Receiver(object):
     # close the data socket
     try:
       self.dataSocket.close()
-    except Exception as ex:
+    except Exception, ex:
       LOG_ERROR("Close of data socket failed: " + str(ex))
     self.dataSocket = None
 

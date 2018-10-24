@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 #******************************************************************************
 # (C) 2014, Stefan Korner, Austria                                            *
 #                                                                             *
@@ -43,7 +43,7 @@ class TCPreceivingClient(UTIL.TCP.SingleServerReceivingClient):
     try:
       tcpLineBuffer += self.dataSocket.recv(LINEBUFFERLEN);
       LOG("tcpLineBuffer: " + tcpLineBuffer)
-    except Exception as ex:
+    except Exception, ex:
       # read failed
       LOG_ERROR("Read failed: " + str(ex))
       self.disconnectClient()
@@ -84,7 +84,7 @@ class TCPreceivingClient(UTIL.TCP.SingleServerReceivingClient):
         retString = "OK\n";
         try:
           self.dataSocket.send(retString)
-        except Exception as ex:
+        except Exception, ex:
           LOG_ERROR("Send of OK response failed: " + str(ex))
       else:
         LOG_ERROR(str(pstatus))
@@ -92,7 +92,7 @@ class TCPreceivingClient(UTIL.TCP.SingleServerReceivingClient):
         retString = "Error: execution failed (see log)!\n"
         try:
           self.dataSocket.send(retString)
-        except Exception as ex:
+        except Exception, ex:
           LOG_ERROR("Send of Error response failed: " + str(ex))
   # ---------------------------------------------------------------------------
   def processLine(self, line):
