@@ -47,7 +47,7 @@ class CNCtcServer(EGSE.CNC.TCserver):
     LOG_ERROR(errorMessage)
     try:
       LOG(str(data))
-    except Exception, ex:
+    except Exception as ex:
       LOG_WARNING("data passed to notifyError are invalid: " + str(ex))
   # ---------------------------------------------------------------------------
   def notifyCNCcommand(self, cncCommandDU):
@@ -86,7 +86,7 @@ class CNCtmServer(EGSE.CNC.TMserver, EGSE.IF.CCSlink):
     LOG_ERROR(errorMessage)
     try:
       LOG(str(data))
-    except Exception, ex:
+    except Exception as ex:
       LOG_WARNING("data passed to notifyError are invalid: " + str(ex))
 
 # =============================================================================
@@ -117,7 +117,7 @@ class EDENserver(EGSE.EDEN.Server, EGSE.IF.CCSlink):
     LOG_ERROR(errorMessage)
     try:
       LOG(str(data))
-    except Exception, ex:
+    except Exception as ex:
       LOG_WARNING("data passed to notifyError are invalid: " + str(ex))
   # ---------------------------------------------------------------------------
   def notifyTcSpace(self, tcPacket):
@@ -155,7 +155,7 @@ class EDENserver2(EGSE.EDEN.Server):
     LOG_ERROR(errorMessage)
     try:
       LOG(str(data))
-    except Exception, ex:
+    except Exception as ex:
       LOG_WARNING("data passed to notifyError are invalid: " + str(ex))
   # ---------------------------------------------------------------------------
   def notifyTcSpace(self, tcPacket):

@@ -1,6 +1,6 @@
 #!/bin/csh
 #******************************************************************************
-# (C) 2014, Stefan Korner, Austria                                            *
+# (C) 2018, Stefan Korner, Austria                                            *
 #                                                                             *
 # The Space Python Library is free software; you can redistribute it and/or   *
 # modify it under the terms of the GNU Lesser General Public License as       *
@@ -12,27 +12,10 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser     *
 # General Public License for more details.                                    *
 #******************************************************************************
-# Start scrip for the SCOE.                                                   *
+# Start scrip for TM frame to TM packet converter.                            *
 #******************************************************************************
-setenv EGSE_PROTOCOL CNC
-setenv HOST 127.0.0.1
-setenv CCS_SERVER_PORT2 48570
-setenv TC_ACK_ACCEPT_SUCC_MNEMO ACK1
-setenv TC_ACK_ACCEPT_FAIL_MNEMO NAK1
-setenv TC_ACK_EXESTA_SUCC_MNEMO ACK2
-setenv TC_ACK_EXESTA_FAIL_MNEMO NAK2
-setenv TC_ACK_EXEPRO_SUCC_MNEMO ACK3
-setenv TC_ACK_EXEPRO_FAIL_MNEMO NAK3
-setenv TC_ACK_EXECUT_SUCC_MNEMO ACK4
-setenv TC_ACK_EXECUT_FAIL_MNEMO NAK4
-setenv TC_ACK_APID_PARAM_BYTE_OFFSET 18
-setenv TC_ACK_SSC_PARAM_BYTE_OFFSET 20
-setenv TC_FKT_ID_BYTE_OFFSET 10
-setenv TC_FKT_ID_BYTE_SIZE 4
-setenv TM_TT_TIME_FORMAT CUC4
-setenv TM_TT_TIME_BYTE_OFFSET 10
-setenv TM_CYCLIC_MNEMO TM_PKT1
-setenv TESTENV ${HOME}/Python/SpacePyLibrary/TESTENV
-setenv PYTHON python3
-setenv PYTHONPATH ${HOME}/Python/SpacePyLibrary:${HOME}/Python/SpacePyLibrary/UnitTest
-${PYTHON} SCOE.py dummy
+# Command line: FRAME2PACKET.csh <frame dump file name> <packet file name>    *
+#******************************************************************************
+setenv PYTHON python
+setenv PYTHONPATH ${HOME}/Python/SpacePyLibrary
+${PYTHON} FRAME2PACKET.py $1 $2

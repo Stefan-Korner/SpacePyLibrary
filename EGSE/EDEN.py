@@ -148,7 +148,7 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
     # read the PDU header from the data socket
     try:
       pduHeader = self.dataSocket.recv(EGSE.EDENPDU.PDU_HEADER_BYTE_SIZE);
-    except Exception, ex:
+    except Exception as ex:
       self.disconnectClient()
       self.notifyConnectionClosed(str(ex))
       return
@@ -167,7 +167,7 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
     if dataFieldLength > 0:
       try:
         dataField = self.dataSocket.recv(dataFieldLength);
-      except Exception, ex:
+      except Exception as ex:
         LOG_ERROR("Read of PDU dataField failed: " + str(ex))
         return
       # consistency check
@@ -217,7 +217,7 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
       else:
         LOG_ERROR("Read of PDU header failed: invalid pduType: " + str(pdu.pduType))
         LOG_INFO("PDU = " + str(pdu))
-    except Exception, ex:
+    except Exception as ex:
       LOG_ERROR("Processing of received PDU failed: " + str(ex))
   # ---------------------------------------------------------------------------
   def notifyConnectionClosed(self, details):
@@ -286,7 +286,7 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
     # read the PDU header from the data socket
     try:
       pduHeader = self.dataSocket.recv(EGSE.EDENPDU.PDU_HEADER_BYTE_SIZE);
-    except Exception, ex:
+    except Exception as ex:
       self.disconnectFromServer()
       self.notifyConnectionClosed(str(ex))
       return
@@ -306,7 +306,7 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
     if dataFieldLength > 0:
       try:
         dataField = self.dataSocket.recv(dataFieldLength);
-      except Exception, ex:
+      except Exception as ex:
         LOG_ERROR("Read of PDU dataField failed: " + str(ex))
         return
       # consistency check
@@ -368,7 +368,7 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
       else:
         LOG_ERROR("Read of PDU header failed: invalid pduType: " + str(pdu.pduType))
         LOG_INFO("PDU = " + str(pdu))
-    except Exception, ex:
+    except Exception as ex:
       LOG_ERROR("Processing of received PDU failed: " + str(ex))
   # ---------------------------------------------------------------------------
   def notifyConnectionClosed(self, details):

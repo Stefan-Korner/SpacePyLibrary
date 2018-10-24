@@ -103,7 +103,7 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
     try:
       strBuffer = self.dataSocket.recv(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE);
       packetHeader = array.array("B", strBuffer)
-    except Exception, ex:
+    except Exception as ex:
       self.disconnectClient()
       self.notifyConnectionClosed(str(ex))
       return
@@ -127,7 +127,7 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
     dataFieldLength = tcPacketDU.packetLength + 1
     try:
       dataField = self.dataSocket.recv(dataFieldLength);
-    except Exception, ex:
+    except Exception as ex:
       LOG_ERROR("Read of packet dataField failed: " + str(ex))
       return
     # consistency check
@@ -146,7 +146,7 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
         # normal CCSDS TC packet
         okStatus = self.notifyCCSDScommand(tcPacketDU)
         self.sendTCackNak(tcPacketDU, okStatus)
-    except Exception, ex:
+    except Exception as ex:
       LOG_ERROR("Processing of received CnC command failed: " + str(ex))
   # ---------------------------------------------------------------------------
   def notifyConnectionClosed(self, details):
@@ -189,7 +189,7 @@ class TCclient(UTIL.TCP.SingleServerReceivingClient):
     # read the packet header from the data socket
     try:
       packetHeader = self.dataSocket.recv(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE);
-    except Exception, ex:
+    except Exception as ex:
       self.disconnectFromServer()
       self.notifyConnectionClosed(str(ex))
       return
@@ -208,7 +208,7 @@ class TCclient(UTIL.TCP.SingleServerReceivingClient):
     dataFieldLength = cncTMpacketDU.packetLength + 1
     try:
       dataField = self.dataSocket.recv(dataFieldLength);
-    except Exception, ex:
+    except Exception as ex:
       LOG_ERROR("Read of packet dataField failed: " + str(ex))
       return
     # consistency check
@@ -221,7 +221,7 @@ class TCclient(UTIL.TCP.SingleServerReceivingClient):
     try:
       LOG_INFO("CNC.TCclient.receiveCallback(CnC response)")
       self.notifyCNCresponse(cncTMpacketDU)
-    except Exception, ex:
+    except Exception as ex:
       LOG_ERROR("Processing of received CnC response failed: " + str(ex))
   # ---------------------------------------------------------------------------
   def notifyConnectionClosed(self, details):
@@ -278,7 +278,7 @@ class TMclient(UTIL.TCP.SingleServerReceivingClient):
     # read the packet header from the data socket
     try:
       packetHeader = self.dataSocket.recv(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE);
-    except Exception, ex:
+    except Exception as ex:
       self.disconnectFromServer()
       self.notifyConnectionClosed(str(ex))
       return
@@ -297,7 +297,7 @@ class TMclient(UTIL.TCP.SingleServerReceivingClient):
     dataFieldLength = ccsdsTMpacketDU.packetLength + 1
     try:
       dataField = self.dataSocket.recv(dataFieldLength);
-    except Exception, ex:
+    except Exception as ex:
       LOG_ERROR("Read of packet dataField failed: " + str(ex))
       return
     # consistency check
@@ -310,7 +310,7 @@ class TMclient(UTIL.TCP.SingleServerReceivingClient):
     try:
       LOG_INFO("CNC.TMclient.receiveCallback(TM packet)")
       self.notifyTMpacket(ccsdsTMpacketDU.getBufferString())
-    except Exception, ex:
+    except Exception as ex:
       LOG_ERROR("Processing of received TM packet failed: " + str(ex))
   # ---------------------------------------------------------------------------
   def notifyConnectionClosed(self, details):

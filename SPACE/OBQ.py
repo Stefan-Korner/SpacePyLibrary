@@ -102,7 +102,7 @@ class OnboardQueueImpl(SPACE.IF.OnboardQueue):
                                                  self.checkCyclicCallback)
     # check if execution times in the queue are expired
     ttExecTimes = self.queue.keys()
-    ttExecTimes.sort()
+    ttExecTimes = sorted(ttExecTimes)
     actualTime = UTIL.TIME.getActualTime()
     cmdsDeleted = False
     for ttExecTime in ttExecTimes:

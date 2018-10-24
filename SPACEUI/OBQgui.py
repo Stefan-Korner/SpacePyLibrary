@@ -13,7 +13,7 @@
 #******************************************************************************
 # Onboard Queue Simulation GUI                                                *
 #******************************************************************************
-import Tkinter
+import tkinter
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import SPACE.DEF, SPACE.IF
 import UI.TKI
@@ -56,24 +56,24 @@ class GUIview(UI.TKI.GUIwinView):
                  row=0,
                  rowweight=0,
                  columnweight=0,
-                 sticky=Tkinter.W)
+                 sticky=tkinter.W)
     # use the filler to force correct resizing of all GUI elements
-    filler = Tkinter.Label(self, text="")
+    filler = tkinter.Label(self, text="")
     self.appGrid(filler,
                  row=0,
                  column=1,
                  rowweight=0,
                  columnweight=1,
-                 sticky=Tkinter.W)
+                 sticky=tkinter.W)
     # onboard queue contents
-    label = Tkinter.Label(self, text="Onboard Queue Contents")
+    label = tkinter.Label(self, text="Onboard Queue Contents")
     self.appGrid(label,
                  row=1,
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,
-                 sticky=Tkinter.EW)
-    self.queueContents = UI.TKI.ScrolledListbox(self, selectmode=Tkinter.SINGLE)
+                 sticky=tkinter.EW)
+    self.queueContents = UI.TKI.ScrolledListbox(self, selectmode=tkinter.SINGLE)
     self.queueContents.list().configure(font="courier")
     self.queueContents.list().insert(0, QUEUE_HEADER1)
     self.queueContents.list().insert(1, QUEUE_HEADER2)
@@ -82,14 +82,14 @@ class GUIview(UI.TKI.GUIwinView):
     self.messageLogger = UI.TKI.MessageLogger(self, "OBQ")
     self.appGrid(self.messageLogger, row=3, columnspan=2)
     # message line
-    self.messageline = Tkinter.Message(self, relief=Tkinter.GROOVE)
+    self.messageline = tkinter.Message(self, relief=tkinter.GROOVE)
     self.appGrid(self.messageline,
                  row=4,
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,
-                 sticky=Tkinter.EW)
-    self.grid(row=0, column=0, sticky=Tkinter.EW+Tkinter.NS)
+                 sticky=tkinter.EW)
+    self.grid(row=0, column=0, sticky=tkinter.EW+tkinter.NS)
     self.master.rowconfigure(0, weight=1)
     self.master.columnconfigure(0, weight=1)
   # ---------------------------------------------------------------------------
@@ -230,7 +230,7 @@ class GUIview(UI.TKI.GUIwinView):
   # ---------------------------------------------------------------------------
   def ttPacketNotify(self):
     """Called when a time tagged packet is added to / removed from the queue"""
-    self.queueContents.list().delete(0, Tkinter.END)
+    self.queueContents.list().delete(0, tkinter.END)
     self.queueContents.list().insert(0, QUEUE_HEADER1)
     self.queueContents.list().insert(1, QUEUE_HEADER2)
     entryPos = 2

@@ -41,7 +41,7 @@ class AdminSender(GRND.NCTRS.AdminMessageSender):
     LOG_ERROR(errorMessage)
     try:
       LOG(str(data))
-    except Exception, ex:
+    except Exception as ex:
       LOG_WARNING("data passed to notifyError are invalid: " + str(ex))
 
 ####################

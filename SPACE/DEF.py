@@ -13,7 +13,7 @@
 #******************************************************************************
 # Space Simulation - Space Data Definitions                                   #
 #******************************************************************************
-import os, cPickle, time
+import os, pickle, time
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.DU, CCSDS.PACKET
 import PUS.PACKET
@@ -167,7 +167,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     tmParamDefs = []
     # step 1) create packet definitions
     # pidMap is the driving map for the join
-    for spid, pidRecord in pidMap.iteritems():
+    for spid, pidRecord in pidMap.items():
       picKey = pidRecord.picKey()
       if picKey in picMap:
         statusMessage = "PI1/PI2 depends on (APID,TYPE,STYPE)"
@@ -195,7 +195,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     tmPktDefs.sort()
     # step 2) create parameter definitions
     # pcfMap is the driving map for the join
-    for paramName, pcfRecord in pcfMap.iteritems():
+    for paramName, pcfRecord in pcfMap.items():
       if paramName in plfMap:
         plfRecords = plfMap[paramName]
       else:
@@ -227,9 +227,9 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     fileName = SCOS.ENV.s_environment.definitionFileName()
     try:
       file = open(fileName, "w")
-      cPickle.dump(self.definitionData, file)
+      pickle.dump(self.definitionData, file)
       file.close()
-    except Exception, ex:
+    except Exception as ex:
       LOG_ERROR("cannot save definitions: " + str(ex), "SPACE")
   # ---------------------------------------------------------------------------
   def initDefinitions(self):
@@ -244,9 +244,9 @@ class DefinitionsImpl(SPACE.IF.Definitions):
         os.stat(fileName)
         try:
           file = open(fileName, "r")
-          self.definitionData = cPickle.load(file)
+          self.definitionData = pickle.load(file)
           file.close()
-        except Exception, ex:
+        except Exception as ex:
           LOG_ERROR("cannot load definitions: " + str(ex), "SPACE")
           self.createDefinitions()
       except:

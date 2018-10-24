@@ -130,6 +130,12 @@ class TMparamExtraction(object):
     if self.bitPos < other.bitPos:
       return -1
     return 0
+  # ---------------------------------------------------------------------------
+  def __lt__(self, other):
+    """compares if self < other"""
+    if other == None:
+      return False
+    return (self.bitPos < other.bitPos)
 
 # =============================================================================
 class TMpktDef(object):
@@ -167,6 +173,12 @@ class TMpktDef(object):
       return -1
     return 0
   # ---------------------------------------------------------------------------
+  def __lt__(self, other):
+    """compares if self < other"""
+    if other == None:
+      return False
+    return (self.pktSPID < other.pktSPID)
+  # ---------------------------------------------------------------------------
   def appendParamLink(self, paramToPacket):
     """used to append later on links to related parameters"""
     paramName = paramToPacket.paramName
@@ -196,7 +208,7 @@ class TMpktDef(object):
     locLgocc = paramToPacket.locLgocc
     try:
       bitWidth = paramDef.getBitWidth()
-    except Exception, ex:
+    except Exception as ex:
       LOG_WARNING("param " + paramName + ": " + str(ex) + " ---> ignored", "SPACE")
       return None
     bitStartPos = locOffbi + (locOffby * 8)
@@ -241,7 +253,7 @@ class TMpktDef(object):
         paramExtraction = TMparamExtraction(pi2BitPos, pi2BitWidth, pi2ValueName, pi2ValueDescr, True, False, True)
         retVal.append(paramExtraction)
     # insert other parameters
-    for paramName, paramToPacket in self.paramLinks.iteritems():
+    for paramName, paramToPacket in self.paramLinks.items():
       paramDef = paramToPacket.paramDef
       paramDescr = paramDef.paramDescr
       isInteger = paramDef.isInteger()
@@ -254,7 +266,7 @@ class TMpktDef(object):
       # ignore exceptions in getBitWidth
       try:
         bitWidth = paramDef.getBitWidth()
-      except Exception, ex:
+      except Exception as ex:
         LOG_WARNING("param " + paramName + ": " + str(ex) + " ---> ignored", "SPACE")
         continue
       bitStartPos = locOffbi + (locOffby * 8)
@@ -332,6 +344,12 @@ class TMparamDef(object):
     if self.paramName < other.paramName:
       return -1
     return 0
+  # ---------------------------------------------------------------------------
+  def __lt__(self, other):
+    """compares if self < other"""
+    if other == None:
+      return False
+    return (self.paramName < other.paramName)
   # ---------------------------------------------------------------------------
   def getCommutatedParamName(self, commutation):
     """returns the commutated param name"""

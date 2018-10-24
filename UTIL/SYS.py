@@ -102,9 +102,9 @@ class DefaultLogger(Logger):
       self.childDefaultLogger._log(message, subsystem)
     else:
       if subsystem == None:
-        print self.logStr + message + self.resetStr
+        print(self.logStr + message + self.resetStr)
       else:
-        print self.logStr + "[" + subsystem + "] " + message + self.resetStr
+        print(self.logStr + "[" + subsystem + "] " + message + self.resetStr)
   # ---------------------------------------------------------------------------
   def _logInfo(self, message, subsystem):
     """logs an info message"""
@@ -120,9 +120,9 @@ class DefaultLogger(Logger):
       self.childDefaultLogger._logInfo(message, subsystem)
     else:
       if subsystem == None:
-        print self.infoStr + message + self.resetStr
+        print(self.infoStr + message + self.resetStr)
       else:
-        print self.infoStr + "[" + subsystem + "] " + message + self.resetStr
+        print(self.infoStr + "[" + subsystem + "] " + message + self.resetStr)
   # ---------------------------------------------------------------------------
   def _logWarning(self, message, subsystem):
     """logs a warning message"""
@@ -138,9 +138,9 @@ class DefaultLogger(Logger):
       self.childDefaultLogger._logWarning(message, subsystem)
     else:
       if subsystem == None:
-        print self.warningStr + message + self.resetStr
+        print(self.warningStr + message + self.resetStr)
       else:
-        print self.warningStr + "[" + subsystem + "] " + message + self.resetStr
+        print(self.warningStr + "[" + subsystem + "] " + message + self.resetStr)
   # ---------------------------------------------------------------------------
   def _logError(self, message, subsystem):
     """logs an error message"""
@@ -156,9 +156,9 @@ class DefaultLogger(Logger):
       self.childDefaultLogger._logError(message, subsystem)
     else:
       if subsystem == None:
-        print self.errorStr + message + self.resetStr
+        print(self.errorStr + message + self.resetStr)
       else:
-        print self.errorStr + "[" + subsystem + "] " + message + self.resetStr
+        print(self.errorStr + "[" + subsystem + "] " + message + self.resetStr)
   # ---------------------------------------------------------------------------
   def registerChildLogger(self, childLogger, subsystem=None):
     """

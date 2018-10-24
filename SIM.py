@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #******************************************************************************
 # (C) 2014, Stefan Korner, Austria                                            *
 #                                                                             *
@@ -66,7 +66,7 @@ SYS_CONFIGURATION = [
   ["SYS_COLOR_LOG", "1"],
   ["SYS_APP_MNEMO", "SIM"],
   ["SYS_APP_NAME", "Simulator"],
-  ["SYS_APP_VERSION", "1.0"]]
+  ["SYS_APP_VERSION", "3.0"]]
 
 ###########
 # classes #
@@ -539,7 +539,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     # send the packet
     try:
       SPACE.IF.s_onboardComputer.generateTMpacket(tmPacketData)
-    except Exception, ex:
+    except Exception as ex:
       LOG_WARNING("cannot send packet via connection: " + str(ex), "SPACE")
       return False
     return True
@@ -776,7 +776,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     try:
       for tmPktDef in SPACE.IF.s_definitions.getTMpktDefs():
         LOG(tmPktDef.pktName + " (SPID = " + str(tmPktDef.pktSPID) + ") - " + tmPktDef.pktDescr, "SPACE")
-    except Exception, ex:
+    except Exception as ex:
       LOG_ERROR("MIB Error: " + str(ex), "SPACE")
       return False
     return True
@@ -795,7 +795,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       # update the TM definitions to ensure an actual testdata.sim
       SPACE.IF.s_definitions.createDefinitions()
       LOG(definitionFileName + " generated", "SPACE")
-    except Exception, ex:
+    except Exception as ex:
       LOG_ERROR("Generation Error: " + str(ex), "SPACE")
       return False
     return True
@@ -1020,15 +1020,15 @@ def obqDisableAck4(*argv): UTIL.TASK.s_processingTask.obqDisableAck4Cmd(("", ) +
 # -----------------------------------------------------------------------------
 def printUsage(launchScriptName):
   """Prints the possible commandline options of the test driver"""
-  print ""
-  print "usage:"
-  print "------"
-  print ""
-  print launchScriptName
-  print "\t[ -i | -interpreter | -c | -cmdprompt | -bg | -background ]"
-  print "\t[ -n | -nogui ] [ -p <port> | -port <port> ]"
-  print "\t[ -l <logfile> | -logfile <logfile> ] [ -h | -help ]"
-  print ""
+  print("")
+  print("usage:")
+  print("------")
+  print("")
+  print(launchScriptName)
+  print("\t[ -i | -interpreter | -c | -cmdprompt | -bg | -background ]")
+  print("\t[ -n | -nogui ] [ -p <port> | -port <port> ]")
+  print("\t[ -l <logfile> | -logfile <logfile> ] [ -h | -help ]")
+  print("")
 
 ########
 # main #
@@ -1090,14 +1090,14 @@ else:
   modelTask = ModelTask(isParent=True)
 # register the TCP/IP server socket for remote control
 if requestHandler.portNr != 0:
-  print "register connect port..."
+  print("register connect port...")
   if not requestHandler.openConnectPort(UTIL.SYS.s_configuration.HOST):
     sys.exit(-1)
   connectSocket = requestHandler.connectSocket
   modelTask.createFileHandler(connectSocket, requestHandler.tcpConnectCallback)
 # register the requestHandler as console handler if requested
 if cmdPrompt:
-  print "register console handler..."
+  print("register console handler...")
   modelTask.registerConsoleHandler(requestHandler)
 
 # initialise singletons
@@ -1118,16 +1118,16 @@ LOG("Open the NCTRS admin message sender (server)")
 SIM.AdminServer.createAdminSender(UTIL.SYS.s_configuration.HOST)
 
 # load the definition data
-print "load definition data (take some time) ..."
+print("load definition data (take some time) ...")
 SPACE.IF.s_definitions.initDefinitions()
-print "definition data loaded"
+print("definition data loaded")
 
 # start the tasks
-print "start modelTask..."
+print("start modelTask...")
 modelTask.start()
 if guiMode:
-  print "start guiTask..."
+  print("start guiTask...")
   guiTask.start()
-  print "guiTask terminated"
+  print("guiTask terminated")
   modelTask.join()
-print "modelTask terminated"
+print("modelTask terminated")

@@ -33,4 +33,4 @@ set TM_TT_TIME_BYTE_OFFSET=10
 set TM_CYCLIC_MNEMO=TM_PKT1
 set TESTENV=C:\Programming\SpacePyLibrary\TESTENV
 set PYTHONPATH=C:\Programming\SpacePyLibrary;C:\Programming\SpacePyLibrary\UnitTest
-python SCOE.py dummy
+python3 SCOE.py dummy

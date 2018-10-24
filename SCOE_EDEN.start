@@ -33,6 +33,6 @@ setenv TM_TT_TIME_FORMAT CUC4
 setenv TM_TT_TIME_BYTE_OFFSET 10
 setenv TM_CYCLIC_MNEMO TM_PKT1
 setenv TESTENV ${HOME}/Python/SpacePyLibrary/TESTENV
-setenv PYTHON python
+setenv PYTHON python3
 setenv PYTHONPATH ${HOME}/Python/SpacePyLibrary:${HOME}/Python/SpacePyLibrary/UnitTest
 ${PYTHON} SCOE.py dummy

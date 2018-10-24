@@ -38,7 +38,7 @@ class TMreceiver(UTIL.TCP.SingleServerReceivingClient):
     # read the TM data unit header from the data socket
     try:
       tmDuHeader = self.dataSocket.recv(GRND.NCTRSDU.TM_DU_HEADER_BYTE_SIZE);
-    except Exception, ex:
+    except Exception as ex:
       self.disconnectFromServer()
       self.notifyConnectionClosed(str(ex))
       return
@@ -67,7 +67,7 @@ class TMreceiver(UTIL.TCP.SingleServerReceivingClient):
     # from the data socket
     try:
       tmRemaining = self.dataSocket.recv(remainingSizeExpected);
-    except Exception, ex:
+    except Exception as ex:
       LOG_ERROR("Read of remaining TM DU failed: " + str(ex))
       self.disconnectFromServer()
       self.notifyConnectionClosed("invalid data")
@@ -176,7 +176,7 @@ class TCreceiver(UTIL.TCP.SingleClientReceivingServer):
     # read the TC data unit header from the data socket
     try:
       tcDuHeader = self.dataSocket.recv(GRND.NCTRSDU.TC_DU_HEADER_BYTE_SIZE);
-    except Exception, ex:
+    except Exception as ex:
       self.disconnectClient()
       self.notifyConnectionClosed(str(ex))
       return
@@ -204,7 +204,7 @@ class TCreceiver(UTIL.TCP.SingleClientReceivingServer):
     # from the data socket
     try:
       tcRemaining = self.dataSocket.recv(remainingSizeExpected);
-    except Exception, ex:
+    except Exception as ex:
       LOG_ERROR("Read of remaining TC DU failed: " + str(ex))
       self.disconnectClient()
       self.notifyConnectionClosed("invalid data")
@@ -234,7 +234,7 @@ class TCreceiver(UTIL.TCP.SingleClientReceivingServer):
         LOG_ERROR("Read of TC DU header failed: invalid dataUnitType: " + str(dataUnitType))
         self.disconnectClient()
         self.notifyConnectionClosed("invalid data")
-    except Exception, ex:
+    except Exception as ex:
       LOG_ERROR("Processing of received data unit failed: " + str(ex))
   # ---------------------------------------------------------------------------
   def notifyConnectionClosed(self, details):
@@ -273,7 +273,7 @@ class TCreceiver(UTIL.TCP.SingleClientReceivingServer):
     # extract the TC packet from the NCTRS TC packet data unit
     try:
       packetData = tcPktDu.getTCpacket()
-    except Exception, ex:
+    except Exception as ex:
       self.notifyError("TC packet extraction failed", ex)
       return
     self.notifyTCpacket(packetData)
@@ -305,7 +305,7 @@ class TCreceiver(UTIL.TCP.SingleClientReceivingServer):
     # extract the CLTU from the NCTRS CLTU data unit
     try:
       cltu = tcCltuDu.getCltu()
-    except Exception, ex:
+    except Exception as ex:
       self.notifyError("CLTU extraction failed", ex)
       return
     self.notifyCltu(cltu)
@@ -369,7 +369,7 @@ class TCsender(UTIL.TCP.SingleServerReceivingClient):
     # read the TC data unit header from the data socket
     try:
       tcDuHeader = self.dataSocket.recv(GRND.NCTRSDU.TC_DU_HEADER_BYTE_SIZE);
-    except Exception, ex:
+    except Exception as ex:
       self.disconnectFromServer()
       self.notifyConnectionClosed(str(ex))
       return
@@ -398,7 +398,7 @@ class TCsender(UTIL.TCP.SingleServerReceivingClient):
     # from the data socket
     try:
       tcRemaining = self.dataSocket.recv(remainingSizeExpected);
-    except Exception, ex:
+    except Exception as ex:
       LOG_ERROR("Read of remaining TC DU failed: " + str(ex))
       self.disconnectFromServer()
       self.notifyConnectionClosed("invalid data")
@@ -520,7 +520,7 @@ class AdminMessageReceiver(UTIL.TCP.SingleServerReceivingClient):
     # read the admin message unit header from the data socket
     try:
       messageHeader = self.dataSocket.recv(GRND.NCTRSDU.MESSAGE_HEADER_BYTE_SIZE);
-    except Exception, ex:
+    except Exception as ex:
       self.disconnectFromServer()
       self.notifyConnectionClosed(str(ex))
       return
@@ -549,7 +549,7 @@ class AdminMessageReceiver(UTIL.TCP.SingleServerReceivingClient):
     # from the data socket
     try:
       messageRemaining = self.dataSocket.recv(remainingSizeExpected);
-    except Exception, ex:
+    except Exception as ex:
       LOG_ERROR("Read of remaining admin message DU failed: " + str(ex))
       self.disconnectFromServer()
       self.notifyConnectionClosed("invalid data")

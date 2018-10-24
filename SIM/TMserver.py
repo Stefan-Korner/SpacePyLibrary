@@ -152,7 +152,7 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
           recordFile.flush()
         else:
           LOG_ERROR("invalid FRAME_RECORD_FORMAT: " + recordFormat, "GRND")
-      except Exception, ex:
+      except Exception as ex:
         LOG_ERROR("cannot write to frame recording file", "GRND")
         LOG(str(ex), "GRND")
     if GRND.IF.s_configuration.nctrsTMconn:
@@ -198,7 +198,7 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
     LOG_ERROR(errorMessage)
     try:
       LOG(str(data))
-    except Exception, ex:
+    except Exception as ex:
       LOG_WARNING("data passed to notifyError are invalid: " + str(ex))
 
 #############

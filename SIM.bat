@@ -38,4 +38,4 @@ set TM_RECORD_FORMAT=NCTRS
 set SYS_COLOR_LOG=1
 set TESTENV=C:\Programming\SpacePyLibrary\TESTENV
 set PYTHONPATH=C:\Programming\SpacePyLibrary;C:\Programming\SpacePyLibrary\UnitTest
-python SIM.py dummy
+python3 SIM.py dummy
