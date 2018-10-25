@@ -42,7 +42,7 @@ def encodeCltu(frame):
   # into the CLTU body together with BCH code bytes
   frameIdx = 0
   frameSize = len(frame)
-  nrCltuCodeBlocks = (frameSize + BCH_MAX_NETTO_INDEX) / BCH_NETTO_SIZE
+  nrCltuCodeBlocks = (frameSize + BCH_MAX_NETTO_INDEX) // BCH_NETTO_SIZE
   cltuBodySize = nrCltuCodeBlocks * UTIL.BCH.CODE_BLOCK_SIZE
   cltuBody = array.array("B", "\0" * cltuBodySize)
   cltuBodyIdx = 0
@@ -99,7 +99,7 @@ def decodeCltu(cltu):
     return None
   # iterate over the CLTU body bytes, which are copied
   # into the frame, BCH code is checked during the iteration
-  nrCltuCodeBlocks = cltuBodySize / UTIL.BCH.CODE_BLOCK_SIZE
+  nrCltuCodeBlocks = cltuBodySize // UTIL.BCH.CODE_BLOCK_SIZE
   frameSize = nrCltuCodeBlocks * BCH_NETTO_SIZE
   frame = array.array("B", "\0" * frameSize)
   frameIdx = 0
@@ -143,7 +143,7 @@ def checkCltu(cltu):
     if cltu[i] != CLTU_TRAILER_SEQUENCE[i]:
       return False, "wrong cltu trailer sequence"
   # iterate over the CLTU body bytes and check the BCH code
-  nrCltuCodeBlocks = cltuBodySize / UTIL.BCH.CODE_BLOCK_SIZE
+  nrCltuCodeBlocks = cltuBodySize // UTIL.BCH.CODE_BLOCK_SIZE
   frameSize = nrCltuCodeBlocks * BCH_NETTO_SIZE
   cltuIdx = CLTU_START_SEQUENCE_SIZE
   codeBlkIdx = 0

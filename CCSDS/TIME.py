@@ -130,9 +130,9 @@ def convertToCDS(pyTime, timeFormat):
   secs = int(pyTime)
   mics = int(round((pyTime - secs) * 1000000))
   # convert into CDS components
-  days = secs / UTIL.TIME.SECONDS_OF_DAY
+  days = secs // UTIL.TIME.SECONDS_OF_DAY
   secs %= UTIL.TIME.SECONDS_OF_DAY
-  mils = (secs * 1000) + (mics / 1000)
+  mils = (secs * 1000) + (mics // 1000)
   if timeFormat == TIME_FORMAT_CDS1:
     timeDU = BinaryUnit("\0" * CDS1_TIME_BYTE_SIZE,
                         CDS1_TIME_BYTE_SIZE,
@@ -153,7 +153,7 @@ def convertFromCDS(timeDU):
   """returns python time representation from CDS binary data unit"""
   secs = timeDU.days * UTIL.TIME.SECONDS_OF_DAY
   mils = timeDU.mils
-  secs += (mils / 1000)
+  secs += (mils // 1000)
   mics = 0
   if len(timeDU) == CDS2_TIME_BYTE_SIZE:
     mics = timeDU.mics

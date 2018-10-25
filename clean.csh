@@ -14,4 +14,5 @@
 # Deletes temporary files that are created during runtime.                    *
 #******************************************************************************
 rm -f */*.pyc
+rm -rf */__pycache__
 rm -f TESTENV/testbin/testdata.sim

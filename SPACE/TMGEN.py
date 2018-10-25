@@ -150,12 +150,12 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
         if isInteger:
           packet.setBits(bitPos, bitLength, paramValue)
         elif isFloat:
-          bytePos = bitPos / 8
-          byteLength = bitLength / 8
+          bytePos = bitPos // 8
+          byteLength = bitLength // 8
           packet.setFloat(bytePos, byteLength, paramValue)
         else:
-          bytePos = bitPos / 8
-          byteLength = bitLength / 8
+          bytePos = bitPos // 8
+          byteLength = bitLength // 8
           packet.setString(bytePos, byteLength, paramValue)
     # re-calculate the time stamp
     if tmPktDef.pktHasDFhdr and self.hasTmTT:
