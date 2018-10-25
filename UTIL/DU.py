@@ -40,6 +40,7 @@ BIT_FILTER = [
   [None, None, None, None, None, None, 0xFD, 0xFC],
   [None, None, None, None, None, None, None, 0xFE]]
 ARRAY_TYPE = type(array.array("B"))
+STRING_TYPE = type("")
 
 ###########
 # classes #
@@ -52,12 +53,14 @@ class BinaryUnit(object):
     """initialise the date structure with binaryString and attribute maps"""
     emptyData = (binaryString == None)
     if emptyData:
-      binaryString = "\0" * (attributesSize1 + attributesSize2)
+      binaryString = [0] * (attributesSize1 + attributesSize2)
     # special notation  to allow oberloading of __getattr__ and __setattr__
     if type(binaryString) == ARRAY_TYPE:
       object.__setattr__(self, "buffer", binaryString)
-    else:
+    elif type(binaryString) == STRING_TYPE:
       object.__setattr__(self, "buffer", array.array("B", binaryString.encode()))
+    else:
+      object.__setattr__(self, "buffer", array.array("B", binaryString))
     object.__setattr__(self, "usedBufferSize", len(self.buffer))
     object.__setattr__(self, "attributesSize1", attributesSize1)
     object.__setattr__(self, "attributeMap1", attributeMap1)
@@ -183,7 +186,7 @@ class BinaryUnit(object):
     if byteSize > bufferSize:
       # buffer must be enlarged
       enlargeSize = byteSize - bufferSize
-      self.buffer.extend(array.array("B", ("\0" * enlargeSize).encode()))
+      self.buffer.extend(array.array("B", ([0] * enlargeSize)))
     object.__setattr__(self, "usedBufferSize", byteSize)
   # ---------------------------------------------------------------------------
   def append(self, binaryString, attributeMap2=None):
@@ -193,8 +196,10 @@ class BinaryUnit(object):
       object.__setattr__(self, "buffer", self.buffer[:self.usedBufferSize])
     if type(binaryString) == ARRAY_TYPE:
       self.buffer.extend(binaryString)
-    else:
+    elif type(binaryString) == STRING_TYPE:
       self.buffer.extend(array.array("B", binaryString.encode()))
+    else:
+      self.buffer.extend(array.array("B", binaryString))
     object.__setattr__(self, "usedBufferSize", len(self.buffer))
     if attributeMap2 != None:
       object.__setattr__(self, "attributeMap2", attributeMap2)
@@ -289,7 +294,7 @@ class BinaryUnit(object):
   # ---------------------------------------------------------------------------
   def setBytes(self, bytePos, byteLength, byteArray):
     """set bytes"""
-    if type(byteArray) != ARRAY_TYPE:
+    if type(byteArray) == STRING_TYPE:
       byteArray = array.array("B", byteArray.encode())
     # consistency checks
     if bytePos < 0:
@@ -511,7 +516,7 @@ class BinaryUnit(object):
 #############
 def array2str(binaryString, maxLen=65536):
   """converts a binaryString into a readable data dump"""
-  if type(binaryString) != ARRAY_TYPE:
+  if type(binaryString) == STRING_TYPE:
     binaryString = array.array("B", binaryString.encode())
   binaryStringSize = len(binaryString)
   if binaryStringSize == 0:
@@ -551,10 +556,10 @@ def str2array(hexString, withoutSpaces=False):
   # e.g. "00 01 FF FE 64 12" converts to array('B', [0, 1, 255, 254, 100, 18])
   # withoutSpaces=True: "0001FFFE6412" instead of "00 01 FF FE 64 12"
   if withoutSpaces:
-    hexTuples = [hexString[i:i+2] for i in xrange(0, len(hexString), 2)]
+    hexTuples = [hexString[i:i+2] for i in range(0, len(hexString), 2)]
   else:
     hexTuples = hexString.split()
-  return array.array('B', map((lambda x: int(x, 16)), hexTuples).encode())
+  return array.array('B', map((lambda x: int(x, 16)), hexTuples))
 
 def unsigned2signed(value, byteSize):
   """convers an unsigned integer into a signed integer"""

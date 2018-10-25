@@ -44,7 +44,7 @@ def encodeCltu(frame):
   frameSize = len(frame)
   nrCltuCodeBlocks = (frameSize + BCH_MAX_NETTO_INDEX) // BCH_NETTO_SIZE
   cltuBodySize = nrCltuCodeBlocks * UTIL.BCH.CODE_BLOCK_SIZE
-  cltuBody = array.array("B", "\0" * cltuBodySize)
+  cltuBody = array.array("B", [0] * cltuBodySize)
   cltuBodyIdx = 0
   codeBlkIdx = 0
   while frameIdx < frameSize:
@@ -101,7 +101,7 @@ def decodeCltu(cltu):
   # into the frame, BCH code is checked during the iteration
   nrCltuCodeBlocks = cltuBodySize // UTIL.BCH.CODE_BLOCK_SIZE
   frameSize = nrCltuCodeBlocks * BCH_NETTO_SIZE
-  frame = array.array("B", "\0" * frameSize)
+  frame = array.array("B", [0] * frameSize)
   frameIdx = 0
   cltuIdx = CLTU_START_SEQUENCE_SIZE
   codeBlkIdx = 0
