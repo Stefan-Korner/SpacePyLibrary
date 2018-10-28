@@ -225,7 +225,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     # save the definitions
     fileName = SCOS.ENV.s_environment.definitionFileName()
     try:
-      file = open(fileName, "w")
+      file = open(fileName, "wb")
       pickle.dump(self.definitionData, file)
       file.close()
     except Exception as ex:
@@ -242,7 +242,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
       try:
         os.stat(fileName)
         try:
-          file = open(fileName, "r")
+          file = open(fileName, "rb")
           self.definitionData = pickle.load(file)
           file.close()
         except Exception as ex:
