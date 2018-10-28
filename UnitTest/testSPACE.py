@@ -67,12 +67,12 @@ def test_DEFoperations():
   print("----- TM packet definitions -----")
   tmPktDefs = SPACE.IF.s_definitions.getTMpktDefs()
   for tmPktDef in tmPktDefs:
-    print(tmPktDef.pktSPID, )
+    print(tmPktDef.pktSPID, " ", end='')
   print("")
   print("----- TM parameter definitions -----")
   tmParamDefs = SPACE.IF.s_definitions.getTMparamDefs()
   for tmParamDef in tmParamDefs:
-    print(tmParamDef.paramName, end='')
+    print(tmParamDef.paramName, " ", end='')
   print("")
   # force a re-creation of the persistent definitions
   # (for the next test run)
