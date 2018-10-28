@@ -38,5 +38,5 @@ setenv TM_RECORD_FORMAT NCTRS
 setenv SYS_COLOR_LOG 1
 setenv TESTENV ${HOME}/Python/SpacePyLibrary/TESTENV
 setenv PYTHON python3
-setenv PYTHONPATH ${HOME}/Python/SpacePyLibrary:${HOME}/Python/SpacePyLibrary/UnitTest
+setenv PYTHONPATH ${HOME}/Python/SpacePyLibrary
 ${PYTHON} SIM.py dummy

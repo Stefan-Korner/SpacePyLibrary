@@ -36,5 +36,5 @@ set TM_TT_TIME_BYTE_OFFSET=10
 set TM_RECORD_FORMAT=NCTRS
 set SYS_COLOR_LOG=1
 set TESTENV=C:\Programming\SpacePyLibrary\TESTENV
-set PYTHONPATH=C:\Programming\SpacePyLibrary;C:\Programming\SpacePyLibrary\UnitTest
+set PYTHONPATH=C:\Programming\SpacePyLibrary
 python3 SIM.py dummy
