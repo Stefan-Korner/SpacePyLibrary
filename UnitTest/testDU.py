@@ -16,6 +16,7 @@
 import array
 import CCSDS.DU, CCSDS.TIME
 import UTIL.DU, UTIL.TCO, UTIL.TIME
+from UTIL.SYS import LOG, LOG_ERROR
 import testData
 
 #############
@@ -117,7 +118,28 @@ def test_DUoperations():
   print("b.getBits( 8, 16) =", ("%08X" % b.getBits( 8, 16)))
   print("b.getBits(12, 16) =", ("%08X" % b.getBits(12, 16)))
   print("b.getBits( 2,  1) =", ("%08X" % b.getBits( 2,  1)))
-  print("b.getBits( 2,  2) =", ("%08X" % b.getBits( 2,  2)))
+  value = b.getBits(2, 2)
+  LOG("b.getBits( 2,  2) = " + str("%08X" % value))
+  if value != 0x0000003:
+    LOG_ERROR("unexpected unsigned value")
+    return False
+  value = b.getSBits(2, 2)
+  LOG("b.getSBits(2,  2) = " + str(value))
+  if value != -1:
+    LOG_ERROR("unexpected signed value")
+    return False
+  b.setSBits(1, 7, -16)
+  LOG("b.setBits( 1,  7, -16) = " + str(b))
+  value = b.getBits(1, 7)
+  LOG("b.getBits( 1,  7) = " + str("%08X" % value))
+  if value != 0x0000070:
+    LOG_ERROR("unexpected unsigned value")
+    return False
+  value = b.getSBits(1, 7)
+  LOG("b.getSBits(1,  7) = " + str(value))
+  if value != -16:
+    LOG_ERROR("unexpected signed value")
+    return False
   b.setBits( 0,  8, 0x00000087)
   print("b.setBits( 0,  8, 0x00000087) =", b)
   b.setBits( 8,  4, 0x00000006)
@@ -129,9 +151,40 @@ def test_DUoperations():
   print("b.getBytes(1, 2) =", b.getBytes(1, 2))
   b.setBytes(1, 2, array.array('B', 'AB'.encode()))
   print("b.setBytes(1, 2, array.array('B', 'AB'.encode())) =", b)
-  print("b.getUnsigned(1, 2) =", ("%08X" % b.getUnsigned(1, 2)))
-  b.setUnsigned(0, 2, 0x00001234)
-  print("b.setUnsigned(0, 2, 0x00001234) =", b)
+  value = b.getUnsigned(1, 2)
+  LOG("b.getUnsigned(1, 2) = " + str("%08X" % value))
+  if value != 0x00004142:
+    LOG_ERROR("unexpected unsigned value")
+    return False
+  value = b.getSigned(1, 2)
+  LOG("b.getSigned(1, 2) = " + str("%08X" % value))
+  if value != 0x00004142:
+    LOG_ERROR("unexpected signed value")
+    return False
+  b.setUnsigned(0, 2, 0x0000F234)
+  LOG("b.setUnsigned(0, 2, 0x0000F234) = " + str(b))
+  value = b.getUnsigned(0, 2)
+  LOG("b.getUnsigned(0, 2) = " + str("%08X" % value))
+  if value != 0x0000F234:
+    LOG_ERROR("unexpected unsigned value")
+    return False
+  value = b.getSigned(0, 2)
+  LOG("b.getSigned(0, 2) = " + str(value))
+  if value != -3532:
+    LOG_ERROR("unexpected signed value")
+    return False
+  b.setSigned(0, 2, -1)
+  LOG("b.setSigned(0, 2, -1) = " + str(b))
+  value = b.getUnsigned(0, 2)
+  LOG("b.getUnsigned(0, 2) = " + str("%08X" % value))
+  if value != 0x0000FFFF:
+    LOG_ERROR("unexpected unsigned value")
+    return False
+  value = b.getSigned(0, 2)
+  LOG("b.getSigned(0, 2) = " + str(value))
+  if value != -1:
+    LOG_ERROR("unexpected signed value")
+    return False
   b = UTIL.DU.BinaryUnit(16 * 'w')
   print("b =", b)
   value = 10.0

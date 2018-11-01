@@ -23,11 +23,13 @@ import struct
 #############
 # field types
 BITS = 0
-BYTES = 1
-UNSIGNED = 2
-FLOAT = 3
-TIME = 4
-STRING = 5
+SBITS = 1
+BYTES = 2
+UNSIGNED = 3
+SIGNED = 4
+FLOAT = 5
+TIME = 6
+STRING = 7
 
 # index = [firstBitInBytePos][lastBitInBytePos]
 BIT_FILTER = [
@@ -141,10 +143,14 @@ class BinaryUnit(object):
         fieldOffset, fieldLength, fieldType = fieldSpec
         if fieldType == BITS:
           retStr += str(self.getBits(fieldOffset, fieldLength))
+        elif fieldType == SBITS:
+          retStr += str(self.getSBits(fieldOffset, fieldLength))
         elif fieldType == BYTES:
           retStr += str(self.getBytes(fieldOffset, fieldLength))
         elif fieldType == UNSIGNED:
           retStr += str(self.getUnsigned(fieldOffset, fieldLength))
+        elif fieldType == SIGNED:
+          retStr += str(self.getSigned(fieldOffset, fieldLength))
         elif fieldType == FLOAT:
           retStr += str(self.getFloat(fieldOffset, fieldLength))
         elif fieldType == TIME:
@@ -160,20 +166,29 @@ class BinaryUnit(object):
         if fieldType == BITS:
           fieldOffset += (self.attributesSize1 << 3)
           retStr += str(self.getBits(fieldOffset, fieldLength))
-        else:
+        elif fieldType == SBITS:
+          fieldOffset += (self.attributesSize1 << 3)
+          retStr += str(self.getSBits(fieldOffset, fieldLength))
+        elif fieldType == BYTES:
           fieldOffset += self.attributesSize1
-          if fieldType == BYTES:
-            retStr += str(self.getBytes(fieldOffset, fieldLength))
-          elif fieldType == UNSIGNED:
-            retStr += str(self.getUnsigned(fieldOffset, fieldLength))
-          elif fieldType == FLOAT:
-            retStr += str(self.getFloat(fieldOffset, fieldLength))
-          elif fieldType == TIME:
-            timeFormat = fieldLength
-            retStr += str(self.getTime(fieldOffset, timeFormat))
-          else:
-            # fieldType == STRING
-            retStr += str(self.getString(fieldOffset, fieldLength))
+          retStr += str(self.getBytes(fieldOffset, fieldLength))
+        elif fieldType == UNSIGNED:
+          fieldOffset += self.attributesSize1
+          retStr += str(self.getUnsigned(fieldOffset, fieldLength))
+        elif fieldType == SIGNED:
+          fieldOffset += self.attributesSize1
+          retStr += str(self.getSigned(fieldOffset, fieldLength))
+        elif fieldType == FLOAT:
+          fieldOffset += self.attributesSize1
+          retStr += str(self.getFloat(fieldOffset, fieldLength))
+        elif fieldType == TIME:
+          fieldOffset += self.attributesSize1
+          timeFormat = fieldLength
+          retStr += str(self.getTime(fieldOffset, timeFormat))
+        else:
+          # fieldType == STRING
+          fieldOffset += self.attributesSize1
+          retStr += str(self.getString(fieldOffset, fieldLength))
     return retStr
   # ---------------------------------------------------------------------------
   def __len__(self):
@@ -281,6 +296,32 @@ class BinaryUnit(object):
       value >>= 8
       bytePos -= 1
   # ---------------------------------------------------------------------------
+  def getSBits(self, bitPos, bitLength):
+    """extracts bits as numerical signed value"""
+    # consistency checks
+    if bitLength <= 1:
+      raise IndexError("invalid bitLength")
+    # get the value as unsigned and convert it if negative
+    value = self.getBits(bitPos, bitLength)
+    maxPosValue = (1 << (bitLength - 1)) - 1
+    if value > maxPosValue:
+      value -= (1 << bitLength)
+    return value
+  # ---------------------------------------------------------------------------
+  def setSBits(self, bitPos, bitLength, value):
+    """sets bits as numerical signed value"""
+    # consistency checks
+    if bitLength <= 1:
+      raise IndexError("invalid bitLength")
+    try:
+      value = int(value)
+    except:
+      raise ValueError("value is not an integer")
+    # convert the value if negative and set it as unsigned
+    if value < 0:
+      value += (1 << bitLength)
+    self.setBits(bitPos, bitLength, value)
+  # ---------------------------------------------------------------------------
   def getBytes(self, bytePos, byteLength):
     """extracts bytes"""
     # consistency checks
@@ -329,7 +370,7 @@ class BinaryUnit(object):
     return value
   # ---------------------------------------------------------------------------
   def setUnsigned(self, bytePos, byteLength, value):
-    """set a numerical value byte aligned"""
+    """set a numerical unsigned value byte aligned"""
     try:
       value = int(value)
     except:
@@ -354,6 +395,26 @@ class BinaryUnit(object):
       self.buffer[bytePos] = byte
       value >>= 8
       bytePos -= 1
+  # ---------------------------------------------------------------------------
+  def getSigned(self, bytePos, byteLength):
+    """extracts a numerical signed value byte aligned"""
+    # get the value as unsigned and convert it if negative
+    value = self.getUnsigned(bytePos, byteLength)
+    maxPosValue = (1 << ((byteLength << 3) - 1)) - 1
+    if value > maxPosValue:
+      value -= (1 << (byteLength << 3))
+    return value
+  # ---------------------------------------------------------------------------
+  def setSigned(self, bytePos, byteLength, value):
+    """set a numerical signed value byte aligned"""
+    try:
+      value = int(value)
+    except:
+      raise ValueError("value is not an integer")
+    # convert the value if negative and set it as unsigned
+    if value < 0:
+      value += (1 << (byteLength << 3))
+    self.setUnsigned(bytePos, byteLength, value)
   # ---------------------------------------------------------------------------
   def getFloat(self, bytePos, byteLength):
     """extracts a float value"""
@@ -422,10 +483,14 @@ class BinaryUnit(object):
       fieldOffset, fieldLength, fieldType = self.attributeMap1[name]
       if fieldType == BITS:
         return self.getBits(fieldOffset, fieldLength)
+      elif fieldType == SBITS:
+        return self.getSBits(fieldOffset, fieldLength)
       elif fieldType == BYTES:
         return self.getBytes(fieldOffset, fieldLength)
       elif fieldType == UNSIGNED:
         return self.getUnsigned(fieldOffset, fieldLength)
+      elif fieldType == SIGNED:
+        return self.getSigned(fieldOffset, fieldLength)
       elif fieldType == FLOAT:
         return self.getFloat(fieldOffset, fieldLength)
       elif fieldType == TIME:
@@ -444,20 +509,29 @@ class BinaryUnit(object):
       if fieldType == BITS:
         fieldOffset += (self.attributesSize1 << 3)
         return self.getBits(fieldOffset, fieldLength)
-      else:
+      elif fieldType == SBITS:
+        fieldOffset += (self.attributesSize1 << 3)
+        return self.getSBits(fieldOffset, fieldLength)
+      elif fieldType == BYTES:
         fieldOffset += self.attributesSize1
-        if fieldType == BYTES:
-          return self.getBytes(fieldOffset, fieldLength)
-        elif fieldType == UNSIGNED:
-          return self.getUnsigned(fieldOffset, fieldLength)
-        elif fieldType == FLOAT:
-          return self.getFloat(fieldOffset, fieldLength)
-        elif fieldType == TIME:
-          timeFormat = fieldLength
-          return self.getTime(fieldOffset, timeFormat)
-        else:
-          # fieldType == STRING
-          return self.getString(fieldOffset, fieldLength)
+        return self.getBytes(fieldOffset, fieldLength)
+      elif fieldType == UNSIGNED:
+        fieldOffset += self.attributesSize1
+        return self.getUnsigned(fieldOffset, fieldLength)
+      elif fieldType == SIGNED:
+        fieldOffset += self.attributesSize1
+        return self.getSigned(fieldOffset, fieldLength)
+      elif fieldType == FLOAT:
+        fieldOffset += self.attributesSize1
+        return self.getFloat(fieldOffset, fieldLength)
+      elif fieldType == TIME:
+        fieldOffset += self.attributesSize1
+        timeFormat = fieldLength
+        return self.getTime(fieldOffset, timeFormat)
+      else:
+        # fieldType == STRING
+        fieldOffset += self.attributesSize1
+        return self.getString(fieldOffset, fieldLength)
     # attribute not in first and second attribute map
     raise AttributeError("attribute not found")
   # ---------------------------------------------------------------------------
@@ -470,10 +544,14 @@ class BinaryUnit(object):
       fieldOffset, fieldLength, fieldType = self.attributeMap1[name]
       if fieldType == BITS:
         self.setBits(fieldOffset, fieldLength, value)
+      elif fieldType == SBITS:
+        self.setSBits(fieldOffset, fieldLength, value)
       elif fieldType == BYTES:
         self.setBytes(fieldOffset, fieldLength, value)
       elif fieldType == UNSIGNED:
         self.setUnsigned(fieldOffset, fieldLength, value)
+      elif fieldType == SIGNED:
+        self.setSigned(fieldOffset, fieldLength, value)
       elif fieldType == FLOAT:
         self.setFloat(fieldOffset, fieldLength, value)
       elif fieldType == TIME:
@@ -493,20 +571,29 @@ class BinaryUnit(object):
       if fieldType == BITS:
         fieldOffset += (self.attributesSize1 << 3)
         self.setBits(fieldOffset, fieldLength, value)
-      else:
+      elif fieldType == SBITS:
+        fieldOffset += (self.attributesSize1 << 3)
+        self.setSBits(fieldOffset, fieldLength, value)
+      elif fieldType == BYTES:
         fieldOffset += self.attributesSize1
-        if fieldType == BYTES:
-          self.setBytes(fieldOffset, fieldLength, value)
-        elif fieldType == UNSIGNED:
-          self.setUnsigned(fieldOffset, fieldLength, value)
-        elif fieldType == FLOAT:
-          self.setFloat(fieldOffset, fieldLength, value)
-        elif fieldType == TIME:
-          timeFormat = fieldLength
-          self.setTime(fieldOffset, timeFormat, value)
-        else:
-          # fieldType == STRING
-          self.setString(fieldOffset, fieldLength, value)
+        self.setBytes(fieldOffset, fieldLength, value)
+      elif fieldType == UNSIGNED:
+        fieldOffset += self.attributesSize1
+        self.setUnsigned(fieldOffset, fieldLength, value)
+      elif fieldType == SIGNED:
+        fieldOffset += self.attributesSize1
+        self.setSigned(fieldOffset, fieldLength, value)
+      elif fieldType == FLOAT:
+        fieldOffset += self.attributesSize1
+        self.setFloat(fieldOffset, fieldLength, value)
+      elif fieldType == TIME:
+        fieldOffset += self.attributesSize1
+        timeFormat = fieldLength
+        self.setTime(fieldOffset, timeFormat, value)
+      else:
+        # fieldType == STRING
+        fieldOffset += self.attributesSize1
+        self.setString(fieldOffset, fieldLength, value)
       return
     # attribute not in first and second attribute map
     raise AttributeError("attribute not found")
