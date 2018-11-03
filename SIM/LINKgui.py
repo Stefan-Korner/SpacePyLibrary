@@ -176,7 +176,7 @@ class GUIview(UI.TKI.GUIwinView):
     entryPos = 2
     uplinkQueue = LINK.IF.s_spaceLink.getUplinkQueue()
     receptionTimes = uplinkQueue.keys()
-    receptionTimes.sort()
+    receptionTimes = sorted(receptionTimes)
     for receptionTime in receptionTimes:
       tcFrameDu = uplinkQueue[receptionTime]
       rowText = QUEUE_ROW_FORMAT % (UTIL.TIME.getASDtimeStr(receptionTime),
@@ -193,7 +193,7 @@ class GUIview(UI.TKI.GUIwinView):
     entryPos = 2
     downlinkQueue = LINK.IF.s_spaceLink.getDownlinkQueue()
     receptionTimes = downlinkQueue.keys()
-    receptionTimes.sort()
+    receptionTimes = sorted(receptionTimes)
     for receptionTime in receptionTimes:
       tmFrameDu, ertUTC = downlinkQueue[receptionTime]
       if ertUTC == None:

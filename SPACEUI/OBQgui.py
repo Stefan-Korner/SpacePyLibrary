@@ -235,7 +235,7 @@ class GUIview(UI.TKI.GUIwinView):
     entryPos = 2
     ttQueue = SPACE.IF.s_onboardQueue.getQueue()
     ttExecTimes = ttQueue.keys()
-    ttExecTimes.sort()
+    ttExecTimes = sorted(ttExecTimes)
     for ttExecTime in ttExecTimes:
       ttPacketDu = ttQueue[ttExecTime]
       rowText = QUEUE_ROW_FORMAT % (UTIL.TIME.getASDtimeStr(ttExecTime),
