@@ -81,7 +81,6 @@ class TMparamToPkt(object):
   # ---------------------------------------------------------------------------
   def __init__(self, paramDef, pktDef, plfRecord):
     self.paramDef = paramDef
-    self.paramName = plfRecord.plfName
     self.pktDef = pktDef
     self.pktSPID = plfRecord.plfSPID
     self.locOffby = plfRecord.plfOffby
@@ -92,7 +91,6 @@ class TMparamToPkt(object):
   def __str__(self):
     """string representation"""
     retVal = "\n"
-    retVal += "   paramName = " + str(self.paramName) + "\n"
     retVal += "   pktSPID = " + str(self.pktSPID) + "\n"
     retVal += "   locOffby = " + str(self.locOffby) + "\n"
     retVal += "   locOffbi = " + str(self.locOffbi) + "\n"
@@ -173,7 +171,7 @@ class TMpktDef(object):
   # ---------------------------------------------------------------------------
   def appendParamLink(self, paramToPacket):
     """used to append later on links to related parameters"""
-    paramName = paramToPacket.paramName
+    paramName = paramToPacket.paramDef.paramName
     self.paramLinks[paramName] = paramToPacket
   # ---------------------------------------------------------------------------
   def rangeOverlap(self, bitPos1, bitWidth1, bitPos2, bitWidth2):
@@ -511,7 +509,7 @@ class TMpacketInjectData(object):
                dataField,
                segmentationFlags):
     """Initialisation with default data"""
-    self.pktName = pktMnemonic.upper()
+    self.pktName = pktMnemonic
     self.pktSPID = pktSPID
     self.parameterValuesList = []
     self.dataField = dataField
@@ -519,15 +517,15 @@ class TMpacketInjectData(object):
     if params == "" or values == "":
       return
     # there are parameter-names and parameter-values
-    paramsLst = string.split(params, ",")
-    valuesLst = string.split(values, ",")
+    paramsLst = params.split(",")
+    valuesLst = values.split(",")
     # both parts must match
     if len(paramsLst) != len(valuesLst):
       LOG_WARNING("parameter-names or parameter-values have different size")
       return
     # create the return list
     for i in range(len(valuesLst)):
-      param = paramsLst[i].strip().strip("{").strip("}").upper()
+      param = paramsLst[i].strip().strip("{").strip("}")
       value = valuesLst[i].strip().strip("{").strip("}")
       if (len(param) > 0) and (len(value) > 0):
         self.parameterValuesList.append([param,value])
