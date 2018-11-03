@@ -189,7 +189,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
       pktName = tmPktDef.pktName
       tmPktDefs.append(tmPktDef)
       tmPktDefsSpidMap[spid] = tmPktDef
-      tmPktSpidNameMap[pktName.upper()] = spid
+      tmPktSpidNameMap[pktName] = spid
       LOG("packet " + pktName + "(" + str(spid) + "), " + statusMessage, "SPACE")
     tmPktDefs.sort()
     # step 2) create parameter definitions
@@ -281,9 +281,8 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     """
     # load or initialise on demand
     self.initDefinitions()
-    upperName = name.upper()
-    if upperName in self.definitionData.tmPktSpidNameMap:
-      return self.definitionData.tmPktSpidNameMap[upperName]
+    if name in self.definitionData.tmPktSpidNameMap:
+      return self.definitionData.tmPktSpidNameMap[name]
     return -1
   # ---------------------------------------------------------------------------
   def getTMpktDefs(self):
