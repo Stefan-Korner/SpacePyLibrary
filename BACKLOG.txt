@@ -17,6 +17,8 @@ Backlog of features that shall be implemented
 
 009 Support clean dis-connect for NCTRS/EDEN/CnC interfaces.
 
+012 Use unittest framework.
+
 --------------------------------- implemented ---------------------------------
 
 001 Remove the dependency to MIB files TPKTconnTable.dat, TPKTconfigTable.dat:
