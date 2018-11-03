@@ -121,9 +121,17 @@ class PLFrecord:
     self.plfSPID = int(fields[1])
     self.plfOffby = int(fields[2])
     self.plfOffbi = int(fields[3])
-    # keep the strigified value, because it could be empty
-    self.plfNbocc = fields[4]
-    self.plfLgocc = fields[5]
+    # fields could be empty
+    plfNbocc = fields[4]
+    if plfNbocc == "":
+      self.plfNbocc = 1
+    else:
+      self.plfNbocc = int(plfNbocc)
+    plfLgocc = fields[5]
+    if plfLgocc == "":
+      self.plfLgocc = 0
+    else:
+      self.plfLgocc = int(plfLgocc)
   # ---------------------------------------------------------------------------
   def key(self):
     """record key"""

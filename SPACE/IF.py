@@ -85,16 +85,9 @@ class TMparamToPkt(object):
     self.pktDef = pktDef
     self.pktSPID = plfRecord.plfSPID
     self.locOffby = plfRecord.plfOffby
-    self.locOffbi =  plfRecord.plfOffbi
-    # fields could be empty
-    if plfRecord.plfNbocc == "":
-      self.locNbocc = 1
-    else:
-      self.locNbocc = int(plfRecord.plfNbocc)
-    if plfRecord.plfLgocc == "":
-      self.locLgocc = 0
-    else:
-      self.locLgocc = int(plfRecord.plfLgocc)
+    self.locOffbi = plfRecord.plfOffbi
+    self.locNbocc = plfRecord.plfNbocc
+    self.locLgocc = plfRecord.plfLgocc
   # ---------------------------------------------------------------------------
   def __str__(self):
     """string representation"""
