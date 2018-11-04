@@ -15,7 +15,7 @@
 import string
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.PACKET
-import UTIL.SYS
+import UTIL.DU, UTIL.SYS
 
 #############
 # constants #
@@ -79,18 +79,20 @@ class Configuration(object):
 class TMparamToPkt(object):
   """Contains the data for a single raw value extraction"""
   # ---------------------------------------------------------------------------
-  def __init__(self, paramDef, pktDef, plfRecord):
-    self.paramDef = paramDef
-    self.pktDef = pktDef
-    self.pktSPID = plfRecord.plfSPID
-    self.locOffby = plfRecord.plfOffby
-    self.locOffbi = plfRecord.plfOffbi
-    self.locNbocc = plfRecord.plfNbocc
-    self.locLgocc = plfRecord.plfLgocc
+  def __init__(self):
+    self.paramDef = None
+    self.valueType = None
+    self.pktDef = None
+    self.pktSPID = None
+    self.locOffby = None
+    self.locOffbi = None
+    self.locNbocc = None
+    self.locLgocc = None
   # ---------------------------------------------------------------------------
   def __str__(self):
     """string representation"""
     retVal = "\n"
+    retVal += "   valueType = " + str(self.valueType) + "\n"
     retVal += "   pktSPID = " + str(self.pktSPID) + "\n"
     retVal += "   locOffby = " + str(self.locOffby) + "\n"
     retVal += "   locOffbi = " + str(self.locOffbi) + "\n"
@@ -102,13 +104,12 @@ class TMparamToPkt(object):
 class TMparamExtraction(object):
   """Defines a dedicated parameter extraction in a packet"""
   # ---------------------------------------------------------------------------
-  def __init__(self, bitPos, bitWidth, name, descr, isInteger, isFloat, piValue=False):
+  def __init__(self, bitPos, bitWidth, name, descr, valueType, piValue=False):
     self.bitPos = bitPos
     self.bitWidth = bitWidth
     self.name = name
     self.descr = descr
-    self.isInteger = isInteger
-    self.isFloat = isFloat
+    self.valueType = valueType
     self.piValue = piValue
   # ---------------------------------------------------------------------------
   def __cmp__(self, other):
@@ -177,24 +178,19 @@ class TMpktDef(object):
     paramToPacket = self.paramLinks[paramName]
     paramDef = paramToPacket.paramDef
     paramDescr = paramDef.paramDescr
-    isInteger = paramDef.isInteger()
-    isFloat = paramDef.isFloat()
+    bitWidth = paramDef.bitWidth
+    valueType = paramToPacket.valueType
     pktSPID = paramToPacket.pktSPID
     locOffby = paramToPacket.locOffby
     locOffbi =  paramToPacket.locOffbi
     locNbocc = paramToPacket.locNbocc
     locLgocc = paramToPacket.locLgocc
-    try:
-      bitWidth = paramDef.getBitWidth()
-    except Exception, ex:
-      LOG_WARNING("param " + paramName + ": " + str(ex) + " ---> ignored", "SPACE")
-      return None
     bitStartPos = locOffbi + (locOffby * 8)
     # check if a parameter commutation is qualified
     nameElements = paramName.split("#")
     if len(nameElements) == 1:
       # normal parameter
-      paramExtraction = TMparamExtraction(bitStartPos, bitWidth, paramName, paramDescr, isInteger, isFloat)
+      paramExtraction = TMparamExtraction(bitStartPos, bitWidth, paramName, paramDescr, valueType)
     else:
       # supercommutated parameter
       commutation = int(nameElements[1])
@@ -202,7 +198,7 @@ class TMpktDef(object):
         LOG_WARNING("param " + nameElements[0] + " has invalid commutation " + nameElements[1], "SPACE")
         return None
       bitPos = bitStartPos + (locLgocc * (commutation - 1))
-      paramExtraction = TMparamExtraction(bitPos, bitWidth, fieldName, paramDescr, isInteger, isFloat)
+      paramExtraction = TMparamExtraction(bitPos, bitWidth, fieldName, paramDescr, valueType)
     return paramExtraction
   # ---------------------------------------------------------------------------
   def getParamExtractions(self):
@@ -216,7 +212,7 @@ class TMpktDef(object):
       pi1BitWidth = self.pktPI1wid
       pi1ValueName = self.pktName + "_PI1VAL"
       pi1ValueDescr = "PI1 Value"
-      paramExtraction = TMparamExtraction(pi1BitPos, pi1BitWidth, pi1ValueName, pi1ValueDescr, True, False, True)
+      paramExtraction = TMparamExtraction(pi1BitPos, pi1BitWidth, pi1ValueName, pi1ValueDescr, UTIL.DU.BITS, True)
       retVal.append(paramExtraction)
     pi2BitPos = None
     pi2BitWidth = None
@@ -228,25 +224,19 @@ class TMpktDef(object):
       else:
         pi2ValueName = self.pktName + "_PI2VAL"
         pi2ValueDescr = "PI2 Value"
-        paramExtraction = TMparamExtraction(pi2BitPos, pi2BitWidth, pi2ValueName, pi2ValueDescr, True, False, True)
+        paramExtraction = TMparamExtraction(pi2BitPos, pi2BitWidth, pi2ValueName, pi2ValueDescr, UTIL.DU.BITS, True)
         retVal.append(paramExtraction)
     # insert other parameters
     for paramName, paramToPacket in self.paramLinks.iteritems():
       paramDef = paramToPacket.paramDef
       paramDescr = paramDef.paramDescr
-      isInteger = paramDef.isInteger()
-      isFloat = paramDef.isFloat()
+      bitWidth = paramDef.bitWidth
+      valueType = paramToPacket.valueType
       pktSPID = paramToPacket.pktSPID
       locOffby = paramToPacket.locOffby
       locOffbi =  paramToPacket.locOffbi
       locNbocc = paramToPacket.locNbocc
       locLgocc = paramToPacket.locLgocc
-      # ignore exceptions in getBitWidth
-      try:
-        bitWidth = paramDef.getBitWidth()
-      except Exception, ex:
-        LOG_WARNING("param " + paramName + ": " + str(ex) + " ---> ignored", "SPACE")
-        continue
       bitStartPos = locOffbi + (locOffby * 8)
       if paramToPacket.locNbocc == 1:
         # single location of the parameter in the packet
@@ -256,7 +246,7 @@ class TMpktDef(object):
         if self.rangeOverlap(pi2BitPos, pi2BitWidth, bitStartPos, bitWidth):
           LOG_WARNING("param " + paramName + " overlaps PI2 ---> ignored", "SPACE")
           continue
-        paramExtraction = TMparamExtraction(bitStartPos, bitWidth, paramName, paramDescr, isInteger, isFloat)
+        paramExtraction = TMparamExtraction(bitStartPos, bitWidth, paramName, paramDescr, valueType)
         retVal.append(paramExtraction)
       else:
         # supercommutated parameter
@@ -269,7 +259,7 @@ class TMpktDef(object):
           if self.rangeOverlap(pi2BitPos, pi2BitWidth, bitPos, bitWidth):
             LOG_WARNING("param " + fieldName + " overlaps PI2 ---> ignored", "SPACE")
             continue
-          paramExtraction = TMparamExtraction(bitPos, bitWidth, fieldName, paramDescr, isInteger, isFloat)
+          paramExtraction = TMparamExtraction(bitPos, bitWidth, fieldName, paramDescr, valueType)
           retVal.append(paramExtraction)
     retVal.sort()
     return retVal
@@ -310,6 +300,7 @@ class TMparamDef(object):
     self.paramDescr = None
     self.paramPtc = None
     self.paramPfc = None
+    self.bitWidth = None
     self.minCommutations = None
     self.maxCommutations = None
   # ---------------------------------------------------------------------------
@@ -327,140 +318,6 @@ class TMparamDef(object):
     """returns the commutated param name"""
     return self.paramName + '_' + ("%04d" % commutation)
   # ---------------------------------------------------------------------------
-  def isInteger(self):
-    """tells if the parameter is signed or unsigned integer"""
-    if (self.paramPtc <= 4) or (self.paramPtc == 6):
-      return True
-    return False
-  # ---------------------------------------------------------------------------
-  def isFloat(self):
-    """tells if the parameter is floar"""
-    return (self.paramPtc == 5)
-  # ---------------------------------------------------------------------------
-  def getBitWidth(self):
-    if self.paramPtc == 1:
-      if self.paramPfc == 0:
-        # unsigned integer (boolean parameter)
-        return 1
-    elif self.paramPtc == 2:
-      if self.paramPfc <= 32:
-        # unsigned integer (enumeration parameter)
-        return self.paramPfc
-    elif self.paramPtc == 3:
-      # unsigned integer
-      if self.paramPfc <= 12:
-        return self.paramPfc + 4
-      elif self.paramPfc == 13:
-        return 24
-      elif self.paramPfc == 14:
-        return 32
-      elif self.paramPfc == 15:
-        # not supported by SCOS-2000
-        return 48
-      elif self.paramPfc == 16:
-        # not supported by SCOS-2000
-        return 64
-    elif self.paramPtc == 4:
-      # signed integer
-      if self.paramPfc <= 12:
-        return self.paramPfc + 4
-      elif self.paramPfc == 13:
-        return 24
-      elif self.paramPfc == 14:
-        return 32
-      elif self.paramPfc == 15:
-        # not supported by SCOS-2000
-        return 48
-      elif self.paramPfc == 16:
-        # not supported by SCOS-2000
-        return 64
-    elif self.paramPtc == 5:
-      # floating point
-      if self.paramPfc == 1:
-        # simple precision real (IEEE)
-        return 32
-      elif self.paramPfc == 2:
-        # double precision real (IEEE)
-        return 64
-      elif self.paramPfc == 3:
-        # simple precision real (MIL 1750A)
-        return 32
-      elif self.paramPfc == 4:
-        # extended precision real (MIL 1750a)
-        return 48
-    elif self.paramPtc == 6:
-      # bit string
-      if self.paramPfc == 0:
-        # variable bit string, not supported by SCOS-2000
-        pass
-      elif self.paramPfc <= 32:
-        # fixed length bit strings, unsigned integer in SCOS-2000
-        return self.paramPfc
-    elif self.paramPtc == 7:
-      # octet string
-      if self.paramPfc == 0:
-        # variable octet string, not supported by SCOS-2000 TM
-        pass
-      else:
-        # fixed length octet strings
-        return self.paramPfc * 8
-    elif self.paramPtc == 8:
-      # ASCII string
-      if self.paramPfc == 0:
-        # variable ASCII string, not supported by SCOS-2000 TM
-        pass
-      else:
-        # fixed length ASCII strings
-        return self.paramPfc * 8
-    elif self.paramPtc == 9:
-      # absolute time
-      if self.paramPfc == 0:
-        # variable length, not supported by SCOS-2000 TM
-        pass
-      elif self.paramPfc == 1:
-        # CDS format, without microseconds
-        return 48
-      elif self.paramPfc == 2:
-        # CDS format, with microseconds
-        return 64
-      elif self.paramPfc <= 6:
-        # CUC format, 1st octet coarse time, 2nd - n-th octet for fine time
-        return (self.paramPfc - 2) * 8
-      elif self.paramPfc <= 10:
-        # CUC format, 1st & 2nd octet coarse time, 3rd - n-th octet for fine time
-        return (self.paramPfc - 5) * 8
-      elif self.paramPfc <= 14:
-        # CUC format, 1st - 3rd octet coarse time, 4rd - n-th octet for fine time
-        return (self.paramPfc - 8) * 8
-      elif self.paramPfc <= 18:
-        # CUC format, 1st - 4th octet coarse time, 5rd - n-th octet for fine time
-        return (self.paramPfc - 11) * 8
-    elif self.paramPtc == 10:
-      # relative time
-      if self.paramPfc <= 2:
-        # not used
-        pass
-      elif self.paramPfc <= 6:
-        # CUC format, 1st octet coarse time, 2nd - n-th octet for fine time
-        return (self.paramPfc - 2) * 8
-      elif self.paramPfc <= 10:
-        # CUC format, 1st & 2nd octet coarse time, 3rd - n-th octet for fine time
-        return (self.paramPfc - 5) * 8
-      elif self.paramPfc <= 14:
-        # CUC format, 1st - 3rd octet coarse time, 4rd - n-th octet for fine time
-        return (self.paramPfc - 8) * 8
-      elif self.paramPfc <= 18:
-        # CUC format, 1st - 4th octet coarse time, 5rd - n-th octet for fine time
-        return (self.paramPfc - 11) * 8
-    elif self.paramPtc == 11:
-      # deduced parameter, N/A
-      pass
-    elif self.paramPtc == 13:
-      # saved synthetic parameter, N/A
-      pass
-    # illegal ptc/pfc combination
-    raise Exception("ptc/pfc combination " + str(self.paramPtc) + "/" + str(self.paramPfc) + " not supported")
-  # ---------------------------------------------------------------------------
   def __str__(self):
     """string representation"""
     retVal = "\n"
@@ -468,6 +325,7 @@ class TMparamDef(object):
     retVal += " paramDescr = " + str(self.paramDescr) + "\n"
     retVal += " paramPtc = " + str(self.paramPtc) + "\n"
     retVal += " paramPfc = " + str(self.paramPfc) + "\n"
+    retVal += " bitWidth = " + str(self.bitWidth) + "\n"
     # These lines have been commented due to problems with pickling and
     # unpickling (errornous unpickling of the whole definition data).
     # This backward reference from parameters to packets is not needed

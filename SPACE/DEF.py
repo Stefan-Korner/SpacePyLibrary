@@ -18,6 +18,7 @@ import CCSDS.DU, CCSDS.PACKET
 import PUS.PACKET
 import SCOS.ENV, SCOS.MIB
 import SPACE.IF
+import UTIL.DU
 
 ###########
 # classes #
@@ -126,11 +127,17 @@ class DefinitionsImpl(SPACE.IF.Definitions):
   # ---------------------------------------------------------------------------
   def createTMparamDef(self, pcfRecord, plfRecords, tmPktDefs):
     """creates a TM parameter definition"""
+    paramPtc = pcfRecord.pcfPtc
+    paramPfc = pcfRecord.pcfPfc
+    # getBitWidth(...) can raise an exception --> it is catched by the caller
+    bitWidth = getBitWidth(paramPtc, paramPfc)
+    # consistency check OK
     tmParamDef = SPACE.IF.TMparamDef()
     tmParamDef.paramName = pcfRecord.pcfName.replace(" ", "_").replace("&", "_").replace(".", "_").replace("-", "_")
     tmParamDef.paramDescr = pcfRecord.pcfDescr
-    tmParamDef.paramPtc = pcfRecord.pcfPtc
-    tmParamDef.paramPfc = pcfRecord.pcfPfc
+    tmParamDef.paramPtc = paramPtc
+    tmParamDef.paramPfc = paramPfc
+    tmParamDef.bitWidth = bitWidth
     # related packets
     # This line has been commented due to problems with pickling and
     # unpickling (errornous unpickling of the whole definition data).
@@ -142,18 +149,32 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     for plfRecord in plfRecords:
       spid = plfRecord.plfSPID
       if spid in tmPktDefs:
+        # consistency check
+        isBytePos = getIsBytePos(plfRecord)
+        try:
+          valueType = getValueType(paramPtc, paramPfc, isBytePos)
+        except Exception, ex:
+          # inconsistency
+          LOG_WARNING("param " + pcfRecord.pcfName + ": " + str(ex) + " ---> ignored", "SPACE")
+          continue
         tmPktDef = tmPktDefs[spid]
-        paramToPacket = SPACE.IF.TMparamToPkt(tmParamDef, tmPktDef, plfRecord)
+        paramToPacket = SPACE.IF.TMparamToPkt()
+        paramToPacket.paramDef = tmParamDef
+        paramToPacket.valueType = valueType
+        paramToPacket.pktDef = tmPktDef
+        paramToPacket.pktSPID = plfRecord.plfSPID
+        paramToPacket.locOffby = plfRecord.plfOffby
+        paramToPacket.locOffbi = plfRecord.plfOffbi
+        paramToPacket.locNbocc = plfRecord.plfNbocc
+        paramToPacket.locLgocc = plfRecord.plfLgocc
         tmParamDef.minCommutations = min(paramToPacket.locNbocc, tmParamDef.minCommutations)
         tmParamDef.maxCommutations = max(paramToPacket.locNbocc, tmParamDef.maxCommutations)
         tmPktDef.appendParamLink(paramToPacket)
-      else:
-        paramToPacket = SPACE.IF.TMparamToPkt(tmParamDef, None, plfRecord)
-      # This line has been commented due to problems with pickling and
-      # unpickling (errornous unpickling of the whole definition data).
-      # This backward reference from parameters to packets is not needed
-      # in the existing implementation.
-      #self.pktLinks[spid] = paramToPacket
+        # This line has been commented due to problems with pickling and
+        # unpickling (errornous unpickling of the whole definition data).
+        # This backward reference from parameters to packets is not needed
+        # in the existing implementation.
+        #self.pktLinks[spid] = paramToPacket
     tmParamDef.minCommutations = min(tmParamDef.minCommutations, tmParamDef.maxCommutations)
     tmParamDef.maxCommutations = max(tmParamDef.minCommutations, tmParamDef.maxCommutations)
     return tmParamDef
@@ -199,7 +220,12 @@ class DefinitionsImpl(SPACE.IF.Definitions):
         plfRecords = plfMap[paramName]
       else:
         plfRecords = []
-      tmParamDef = self.createTMparamDef(pcfRecord, plfRecords, tmPktDefsSpidMap)
+      try:
+        tmParamDef = self.createTMparamDef(pcfRecord, plfRecords, tmPktDefsSpidMap)
+      except Exception, ex:
+        # inconsistency
+        LOG_WARNING("param " + paramName + ": " + str(ex) + " ---> ignored", "SPACE")
+        continue
       tmParamDefs.append(tmParamDef)
     tmParamDefs.sort()
     self.definitionData.tmPktDefs = tmPktDefs
@@ -349,3 +375,251 @@ class DefinitionsImpl(SPACE.IF.Definitions):
 def init():
   # initialise singleton(s)
   SPACE.IF.s_definitions = DefinitionsImpl()
+# -----------------------------------------------------------------------------
+def getBitWidth(paramPtc, paramPfc):
+  """calculates the bit width based on the parameter definition in the MIB"""
+  if paramPtc == 1:
+    if paramPfc == 0:
+      # unsigned integer (boolean parameter)
+      return 1
+  elif paramPtc == 2:
+    if paramPfc <= 32:
+      # unsigned integer (enumeration parameter)
+      return paramPfc
+  elif paramPtc == 3:
+    # unsigned integer
+    if paramPfc <= 12:
+      return paramPfc + 4
+    elif paramPfc == 13:
+      return 24
+    elif paramPfc == 14:
+      return 32
+    elif paramPfc == 15:
+      # not supported by SCOS-2000
+      return 48
+    elif paramPfc == 16:
+      # not supported by SCOS-2000
+      return 64
+  elif paramPtc == 4:
+    # signed integer
+    if paramPfc <= 12:
+      return paramPfc + 4
+    elif paramPfc == 13:
+      return 24
+    elif paramPfc == 14:
+      return 32
+    elif paramPfc == 15:
+      # not supported by SCOS-2000
+      return 48
+    elif paramPfc == 16:
+      # not supported by SCOS-2000
+      return 64
+  elif paramPtc == 5:
+    # floating point
+    if paramPfc == 1:
+      # simple precision real (IEEE)
+      return 32
+    elif paramPfc == 2:
+      # double precision real (IEEE)
+      return 64
+    elif paramPfc == 3:
+      # simple precision real (MIL 1750A)
+      return 32
+    elif paramPfc == 4:
+      # extended precision real (MIL 1750a)
+      return 48
+  elif paramPtc == 6:
+    # bit string
+    if paramPfc == 0:
+      # variable bit string, not supported by SCOS-2000
+      pass
+    elif paramPfc <= 32:
+      # fixed length bit strings, unsigned integer in SCOS-2000
+      return paramPfc
+  elif paramPtc == 7:
+    # octet string
+    if paramPfc == 0:
+      # variable octet string, not supported by SCOS-2000 TM
+      pass
+    else:
+      # fixed length octet strings
+      return paramPfc * 8
+  elif paramPtc == 8:
+    # ASCII string
+    if paramPfc == 0:
+      # variable ASCII string, not supported by SCOS-2000 TM
+      pass
+    else:
+      # fixed length ASCII strings
+      return paramPfc * 8
+  elif paramPtc == 9:
+    # absolute time
+    if paramPfc == 0:
+      # variable length, not supported by SCOS-2000 TM
+      pass
+    elif paramPfc == 1:
+      # CDS format, without microseconds
+      return 48
+    elif paramPfc == 2:
+      # CDS format, with microseconds
+      return 64
+    elif paramPfc <= 6:
+      # CUC format, 1st octet coarse time, 2nd - n-th octet for fine time
+      return (paramPfc - 2) * 8
+    elif paramPfc <= 10:
+      # CUC format, 1st & 2nd octet coarse time, 3rd - n-th octet for fine time
+      return (paramPfc - 5) * 8
+    elif paramPfc <= 14:
+      # CUC format, 1st - 3rd octet coarse time, 4rd - n-th octet for fine time
+      return (paramPfc - 8) * 8
+    elif paramPfc <= 18:
+      # CUC format, 1st - 4th octet coarse time, 5rd - n-th octet for fine time
+      return (paramPfc - 11) * 8
+  elif paramPtc == 10:
+    # relative time
+    if paramPfc <= 2:
+      # not used
+      pass
+    elif paramPfc <= 6:
+      # CUC format, 1st octet coarse time, 2nd - n-th octet for fine time
+      return (paramPfc - 2) * 8
+    elif paramPfc <= 10:
+      # CUC format, 1st & 2nd octet coarse time, 3rd - n-th octet for fine time
+      return (paramPfc - 5) * 8
+    elif paramPfc <= 14:
+      # CUC format, 1st - 3rd octet coarse time, 4rd - n-th octet for fine time
+      return (paramPfc - 8) * 8
+    elif paramPfc <= 18:
+      # CUC format, 1st - 4th octet coarse time, 5rd - n-th octet for fine time
+      return (paramPfc - 11) * 8
+  elif paramPtc == 11:
+    # deduced parameter, N/A
+    pass
+  elif paramPtc == 13:
+    # saved synthetic parameter, N/A
+    pass
+  # illegal ptc/pfc combination
+  raise Exception("ptc/pfc combination " + str(self.paramPtc) + "/" + str(self.paramPfc) + " not supported")
+# -----------------------------------------------------------------------------
+def getIsBytePos(plfRecord):
+  """
+  Checks if the parameter is located byte aligned.
+  This check is also performed for super-commutated parameters.
+  """
+  if plfRecord.plfOffbi != 0:
+    return False
+  # at least first occurence is byte aligned
+  if plfRecord.plfNbocc == 1:
+    return True
+  # super-commutated parameter
+  return ((plfRecord.plfLgocc % 8) == 0)
+# -----------------------------------------------------------------------------
+def getValueType(paramPtc, paramPfc, isBytePos):
+  """Returns the type and the bit width of a parameter value as tupple"""
+  if paramPfc < 0:
+    # not allowed --> exception will be raised
+    pass
+  if paramPtc == 1:
+    # boolean parameter
+    if paramPfc == 0:
+      return UTIL.DU.BITS
+  elif paramPtc == 2:
+    # enumeration parameter
+    if (paramPfc == 8) or (paramPfc == 16) or (paramPfc == 24) or (paramPfc == 32):
+      if isBytePos:
+        return UTIL.DU.UNSIGNED
+      else:
+        return UTIL.DU.BITS
+    elif (paramPfc > 0) and (paramPfc < 32):
+      return UTIL.DU.BITS
+  elif paramPtc == 3:
+    # unsigned integer
+    if (paramPfc == 4) or (paramPfc == 12) or (paramPfc == 13) or (paramPfc == 14):
+      if isBytePos:
+        return UTIL.DU.UNSIGNED
+      else:
+        return UTIL.DU.BITS
+    elif (paramPfc == 15) or (paramPfc == 16):
+      # not supported by SCOS-2000
+      if isBytePos:
+        return UTIL.DU.UNSIGNED
+    elif (paramPfc > 0) and (paramPfc < 12):
+      return UTIL.DU.BITS
+  elif paramPtc == 4:
+    # signed integer
+    if (paramPfc == 4) or (paramPfc == 12) or (paramPfc == 13) or (paramPfc == 14):
+      if isBytePos:
+        return UTIL.DU.SIGNED
+      else:
+        return UTIL.DU.SBITS
+    elif (paramPfc == 15) or (paramPfc == 16):
+      # not supported by SCOS-2000
+      if isBytePos:
+        return UTIL.DU.SIGNED
+    elif (paramPfc > 0) and (paramPfc < 12):
+      return UTIL.DU.SBITS
+  elif paramPtc == 5:
+    # floating point
+    if (paramPfc == 1) or (paramPfc == 2):
+      # simple/double precision real (IEEE)
+      return UTIL.DU.FLOAT
+    elif (paramPfc == 3) or (paramPfc == 4):
+      # simple/extended precision real (MIL 1750A): not implemented
+      pass
+  elif paramPtc == 6:
+    # bit string
+    if paramPfc == 0:
+      # variable bit string, not supported by SCOS-2000, not implemented
+      pass
+    elif (paramPfc == 8) or (paramPfc == 16) or (paramPfc == 24) or (paramPfc == 32):
+      # fixed length bit strings, unsigned integer in SCOS-2000
+      if isBytePos:
+        return UTIL.DU.SIGNED
+      else:
+        return UTIL.DU.SBITS
+    elif (paramPfc > 0) and (paramPfc < 32):
+      # fixed length bit strings, unsigned integer in SCOS-2000
+      return UTIL.DU.BITS
+  elif paramPtc == 7:
+    # octet string
+    if paramPfc == 0:
+      # variable octet string, not supported by SCOS-2000 TM, not implemented
+      pass
+    else:
+      # fixed length octet strings
+      return UTIL.DU.BYTES
+  elif paramPtc == 8:
+    # ASCII string
+    if paramPfc == 0:
+      # variable ASCII string, not supported by SCOS-2000 TM, not implemented
+      pass
+    else:
+      # fixed length ASCII strings
+      return UTIL.DU.STRING
+  elif paramPtc == 9:
+    # absolute time
+    if paramPfc == 0:
+      # variable length, not supported by SCOS-2000 TM
+      pass
+    elif (paramPfc == 1) or (paramPfc == 2):
+      # CDS format
+      return UTIL.DU.TIME
+    elif (paramPfc >= 3) and (paramPfc <= 18):
+      # CUC format
+      return UTIL.DU.TIME
+  elif paramPtc == 10:
+    # relative time
+    if paramPfc <= 2:
+      # not used
+      pass
+    elif paramPfc <= 18:
+      # CUC format
+      return UTIL.DU.TIME
+  elif paramPtc == 11:
+    # deduced parameter, N/A
+    pass
+  elif paramPtc == 13:
+    # saved synthetic parameter, N/A
+    pass
+  # illegal ptc/pfc combination
+  raise Exception("ptc/pfc combination " + str(paramPtc) + "/" + str(paramPfc) + " not supported")
