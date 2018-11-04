@@ -146,20 +146,20 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
         bitPos = paramExtraction.bitPos
         bitLength = paramExtraction.bitWidth
         valueType = paramExtraction.valueType
-        if UTIL.DU.BITS:
+        if valueType == UTIL.DU.BITS:
           packet.setBits(bitPos, bitLength, paramValue)
-        elif UTIL.DU.SBITS:
+        elif valueType == UTIL.DU.SBITS:
           packet.setSBits(bitPos, bitLength, paramValue)
         else:
           bytePos = bitPos // 8
           byteLength = bitLength // 8
-          if UTIL.DU.UNSIGNED:
+          if valueType == UTIL.DU.UNSIGNED:
             packet.setUnsigned(bytePos, byteLength, paramValue)
-          elif UTIL.DU.SIGNED:
+          elif valueType == UTIL.DU.SIGNED:
             bytePos = bitPos // 8
             byteLength = bitLength // 8
             packet.setSigned(bytePos, byteLength, paramValue)
-          elif UTIL.DU.FLOAT:
+          elif valueType == UTIL.DU.FLOAT:
             bytePos = bitPos // 8
             byteLength = bitLength // 8
             packet.setFloat(bytePos, byteLength, paramValue)
