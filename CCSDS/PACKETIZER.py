@@ -48,6 +48,7 @@ class Packetizer():
     except:
       LOG_ERROR("error in TM packet extraction from TM frame")
       self.reset()
+      return
     # --- leading fragment ---
     if leadingFragment:
       # there must be a pending packet fragment from the previous frame
