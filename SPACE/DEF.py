@@ -574,9 +574,9 @@ def getValueType(paramPtc, paramPfc, isBytePos):
     elif (paramPfc == 8) or (paramPfc == 16) or (paramPfc == 24) or (paramPfc == 32):
       # fixed length bit strings, unsigned integer in SCOS-2000
       if isBytePos:
-        return UTIL.DU.SIGNED
+        return UTIL.DU.UNSIGNED
       else:
-        return UTIL.DU.SBITS
+        return UTIL.DU.BITS
     elif (paramPfc > 0) and (paramPfc < 32):
       # fixed length bit strings, unsigned integer in SCOS-2000
       return UTIL.DU.BITS
