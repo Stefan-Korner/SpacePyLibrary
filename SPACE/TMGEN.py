@@ -145,18 +145,30 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
         # apply the parameter value
         bitPos = paramExtraction.bitPos
         bitLength = paramExtraction.bitWidth
-        isInteger = paramExtraction.isInteger
-        isFloat = paramExtraction.isFloat
-        if isInteger:
+        valueType = paramExtraction.valueType
+        if UTIL.DU.BITS:
           packet.setBits(bitPos, bitLength, paramValue)
-        elif isFloat:
-          bytePos = bitPos // 8
-          byteLength = bitLength // 8
-          packet.setFloat(bytePos, byteLength, paramValue)
+        elif UTIL.DU.SBITS:
+          packet.setSBits(bitPos, bitLength, paramValue)
         else:
           bytePos = bitPos // 8
           byteLength = bitLength // 8
-          packet.setString(bytePos, byteLength, paramValue)
+          if UTIL.DU.UNSIGNED:
+            packet.setUnsigned(bytePos, byteLength, paramValue)
+          elif UTIL.DU.SIGNED:
+            bytePos = bitPos // 8
+            byteLength = bitLength // 8
+            packet.setSigned(bytePos, byteLength, paramValue)
+          elif UTIL.DU.FLOAT:
+            bytePos = bitPos // 8
+            byteLength = bitLength // 8
+            packet.setFloat(bytePos, byteLength, paramValue)
+          else:
+            # TIME and other types are passed as string
+            # TODO: use specific encodings
+            bytePos = bitPos // 8
+            byteLength = bitLength // 8
+            packet.setString(bytePos, byteLength, paramValue)
     # re-calculate the time stamp
     if tmPktDef.pktHasDFhdr and self.hasTmTT:
       if obtUTC == None:
