@@ -50,12 +50,12 @@ SYS_CONFIGURATION = [
 #############
 def printUsage(launchScriptName):
   """Prints the commandline options"""
-  print ""
-  print "usage:"
-  print "------"
-  print ""
-  print launchScriptName + " <frame dump file name> <packet file name>"
-  print ""
+  print("")
+  print("usage:")
+  print("------")
+  print("")
+  print(launchScriptName + " <frame dump file name> <packet file name>")
+  print("")
 
 ###########
 # classes #
@@ -164,7 +164,7 @@ class PacketizerImpl(CCSDS.PACKETIZER.Packetizer):
 ########
 # process command line
 if len(sys.argv) != 3:
-  print "error: invalid command line!"
+  print("error: invalid command line!")
   launchScriptName = sys.argv[0]
   printUsage(launchScriptName)
   sys.exit(-1)

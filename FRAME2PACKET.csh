@@ -15,6 +15,6 @@
 #******************************************************************************
 # Command line: FRAME2PACKET.csh <frame dump file name> <packet file name>    *
 #******************************************************************************
-setenv PYTHON python
+setenv PYTHON python3
 setenv PYTHONPATH ${HOME}/Python/SpacePyLibrary
 ${PYTHON} FRAME2PACKET.py $1 $2
