@@ -19,6 +19,10 @@ Backlog of features that shall be implemented
 
 013 Support stringified time as TM parameter (TMGEN.py).
 
+014 Support COP-1 protocol for CCSDS frame layer (see related issued).
+
+015 Implement a rudimentary control system (CS).
+
 --------------------------------- implemented ---------------------------------
 
 001 Remove the dependency to MIB files TPKTconnTable.dat, TPKTconfigTable.dat:
