@@ -24,6 +24,7 @@
 #******************************************************************************
 import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import CS.EGSEgui, CS.FRAMEgui, CS.NCTRSgui
 import MC.IF
 import MCUI.CFGgui, MCUI.TMgui, MCUI.TCgui
 import UI.TKI
@@ -99,6 +100,24 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("h  | help ...............provides this information", "TC")
     LOG("q  | quit ...............terminates SIM application", "TC")
     LOG("u  | dumpConfiguration...dumps the configuration", "TC")
+    LOG_INFO("Available control commands:", "EGSE")
+    LOG("", "EGSE")
+    LOG("x  | exit ...............terminates client connection (only for TCP/IP clients)", "EGSE")
+    LOG("h  | help ...............provides this information", "EGSE")
+    LOG("q  | quit ...............terminates SIM application", "EGSE")
+    LOG("u  | dumpConfiguration...dumps the configuration", "EGSE")
+    LOG_INFO("Available control commands:", "FRAME")
+    LOG("", "FRAME")
+    LOG("x  | exit ...............terminates client connection (only for TCP/IP clients)", "FRAME")
+    LOG("h  | help ...............provides this information", "FRAME")
+    LOG("q  | quit ...............terminates SIM application", "FRAME")
+    LOG("u  | dumpConfiguration...dumps the configuration", "FRAME")
+    LOG_INFO("Available control commands:", "NCTRS")
+    LOG("", "NCTRS")
+    LOG("x  | exit ...............terminates client connection (only for TCP/IP clients)", "NCTRS")
+    LOG("h  | help ...............provides this information", "NCTRS")
+    LOG("q  | quit ...............terminates SIM application", "NCTRS")
+    LOG("u  | dumpConfiguration...dumps the configuration", "NCTRS")
     return True
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
@@ -171,9 +190,15 @@ if guiMode:
   win0 = UI.TKI.createWindow()
   win1 = UI.TKI.createWindow()
   win2 = UI.TKI.createWindow()
+  win3 = UI.TKI.createWindow()
+  win4 = UI.TKI.createWindow()
+  win5 = UI.TKI.createWindow()
   gui0view = MCUI.CFGgui.GUIview(win0)
   gui1view = MCUI.TMgui.GUIview(win1)
   gui2view = MCUI.TCgui.GUIview(win2)
+  gui3view = CS.EGSEgui.GUIview(win3)
+  gui4view = CS.FRAMEgui.GUIview(win4)
+  gui5view = CS.NCTRSgui.GUIview(win5)
   UI.TKI.finaliseGUIcreation()
 else:
   modelTask = ModelTask(isParent=True)

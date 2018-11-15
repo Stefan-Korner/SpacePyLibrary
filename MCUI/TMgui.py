@@ -25,7 +25,7 @@ class GUIview(UI.TKI.GUIwinView):
   # ---------------------------------------------------------------------------
   def __init__(self, master):
     """Initialise all GUI elements"""
-    UI.TKI.GUIwinView.__init__(self, master, "TM", "M&C Monitoring (TM)")
+    UI.TKI.GUIwinView.__init__(self, master, "TM", "M&C TM")
     # log messages (default logger)
     self.messageLogger = UI.TKI.MessageLogger(self, "TM")
     self.appGrid(self.messageLogger, row=0, columnspan=2)
