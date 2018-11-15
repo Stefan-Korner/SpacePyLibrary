@@ -10,7 +10,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT License    *
 # for more details.                                                           *
 #******************************************************************************
-# Monitoring and Control (M&C) - Monitoring (TM) GUI                          *
+# FRAME layer GUI                                                             *
 #******************************************************************************
 import tkinter
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
@@ -21,13 +21,13 @@ import UI.TKI
 ###########
 # =============================================================================
 class GUIview(UI.TKI.GUIwinView):
-  """Implementation of the M&C Monitoring GUI layer"""
+  """Implementation of the Control System FRAME GUI layer"""
   # ---------------------------------------------------------------------------
   def __init__(self, master):
     """Initialise all GUI elements"""
-    UI.TKI.GUIwinView.__init__(self, master, "TM", "M&C TM")
+    UI.TKI.GUIwinView.__init__(self, master, "FRAME", "FRAME Layer")
     # log messages (default logger)
-    self.messageLogger = UI.TKI.MessageLogger(self, "TM")
+    self.messageLogger = UI.TKI.MessageLogger(self, "FRAME")
     self.appGrid(self.messageLogger, row=0, columnspan=2)
     # message line
     self.messageline = tkinter.Message(self, relief=tkinter.GROOVE)
@@ -50,4 +50,4 @@ class GUIview(UI.TKI.GUIwinView):
   # ---------------------------------------------------------------------------
   def notifyStatus(self, status):
     """Generic callback when something changes in the model"""
-    LOG_WARNING("TMgui.GUIview.notifyStatus not implemented", "TM")
+    LOG_WARNING("FRAMEgui.GUIview.notifyStatus not implemented", "FRAME")
