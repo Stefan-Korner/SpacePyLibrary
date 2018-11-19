@@ -27,8 +27,8 @@ ACK_STRS = ["ENABLE_ACK", "ENABLE_NAK", "DISABLE_ACK"]
 # classes #
 ###########
 # =============================================================================
-class Configuration(object):
-  """Configuration"""
+class ServerConfiguration(object):
+  """Server Configuration (on SCOE side)"""
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise the connection relevant informations"""
@@ -41,8 +41,8 @@ class Configuration(object):
     self.egseAck2 = ENABLE_ACK
   # ---------------------------------------------------------------------------
   def dump(self):
-    """Dumps the status of the configuration attributes"""
-    LOG_INFO("EGSE interface configuration", "EGSE")
+    """Dumps the status of the server configuration attributes"""
+    LOG_INFO("EGSE interface server configuration", "EGSE")
     LOG("CCS connected = " + str(self.connected), "EGSE")
     LOG("CCS interface port = " + str(self.ccsPort), "EGSE")
     LOG("CCS connected 2 = " + str(self.connected2), "EGSE")
@@ -64,7 +64,7 @@ class CCSlink(object):
 ####################
 # global variables #
 ####################
-# configuration is a singleton
-s_configuration = None
+# server configuration is a singleton
+s_serverConfiguration = None
 # CCS link is a singleton
 s_ccsLink = None
