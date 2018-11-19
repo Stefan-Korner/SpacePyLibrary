@@ -51,21 +51,21 @@ class GUIview(UI.TKI.GUIwinView):
                  sticky=Tkinter.W)
     # CCS interface status
     self.ccsStatusField = UI.TKI.ValueField(self, row=1, label="EGSE protocol:")
-    self.ccsStatusField.set(EGSE.IF.s_configuration.egseProtocol)
+    self.ccsStatusField.set(EGSE.IF.s_serverConfiguration.egseProtocol)
     # CCS interface status
     self.ccsStatusField = UI.TKI.ValueField(self, row=2, label="CCS interface status:")
     self.ccsStatusField.set("INIT")
     self.ccsStatusField.setBackground(COLOR_INITIALISED)
     # CCS interface port
     self.ccsPortField = UI.TKI.ValueField(self, row=3, label="CCS interface port:")
-    self.ccsPortField.set(EGSE.IF.s_configuration.ccsPort)
+    self.ccsPortField.set(EGSE.IF.s_serverConfiguration.ccsPort)
     # CCS interface status 2
     self.ccsStatusField2 = UI.TKI.ValueField(self, row=4, label="CCS interface status 2:")
     self.ccsStatusField2.set("INIT")
     self.ccsStatusField2.setBackground(COLOR_INITIALISED)
     # CCS interface port 2
     self.ccsPortField2 = UI.TKI.ValueField(self, row=5, label="CCS interface port 2:")
-    self.ccsPortField2.set(EGSE.IF.s_configuration.ccsPort2)
+    self.ccsPortField2.set(EGSE.IF.s_serverConfiguration.ccsPort2)
     # log messages (default logger)
     self.messageLogger = UI.TKI.MessageLogger(self)
     self.appGrid(self.messageLogger, row=6, columnspan=2)

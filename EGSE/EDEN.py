@@ -43,13 +43,13 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
   # ---------------------------------------------------------------------------
   def sendTc_eSpace(self, tcSpacePDU, telecommandEchoStatus):
     """Send a (TC_E,SPACE) PDU to the CCS"""
-    if EGSE.IF.s_configuration.egseAck1 == EGSE.IF.ENABLE_ACK:
+    if EGSE.IF.s_serverConfiguration.egseAck1 == EGSE.IF.ENABLE_ACK:
       # normal processing
       if telecommandEchoStatus == 0:
         LOG_INFO("EDEN.Server.sendTc_eSpace(OK)")
       else:
         LOG_ERROR("EDEN.Server.sendTc_eSpace(ERROR)")
-    elif EGSE.IF.s_configuration.egseAck1 == EGSE.IF.ENABLE_NAK:
+    elif EGSE.IF.s_serverConfiguration.egseAck1 == EGSE.IF.ENABLE_NAK:
       LOG_WARNING("force ERROR for (TC_E,SPACE)")
       telecommandEchoStatus = 1
     else:
@@ -61,13 +61,13 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
   # ---------------------------------------------------------------------------
   def sendTc_eScoe(self, tcSpacePDU, telecommandEchoStatus):
     """Send a (TC_E,SCOE) PDU to the CCS"""
-    if EGSE.IF.s_configuration.egseAck1 == EGSE.IF.ENABLE_ACK:
+    if EGSE.IF.s_serverConfiguration.egseAck1 == EGSE.IF.ENABLE_ACK:
       # normal processing
       if telecommandEchoStatus == 0:
         LOG_INFO("EDEN.Server.sendTc_eScoe(OK)")
       else:
         LOG_ERROR("EDEN.Server.sendTc_eScoe(ERROR)")
-    elif EGSE.IF.s_configuration.egseAck1 == EGSE.IF.ENABLE_NAK:
+    elif EGSE.IF.s_serverConfiguration.egseAck1 == EGSE.IF.ENABLE_NAK:
       LOG_WARNING("force ERROR for (TC_E,SCOE)")
       telecommandEchoStatus = 1
     else:
@@ -79,13 +79,13 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
   # ---------------------------------------------------------------------------
   def sendTc_aSpace(self, status, tcIdentificationWord):
     """Send a (TC_A,SPACE) PDU to the CCS"""
-    if EGSE.IF.s_configuration.egseAck2 == EGSE.IF.ENABLE_ACK:
+    if EGSE.IF.s_serverConfiguration.egseAck2 == EGSE.IF.ENABLE_ACK:
       # normal processing
       if status == 0:
         LOG_INFO("EDEN.Server.sendTc_aSpace(OK)")
       else:
         LOG_ERROR("EDEN.Server.sendTc_aSpace(ERROR)")
-    elif EGSE.IF.s_configuration.egseAck2 == EGSE.IF.ENABLE_NAK:
+    elif EGSE.IF.s_serverConfiguration.egseAck2 == EGSE.IF.ENABLE_NAK:
       LOG_WARNING("force ERROR for (TC_A,SPACE)")
       status = 1
     else:
@@ -100,13 +100,13 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
   # ---------------------------------------------------------------------------
   def sendTc_aScoe(self, status, tcIdentificationWord):
     """Send a (TC_A,SCOE) PDU to the CCS"""
-    if EGSE.IF.s_configuration.egseAck2 == EGSE.IF.ENABLE_ACK:
+    if EGSE.IF.s_serverConfiguration.egseAck2 == EGSE.IF.ENABLE_ACK:
       # normal processing
       if status == 0:
         LOG_INFO("EDEN.Server.sendTc_aScoe(OK)")
       else:
         LOG_ERROR("EDEN.Server.sendTc_aScoe(ERROR)")
-    elif EGSE.IF.s_configuration.egseAck2 == EGSE.IF.ENABLE_NAK:
+    elif EGSE.IF.s_serverConfiguration.egseAck2 == EGSE.IF.ENABLE_NAK:
       LOG_WARNING("force ERROR for (TC_A,SCOE)")
       status = 1
     else:

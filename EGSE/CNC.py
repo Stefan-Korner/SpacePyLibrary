@@ -17,7 +17,7 @@ import array
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.PACKET
-import EGSE.CNCPDU
+import EGSE.CNCPDU, EGSE.IF
 import PUS.SERVICES
 import UTIL.TASK, UTIL.TCP, UTIL.TIME
 
@@ -44,13 +44,13 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
     # format the response message according to the cncCommandDU
     # TODO: the recent implementation does not consider specific CnC messages
     #       but simply appends the message to the ACK/NAK token
-    if EGSE.IF.s_configuration.egseAck2 == EGSE.IF.ENABLE_ACK:
+    if EGSE.IF.s_serverConfiguration.egseAck2 == EGSE.IF.ENABLE_ACK:
       # normal processing
       if okStatus:
         LOG_INFO("CNC.TCserver.sendCNCackNak(ACK)")
       else:
         LOG_ERROR("CNC.TCserver.sendCNCackNak(NAK)")
-    elif EGSE.IF.s_configuration.egseAck2 == EGSE.IF.ENABLE_NAK:
+    elif EGSE.IF.s_serverConfiguration.egseAck2 == EGSE.IF.ENABLE_NAK:
       LOG_WARNING("force CnC NAK")
       okStatus = False
     else:
@@ -73,13 +73,13 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
   def sendTCackNak(self, ccsdsTCpacketDU, okStatus):
     """Send a TC ACK or NAK as response to a CCSDSC TC packet to the CCS"""
     # format the response message according to the ccsdsTCpacketDU
-    if EGSE.IF.s_configuration.egseAck2 == EGSE.IF.ENABLE_ACK:
+    if EGSE.IF.s_serverConfiguration.egseAck2 == EGSE.IF.ENABLE_ACK:
       # normal processing
       if okStatus:
         LOG_INFO("CNC.TCserver.sendTCackNak(ACK)")
       else:
         LOG_ERROR("CNC.TCserver.sendTCackNak(NAK)")
-    elif EGSE.IF.s_configuration.egseAck2 == EGSE.IF.ENABLE_NAK:
+    elif EGSE.IF.s_serverConfiguration.egseAck2 == EGSE.IF.ENABLE_NAK:
       LOG_WARNING("force TC NAK")
       okStatus = False
     else:

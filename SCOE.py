@@ -209,7 +209,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
   def dumpConfigurationCmd(self, argv):
     """Decoded dumpConfiguration command"""
     self.logMethod("dumpConfigurationCmd")
-    EGSE.IF.s_configuration.dump()
+    EGSE.IF.s_serverConfiguration.dump()
     return True
   # ---------------------------------------------------------------------------
   def egseEnableAck1Cmd(self, argv):
@@ -220,7 +220,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       LOG_WARNING("invalid parameters passed for egseEnableAck1", "EGSE")
       return False
     # enable the ack sending
-    EGSE.IF.s_configuration.egseAck1 = EGSE.IF.ENABLE_ACK
+    EGSE.IF.s_serverConfiguration.egseAck1 = EGSE.IF.ENABLE_ACK
     # notify the GUI
     self.notifyGUItask("EGSE_ENABLED_ACK1")
     return True
@@ -232,7 +232,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       LOG_WARNING("invalid parameters passed for egseEnableNak1", "EGSE")
       return False
     # enable the ack sending
-    EGSE.IF.s_configuration.egseAck1 = EGSE.IF.ENABLE_NAK
+    EGSE.IF.s_serverConfiguration.egseAck1 = EGSE.IF.ENABLE_NAK
     # notify the GUI
     self.notifyGUItask("EGSE_ENABLED_NAK1")
     return True
@@ -244,7 +244,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       LOG_WARNING("invalid parameters passed for egseDisableAck1", "EGSE")
       return False
     # enable the ack sending
-    EGSE.IF.s_configuration.egseAck1 = EGSE.IF.DISABLE_ACK
+    EGSE.IF.s_serverConfiguration.egseAck1 = EGSE.IF.DISABLE_ACK
     # notify the GUI
     self.notifyGUItask("EGSE_DISABLED_ACK1")
     return True
@@ -257,7 +257,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       LOG_WARNING("invalid parameters passed for egseEnableAck2", "EGSE")
       return False
     # enable the ack sending
-    EGSE.IF.s_configuration.egseAck2 = EGSE.IF.ENABLE_ACK
+    EGSE.IF.s_serverConfiguration.egseAck2 = EGSE.IF.ENABLE_ACK
     # notify the GUI
     self.notifyGUItask("EGSE_ENABLED_ACK2")
     return True
@@ -269,7 +269,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       LOG_WARNING("invalid parameters passed for egseEnableNak2", "EGSE")
       return False
     # enable the ack sending
-    EGSE.IF.s_configuration.egseAck2 = EGSE.IF.ENABLE_NAK
+    EGSE.IF.s_serverConfiguration.egseAck2 = EGSE.IF.ENABLE_NAK
     # notify the GUI
     self.notifyGUItask("EGSE_ENABLED_NAK2")
     return True
@@ -281,7 +281,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       LOG_WARNING("invalid parameters passed for egseDisableAck2", "EGSE")
       return False
     # enable the ack sending
-    EGSE.IF.s_configuration.egseAck2 = EGSE.IF.DISABLE_ACK
+    EGSE.IF.s_serverConfiguration.egseAck2 = EGSE.IF.DISABLE_ACK
     # notify the GUI
     self.notifyGUItask("EGSE_DISABLED_ACK2")
     return True
@@ -629,14 +629,14 @@ class ModelTask(UTIL.TASK.ProcessingTask):
   # ---------------------------------------------------------------------------
   def setCCSconnected(self):
     """CCS connection established"""
-    EGSE.IF.s_configuration.connected = True
+    EGSE.IF.s_serverConfiguration.connected = True
     self.notifyGUItask("CCS_CONNECTED")
     SPACE.IF.s_configuration.connected = True
     self.notifyGUItask("TM_CONNECTED")
   # ---------------------------------------------------------------------------
   def setCCSconnected2(self):
     """CCS 2nd connection established"""
-    EGSE.IF.s_configuration.connected2 = True
+    EGSE.IF.s_serverConfiguration.connected2 = True
     self.notifyGUItask("CCS_CONNECTED2")
     SPACE.IF.s_configuration.connected = True
     self.notifyGUItask("TM_CONNECTED")
@@ -703,7 +703,7 @@ PUS.PACKET.setTMttTimeProperties(
 PUS.SERVICES.service1_setTCackParamsProperties(
   int(UTIL.SYS.s_configuration.TC_ACK_APID_PARAM_BYTE_OFFSET),
   int(UTIL.SYS.s_configuration.TC_ACK_SSC_PARAM_BYTE_OFFSET))
-EGSE.IF.s_configuration = EGSE.IF.Configuration()
+EGSE.IF.s_serverConfiguration = EGSE.IF.ServerConfiguration()
 SPACE.IF.s_configuration = SPACE.IF.Configuration()
 # initialise the request handler
 requestHandler = UTIL.TASK.RequestHandler(sys.argv)
