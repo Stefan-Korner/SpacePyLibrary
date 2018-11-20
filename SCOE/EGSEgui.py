@@ -49,9 +49,9 @@ class GUIview(UI.TKI.GUIwinView):
                  rowweight=0,
                  columnweight=0,
                  sticky=Tkinter.W)
-    # CCS interface status
-    self.ccsStatusField = UI.TKI.ValueField(self, row=1, label="EGSE protocol:")
-    self.ccsStatusField.set(EGSE.IF.s_serverConfiguration.egseProtocol)
+    # EGSE protocol
+    self.egseProtocolField = UI.TKI.ValueField(self, row=1, label="EGSE protocol:")
+    self.egseProtocolField.set(EGSE.IF.s_serverConfiguration.egseProtocol)
     # CCS interface status
     self.ccsStatusField = UI.TKI.ValueField(self, row=2, label="CCS interface status:")
     self.ccsStatusField.set("INIT")
