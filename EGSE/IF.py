@@ -27,6 +27,26 @@ ACK_STRS = ["ENABLE_ACK", "ENABLE_NAK", "DISABLE_ACK"]
 # classes #
 ###########
 # =============================================================================
+class ClientConfiguration(object):
+  """Client Configuration (on CCS side)"""
+  # ---------------------------------------------------------------------------
+  def __init__(self):
+    """Initialise the connection relevant informations"""
+    self.egseProtocol = UTIL.SYS.s_configuration.EGSE_PROTOCOL
+    self.connected = False
+    self.scoePort = UTIL.SYS.s_configuration.SCOE_SERVER_PORT
+    self.connected2 = False
+    self.scoePort2 = UTIL.SYS.s_configuration.SCOE_SERVER_PORT2
+  # ---------------------------------------------------------------------------
+  def dump(self):
+    """Dumps the status of the server configuration attributes"""
+    LOG_INFO("EGSE interface server configuration", "EGSE")
+    LOG("SCOE connected = " + str(self.connected), "EGSE")
+    LOG("SCOE interface port = " + str(self.scoePort), "EGSE")
+    LOG("SCOE connected 2 = " + str(self.connected2), "EGSE")
+    LOG("SCOE interface port 2 = " + str(self.scoePort2), "EGSE")
+
+# =============================================================================
 class ServerConfiguration(object):
   """Server Configuration (on SCOE side)"""
   # ---------------------------------------------------------------------------
@@ -54,6 +74,14 @@ class ServerConfiguration(object):
 # interfaces #
 ##############
 # =============================================================================
+class SCOElink(object):
+  """Interface to the special checkout equipment"""
+  # ---------------------------------------------------------------------------
+  def pushTCpacket(self, tcPacketDu):
+    """consumes a telecommand packet"""
+    pass
+
+# =============================================================================
 class CCSlink(object):
   """Interface to the central checkout system"""
   # ---------------------------------------------------------------------------
@@ -64,7 +92,11 @@ class CCSlink(object):
 ####################
 # global variables #
 ####################
+# client configuration is a singleton
+s_clientConfiguration = None
 # server configuration is a singleton
 s_serverConfiguration = None
+# SCOE link is a singleton
+s_scoeLink = None
 # CCS link is a singleton
 s_ccsLink = None

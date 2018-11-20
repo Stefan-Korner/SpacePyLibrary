@@ -25,6 +25,7 @@
 import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CS.EGSEgui, CS.FRAMEgui, CS.NCTRSgui
+import EGSE.IF
 import MC.IF
 import MCUI.CFGgui, MCUI.TMgui, MCUI.TCgui
 import UI.TKI
@@ -34,6 +35,10 @@ import UTIL.SYS, UTIL.TCO, UTIL.TASK
 # constants #
 #############
 SYS_CONFIGURATION = [
+  ["EGSE_PROTOCOL", "EDEN"],
+  ["SCOE_HOST", "127.0.0.1"],
+  ["SCOE_SERVER_PORT", "48569"],
+  ["SCOE_SERVER_PORT2", "-1"],
   ["SYS_COLOR_LOG", "1"],
   ["SYS_APP_MNEMO", "CS"],
   ["SYS_APP_NAME", "Control System"],
@@ -130,6 +135,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     """Decoded dumpConfiguration command"""
     self.logMethod("dumpConfigurationCmd")
     MC.IF.s_configuration.dump()
+    EGSE.IF.s_clientConfiguration.dump()
     return True
 
 #############
@@ -166,6 +172,7 @@ else:
 # initialise the system configuration
 UTIL.SYS.s_configuration.setDefaults(SYS_CONFIGURATION)
 MC.IF.s_configuration = MC.IF.Configuration()
+EGSE.IF.s_clientConfiguration = EGSE.IF.ClientConfiguration()
 # initialise the request handler
 requestHandler = UTIL.TASK.RequestHandler(sys.argv)
 if requestHandler.helpRequested:
