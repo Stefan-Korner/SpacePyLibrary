@@ -76,6 +76,14 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       retStatus = self.quitCmd(argv)
     elif (cmd == "U") or (cmd == "DUMPCONFIGURATION"):
       retStatus = self.dumpConfigurationCmd(argv)
+    elif (cmd == "C1") or (cmd == "CONNECTPORT"):
+      retStatus = self.connectPortCmd(argv)
+    elif (cmd == "D1") or (cmd == "DISCONNECTPORT"):
+      retStatus = self.disconnectPortCmd(argv)
+    elif (cmd == "C2") or (cmd == "CONNECTPORT2"):
+      retStatus = self.connectPort2Cmd(argv)
+    elif (cmd == "D2") or (cmd == "DISCONNECTPORT2"):
+      retStatus = self.disconnectPort2Cmd(argv)
     else:
       LOG_WARNING("invalid command " + argv[0])
       return -1
@@ -111,6 +119,10 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("h  | help ...............provides this information", "EGSE")
     LOG("q  | quit ...............terminates SIM application", "EGSE")
     LOG("u  | dumpConfiguration...dumps the configuration", "EGSE")
+    LOG("c1 | connectPort.........connect to SCOE port 1", "EGSE")
+    LOG("d1 | disconnectPort......disconnect from SCOE port 1", "EGSE")
+    LOG("c2 | connectPort2........connect to SCOE port 2", "EGSE")
+    LOG("d2 | disconnectPort2.....disconnect from SCOE port 2", "EGSE")
     LOG_INFO("Available control commands:", "FRAME")
     LOG("", "FRAME")
     LOG("x  | exit ...............terminates client connection (only for TCP/IP clients)", "FRAME")
@@ -137,6 +149,30 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     MC.IF.s_configuration.dump()
     EGSE.IF.s_clientConfiguration.dump()
     return True
+  # ---------------------------------------------------------------------------
+  def connectPortCmd(self, argv):
+    """Decoded connectPort command"""
+    self.logMethod("connectPortCmd", "EGSE")
+    # notify the GUI
+    self.notifyGUItask("SCOE_CONNECTED")
+  # ---------------------------------------------------------------------------
+  def disconnectPortCmd(self, argv):
+    """Decoded disconnectPort command"""
+    self.logMethod("disconnectPortCmd", "EGSE")
+    # notify the GUI
+    self.notifyGUItask("SCOE_DISCONNECTED")
+  # ---------------------------------------------------------------------------
+  def connectPort2Cmd(self, argv):
+    """Decoded connectPort2 command"""
+    self.logMethod("connectPort2Cmd", "EGSE")
+    # notify the GUI
+    self.notifyGUItask("SCOE2_CONNECTED")
+  # ---------------------------------------------------------------------------
+  def disconnectPort2Cmd(self, argv):
+    """Decoded disconnectPort2 command"""
+    self.logMethod("disconnectPort2Cmd", "EGSE")
+    # notify the GUI
+    self.notifyGUItask("SCOE2_DISCONNECTED")
 
 #############
 # functions #

@@ -23,6 +23,7 @@ import UI.TKI
 COLOR_BUTTON_FG = "#FFFFFF"
 COLOR_BUTTON_BG = "#808080"
 COLOR_INITIALISED = "#FFFF00"
+COLOR_CONNECTED = "#00FF00"
 
 ###########
 # classes #
@@ -36,8 +37,10 @@ class GUIview(UI.TKI.GUIwinView):
     UI.TKI.GUIwinView.__init__(self, master, "EGSE", "EGSE Interface")
     # menu buttons
     self.menuButtons = UI.TKI.MenuButtons(self,
-      [["CONN1", self.connectPort1Callback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
-       ["CONN2", self.connectPort2Callback, COLOR_BUTTON_FG, COLOR_BUTTON_BG]])
+      [["CONN", self.connectPortCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
+       ["DCONN", self.disconnectPortCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, tkinter.DISABLED],
+       ["CONN2", self.connectPort2Callback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
+       ["DCONN2", self.disconnectPort2Callback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, tkinter.DISABLED]])
     self.appGrid(self.menuButtons,
                  row=0,
                  columnspan=2,
@@ -83,17 +86,70 @@ class GUIview(UI.TKI.GUIwinView):
     fill the command menu bar,
     implementation of UI.TKI.GUIwinView.fillCommandMenuItems
     """
-    self.addCommandMenuItem(label="ConnectPort1", command=self.connectPort1Callback)
+    self.addCommandMenuItem(label="ConnectPort", command=self.connectPortCallback)
+    self.addCommandMenuItem(label="DisconnectPort", command=self.disconnectPortCallback, enabled=False)
     self.addCommandMenuItem(label="ConnectPort2", command=self.connectPort2Callback)
+    self.addCommandMenuItem(label="DisconnectPort2", command=self.disconnectPort2Callback, enabled=False)
   # ---------------------------------------------------------------------------
-  def connectPort1Callback(self):
-    """Called when the ConnectPort1 menu entry is selected"""
-    LOG_WARNING("EGSEgui.GUIview.connectPort1Callback not implemented", "EGSE")
+  def connectPortCallback(self):
+    """Called when the ConnectPort menu entry is selected"""
+    self.notifyModelTask(["CONNECTPORT"])
+  # ---------------------------------------------------------------------------
+  def disconnectPortCallback(self):
+    """Called when the DisconnectPort menu entry is selected"""
+    self.notifyModelTask(["DISCONNECTPORT"])
   # ---------------------------------------------------------------------------
   def connectPort2Callback(self):
     """Called when the ConnectPort2 menu entry is selected"""
-    LOG_WARNING("EGSEgui.GUIview.connectPort2Callback not implemented", "EGSE")
+    self.notifyModelTask(["CONNECTPORT2"])
+  # ---------------------------------------------------------------------------
+  def disconnectPort2Callback(self):
+    """Called when the DisconnectPort2 menu entry is selected"""
+    self.notifyModelTask(["DISCONNECTPORT2"])
   # ---------------------------------------------------------------------------
   def notifyStatus(self, status):
     """Generic callback when something changes in the model"""
-    LOG_WARNING("EGSEgui.GUIview.notifyStatus not implemented", "EGSE")
+    if status == "SCOE_CONNECTED":
+      self.scoeConnectedNotify()
+    elif status == "SCOE_DISCONNECTED":
+      self.scoeDisconnectedNotify()
+    elif status == "SCOE2_CONNECTED":
+      self.scoeConnected2Notify()
+    elif status == "SCOE2_DISCONNECTED":
+      self.scoeDisconnected2Notify()
+  # ---------------------------------------------------------------------------
+  def scoeConnectedNotify(self):
+    """Called when the SCOE port connect function is successfully processed"""
+    self.scoeStatusField.set("CONNECTED")
+    self.scoeStatusField.setBackground(COLOR_CONNECTED)
+    self.menuButtons.setState("CONN", tkinter.DISABLED)
+    self.menuButtons.setState("DCONN", tkinter.NORMAL)
+    self.disableCommandMenuItem("ConnectPort")
+    self.enableCommandMenuItem("DisconnectPort")
+  # ---------------------------------------------------------------------------
+  def scoeDisconnectedNotify(self):
+    """Called when the SCOE port disconnect function is successfully processed"""
+    self.scoeStatusField.set("DISCONNECTED")
+    self.scoeStatusField.setBackground(COLOR_INITIALISED)
+    self.menuButtons.setState("CONN", tkinter.NORMAL)
+    self.menuButtons.setState("DCONN", tkinter.DISABLED)
+    self.enableCommandMenuItem("ConnectPort")
+    self.disableCommandMenuItem("DisconnectPort")
+  # ---------------------------------------------------------------------------
+  def scoeConnected2Notify(self):
+    """Called when the SCOE port 2 connect function is successfully processed"""
+    self.scoeStatusField2.set("CONNECTED")
+    self.scoeStatusField2.setBackground(COLOR_CONNECTED)
+    self.menuButtons.setState("CONN2", tkinter.DISABLED)
+    self.menuButtons.setState("DCONN2", tkinter.NORMAL)
+    self.disableCommandMenuItem("ConnectPort2")
+    self.enableCommandMenuItem("DisconnectPort2")
+  # ---------------------------------------------------------------------------
+  def scoeDisconnected2Notify(self):
+    """Called when the SCOE port 2 disconnect function is successfully processed"""
+    self.scoeStatusField2.set("DISCONNECTED")
+    self.scoeStatusField2.setBackground(COLOR_INITIALISED)
+    self.menuButtons.setState("CONN2", tkinter.NORMAL)
+    self.menuButtons.setState("DCONN2", tkinter.DISABLED)
+    self.enableCommandMenuItem("ConnectPort2")
+    self.disableCommandMenuItem("DisconnectPort2")
