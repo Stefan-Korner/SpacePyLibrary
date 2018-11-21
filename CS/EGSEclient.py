@@ -87,7 +87,7 @@ def createEGSEclients(hostName=None):
   if egseProtocol == "CNC":
     s_client = CNCtcClient(hostName, portNr=int(UTIL.SYS.s_configuration.SCOE_SERVER_PORT))
   elif egseProtocol == "EDEN":
-    s_server = EDENclient(hostName, portNr=int(UTIL.SYS.s_configuration.SCOE_SERVER_PORT))
+    s_client = EDENclient(hostName, portNr=int(UTIL.SYS.s_configuration.SCOE_SERVER_PORT))
   else:
     LOG_ERROR("invalid EGSE_PROTOCOL defined")
     sys.exit(-1)
