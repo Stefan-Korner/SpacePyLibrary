@@ -46,27 +46,30 @@ class GUIview(UI.TKI.GUIwinView):
     # EGSE interface status
     self.egseProtocolField = UI.TKI.ValueField(self, row=1, label="EGSE protocol:")
     self.egseProtocolField.set(EGSE.IF.s_clientConfiguration.egseProtocol)
+    # SCOE interface host
+    self.scoeHostField = UI.TKI.ValueField(self, row=2, label="SCOE host:")
+    self.scoeHostField.set(EGSE.IF.s_clientConfiguration.scoeHost)
     # SCOE interface status
-    self.scoeStatusField = UI.TKI.ValueField(self, row=2, label="SCOE interface status:")
+    self.scoeStatusField = UI.TKI.ValueField(self, row=3, label="SCOE interface status:")
     self.scoeStatusField.set("INIT")
     self.scoeStatusField.setBackground(COLOR_INITIALISED)
     # SCOE interface port
-    self.scoePortField = UI.TKI.ValueField(self, row=3, label="SCOE interface port:")
+    self.scoePortField = UI.TKI.ValueField(self, row=4, label="SCOE interface port:")
     self.scoePortField.set(EGSE.IF.s_clientConfiguration.scoePort)
     # SCOE interface status 2
-    self.scoeStatusField2 = UI.TKI.ValueField(self, row=4, label="SCOE interface status 2:")
+    self.scoeStatusField2 = UI.TKI.ValueField(self, row=5, label="SCOE interface status 2:")
     self.scoeStatusField2.set("INIT")
     self.scoeStatusField2.setBackground(COLOR_INITIALISED)
     # S interface port 2
-    self.scoePortField2 = UI.TKI.ValueField(self, row=5, label="SCOE interface port 2:")
+    self.scoePortField2 = UI.TKI.ValueField(self, row=6, label="SCOE interface port 2:")
     self.scoePortField2.set(EGSE.IF.s_clientConfiguration.scoePort2)
     # log messages
     self.messageLogger = UI.TKI.MessageLogger(self, "EGSE")
-    self.appGrid(self.messageLogger, row=6, columnspan=2)
+    self.appGrid(self.messageLogger, row=7, columnspan=2)
     # message line
     self.messageline = tkinter.Message(self, relief=tkinter.GROOVE)
     self.appGrid(self.messageline,
-                 row=7,
+                 row=8,
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,

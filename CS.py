@@ -24,7 +24,7 @@
 #******************************************************************************
 import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CS.EGSEgui, CS.FRAMEgui, CS.NCTRSgui
+import CS.EGSEclient, CS.EGSEgui, CS.FRAMEgui, CS.NCTRSgui
 import EGSE.IF
 import MC.IF
 import MCUI.CFGgui, MCUI.TMgui, MCUI.TCgui
@@ -220,6 +220,10 @@ if requestHandler.portNr != 0:
 if cmdPrompt:
   print("register console handler...")
   modelTask.registerConsoleHandler(requestHandler)
+
+# create the EGSE clients
+LOG("Create the EGSE clients")
+CS.EGSEclient.createEGSEclients(UTIL.SYS.s_configuration.SCOE_HOST)
 
 # start the tasks
 print("start modelTask...")
