@@ -33,6 +33,7 @@ class ClientConfiguration(object):
   def __init__(self):
     """Initialise the connection relevant informations"""
     self.egseProtocol = UTIL.SYS.s_configuration.EGSE_PROTOCOL
+    self.scoeHost = UTIL.SYS.s_configuration.SCOE_HOST
     self.connected = False
     self.scoePort = UTIL.SYS.s_configuration.SCOE_SERVER_PORT
     self.connected2 = False
@@ -41,6 +42,7 @@ class ClientConfiguration(object):
   def dump(self):
     """Dumps the status of the server configuration attributes"""
     LOG_INFO("EGSE interface server configuration", "EGSE")
+    LOG("SCOE host = " + self.scoeHost, "EGSE")
     LOG("SCOE connected = " + str(self.connected), "EGSE")
     LOG("SCOE interface port = " + str(self.scoePort), "EGSE")
     LOG("SCOE connected 2 = " + str(self.connected2), "EGSE")

@@ -756,8 +756,8 @@ SPACE.ASW.init()
 SPACE.MIL.init()
 
 # create the EGSE server
-LOG("Open the EGSE server")
-SCOE.EGSEserver.createEGSEserver(UTIL.SYS.s_configuration.HOST)
+LOG("Open the EGSE servers")
+SCOE.EGSEserver.createEGSEservers(UTIL.SYS.s_configuration.HOST)
 
 # load the definition data
 print "load definition data (take some time) ..."

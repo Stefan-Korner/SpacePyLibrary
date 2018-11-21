@@ -175,16 +175,16 @@ class EDENserver2(EGSE.EDEN.Server):
 ####################
 # global variables #
 ####################
-# EGSE server is a singleton
+# EGSE servers are singletons
 s_server = None
 s_server2 = None
 
 #############
 # functions #
 #############
-# functions to encapsulate access to s_server
+# functions to encapsulate access to s_server and s_server2
 # -----------------------------------------------------------------------------
-def createEGSEserver(hostName=None):
+def createEGSEservers(hostName=None):
   """create the EGSE server"""
   global s_server, s_server2
   egseProtocol = UTIL.SYS.s_configuration.EGSE_PROTOCOL
