@@ -58,8 +58,8 @@ class EDENclient(EGSE.EDEN.Client):
     self.portNr = portNr
 
 # =============================================================================
-class EDENclient(EGSE.EDEN.Server):
-  """Subclass of EGSE.EDEN.Server"""
+class EDENclient(EGSE.EDEN.Client):
+  """Subclass of EGSE.EDEN.Client"""
   # this client is used for simulating a 2nd client endpoint
   # ---------------------------------------------------------------------------
   def __init__(self, hostName, portNr):
