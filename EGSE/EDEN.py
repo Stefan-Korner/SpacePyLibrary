@@ -259,21 +259,21 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
   # ---------------------------------------------------------------------------
   def sendTcSpace(self, tcPacket):
     """Send a (TC,SPACE) PDU to the SCOE"""
-    LOG_INFO("EDEN.Client.sendTcSpace")
+    LOG_INFO("EDEN.Client.sendTcSpace", "EDEN")
     tcSpacePDU = EGSE.EDENPDU.TCspace()
     tcSpacePDU.setCCSDSpacket(tcPacket)
     self.sendPDU(tcSpacePDU)
   # ---------------------------------------------------------------------------
   def sendTcScoe(self, tcPacket):
     """Send a (TC,SCOE) PDU to the SCOE"""
-    LOG_INFO("EDEN.Client.sendTcScoe")
+    LOG_INFO("EDEN.Client.sendTcScoe", "EDEN")
     tcScoePDU = EGSE.EDENPDU.TCscoe()
     tcScoePDU.setCCSDSpacket(tcPacket)
     self.sendPDU(tcScoePDU)
   # ---------------------------------------------------------------------------
   def sendCmdExec(self, tcPacket):
     """Send a (CMD,EXEC) PDU to the SCOE"""
-    LOG_INFO("EDEN.Client.sendCmdExec")
+    LOG_INFO("EDEN.Client.sendCmdExec", "EDEN")
     pdu = EGSE.EDENPDU.PDU()
     pdu.pduType = EGSE.EDENPDU.PDU_TYPE_CMD
     pdu.subType = EGSE.EDENPDU.SUB_TYPE_EXEC
@@ -297,7 +297,7 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
       self.notifyConnectionClosed("empty data read")
       return
     if pduHeaderLen != EGSE.EDENPDU.PDU_HEADER_BYTE_SIZE:
-      LOG_ERROR("Read of PDU header failed: invalid size: " + str(pduHeaderLen))
+      LOG_ERROR("Read of PDU header failed: invalid size: " + str(pduHeaderLen), "EDEN")
       return
     pdu = EGSE.EDENPDU.PDU(pduHeader)
     # read the data field for the PDU from the data socket
@@ -306,12 +306,12 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
       try:
         dataField = self.dataSocket.recv(dataFieldLength);
       except Exception, ex:
-        LOG_ERROR("Read of PDU dataField failed: " + str(ex))
+        LOG_ERROR("Read of PDU dataField failed: " + str(ex), "EDEN")
         return
       # consistency check
       remainingSizeRead = len(dataField)
       if remainingSizeRead != dataFieldLength:
-        LOG_ERROR("Read of remaining PDU failed: invalid remaining size: " + str(remainingSizeRead))
+        LOG_ERROR("Read of remaining PDU failed: invalid remaining size: " + str(remainingSizeRead), "EDEN")
         return
       pdu.setDataField(dataField)
     # dispatch depending on pduType and subType
@@ -319,85 +319,85 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
       if pdu.pduType == EGSE.EDENPDU.PDU_TYPE_TC_A:
         if pdu.subType == EGSE.EDENPDU.SUB_TYPE_SPACE:
           # (TC_A,SPACE)
-          LOG_INFO("EDEN.Client.receiveCallback(TC_A,SPACE)")
+          LOG_INFO("EDEN.Client.receiveCallback(TC_A,SPACE)", "EDEN")
           self.notifyTc_aSpace(pdu.field2, pdu.field3)
         elif pdu.subType == EGSE.EDENPDU.SUB_TYPE_SCOE:
           # (TC_A,SCOE)
-          LOG_INFO("EDEN.Client.receiveCallback(TC_A,SCOE)")
+          LOG_INFO("EDEN.Client.receiveCallback(TC_A,SCOE)", "EDEN")
           self.notifyTc_aScoe(pdu.field2, pdu.field3)
         else:
-          LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType))
-          LOG_INFO("PDU = " + str(pdu))
+          LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType), "EDEN")
+          LOG_INFO("PDU = " + str(pdu), "EDEN")
       elif pdu.pduType == EGSE.EDENPDU.PDU_TYPE_TC_E:
         if pdu.subType == EGSE.EDENPDU.SUB_TYPE_SPACE:
           # (TC_E,SPACE)
-          LOG_INFO("EDEN.Client.receiveCallback(TC_E,SPACE)")
+          LOG_INFO("EDEN.Client.receiveCallback(TC_E,SPACE)", "EDEN")
           tc_eSpacePDU = EGSE.EDENPDU.TC_Espace(pdu.buffer)
           self.notifyTc_eSpace(tc_eSpacePDU.getCCSDSpacket())
         elif pdu.subType == EGSE.EDENPDU.SUB_TYPE_SCOE:
           # (TC_E,SCOE)
-          LOG_INFO("EDEN.Client.receiveCallback(TC_E,SCOE)")
+          LOG_INFO("EDEN.Client.receiveCallback(TC_E,SCOE)", "EDEN")
           tc_eScoePDU = EGSE.EDENPDU.TC_Escoe(pdu.buffer)
           self.notifyTc_eScoe(tc_eScoePDU.getCCSDSpacket())
         else:
-          LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType))
+          LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType), "EDEN")
           LOG_INFO("PDU = " + str(pdu))
       elif pdu.pduType == EGSE.EDENPDU.PDU_TYPE_TM:
         if pdu.subType == EGSE.EDENPDU.SUB_TYPE_SPACE:
           # (TM,SPACE)
-          LOG_INFO("EDEN.Client.receiveCallback(TM,SPACE)")
+          LOG_INFO("EDEN.Client.receiveCallback(TM,SPACE)", "EDEN")
           tmSpacePDU = EGSE.EDENPDU.TMspace(pdu.buffer)
           self.notifyTmSpace(tmSpacePDU.getCCSDSpacket())
         elif pdu.subType == EGSE.EDENPDU.SUB_TYPE_SCOE:
           # (TM,SCOE)
-          LOG_INFO("EDEN.Client.receiveCallback(TM,SCOE)")
+          LOG_INFO("EDEN.Client.receiveCallback(TM,SCOE)", "EDEN")
           tmScoePDU = EGSE.EDENPDU.TMscoe(pdu.buffer)
           self.notifyTmScoe(tmScoePDU.getCCSDSpacket())
         else:
-          LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType))
-          LOG_INFO("PDU = " + str(pdu))
+          LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType), "EDEN")
+          LOG_INFO("PDU = " + str(pdu), "EDEN")
       elif pdu.pduType == EGSE.EDENPDU.PDU_TYPE_CMD:
         if pdu.subType == EGSE.EDENPDU.SUB_TYPE_ANSW:
           # (CMD,ANSW)
-          LOG_INFO("EDEN.Client.receiveCallback(CMD,ANSW)")
+          LOG_INFO("EDEN.Client.receiveCallback(CMD,ANSW)", "EDEN")
           self.notifyCmdAnsw(pdu.getDataField().tostring())
         else:
-          LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType))
-          LOG_INFO("PDU = " + str(pdu))
+          LOG_ERROR("Read of PDU header failed: invalid subType: " + str(pdu.subType), "EDEN")
+          LOG_INFO("PDU = " + str(pdu), "EDEN")
       else:
-        LOG_ERROR("Read of PDU header failed: invalid pduType: " + str(pdu.pduType))
-        LOG_INFO("PDU = " + str(pdu))
+        LOG_ERROR("Read of PDU header failed: invalid pduType: " + str(pdu.pduType), "EDEN")
+        LOG_INFO("PDU = " + str(pdu), "EDEN")
     except Exception, ex:
-      LOG_ERROR("Processing of received PDU failed: " + str(ex))
+      LOG_ERROR("Processing of received PDU failed: " + str(ex), "EDEN")
   # ---------------------------------------------------------------------------
   def notifyConnectionClosed(self, details):
     """Connection closed by server"""
-    LOG_WARNING("Connection closed by SCOE: " + details)
+    LOG_WARNING("Connection closed by SCOE: " + details, "EDEN")
   # ---------------------------------------------------------------------------
   def notifyTc_aSpace(self, status, tcIdentificationWord):
     """(TC_A,SPACE) received: hook for derived classes"""
-    LOG_INFO("notifyTc_aSpace: status = " + str(status) + ", tcIdentificationWord = " + str(tcIdentificationWord))
+    LOG_INFO("notifyTc_aSpace: status = " + str(status) + ", tcIdentificationWord = " + str(tcIdentificationWord), "EDEN")
   # ---------------------------------------------------------------------------
   def notifyTc_aScoe(self, status, tcIdentificationWord):
     """(TC_A,SCOE) received: hook for derived classes"""
-    LOG_INFO("notifyTc_aScoe: status = " + str(status) + ", tcIdentificationWord = " + str(tcIdentificationWord))
+    LOG_INFO("notifyTc_aScoe: status = " + str(status) + ", tcIdentificationWord = " + str(tcIdentificationWord), "EDEN")
   # ---------------------------------------------------------------------------
   def notifyTc_eSpace(self, tcPacket):
     """(TC_E,SPACE) received: hook for derived classes"""
-    LOG_INFO("notifyTc_eSpace: tcPacket = " + UTIL.DU.array2str(tcPacket))
+    LOG_INFO("notifyTc_eSpace: tcPacket = " + UTIL.DU.array2str(tcPacket), "EDEN")
   # ---------------------------------------------------------------------------
   def notifyTc_eScoe(self, tcPacket):
     """(TC_E,SCOE) received: hook for derived classes"""
-    LOG_INFO("notifyTc_eScoe: tcPacket = " + UTIL.DU.array2str(tcPacket))
+    LOG_INFO("notifyTc_eScoe: tcPacket = " + UTIL.DU.array2str(tcPacket), "EDEN")
   # ---------------------------------------------------------------------------
   def notifyTmSpace(self, tmPacket):
     """(TM,SPACE) received: hook for derived classes"""
-    LOG_INFO("notifyTmSpace: tmPacket = " + UTIL.DU.array2str(tmPacket))
+    LOG_INFO("notifyTmSpace: tmPacket = " + UTIL.DU.array2str(tmPacket), "EDEN")
   # ---------------------------------------------------------------------------
   def notifyTmScoe(self, tmPacket):
     """(TM,SCOE) received: hook for derived classes"""
-    LOG_INFO("notifyTmScoe: tmPacket = " + UTIL.DU.array2str(tmPacket))
+    LOG_INFO("notifyTmScoe: tmPacket = " + UTIL.DU.array2str(tmPacket), "EDEN")
   # ---------------------------------------------------------------------------
   def notifyCmdAnsw(self, message):
     """(CMD,ANSW) received: hook for derived classes"""
-    LOG_INFO("notifyCmdAnsw: message = " + message)
+    LOG_INFO("notifyCmdAnsw: message = " + message, "EDEN")

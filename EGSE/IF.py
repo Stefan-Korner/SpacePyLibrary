@@ -27,26 +27,25 @@ ACK_STRS = ["ENABLE_ACK", "ENABLE_NAK", "DISABLE_ACK"]
 # classes #
 ###########
 # =============================================================================
-class ClientConfiguration(object):
-  """Client Configuration (on CCS side)"""
+class EDENclientConfiguration(object):
+  """EDEN Client Configuration (on CCS side)"""
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise the connection relevant informations"""
-    self.egseProtocol = UTIL.SYS.s_configuration.EGSE_PROTOCOL
-    self.scoeHost = UTIL.SYS.s_configuration.SCOE_HOST
+    self.edenHost = UTIL.SYS.s_configuration.EDEN_HOST
     self.connected = False
-    self.scoePort = UTIL.SYS.s_configuration.SCOE_SERVER_PORT
+    self.edenPort = UTIL.SYS.s_configuration.EDEN_SERVER_PORT
     self.connected2 = False
-    self.scoePort2 = UTIL.SYS.s_configuration.SCOE_SERVER_PORT2
+    self.edenPort2 = UTIL.SYS.s_configuration.EDEN_SERVER_PORT2
   # ---------------------------------------------------------------------------
   def dump(self):
     """Dumps the status of the server configuration attributes"""
-    LOG_INFO("EGSE interface server configuration", "EGSE")
-    LOG("SCOE host = " + self.scoeHost, "EGSE")
-    LOG("SCOE connected = " + str(self.connected), "EGSE")
-    LOG("SCOE interface port = " + str(self.scoePort), "EGSE")
-    LOG("SCOE connected 2 = " + str(self.connected2), "EGSE")
-    LOG("SCOE interface port 2 = " + str(self.scoePort2), "EGSE")
+    LOG_INFO("EGSE interface server configuration", "EDEN")
+    LOG("EDEN host = " + self.edenHost, "EDEN")
+    LOG("EDEN connected = " + str(self.connected), "EDEN")
+    LOG("EDEN interface port = " + str(self.edenPort), "EDEN")
+    LOG("EDEN connected 2 = " + str(self.connected2), "EDEN")
+    LOG("EDEN interface port 2 = " + str(self.edenPort2), "EDEN")
 
 # =============================================================================
 class ServerConfiguration(object):
@@ -94,8 +93,8 @@ class CCSlink(object):
 ####################
 # global variables #
 ####################
-# client configuration is a singleton
-s_clientConfiguration = None
+# EDEN client configuration is a singleton
+s_edenClientConfiguration = None
 # server configuration is a singleton
 s_serverConfiguration = None
 # SCOE link is a singleton

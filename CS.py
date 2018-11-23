@@ -24,7 +24,7 @@
 #******************************************************************************
 import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CS.EGSEclient, CS.EGSEgui, CS.FRAMEgui, CS.NCTRSgui
+import CS.EDENclient, CS.EDENgui, CS.FRAMEgui, CS.NCTRSgui
 import EGSE.IF
 import MC.IF
 import MCUI.CFGgui, MCUI.TMgui, MCUI.TCgui
@@ -35,10 +35,9 @@ import UTIL.SYS, UTIL.TCO, UTIL.TASK
 # constants #
 #############
 SYS_CONFIGURATION = [
-  ["EGSE_PROTOCOL", "EDEN"],
-  ["SCOE_HOST", "127.0.0.1"],
-  ["SCOE_SERVER_PORT", "48569"],
-  ["SCOE_SERVER_PORT2", "-1"],
+  ["EDEN_HOST", "127.0.0.1"],
+  ["EDEN_SERVER_PORT", "48569"],
+  ["EDEN_SERVER_PORT2", "-1"],
   ["SYS_COLOR_LOG", "1"],
   ["SYS_APP_MNEMO", "CS"],
   ["SYS_APP_NAME", "Control System"],
@@ -76,14 +75,14 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       retStatus = self.quitCmd(argv)
     elif (cmd == "U") or (cmd == "DUMPCONFIGURATION"):
       retStatus = self.dumpConfigurationCmd(argv)
-    elif (cmd == "C1") or (cmd == "CONNECTPORT"):
-      retStatus = self.connectPortCmd(argv)
-    elif (cmd == "D1") or (cmd == "DISCONNECTPORT"):
-      retStatus = self.disconnectPortCmd(argv)
-    elif (cmd == "C2") or (cmd == "CONNECTPORT2"):
-      retStatus = self.connectPort2Cmd(argv)
-    elif (cmd == "D2") or (cmd == "DISCONNECTPORT2"):
-      retStatus = self.disconnectPort2Cmd(argv)
+    elif (cmd == "E1") or (cmd == "CONNECTEDEN"):
+      retStatus = self.connectEDENcmd(argv)
+    elif (cmd == "F1") or (cmd == "DISCONNECTEDEN"):
+      retStatus = self.disconnectEDENcmd(argv)
+    elif (cmd == "E2") or (cmd == "CONNECTEDEN2"):
+      retStatus = self.connectEDEN2cmd(argv)
+    elif (cmd == "F2") or (cmd == "DISCONNECTEDEN2"):
+      retStatus = self.disconnectEDEN2cmd(argv)
     else:
       LOG_WARNING("invalid command " + argv[0])
       return -1
@@ -113,16 +112,16 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("h  | help ...............provides this information", "TC")
     LOG("q  | quit ...............terminates SIM application", "TC")
     LOG("u  | dumpConfiguration...dumps the configuration", "TC")
-    LOG_INFO("Available control commands:", "EGSE")
-    LOG("", "EGSE")
-    LOG("x  | exit ...............terminates client connection (only for TCP/IP clients)", "EGSE")
-    LOG("h  | help ...............provides this information", "EGSE")
-    LOG("q  | quit ...............terminates SIM application", "EGSE")
-    LOG("u  | dumpConfiguration...dumps the configuration", "EGSE")
-    LOG("c1 | connectPort.........connect to SCOE port 1", "EGSE")
-    LOG("d1 | disconnectPort......disconnect from SCOE port 1", "EGSE")
-    LOG("c2 | connectPort2........connect to SCOE port 2", "EGSE")
-    LOG("d2 | disconnectPort2.....disconnect from SCOE port 2", "EGSE")
+    LOG_INFO("Available control commands:", "EDEN")
+    LOG("", "EDEN")
+    LOG("x  | exit ...............terminates client connection (only for TCP/IP clients)", "EDEN")
+    LOG("h  | help ...............provides this information", "EDEN")
+    LOG("q  | quit ...............terminates SIM application", "EDEN")
+    LOG("u  | dumpConfiguration...dumps the configuration", "EDEN")
+    LOG("e1 | connectEDEN.........connect to EDEN port 1", "EDEN")
+    LOG("f1 | disconnectEDEN......disconnect from EDEN port 1", "EDEN")
+    LOG("e2 | connectEDEN2........connect to EDEN port 2", "EDEN")
+    LOG("f2 | disconnectEDEN2.....disconnect from EDEN port 2", "EDEN")
     LOG_INFO("Available control commands:", "FRAME")
     LOG("", "FRAME")
     LOG("x  | exit ...............terminates client connection (only for TCP/IP clients)", "FRAME")
@@ -147,32 +146,32 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     """Decoded dumpConfiguration command"""
     self.logMethod("dumpConfigurationCmd")
     MC.IF.s_configuration.dump()
-    EGSE.IF.s_clientConfiguration.dump()
+    EGSE.IF.s_edenClientConfiguration.dump()
     return True
   # ---------------------------------------------------------------------------
-  def connectPortCmd(self, argv):
-    """Decoded connectPort command"""
-    self.logMethod("connectPortCmd", "EGSE")
+  def connectEDENcmd(self, argv):
+    """Decoded connectEDEN command"""
+    self.logMethod("connectEDENcmd", "EGSE")
     # notify the GUI
-    self.notifyGUItask("SCOE_CONNECTED")
+    self.notifyGUItask("EDEN_CONNECTED")
   # ---------------------------------------------------------------------------
-  def disconnectPortCmd(self, argv):
-    """Decoded disconnectPort command"""
-    self.logMethod("disconnectPortCmd", "EGSE")
+  def disconnectEDENcmd(self, argv):
+    """Decoded disconnectEDEN command"""
+    self.logMethod("disconnectEDENcmd", "EGSE")
     # notify the GUI
-    self.notifyGUItask("SCOE_DISCONNECTED")
+    self.notifyGUItask("EDEN_DISCONNECTED")
   # ---------------------------------------------------------------------------
-  def connectPort2Cmd(self, argv):
-    """Decoded connectPort2 command"""
-    self.logMethod("connectPort2Cmd", "EGSE")
+  def connectEDEN2cmd(self, argv):
+    """Decoded connectEDEN2 command"""
+    self.logMethod("connectEDEN2cmd", "EGSE")
     # notify the GUI
-    self.notifyGUItask("SCOE2_CONNECTED")
+    self.notifyGUItask("EDEN2_CONNECTED")
   # ---------------------------------------------------------------------------
-  def disconnectPort2Cmd(self, argv):
-    """Decoded disconnectPort2 command"""
-    self.logMethod("disconnectPort2Cmd", "EGSE")
+  def disconnectEDEN2cmd(self, argv):
+    """Decoded disconnectEDEN2 command"""
+    self.logMethod("disconnectEDEN2cmd", "EGSE")
     # notify the GUI
-    self.notifyGUItask("SCOE2_DISCONNECTED")
+    self.notifyGUItask("EDEN2_DISCONNECTED")
 
 #############
 # functions #
@@ -208,7 +207,7 @@ else:
 # initialise the system configuration
 UTIL.SYS.s_configuration.setDefaults(SYS_CONFIGURATION)
 MC.IF.s_configuration = MC.IF.Configuration()
-EGSE.IF.s_clientConfiguration = EGSE.IF.ClientConfiguration()
+EGSE.IF.s_edenClientConfiguration = EGSE.IF.EDENclientConfiguration()
 # initialise the request handler
 requestHandler = UTIL.TASK.RequestHandler(sys.argv)
 if requestHandler.helpRequested:
@@ -239,7 +238,7 @@ if guiMode:
   gui0view = MCUI.CFGgui.GUIview(win0)
   gui1view = MCUI.TMgui.GUIview(win1)
   gui2view = MCUI.TCgui.GUIview(win2)
-  gui3view = CS.EGSEgui.GUIview(win3)
+  gui3view = CS.EDENgui.GUIview(win3)
   gui4view = CS.FRAMEgui.GUIview(win4)
   gui5view = CS.NCTRSgui.GUIview(win5)
   UI.TKI.finaliseGUIcreation()
@@ -257,9 +256,9 @@ if cmdPrompt:
   print "register console handler..."
   modelTask.registerConsoleHandler(requestHandler)
 
-# create the EGSE clients
-LOG("Create the EGSE clients")
-CS.EGSEclient.createEGSEclients(UTIL.SYS.s_configuration.SCOE_HOST)
+# create the EDEN client
+print "Create the EDENclients"
+CS.EDENclient.createClients()
 
 # start the tasks
 print "start modelTask..."
