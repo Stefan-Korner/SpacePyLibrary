@@ -15,7 +15,7 @@
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import EGSE.CNC, EGSE.EDEN, EGSE.IF
+import EGSE.EDEN, EGSE.IF
 import UTIL.SYS
 
 ###########

@@ -10,43 +10,44 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT License    *
 # for more details.                                                           *
 #******************************************************************************
-# EDEN client for connection to SCOE                                          *
-# implements Core_EGSE_AD03_GAL_REQ_ALS_SA_R_0002_EGSE_IRD_issue2.pdf         *
+# CNC client for connection to SCOE                                           *
+# implements implements CAIT-03474-ASTR_issue_3_EGSE_IRD.pdf                  *
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import EGSE.CNC, EGSE.EDEN, EGSE.IF
+import EGSE.CNC, EGSE.IF
 import UTIL.SYS
 
 ###########
 # classes #
 ###########
 # =============================================================================
-class Client(EGSE.EDEN.Client):
-  """Subclass of EGSE.EDEN.Client"""
-  # this client sends CCSDS TC packets and received CCSDS TM packets
+class TCclient(EGSE.CNC.TCclient):
+  """Subclass of EGSE.CNC.TCclient"""
+  # this client sends CnC commands
+  # and receives automatically ACK/NAK CnC responses
   # ---------------------------------------------------------------------------
   def __init__(self, hostName, portNr):
     """Initialise attributes only"""
-    EGSE.EDEN.Client.__init__(self)
+    EGSE.CNC.TCclient.__init__(self)
     self.hostName = hostName
     self.portNr = portNr
 
 # =============================================================================
-class Client2(EGSE.EDEN.Client):
-  """Subclass of EGSE.EDEN.Client"""
-  # this client is used for simulating a 2nd client endpoint
+class TMclient(EGSE.CNC.TMclient):
+  """Subclass of EGSE.CNC.TMclient"""
+  # this client only receives CCSDS TM packets
   # ---------------------------------------------------------------------------
   def __init__(self, hostName, portNr):
     """Initialise attributes only"""
-    EGSE.EDEN.Client.__init__(self)
+    EGSE.CNC.TMclient.__init__(self)
     self.hostName = hostName
     self.portNr = portNr
 
 ####################
 # global variables #
 ####################
-# EDEN clients are singletons
+# CNC clients are singletons
 s_client = None
 s_client2 = None
 
@@ -58,13 +59,11 @@ s_client2 = None
 def createClients():
   """create the EGSE clients"""
   global s_client, s_client2
-  edenHost = EGSE.IF.s_edenClientConfiguration.edenHost
-  if edenHost == "":
-    # no EDEN connection configured
+  cncHost = EGSE.IF.s_cncClientConfiguration.cncHost
+  if cncHost == "":
+    # no CNC connection configured
     LOG_INFO
-  edenPort = int(EGSE.IF.s_edenClientConfiguration.edenPort)
-  s_client = Client(edenHost, edenPort)
-  edenPort2 = int(EGSE.IF.s_edenClientConfiguration.edenPort2)
-  if edenPort2 > 0:
-    # there is a second EDEN connection configured
-    s_client2 = Client2(edenHost, edenPort2)
+  cncPort = int(EGSE.IF.s_cncClientConfiguration.cncPort)
+  s_client = TCclient(cncHost, cncPort)
+  cncPort2 = int(EGSE.IF.s_cncClientConfiguration.cncPort2)
+  s_client2 = TMclient(cncHost, cncPort2)
