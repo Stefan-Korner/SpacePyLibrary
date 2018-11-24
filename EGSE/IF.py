@@ -27,6 +27,27 @@ ACK_STRS = ["ENABLE_ACK", "ENABLE_NAK", "DISABLE_ACK"]
 # classes #
 ###########
 # =============================================================================
+class CNCclientConfiguration(object):
+  """CNC Client Configuration (on CCS side)"""
+  # ---------------------------------------------------------------------------
+  def __init__(self):
+    """Initialise the connection relevant informations"""
+    self.cncHost = UTIL.SYS.s_configuration.CNC_HOST
+    self.connected = False
+    self.cncPort = UTIL.SYS.s_configuration.CNC_SERVER_PORT
+    self.connected2 = False
+    self.cncPort2 = UTIL.SYS.s_configuration.CNC_SERVER_PORT2
+  # ---------------------------------------------------------------------------
+  def dump(self):
+    """Dumps the status of the server configuration attributes"""
+    LOG_INFO("EGSE interface server configuration", "CNC")
+    LOG("CNC host = " + self.cncHost, "CNC")
+    LOG("CNC connected = " + str(self.connected), "CNC")
+    LOG("CNC interface port = " + str(self.cncPort), "CNC")
+    LOG("CNC connected 2 = " + str(self.connected2), "CNC")
+    LOG("CNC interface port 2 = " + str(self.cncPort2), "CNC")
+
+# =============================================================================
 class EDENclientConfiguration(object):
   """EDEN Client Configuration (on CCS side)"""
   # ---------------------------------------------------------------------------
@@ -93,6 +114,8 @@ class CCSlink(object):
 ####################
 # global variables #
 ####################
+# CNC client configuration is a singleton
+s_cncClientConfiguration = None
 # EDEN client configuration is a singleton
 s_edenClientConfiguration = None
 # server configuration is a singleton
