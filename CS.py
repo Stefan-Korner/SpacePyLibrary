@@ -24,7 +24,7 @@
 #******************************************************************************
 import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CS.EDENclient, CS.EDENgui, CS.FRAMEgui, CS.NCTRSgui
+import CS.CNCclient, CS.CNCgui, CS.EDENclient, CS.EDENgui, CS.FRAMEgui, CS.NCTRSgui
 import EGSE.IF
 import MC.IF
 import MCUI.CFGgui, MCUI.TMgui, MCUI.TCgui
@@ -35,6 +35,9 @@ import UTIL.SYS, UTIL.TCO, UTIL.TASK
 # constants #
 #############
 SYS_CONFIGURATION = [
+  ["CNC_HOST", "127.0.0.1"],
+  ["CNC_SERVER_PORT", "48569"],
+  ["CNC_SERVER_PORT2", "-1"],
   ["EDEN_HOST", "127.0.0.1"],
   ["EDEN_SERVER_PORT", "48569"],
   ["EDEN_SERVER_PORT2", "-1"],
@@ -75,6 +78,14 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       retStatus = self.quitCmd(argv)
     elif (cmd == "U") or (cmd == "DUMPCONFIGURATION"):
       retStatus = self.dumpConfigurationCmd(argv)
+    elif (cmd == "C1") or (cmd == "CONNECTCNC"):
+      retStatus = self.connectCNCcmd(argv)
+    elif (cmd == "D1") or (cmd == "DISCONNECTCNC"):
+      retStatus = self.disconnectCNCcmd(argv)
+    elif (cmd == "C2") or (cmd == "CONNECTCNC2"):
+      retStatus = self.connectCNC2cmd(argv)
+    elif (cmd == "D2") or (cmd == "DISCONNECTCNC2"):
+      retStatus = self.disconnectCNC2cmd(argv)
     elif (cmd == "E1") or (cmd == "CONNECTEDEN"):
       retStatus = self.connectEDENcmd(argv)
     elif (cmd == "F1") or (cmd == "DISCONNECTEDEN"):
@@ -112,6 +123,16 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("h  | help ...............provides this information", "TC")
     LOG("q  | quit ...............terminates SIM application", "TC")
     LOG("u  | dumpConfiguration...dumps the configuration", "TC")
+    LOG_INFO("Available control commands:", "CNC")
+    LOG("", "CNC")
+    LOG("x  | exit ...............terminates client connection (only for TCP/IP clients)", "CNC")
+    LOG("h  | help ...............provides this information", "CNC")
+    LOG("q  | quit ...............terminates SIM application", "CNC")
+    LOG("u  | dumpConfiguration...dumps the configuration", "CNC")
+    LOG("c1 | connectCNC..........connect to CNC port 1", "CNC")
+    LOG("d1 | disconnectCNC.......disconnect from CNC port 1", "CNC")
+    LOG("c2 | connectCNC2.........connect to CNC port 2", "CNC")
+    LOG("d2 | disconnectCNC2......disconnect from CNC port 2", "CNC")
     LOG_INFO("Available control commands:", "EDEN")
     LOG("", "EDEN")
     LOG("x  | exit ...............terminates client connection (only for TCP/IP clients)", "EDEN")
@@ -146,30 +167,55 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     """Decoded dumpConfiguration command"""
     self.logMethod("dumpConfigurationCmd")
     MC.IF.s_configuration.dump()
+    EGSE.IF.s_cncClientConfiguration.dump()
     EGSE.IF.s_edenClientConfiguration.dump()
     return True
   # ---------------------------------------------------------------------------
+  def connectCNCcmd(self, argv):
+    """Decoded connectCNC command"""
+    self.logMethod("connectCNCcmd", "CNC")
+    # notify the GUI
+    self.notifyGUItask("CNC_CONNECTED")
+  # ---------------------------------------------------------------------------
+  def disconnectCNCcmd(self, argv):
+    """Decoded disconnectCNC command"""
+    self.logMethod("disconnectCNCcmd", "CNC")
+    # notify the GUI
+    self.notifyGUItask("CNC_DISCONNECTED")
+  # ---------------------------------------------------------------------------
+  def connectCNC2cmd(self, argv):
+    """Decoded connectCNC2 command"""
+    self.logMethod("connectCNC2cmd", "CNC")
+    # notify the GUI
+    self.notifyGUItask("CNC2_CONNECTED")
+  # ---------------------------------------------------------------------------
+  def disconnectCNC2cmd(self, argv):
+    """Decoded disconnectCNC2 command"""
+    self.logMethod("disconnectCNC2cmd", "CNC")
+    # notify the GUI
+    self.notifyGUItask("CNC2_DISCONNECTED")
+  # ---------------------------------------------------------------------------
   def connectEDENcmd(self, argv):
     """Decoded connectEDEN command"""
-    self.logMethod("connectEDENcmd", "EGSE")
+    self.logMethod("connectEDENcmd", "EDEN")
     # notify the GUI
     self.notifyGUItask("EDEN_CONNECTED")
   # ---------------------------------------------------------------------------
   def disconnectEDENcmd(self, argv):
     """Decoded disconnectEDEN command"""
-    self.logMethod("disconnectEDENcmd", "EGSE")
+    self.logMethod("disconnectEDENcmd", "EDEN")
     # notify the GUI
     self.notifyGUItask("EDEN_DISCONNECTED")
   # ---------------------------------------------------------------------------
   def connectEDEN2cmd(self, argv):
     """Decoded connectEDEN2 command"""
-    self.logMethod("connectEDEN2cmd", "EGSE")
+    self.logMethod("connectEDEN2cmd", "EDEN")
     # notify the GUI
     self.notifyGUItask("EDEN2_CONNECTED")
   # ---------------------------------------------------------------------------
   def disconnectEDEN2cmd(self, argv):
     """Decoded disconnectEDEN2 command"""
-    self.logMethod("disconnectEDEN2cmd", "EGSE")
+    self.logMethod("disconnectEDEN2cmd", "EDEN")
     # notify the GUI
     self.notifyGUItask("EDEN2_DISCONNECTED")
 
@@ -207,6 +253,7 @@ else:
 # initialise the system configuration
 UTIL.SYS.s_configuration.setDefaults(SYS_CONFIGURATION)
 MC.IF.s_configuration = MC.IF.Configuration()
+EGSE.IF.s_cncClientConfiguration = EGSE.IF.CNCclientConfiguration()
 EGSE.IF.s_edenClientConfiguration = EGSE.IF.EDENclientConfiguration()
 # initialise the request handler
 requestHandler = UTIL.TASK.RequestHandler(sys.argv)
@@ -235,12 +282,14 @@ if guiMode:
   win3 = UI.TKI.createWindow()
   win4 = UI.TKI.createWindow()
   win5 = UI.TKI.createWindow()
+  win6 = UI.TKI.createWindow()
   gui0view = MCUI.CFGgui.GUIview(win0)
   gui1view = MCUI.TMgui.GUIview(win1)
   gui2view = MCUI.TCgui.GUIview(win2)
-  gui3view = CS.EDENgui.GUIview(win3)
-  gui4view = CS.FRAMEgui.GUIview(win4)
-  gui5view = CS.NCTRSgui.GUIview(win5)
+  gui3view = CS.CNCgui.GUIview(win3)
+  gui4view = CS.EDENgui.GUIview(win4)
+  gui5view = CS.FRAMEgui.GUIview(win5)
+  gui6view = CS.NCTRSgui.GUIview(win6)
   UI.TKI.finaliseGUIcreation()
 else:
   modelTask = ModelTask(isParent=True)
@@ -256,7 +305,10 @@ if cmdPrompt:
   print "register console handler..."
   modelTask.registerConsoleHandler(requestHandler)
 
-# create the EDEN client
+# create the CNC clients
+print "Create the CNCclients"
+CS.CNCclient.createClients()
+# create the EDEN clients
 print "Create the EDENclients"
 CS.EDENclient.createClients()
 
