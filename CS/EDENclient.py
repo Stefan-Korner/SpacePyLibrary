@@ -31,6 +31,20 @@ class Client(EGSE.EDEN.Client):
     EGSE.EDEN.Client.__init__(self)
     self.hostName = hostName
     self.portNr = portNr
+  # ---------------------------------------------------------------------------
+  def connectLink(self):
+    """Connects link 1 to server (e.g. SCOE)"""
+    if self.connectToServer(self.hostName, self.portNr):
+      EGSE.IF.s_edenClientConfiguration.connected = True
+      UTIL.TASK.s_processingTask.notifyEDENconnected()
+    else:
+      LOG_ERROR("Connect link 1 failed", "EDEN")
+  # ---------------------------------------------------------------------------
+  def disconnectLink(self):
+    """Disconnects link 1 from server (e.g. SCOE)"""
+    self.disconnectFromServer()
+    EGSE.IF.s_edenClientConfiguration.connected = False
+    UTIL.TASK.s_processingTask.notifyEDENdisconnected()
 
 # =============================================================================
 class Client2(EGSE.EDEN.Client):
@@ -42,6 +56,20 @@ class Client2(EGSE.EDEN.Client):
     EGSE.EDEN.Client.__init__(self)
     self.hostName = hostName
     self.portNr = portNr
+  # ---------------------------------------------------------------------------
+  def connectLink(self):
+    """Connects link 2 to server (e.g. SCOE)"""
+    if self.connectToServer(self.hostName, self.portNr):
+      EGSE.IF.s_edenClientConfiguration.connected2 = True
+      UTIL.TASK.s_processingTask.notifyEDEN2connected()
+    else:
+      LOG_ERROR("Connect link 2 failed", "EDEN")
+  # ---------------------------------------------------------------------------
+  def disconnectLink(self):
+    """Disconnects link 2 from server (e.g. SCOE)"""
+    self.disconnectFromServer()
+    EGSE.IF.s_edenClientConfiguration.connected2 = False
+    UTIL.TASK.s_processingTask.notifyEDEN2disconnected()
 
 ####################
 # global variables #
@@ -60,11 +88,47 @@ def createClients():
   global s_client, s_client2
   edenHost = EGSE.IF.s_edenClientConfiguration.edenHost
   if edenHost == "":
-    # no EDEN connection configured
-    LOG_INFO
+    LOG_INFO("no EDEN connection configured", "EDEN")
+    return
   edenPort = int(EGSE.IF.s_edenClientConfiguration.edenPort)
   s_client = Client(edenHost, edenPort)
   edenPort2 = int(EGSE.IF.s_edenClientConfiguration.edenPort2)
   if edenPort2 > 0:
     # there is a second EDEN connection configured
     s_client2 = Client2(edenHost, edenPort2)
+# -----------------------------------------------------------------------------
+def connectEDEN():
+  """Connect EDEN link 1"""
+  LOG_INFO("Connect EDEN link 1", "EDEN")
+  if EGSE.IF.s_edenClientConfiguration.edenHost == "" or \
+     EGSE.IF.s_edenClientConfiguration.edenPort == "-1":
+    LOG_ERROR("no EDEN link 1 configured", "EDEN")
+    return
+  s_client.connectLink()
+# -----------------------------------------------------------------------------
+def disconnectEDEN():
+  """Disonnect EDEN link 1"""
+  LOG_INFO("Disonnect EDEN link 1", "EDEN")
+  if EGSE.IF.s_edenClientConfiguration.edenHost == "" or \
+     EGSE.IF.s_edenClientConfiguration.edenPort == "-1":
+    LOG_ERROR("no EDEN TC link 1 configured", "EDEN")
+    return
+  s_client.disconnectLink()
+# -----------------------------------------------------------------------------
+def connectEDEN2():
+  """Connect EDEN link 2"""
+  LOG_INFO("Connect EDEN link 2", "EDEN")
+  if EGSE.IF.s_edenClientConfiguration.edenHost == "" or \
+     EGSE.IF.s_edenClientConfiguration.edenPort2 == "-1":
+    LOG_ERROR("no EDEN link 2 configured", "EDEN")
+    return
+  s_client2.connectLink()
+# -----------------------------------------------------------------------------
+def disconnectEDEN2():
+  """Disonnect EDEN link 2"""
+  LOG_INFO("Disonnect EDEN link 2", "EDEN")
+  if EGSE.IF.s_edenClientConfiguration.edenHost == "" or \
+     EGSE.IF.s_edenClientConfiguration.edenPort2 == "-1":
+    LOG_ERROR("no EDEN link 2 configured", "EDEN")
+    return
+  s_client2.disconnectLink()

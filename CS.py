@@ -37,7 +37,7 @@ import UTIL.SYS, UTIL.TCO, UTIL.TASK
 SYS_CONFIGURATION = [
   ["CNC_HOST", "127.0.0.1"],
   ["CNC_SERVER_PORT", "48569"],
-  ["CNC_SERVER_PORT2", "-1"],
+  ["CNC_SERVER_PORT2", "48570"],
   ["EDEN_HOST", "127.0.0.1"],
   ["EDEN_SERVER_PORT", "48569"],
   ["EDEN_SERVER_PORT2", "-1"],
@@ -174,50 +174,74 @@ class ModelTask(UTIL.TASK.ProcessingTask):
   def connectCNCcmd(self, argv):
     """Decoded connectCNC command"""
     self.logMethod("connectCNCcmd", "CNC")
-    # notify the GUI
-    self.notifyGUItask("CNC_CONNECTED")
+    CS.CNCclient.connectCNC()
   # ---------------------------------------------------------------------------
   def disconnectCNCcmd(self, argv):
     """Decoded disconnectCNC command"""
     self.logMethod("disconnectCNCcmd", "CNC")
-    # notify the GUI
-    self.notifyGUItask("CNC_DISCONNECTED")
+    CS.CNCclient.disconnectCNC()
   # ---------------------------------------------------------------------------
   def connectCNC2cmd(self, argv):
     """Decoded connectCNC2 command"""
     self.logMethod("connectCNC2cmd", "CNC")
-    # notify the GUI
-    self.notifyGUItask("CNC2_CONNECTED")
+    CS.CNCclient.connectCNC2()
   # ---------------------------------------------------------------------------
   def disconnectCNC2cmd(self, argv):
     """Decoded disconnectCNC2 command"""
     self.logMethod("disconnectCNC2cmd", "CNC")
-    # notify the GUI
-    self.notifyGUItask("CNC2_DISCONNECTED")
+    CS.CNCclient.disconnectCNC2()
   # ---------------------------------------------------------------------------
   def connectEDENcmd(self, argv):
     """Decoded connectEDEN command"""
     self.logMethod("connectEDENcmd", "EDEN")
-    # notify the GUI
-    self.notifyGUItask("EDEN_CONNECTED")
+    CS.EDENclient.connectEDEN()
   # ---------------------------------------------------------------------------
   def disconnectEDENcmd(self, argv):
     """Decoded disconnectEDEN command"""
     self.logMethod("disconnectEDENcmd", "EDEN")
-    # notify the GUI
-    self.notifyGUItask("EDEN_DISCONNECTED")
+    CS.EDENclient.disconnectEDEN()
   # ---------------------------------------------------------------------------
   def connectEDEN2cmd(self, argv):
     """Decoded connectEDEN2 command"""
     self.logMethod("connectEDEN2cmd", "EDEN")
-    # notify the GUI
-    self.notifyGUItask("EDEN2_CONNECTED")
+    CS.EDENclient.connectEDEN2()
   # ---------------------------------------------------------------------------
   def disconnectEDEN2cmd(self, argv):
     """Decoded disconnectEDEN2 command"""
     self.logMethod("disconnectEDEN2cmd", "EDEN")
-    # notify the GUI
-    self.notifyGUItask("EDEN2_DISCONNECTED")
+    CS.EDENclient.disconnectEDEN2()
+  # ---------------------------------------------------------------------------
+  def notifyCNCconnected(self):
+    """CNC connection established"""
+    self.notifyGUItask("CNC_CONNECTED")
+  # ---------------------------------------------------------------------------
+  def notifyCNCdisconnected(self):
+    """CNC connection terminated"""
+    self.notifyGUItask("CNC_DISCONNECTED")
+  # ---------------------------------------------------------------------------
+  def notifyCNC2connected(self):
+    """CNC 2nd connection established"""
+    self.notifyGUItask("CNC2_CONNECTED")
+  # ---------------------------------------------------------------------------
+  def notifyCNC2disconnected(self):
+    """CNC 2nd connection terminated"""
+    self.notifyGUItask("CNC2_DISCONNECTED")
+  # ---------------------------------------------------------------------------
+  def notifyEDENconnected(self):
+    """EDEN connection established"""
+    self.notifyGUItask("EDEN_CONNECTED")
+  # ---------------------------------------------------------------------------
+  def notifyEDENdisconnected(self):
+    """EDEN connection terminated"""
+    self.notifyGUItask("EDEN_DISCONNECTED")
+  # ---------------------------------------------------------------------------
+  def notifyEDEN2connected(self):
+    """EDEN 2nd connection established"""
+    self.notifyGUItask("EDEN_CONNECTED")
+  # ---------------------------------------------------------------------------
+  def notifyEDEN2disconnected(self):
+    """EDEN 2nd connection terminated"""
+    self.notifyGUItask("EDEN_DISCONNECTED")
 
 #############
 # functions #
