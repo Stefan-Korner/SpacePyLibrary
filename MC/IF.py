@@ -31,8 +31,28 @@ class Configuration(object):
     """Dumps the status of the configuration attributes"""
     LOG_INFO("Monitoring an Control configuration", "CFG")
 
+# =============================================================================
+class TMmodel(object):
+  """Telemetry model"""
+  # ---------------------------------------------------------------------------
+  def pushTMpacket(self, tmPacketDu, ertUTC):
+    """consumes a telemetry packet"""
+    pass
+
+# =============================================================================
+class TCmodel(object):
+  """Telecommand model"""
+  # ---------------------------------------------------------------------------
+  def pushTCpacket(self, tcPacketDu):
+    """consumes a telecommand packet"""
+    pass
+
 ####################
 # global variables #
 ####################
 # configuration is a singleton
 s_configuration = None
+# telemetry model is a singleton
+s_tmModel = None
+# telecommand model is a singleton
+s_tcModel = None

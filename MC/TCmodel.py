@@ -10,6 +10,31 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT License    *
 # for more details.                                                           *
 #******************************************************************************
-# Monitoring and Control (M&C)                                                *
+# Monitoring and Control (M&C) - Telecommand Model                            *
 #******************************************************************************
-__all__ = ["IF", "TCmodel", "TMmodel"]
+from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import MC.IF
+
+###########
+# classes #
+###########
+# =============================================================================
+class TCmodel(MC.IF.TCmodel):
+  """Implementation of the telecommand model"""
+  # ---------------------------------------------------------------------------
+  def __init__(self):
+    """Initialise attributes only"""
+  # ---------------------------------------------------------------------------
+  def pushTCpacket(self, tcPacketDu):
+    """
+    consumes a telecommand packet:
+    implementation of MC.IF.TCmodel.pushTCpacket
+    """
+    LOG_INFO("pushTCpacket", "TC")
+
+#############
+# functions #
+#############
+def init():
+  # initialise singleton(s)
+  MC.IF.s_tcModel = TCmodel()
