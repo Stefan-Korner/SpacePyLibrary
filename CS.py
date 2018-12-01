@@ -26,7 +26,7 @@ import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CS.CNCclient, CS.CNCgui, CS.EDENclient, CS.EDENgui, CS.FRAMEgui, CS.NCTRSgui
 import EGSE.IF
-import MC.IF
+import MC.IF, MC.TCmodel, MC.TMmodel
 import MCUI.CFGgui, MCUI.TMgui, MCUI.TCgui
 import UI.TKI
 import UTIL.SYS, UTIL.TCO, UTIL.TASK
@@ -335,6 +335,12 @@ CS.CNCclient.createClients()
 # create the EDEN clients
 print("Create the EDENclients")
 CS.EDENclient.createClients()
+# create the TC model
+print("Create the TC model")
+MC.TCmodel.init()
+# create the TM model
+print("Create the TM model")
+MC.TMmodel.init()
 
 # start the tasks
 print("start modelTask...")
