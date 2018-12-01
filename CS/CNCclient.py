@@ -16,7 +16,7 @@
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import EGSE.CNC, EGSE.IF
-import UTIL.SYS
+import UTIL.SYS, UTIL.TASK
 
 ###########
 # classes #
@@ -32,6 +32,20 @@ class TCclient(EGSE.CNC.TCclient):
     EGSE.CNC.TCclient.__init__(self)
     self.hostName = hostName
     self.portNr = portNr
+  # ---------------------------------------------------------------------------
+  def connectTClink(self):
+    """Connects TC link to server (e.g. SCOE)"""
+    if self.connectToServer(self.hostName, self.portNr):
+      EGSE.IF.s_cncClientConfiguration.connected = True
+      UTIL.TASK.s_processingTask.notifyCNCconnected()
+    else:
+      LOG_ERROR("Connect TC link failed", "CNC")
+  # ---------------------------------------------------------------------------
+  def disconnectTClink(self):
+    """Disconnects TC link from server (e.g. SCOE)"""
+    self.disconnectFromServer()
+    EGSE.IF.s_cncClientConfiguration.connected = False
+    UTIL.TASK.s_processingTask.notifyCNCdisconnected()
 
 # =============================================================================
 class TMclient(EGSE.CNC.TMclient):
@@ -43,6 +57,20 @@ class TMclient(EGSE.CNC.TMclient):
     EGSE.CNC.TMclient.__init__(self)
     self.hostName = hostName
     self.portNr = portNr
+  # ---------------------------------------------------------------------------
+  def connectTMlink(self):
+    """Connects TM link to server (e.g. SCOE)"""
+    if self.connectToServer(self.hostName, self.portNr):
+      EGSE.IF.s_cncClientConfiguration.connected2 = True
+      UTIL.TASK.s_processingTask.notifyCNC2connected()
+    else:
+      LOG_ERROR("Connect TM link failed", "CNC")
+  # ---------------------------------------------------------------------------
+  def disconnectTMlink(self):
+    """Disconnects TM link from server (e.g. SCOE)"""
+    self.disconnectFromServer()
+    EGSE.IF.s_cncClientConfiguration.connected2 = False
+    UTIL.TASK.s_processingTask.notifyCNC2disconnected()
 
 ####################
 # global variables #
@@ -61,9 +89,45 @@ def createClients():
   global s_client, s_client2
   cncHost = EGSE.IF.s_cncClientConfiguration.cncHost
   if cncHost == "":
-    # no CNC connection configured
-    LOG_INFO
+    LOG_INFO("no CNC connection configured", "CNC")
+    return
   cncPort = int(EGSE.IF.s_cncClientConfiguration.cncPort)
   s_client = TCclient(cncHost, cncPort)
   cncPort2 = int(EGSE.IF.s_cncClientConfiguration.cncPort2)
   s_client2 = TMclient(cncHost, cncPort2)
+# -----------------------------------------------------------------------------
+def connectCNC():
+  """Connect CNC TC link"""
+  LOG_INFO("Connect CNC TC link", "CNC")
+  if EGSE.IF.s_cncClientConfiguration.cncHost == "" or \
+     EGSE.IF.s_cncClientConfiguration.cncPort == "-1":
+    LOG_ERROR("no CNC TC link configured", "CNC")
+    return
+  s_client.connectTClink()
+# -----------------------------------------------------------------------------
+def disconnectCNC():
+  """Disonnect CNC TC link"""
+  LOG_INFO("Disonnect CNC TC link", "CNC")
+  if EGSE.IF.s_cncClientConfiguration.cncHost == "" or \
+     EGSE.IF.s_cncClientConfiguration.cncPort == "-1":
+    LOG_ERROR("no CNC TC link configured", "CNC")
+    return
+  s_client.disconnectTClink()
+# -----------------------------------------------------------------------------
+def connectCNC2():
+  """Connect CNC TM link"""
+  LOG_INFO("Connect CNC TM link", "CNC")
+  if EGSE.IF.s_cncClientConfiguration.cncHost == "" or \
+     EGSE.IF.s_cncClientConfiguration.cncPort2 == "-1":
+    LOG_ERROR("no CNC TM link configured", "CNC")
+    return
+  s_client2.connectTMlink()
+# -----------------------------------------------------------------------------
+def disconnectCNC2():
+  """Disonnect CNC TM link"""
+  LOG_INFO("Disonnect CNC TM link", "CNC")
+  if EGSE.IF.s_cncClientConfiguration.cncHost == "" or \
+     EGSE.IF.s_cncClientConfiguration.cncPort2 == "-1":
+    LOG_ERROR("no CNC TM link configured", "CNC")
+    return
+  s_client2.disconnectTMlink()
