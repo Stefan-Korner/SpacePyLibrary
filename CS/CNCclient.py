@@ -15,7 +15,9 @@
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import CCSDS.PACKET
 import EGSE.CNC, EGSE.IF
+import MC.IF
 import UTIL.SYS, UTIL.TASK
 
 ###########
@@ -46,6 +48,11 @@ class TCclient(EGSE.CNC.TCclient):
     self.disconnectFromServer()
     EGSE.IF.s_cncClientConfiguration.connected = False
     UTIL.TASK.s_processingTask.notifyCNCdisconnected()
+  # ---------------------------------------------------------------------------
+  def notifyCNCresponse(self, cncTMpacketDU):
+    """CnC response received: overloaded from EGSE.CNC.TCclient"""
+    LOG_INFO("notifyCNCresponse: message = " + cncTMpacketDU.getCNCmessage(), "CNC")
+    MC.IF.s_tmModel.pushTMpacket(cncTMpacketDU, None)
 
 # =============================================================================
 class TMclient(EGSE.CNC.TMclient):
@@ -71,6 +78,12 @@ class TMclient(EGSE.CNC.TMclient):
     self.disconnectFromServer()
     EGSE.IF.s_cncClientConfiguration.connected2 = False
     UTIL.TASK.s_processingTask.notifyCNC2disconnected()
+  # ---------------------------------------------------------------------------
+  def notifyTMpacket(self, tmPacket):
+    """TM packet received: overloaded from EGSE.CNC.TMclient"""
+    LOG_INFO("notifyTMpacket", "CNC")
+    tmPacketDu = CCSDS.PACKET.TMpacket(tmPacket)
+    MC.IF.s_tmModel.pushTMpacket(tmPacketDu, None)
 
 ####################
 # global variables #

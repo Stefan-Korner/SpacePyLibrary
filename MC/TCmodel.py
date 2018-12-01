@@ -31,6 +31,7 @@ class TCmodel(MC.IF.TCmodel):
     implementation of MC.IF.TCmodel.pushTCpacket
     """
     LOG_INFO("pushTCpacket", "TC")
+    LOG("PUS Packet:" + UTIL.DU.array2str(tmPacketDu.getBufferString()[0:min(16,len(tmPacketDu))]), "TC")
 
 #############
 # functions #

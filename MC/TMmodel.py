@@ -14,6 +14,7 @@
 #******************************************************************************
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import MC.IF
+import UTIL.DU
 
 ###########
 # classes #
@@ -31,6 +32,7 @@ class TMmodel(MC.IF.TMmodel):
     implementation of MC.IF.TMmodel.pushTMpacket
     """
     LOG_INFO("pushTMpacket", "TM")
+    LOG("TM Packet:" + UTIL.DU.array2str(tmPacketDu.getBufferString()[0:min(16,len(tmPacketDu))]), "TM")
 
 #############
 # functions #
