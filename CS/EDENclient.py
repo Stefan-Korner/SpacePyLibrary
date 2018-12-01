@@ -15,8 +15,10 @@
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import CCSDS.PACKET
 import EGSE.EDEN, EGSE.IF
-import UTIL.SYS
+import MC.IF
+import UTIL.SYS, UTIL.TASK
 
 ###########
 # classes #
@@ -45,6 +47,16 @@ class Client(EGSE.EDEN.Client):
     self.disconnectFromServer()
     EGSE.IF.s_edenClientConfiguration.connected = False
     UTIL.TASK.s_processingTask.notifyEDENdisconnected()
+  # ---------------------------------------------------------------------------
+  def notifyTmSpace(self, tmPacket):
+    """(TM,SPACE) received: overloaded from EGSE.EDEN.Client"""
+    tmPacketDu = CCSDS.PACKET.TMpacket(tmPacket)
+    MC.IF.s_tmModel.pushTMpacket(tmPacketDu, None)
+  # ---------------------------------------------------------------------------
+  def notifyTmScoe(self, tmPacket):
+    """(TM,SCOE) received: overloaded from EGSE.EDEN.Client"""
+    tmPacketDu = CCSDS.PACKET.TMpacket(tmPacket)
+    MC.IF.s_tmModel.pushTMpacket(tmPacketDu, None)
 
 # =============================================================================
 class Client2(EGSE.EDEN.Client):
@@ -70,6 +82,16 @@ class Client2(EGSE.EDEN.Client):
     self.disconnectFromServer()
     EGSE.IF.s_edenClientConfiguration.connected2 = False
     UTIL.TASK.s_processingTask.notifyEDEN2disconnected()
+  # ---------------------------------------------------------------------------
+  def notifyTmSpace(self, tmPacket):
+    """(TM,SPACE) received: overloaded from EGSE.EDEN.Client"""
+    tmPacketDu = CCSDS.PACKET.TMpacket(tmPacket)
+    MC.IF.s_tmModel.pushTMpacket(tmPacketDu, None)
+  # ---------------------------------------------------------------------------
+  def notifyTmScoe(self, tmPacket):
+    """(TM,SCOE) received: overloaded from EGSE.EDEN.Client"""
+    tmPacketDu = CCSDS.PACKET.TMpacket(tmPacket)
+    MC.IF.s_tmModel.pushTMpacket(tmPacketDu, None)
 
 ####################
 # global variables #
