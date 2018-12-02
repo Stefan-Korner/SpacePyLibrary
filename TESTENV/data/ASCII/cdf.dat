@@ -1,0 +1,64 @@
+PUSCMD01	E	Bit Parameter 1	1	1	0	PAR1	R	0	
+PUSCMD01	E	Bit Parameter 2	1	2	0	PAR2	R	0	
+PUSCMD01	E	Bit Parameter 3	1	3	0	PAR3	R	0	
+PUSCMD01	E	Bit Parameter 4	1	4	0	PAR4	R	0	
+PUSCMD01	E	Bit Parameter 5	1	5	0	PAR5	R	0	
+PUSCMD01	E	Bit Parameter 6	1	6	0	PAR6	R	0	
+PUSCMD01	E	Bit Parameter 7	1	7	0	PAR7	R	0	
+PUSCMD01	E	Bit Parameter 8	1	8	0	PAR8	R	0	
+PUSCMD01	E	Unsigned Integer Parameter	32	9	0	PAR9	R	0	
+PUSCMD01	E	String Parameter	64	10	0	PAR10	R	........	
+PUSCMD02	E	Bit Parameter 1	1	1	0	PAR1	R	0	
+PUSCMD02	E	Bit Parameter 2	1	2	0	PAR2	R	0	
+PUSCMD02	E	Bit Parameter 3	1	3	0	PAR3	R	0	
+PUSCMD02	E	Bit Parameter 4	1	4	0	PAR4	R	0	
+PUSCMD02	E	Bit Parameter 5	1	5	0	PAR5	R	0	
+PUSCMD02	E	Bit Parameter 6	1	6	0	PAR6	R	0	
+PUSCMD02	E	Bit Parameter 7	1	7	0	PAR7	R	0	
+PUSCMD02	E	Bit Parameter 8	1	8	0	PAR8	R	0	
+PUSCMD02	E	Unsigned Integer Parameter	32	9	0	PAR9	R	0	
+PUSCMD02	E	String Parameter	64	10	0	PAR10	R	........	
+TXTCMD01	F	Command	0	0	0	Command	R	ABORT	
+TXTCMD02	F	Command	0	0	0	Command	R	ACK_SAFETY	
+TXTCMD03	F	Command	0	0	0	Command	R	APPLY	
+TXTCMD03	F	Blank	0	8	0	Blank	R	32	
+TXTCMD03	E	Params	0	16	0	Params	R		
+TXTCMD04	F	Command	0	0	0	Command	R	CHARGE	
+TXTCMD04	F	Blank	0	8	0	Blank	R	32	
+TXTCMD04	E	Params	0	16	0	Params	R		
+TXTCMD05	F	Command	0	0	0	Command	R	ERROR	
+TXTCMD05	F	Blank	0	8	0	Blank	R	32	
+TXTCMD05	E	Params	0	16	0	Params	R		
+TXTCMD06	F	Command	0	0	0	Command	R	GETTM	
+TXTCMD06	F	Blank	0	8	0	Blank	R	32	
+TXTCMD06	E	Params	0	16	0	Params	R		
+TXTCMD07	F	Command	0	0	0	Command	R	MESSAGE	
+TXTCMD07	F	Blank	0	8	0	Blank	R	32	
+TXTCMD07	E	Params	0	16	0	Params	R		
+TXTCMD08	F	Command	0	0	0	Command	R	OFFLINE	
+TXTCMD08	F	Blank	0	8	0	Blank	R	32	
+TXTCMD08	E	Params	0	16	0	Params	R		
+TXTCMD09	F	Command	0	0	0	Command	R	ONLINE	
+TXTCMD09	F	Blank	0	8	0	Blank	R	32	
+TXTCMD09	E	Params	0	16	0	Params	R		
+TXTCMD10	F	Command	0	0	0	Command	R	REPORTPARA	
+TXTCMD10	F	Blank	0	8	0	Blank	R	32	
+TXTCMD10	E	Params	0	16	0	Params	R		
+TXTCMD11	F	Command	0	0	0	Command	R	RESET	
+TXTCMD11	F	Blank	0	8	0	Blank	R	32	
+TXTCMD11	E	Params	0	16	0	Params	R		
+TXTCMD12	F	Command	0	0	0	Command	R	SET	
+TXTCMD12	F	Blank	0	8	0	Blank	R	32	
+TXTCMD12	E	Params	0	16	0	Params	R		
+TXTCMD13	F	Command	0	0	0	Command	R	STRAP	
+TXTCMD13	F	Blank	0	8	0	Blank	R	32	
+TXTCMD13	E	Params	0	16	0	Params	R		
+TXTCMD14	F	Command	0	0	0	Command	R	TEST	
+TXTCMD14	F	Blank	0	8	0	Blank	R	32	
+TXTCMD14	E	Params	0	16	0	Params	R		
+TXTCMD15	F	Command	0	0	0	Command	R	TRANSFER	
+TXTCMD15	F	Blank	0	8	0	Blank	R	32	
+TXTCMD15	E	Params	0	16	0	Params	R		
+TXTCMD16	F	Command	0	0	0	Command	R	UPDATE	
+TXTCMD16	F	Blank	0	8	0	Blank	R	32	
+TXTCMD16	E	Params	0	16	0	Params	R		

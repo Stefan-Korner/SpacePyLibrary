@@ -1,0 +1,13 @@
+PAR1	Bit Parameter 1	2	1	U	D		N				R	0	N	
+PAR2	Bit Parameter 2	2	1	U	D		N				R	0	N	
+PAR3	Bit Parameter 3	2	1	U	D		N				R	0	N	
+PAR4	Bit Parameter 4	2	1	U	D		N				R	0	N	
+PAR5	Bit Parameter 5	2	1	U	D		N				R	0	N	
+PAR6	Bit Parameter 6	2	1	U	D		N				R	0	N	
+PAR7	Bit Parameter 7	2	1	U	D		N				R	0	N	
+PAR8	Bit Parameter 8	2	1	U	D		N				R	0	N	
+PAR9	Unsigned Integer Parameter	3	14	U	D		N				R	0	N	
+PAR10	String Parameter	8	8	U	D		N				R	........	N	
+Command	Command name	8	0	A			N				R		N		
+Blank	Command and parameters delimiter	3	4	A	D		N				R	32	N		
+Params	Parameters	8	0	A			N				R		N		
