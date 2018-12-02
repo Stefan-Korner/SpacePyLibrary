@@ -137,6 +137,32 @@ class PLFrecord:
     """record key"""
     return self.plfName
 
+# =============================================================================
+class CCFrecord:
+  """MIB record from ccf.dat"""
+  # ---------------------------------------------------------------------------
+  def __init__(self, fields):
+    """initialise selected attributes from the record"""
+    self.ccfCName = fields[0]
+    self.ccfDescr = fields[1]
+    self.ccfDescr2 = fields[2]
+    ccfType = fields[6]
+    if ccfType == "":
+      self.ccfType = -1
+    else:
+      self.ccfType = int(ccfType)
+    ccfSType = fields[7]
+    if ccfSType == "":
+      self.ccfSType = -1
+    else:
+      self.ccfSType = int(ccfSType)
+    self.ccfAPID = int(fields[8])
+    self.ccfNPars = int(fields[9])
+  # ---------------------------------------------------------------------------
+  def key(self):
+    """record key"""
+    return self.ccfCName
+
 #############
 # functions #
 #############
@@ -153,6 +179,8 @@ def getMinFieldNr(tableName):
     return 6
   if tableName == "plf.dat":
     return 6
+  if tableName == "ccf.dat":
+    return 6
   raise Exception("invalid table name: " + tableName)
 
 # -----------------------------------------------------------------------------
@@ -168,6 +196,8 @@ def createRecord(tableName, fields):
     return PCFrecord(fields)
   if tableName == "plf.dat":
     return PLFrecord(fields)
+  if tableName == "ccf.dat":
+    return CCFrecord(fields)
   raise Exception("invalid table name: " + tableName)
 
 # -----------------------------------------------------------------------------

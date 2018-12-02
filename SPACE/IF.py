@@ -370,6 +370,45 @@ class TMpacketInjectData(object):
       if (len(param) > 0) and (len(value) > 0):
         self.parameterValuesList.append([param,value])
 
+# =============================================================================
+class TCpktDef(object):
+  """Contains the most important definition data of a TC packet"""
+  # ---------------------------------------------------------------------------
+  def __init__(self):
+    self.pktName = None
+    self.pktDescr = None
+    self.pktDescr2 = None
+    self.pktAPID = None
+    self.pktType = None
+    self.pktSType = None
+  # ---------------------------------------------------------------------------
+  def __cmp__(self, other):
+    """supports sorting by SPID"""
+    if other == None:
+      return 1
+    if self.pktName > other.pktName:
+      return 1
+    if self.pktName < other.pktName:
+      return -1
+    return 0
+  # ---------------------------------------------------------------------------
+  def __lt__(self, other):
+    """compares if self < other"""
+    if other == None:
+      return False
+    return (self.pktName < other.pktName)
+  # ---------------------------------------------------------------------------
+  def __str__(self):
+    """string representation"""
+    retVal = "\n"
+    retVal += " pktName = " + str(self.pktName) + "\n"
+    retVal += " pktDescr = " + str(self.pktDescr) + "\n"
+    retVal += " pktDescr2 = " + str(self.pktDescr2) + "\n"
+    retVal += " pktAPID = " + str(self.pktAPID) + "\n"
+    retVal += " pktType = " + str(self.pktType) + "\n"
+    retVal += " pktSType = " + str(self.pktSType) + "\n"
+    return retVal
+
 ##############
 # interfaces #
 ##############
@@ -421,6 +460,14 @@ class Definitions(object):
                                   dataField=None,
                                   segmentationFlags=CCSDS.PACKET.UNSEGMENTED):
     """returns the data that are used for packet injection"""
+    pass
+  # ---------------------------------------------------------------------------
+  def getTCpktDefByIndex(self, index):
+    """returns a TC packet definition"""
+    pass
+  # ---------------------------------------------------------------------------
+  def getTCpktDefByName(self, name):
+    """returns a TC packet definition"""
     pass
 
 # =============================================================================
