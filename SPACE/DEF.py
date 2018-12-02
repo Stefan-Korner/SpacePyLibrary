@@ -34,6 +34,8 @@ class DefinitionData(object):
     self.tmPktDefsSpidMap = None
     self.tmPktSpidNameMap = None
     self.tmParamDefs = None
+    self.tcPktDefs = None
+    self.tcPktDefsNameMap = None
 
 # =============================================================================
 class DefinitionsImpl(SPACE.IF.Definitions):
@@ -211,7 +213,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
       tmPktDefs.append(tmPktDef)
       tmPktDefsSpidMap[spid] = tmPktDef
       tmPktSpidNameMap[pktName] = spid
-      LOG("packet " + pktName + "(" + str(spid) + "), " + statusMessage, "SPACE")
+      LOG("TM packet " + pktName + "(" + str(spid) + "), " + statusMessage, "SPACE")
     tmPktDefs.sort()
     # step 2) create parameter definitions
     # pcfMap is the driving map for the join
@@ -233,6 +235,32 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     self.definitionData.tmPktSpidNameMap = tmPktSpidNameMap
     self.definitionData.tmParamDefs = tmParamDefs
   # ---------------------------------------------------------------------------
+  def createTCpktDef(self, ccfRecord):
+    """creates a TM packet definition"""
+    tcPktDef = SPACE.IF.TCpktDef();
+    tcPktDef.pktName = ccfRecord.ccfCName
+    tcPktDef.pktDescr = ccfRecord.ccfDescr
+    tcPktDef.pktDescr2 = ccfRecord.ccfDescr2
+    tcPktDef.pktAPID = ccfRecord.ccfAPID
+    tcPktDef.pktType = ccfRecord.ccfType
+    tcPktDef.pktSType = ccfRecord.ccfSType
+    return tcPktDef
+  # ---------------------------------------------------------------------------
+  def createTCdefinitions(self, ccfMap):
+    """helper method: create TC packet and parameter definitions from MIB tables"""
+    tcPktDefs = []
+    tcPktDefsNameMap = {}
+    # step 1) create packet definitions
+    for cName, ccfRecord in ccfMap.items():
+      tcPktDef = self.createTCpktDef(ccfRecord)
+      pktName = tcPktDef.pktName
+      tcPktDefs.append(tcPktDef)
+      tcPktDefsNameMap[pktName] = tcPktDef
+      LOG("TC packet " + pktName + "(" + str(tcPktDef.pktAPID) + "," + str(tcPktDef.pktType) + "," + str(tcPktDef.pktSType) + ")", "SPACE")
+    tcPktDefs.sort()
+    self.definitionData.tcPktDefs = tcPktDefs
+    self.definitionData.tcPktDefsNameMap = tcPktDefsNameMap
+  # ---------------------------------------------------------------------------
   def createDefinitions(self):
     """
     creates the definition data:
@@ -245,7 +273,9 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     tpcfMap = SCOS.MIB.readTable("tpcf.dat")
     pcfMap = SCOS.MIB.readTable("pcf.dat")
     plfMap = SCOS.MIB.readTable("plf.dat", uniqueKeys=False)
+    ccfMap = SCOS.MIB.readTable("ccf.dat")
     self.createTMdefinitions(pidMap, picMap, tpcfMap, pcfMap, plfMap)
+    self.createTCdefinitions(ccfMap)
     d = time.localtime()
     self.definitionData.creationTime = "%04d.%02d.%02d %02d:%02d:%02d" % d[:6]
     # save the definitions
@@ -368,6 +398,28 @@ class DefinitionsImpl(SPACE.IF.Definitions):
                                        values,
                                        dataField,
                                        segmentationFlags)
+  # ---------------------------------------------------------------------------
+  def getTCpktDefByIndex(self, index):
+    """
+    returns a TC packet definition:
+    implementation of SPACE.IF.Definitions.getTCpktDefByIndex
+    """
+    # load or initialise on demand
+    self.initDefinitions()
+    if index < 0 or index > len(self.definitionData.tcPktDefs):
+      return None
+    return self.definitionData.tcPktDefs[index]
+  # ---------------------------------------------------------------------------
+  def getTCpktDefByName(self, name):
+    """
+    returns a TC packet definition:
+    implementation of SPACE.IF.Definitions.getTCpktDefByName
+    """
+    # load or initialise on demand
+    self.initDefinitions()
+    if name in self.definitionData.tcPktDefsNameMap:
+      return self.definitionData.tcPktDefsNameMap[name]
+    return None
 
 #############
 # functions #

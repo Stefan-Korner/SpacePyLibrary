@@ -28,6 +28,7 @@ import CS.CNCclient, CS.CNCgui, CS.EDENclient, CS.EDENgui, CS.FRAMEgui, CS.NCTRS
 import EGSE.IF
 import MC.IF, MC.TCmodel, MC.TMmodel
 import MCUI.CFGgui, MCUI.TMgui, MCUI.TCgui
+import SPACE.DEF, SPACE.IF
 import UI.TKI
 import UTIL.SYS, UTIL.TCO, UTIL.TASK
 
@@ -329,6 +330,9 @@ if cmdPrompt:
   print("register console handler...")
   modelTask.registerConsoleHandler(requestHandler)
 
+# initialise singletons
+SPACE.DEF.init()
+
 # create the CNC clients
 print("Create the CNCclients")
 CS.CNCclient.createClients()
@@ -341,6 +345,11 @@ MC.TCmodel.init()
 # create the TM model
 print("Create the TM model")
 MC.TMmodel.init()
+
+# load the definition data
+print("load definition data (take some time) ...")
+SPACE.IF.s_definitions.initDefinitions()
+print("definition data loaded")
 
 # start the tasks
 print("start modelTask...")
