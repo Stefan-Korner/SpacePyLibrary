@@ -399,6 +399,15 @@ class DefinitionsImpl(SPACE.IF.Definitions):
                                        dataField,
                                        segmentationFlags)
   # ---------------------------------------------------------------------------
+  def getTCpktDefs(self):
+    """
+    returns the TC packet definitions:
+    implementation of SPACE.IF.Definitions.getTCpktDefs
+    """
+    # load or initialise on demand
+    self.initDefinitions()
+    return self.definitionData.tcPktDefs
+  # ---------------------------------------------------------------------------
   def getTCpktDefByIndex(self, index):
     """
     returns a TC packet definition:
