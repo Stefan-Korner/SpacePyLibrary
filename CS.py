@@ -257,6 +257,8 @@ class ModelTask(UTIL.TASK.ProcessingTask):
   def notifyCNCconnected(self):
     """CNC connection established"""
     self.notifyGUItask("CNC_CONNECTED")
+    MC.IF.s_configuration.connected = True
+    self.notifyGUItask("TC_CONNECTED")
   # ---------------------------------------------------------------------------
   def notifyCNCdisconnected(self):
     """CNC connection terminated"""
@@ -273,6 +275,8 @@ class ModelTask(UTIL.TASK.ProcessingTask):
   def notifyEDENconnected(self):
     """EDEN connection established"""
     self.notifyGUItask("EDEN_CONNECTED")
+    MC.IF.s_configuration.connected = True
+    self.notifyGUItask("TC_CONNECTED")
   # ---------------------------------------------------------------------------
   def notifyEDENdisconnected(self):
     """EDEN connection terminated"""
@@ -281,6 +285,8 @@ class ModelTask(UTIL.TASK.ProcessingTask):
   def notifyEDEN2connected(self):
     """EDEN 2nd connection established"""
     self.notifyGUItask("EDEN_CONNECTED")
+    MC.IF.s_configuration.connected = True
+    self.notifyGUItask("TC_CONNECTED")
   # ---------------------------------------------------------------------------
   def notifyEDEN2disconnected(self):
     """EDEN 2nd connection terminated"""

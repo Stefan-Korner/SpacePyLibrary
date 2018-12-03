@@ -25,11 +25,17 @@ class Configuration(object):
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise the M&C relevant informations"""
-    pass
+    self.connected = False
+    self.tcPacketData = None
   # ---------------------------------------------------------------------------
   def dump(self):
     """Dumps the status of the configuration attributes"""
     LOG_INFO("Monitoring an Control configuration", "CFG")
+    LOG("Connected = " + str(self.connected), "CFG")
+    if self.tcPacketData == None:
+      LOG("No packet defined", "CFG")
+    else:
+      LOG("Packet = " + self.tcPacketData.pktName, "CFG")
 
 # =============================================================================
 class TMmodel(object):
