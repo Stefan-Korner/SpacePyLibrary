@@ -28,6 +28,7 @@ import CS.CNCclient, CS.CNCgui, CS.EDENclient, CS.EDENgui, CS.FRAMEgui, CS.NCTRS
 import EGSE.IF
 import MC.IF, MC.TCmodel, MC.TMmodel
 import MCUI.CFGgui, MCUI.TMgui, MCUI.TCgui
+import SCOS.ENV
 import SPACE.DEF, SPACE.IF
 import UI.TKI
 import UTIL.SYS, UTIL.TCO, UTIL.TASK
@@ -79,6 +80,10 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       retStatus = self.quitCmd(argv)
     elif (cmd == "U") or (cmd == "DUMPCONFIGURATION"):
       retStatus = self.dumpConfigurationCmd(argv)
+    elif (cmd == "L") or (cmd == "LISTPACKETS"):
+      retStatus = self.listPacketsCmd(argv)
+    elif (cmd == "G") or (cmd == "GENERATE"):
+      retStatus = self.generateCmd(argv)
     elif (cmd == "C1") or (cmd == "CONNECTCNC"):
       retStatus = self.connectCNCcmd(argv)
     elif (cmd == "D1") or (cmd == "DISCONNECTCNC"):
@@ -112,6 +117,8 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("h  | help ...............provides this information", "CFG")
     LOG("q  | quit ...............terminates SIM application", "CFG")
     LOG("u  | dumpConfiguration...dumps the configuration", "CFG")
+    LOG("l  | listPackets.........lists available packets", "CFG")
+    LOG("g  | generate............generates the testdata.sim file in testbin directory", "CFG")
     LOG_INFO("Available monitoring commands:", "TM")
     LOG("", "TM")
     LOG("x  | exit ...............terminates client connection (only for TCP/IP clients)", "TM")
@@ -170,6 +177,41 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     MC.IF.s_configuration.dump()
     EGSE.IF.s_cncClientConfiguration.dump()
     EGSE.IF.s_edenClientConfiguration.dump()
+    return True
+  # ---------------------------------------------------------------------------
+  def listPacketsCmd(self, argv):
+    """Decoded listPackets command"""
+    self.logMethod("listPacketsCmd", "CFG")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed", "CFG")
+      return False
+    # read the MIB 
+    try:
+      for tcPktDef in SPACE.IF.s_definitions.getTCpktDefs():
+        LOG(tcPktDef.pktName + " (" + str(tcPktDef.pktAPID) + "," + str(tcPktDef.pktType) + "," + str(tcPktDef.pktSType) + ") - " + tcPktDef.pktDescr, "CFG")
+    except Exception as ex:
+      LOG_ERROR("MIB Error: " + str(ex), "CFG")
+      return False
+    return True
+  # ---------------------------------------------------------------------------
+  def generateCmd(self, argv):
+    """Decoded generate command"""
+    self.logMethod("generateCmd", "CFG")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed", "CFG")
+      return False
+    # generate the testdata.sim file
+    definitionFileName = SCOS.ENV.s_environment.definitionFileName()
+    LOG("generate to " + definitionFileName, "CFG")
+    try:
+      # update the TM definitions to ensure an actual testdata.sim
+      SPACE.IF.s_definitions.createDefinitions()
+      LOG(definitionFileName + " generated", "CFG")
+    except Exception as ex:
+      LOG_ERROR("Generation Error: " + str(ex), "CFG")
+      return False
     return True
   # ---------------------------------------------------------------------------
   def connectCNCcmd(self, argv):

@@ -480,6 +480,10 @@ class Definitions(object):
     """returns the data that are used for packet injection"""
     pass
   # ---------------------------------------------------------------------------
+  def getTCpktDefs(self):
+    """returns the TC packet definitions"""
+    pass
+  # ---------------------------------------------------------------------------
   def getTCpktDefByIndex(self, index):
     """returns a TC packet definition"""
     pass
