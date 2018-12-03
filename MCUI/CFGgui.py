@@ -40,7 +40,7 @@ class GUIview(UI.TKI.GUIwinView):
                  row=0,
                  columnspan=2,
                  rowweight=0,
-                 sticky=tkinter.EW)
+                 sticky=Tkinter.EW)
     # log messages (default logger)
     self.messageLogger = UI.TKI.MessageLogger(self)
     self.appGrid(self.messageLogger, row=1, columnspan=2)
@@ -68,17 +68,17 @@ class GUIview(UI.TKI.GUIwinView):
     """Called when the ListPackets menu entry is selected"""
     # disable the button during generation,
     # because generation could take some time
-    self.menuButtons.setState("LIST", tkinter.DISABLED)
+    self.menuButtons.setState("LIST", Tkinter.DISABLED)
     self.notifyModelTask(["LISTPACKETS"])
-    self.menuButtons.setState("LIST", tkinter.NORMAL)
+    self.menuButtons.setState("LIST", Tkinter.NORMAL)
   # ---------------------------------------------------------------------------
   def generateCallback(self):
     """Called when the Generate menu entry is selected"""
     # disable the button during generation,
     # because generation could take some time
-    self.menuButtons.setState("GEN", tkinter.DISABLED)
+    self.menuButtons.setState("GEN", Tkinter.DISABLED)
     self.notifyModelTask(["GENERATE"])
-    self.menuButtons.setState("GEN", tkinter.NORMAL)
+    self.menuButtons.setState("GEN", Tkinter.NORMAL)
   # ---------------------------------------------------------------------------
   def notifyStatus(self, status):
     """Generic callback when something changes in the model"""
