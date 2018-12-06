@@ -381,6 +381,12 @@ class TCpktDef(object):
     self.pktAPID = None
     self.pktType = None
     self.pktSType = None
+    self.pktDFHsize = None
+    self.pktHasDFhdr = None
+    self.pktCheck = None
+    self.pktSPsize = None
+    self.pktSPDFsize = None
+    self.pktSPDFdataSize = None
   # ---------------------------------------------------------------------------
   def __cmp__(self, other):
     """supports sorting by SPID"""
@@ -407,6 +413,12 @@ class TCpktDef(object):
     retVal += " pktAPID = " + str(self.pktAPID) + "\n"
     retVal += " pktType = " + str(self.pktType) + "\n"
     retVal += " pktSType = " + str(self.pktSType) + "\n"
+    retVal += " pktDFHsize = " + str(self.pktDFHsize) + "\n"
+    retVal += " pktHasDFhdr = " + str(self.pktHasDFhdr) + "\n"
+    retVal += " pktCheck = " + str(self.pktCheck) + "\n"
+    retVal += " pktSPsize = " + str(self.pktSPsize) + "\n"
+    retVal += " pktSPDFsize = " + str(self.pktSPDFsize) + "\n"
+    retVal += " pktSPDFdataSize = " + str(self.pktSPDFsize) + "\n"
     return retVal
 
 ##############

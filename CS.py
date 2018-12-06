@@ -26,7 +26,7 @@ import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CS.CNCclient, CS.CNCgui, CS.EDENclient, CS.EDENgui, CS.FRAMEgui, CS.NCTRSgui
 import EGSE.IF
-import MC.IF, MC.TCmodel, MC.TMmodel
+import MC.IF, MC.TCGEN, MC.TCmodel, MC.TMmodel
 import MCUI.CFGgui, MCUI.TMgui, MCUI.TCgui
 import SCOS.ENV
 import SPACE.DEF, SPACE.IF
@@ -380,6 +380,7 @@ if cmdPrompt:
 
 # initialise singletons
 SPACE.DEF.init()
+MC.TCGEN.init()
 
 # create the CNC clients
 print "Create the CNCclients"

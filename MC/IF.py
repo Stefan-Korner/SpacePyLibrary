@@ -14,6 +14,7 @@
 #******************************************************************************
 import string
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import CCSDS.PACKET
 import UTIL.SYS
 
 ###########
@@ -53,6 +54,18 @@ class TCmodel(object):
     """consumes a telecommand packet"""
     pass
 
+# =============================================================================
+class TCpacketGenerator(object):
+  """Interface of the generator for telecommand packets"""
+  # ---------------------------------------------------------------------------
+  def getTCpacket(self,
+                  pktName,
+                  dataField=None,
+                  segmentationFlags=CCSDS.PACKET.UNSEGMENTED,
+                  reuse=True):
+    """creates a CCSDS TC packet with optional parameter values"""
+    pass
+
 ####################
 # global variables #
 ####################
@@ -62,3 +75,5 @@ s_configuration = None
 s_tmModel = None
 # telecommand model is a singleton
 s_tcModel = None
+# telecommand packet generator is a singleton
+s_tcPacketGenerator = None
