@@ -84,6 +84,10 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       retStatus = self.listPacketsCmd(argv)
     elif (cmd == "G") or (cmd == "GENERATE"):
       retStatus = self.generateCmd(argv)
+    elif (cmd == "P") or (cmd == "SETPACKETDATA"):
+      retStatus = self.setPacketDataCmd(argv)
+    elif (cmd == "S") or (cmd == "SENDPACKET"):
+      retStatus = self.sendPacketCmd(argv)
     elif (cmd == "C1") or (cmd == "CONNECTCNC"):
       retStatus = self.connectCNCcmd(argv)
     elif (cmd == "D1") or (cmd == "DISCONNECTCNC"):
@@ -131,6 +135,10 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("h  | help ...............provides this information", "TC")
     LOG("q  | quit ...............terminates SIM application", "TC")
     LOG("u  | dumpConfiguration...dumps the configuration", "TC")
+    LOG("p  | setPacketData <pktMnemonic>", "TC")
+    LOG("                         predefine data for the next TC packet", "TC")
+    LOG("s  | sendPacket [<pktMnemonic>]", "TC")
+    LOG("                         send predefined or specific TC packet", "TC")
     LOG_INFO("Available control commands:", "CNC")
     LOG("", "CNC")
     LOG("x  | exit ...............terminates client connection (only for TCP/IP clients)", "CNC")
@@ -211,6 +219,61 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       LOG(definitionFileName + " generated", "CFG")
     except Exception as ex:
       LOG_ERROR("Generation Error: " + str(ex), "CFG")
+      return False
+    return True
+  # ---------------------------------------------------------------------------
+  def setPacketDataCmd(self, argv):
+    """Decoded setPacketData command"""
+    self.logMethod("setPacketDataCmd", "TC")
+
+    # consistency check
+    if len(argv) != 2:
+      LOG_WARNING("invalid parameters passed for setPacketData", "TC")
+      return False
+
+    # extract the arguments
+    pktMnemonic = argv[1]
+    # check the packet data
+    tcPacketData = SPACE.IF.s_definitions.getTCpacketInjectData(pktMnemonic)
+    if tcPacketData == None:
+      LOG_WARNING("invalid data passed for setPacketData", "TC")
+      return False
+    # initialise the packet data
+    MC.IF.s_configuration.tcPacketData = tcPacketData
+    LOG("Packet = " + MC.IF.s_configuration.tcPacketData.pktName, "TC")
+
+    # notify the GUI
+    self.notifyGUItask("PACKETDATA_SET")
+    return True
+  # ---------------------------------------------------------------------------
+  def sendPacketCmd(self, argv):
+    """Decoded sendPacket command"""
+    self.logMethod("sendPacketCmd", "TC")
+
+    # consistency check
+    if len(argv) != 1 and len(argv) != 2:
+      LOG_WARNING("invalid parameters passed for sendPacket", "TC")
+      return False
+
+    # extract the arguments
+    if len(argv) == 1:
+      if MC.IF.s_configuration.tcPacketData == None:
+        LOG_WARNING("packet data not initialised", "TC")
+        return False
+      tcPacketData = MC.IF.s_configuration.tcPacketData
+    else:
+      pktMnemonic = argv[1]
+      # check the packet data
+      tcPacketData = SPACE.IF.s_definitions.getTCpacketInjectData(pktMnemonic)
+      if tcPacketData == None:
+        LOG_WARNING("invalid data passed for sendPacket", "TC")
+        return False
+
+    try:
+      packetDU = MC.IF.s_tcPacketGenerator.getTCpacket(tcPacketData.pktName)
+      MC.IF.s_tcModel.pushTCpacket(packetDU)
+    except Exception as ex:
+      LOG_WARNING("cannot send packet: " + str(ex), "TC")
       return False
     return True
   # ---------------------------------------------------------------------------
