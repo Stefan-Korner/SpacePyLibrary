@@ -244,6 +244,12 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     tcPktDef.pktAPID = ccfRecord.ccfAPID
     tcPktDef.pktType = ccfRecord.ccfType
     tcPktDef.pktSType = ccfRecord.ccfSType
+    tcPktDef.pktDFHsize = 4
+    tcPktDef.pktHasDFhdr = True
+    tcPktDef.pktCheck = True
+    tcPktDef.pktSPsize = 16
+    tcPktDef.pktSPDFsize = 10
+    tcPktDef.pktSPDFdataSize = 6
     return tcPktDef
   # ---------------------------------------------------------------------------
   def createTCdefinitions(self, ccfMap):
