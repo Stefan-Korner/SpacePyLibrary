@@ -435,6 +435,20 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     if name in self.definitionData.tcPktDefsNameMap:
       return self.definitionData.tcPktDefsNameMap[name]
     return None
+  # ---------------------------------------------------------------------------
+  def getTCpacketInjectData(self,
+                            pktMnemonic,
+                            dataField=None,
+                            segmentationFlags=CCSDS.PACKET.UNSEGMENTED):
+    """
+    returns the data that are used for packet injection:
+    implementation of SPACE.IF.Definitions.getTCpacketInjectData
+    """
+    if pktMnemonic not in self.definitionData.tcPktDefsNameMap:
+      return None
+    return SPACE.IF.TCpacketInjectData(pktMnemonic,
+                                       dataField,
+                                       segmentationFlags)
 
 #############
 # functions #

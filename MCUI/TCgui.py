@@ -12,9 +12,10 @@
 #******************************************************************************
 # Monitoring and Control (M&C) - Control (TC) GUI                             *
 #******************************************************************************
-import Tkinter
+import Tkinter, tkSimpleDialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import MC.IF
+import SPACE.IF
 import UI.TKI
 
 #############
@@ -28,6 +29,128 @@ COLOR_CONNECTED = "#00FF00"
 ###########
 # classes #
 ###########
+# =============================================================================
+class TCpacketDetails(Tkinter.Frame, UI.TKI.AppGrid):
+  """Displays the packet details, implemented as Tkinter.Frame"""
+  # ---------------------------------------------------------------------------
+  def __init__(self, master):
+    Tkinter.Frame.__init__(self, master, relief=Tkinter.GROOVE, borderwidth=1)
+    # --- filler ---
+    filler = Tkinter.Label(self)
+    self.appGrid(filler, row=0, columnspan=2, rowweight=0)
+    # packet name
+    self.pktNameField = UI.TKI.ValueField(self, row=1, label="Packet name:")
+    # packet description
+    self.pktDescrField = UI.TKI.ValueField(self, row=2, label="Packet description:")
+    # packet description 2
+    self.pktDescrField2 = UI.TKI.ValueField(self, row=3, label="Packet description 2:")
+    # APID
+    self.pktAPIDfield = UI.TKI.ValueField(self, row=4, label="Packet APID:")
+    # Type
+    self.pktTypeField = UI.TKI.ValueField(self, row=5, label="Packet Type:")
+    # Subtype
+    self.pktSubtypeField = UI.TKI.ValueField(self, row=6, label="Packet Subtype:")
+    # --- parameter listbox ---
+    label = Tkinter.Label(self, text="Parameters")
+    self.appGrid(label, row=0, column=2, rowweight=0)
+    self.parametersListbox = UI.TKI.ScrolledListbox(self, selectmode=Tkinter.SINGLE)
+    self.appGrid(self.parametersListbox, row=1, column=2, rowspan=6, rowweight=0, columnweight=1)
+    # --- filler ---
+    filler = Tkinter.Label(self)
+    self.appGrid(filler, row=7, columnspan=3, rowweight=0)
+    # --- filler ---
+    filler = Tkinter.Label(self)
+    self.appGrid(filler, row=8, columnspan=3, rowweight=0)
+  # ---------------------------------------------------------------------------
+  def update(self, tcPktDef):
+    """Update the packet fields"""
+    # fetch the data
+    pktName = ""
+    pktDescr = ""
+    pktDescr2 = ""
+    pktAPID = ""
+    pktType = ""
+    pktSType = ""
+    if tcPktDef != None:
+      pktName = tcPktDef.pktName
+      pktDescr = tcPktDef.pktDescr
+      pktDescr = tcPktDef.pktDescr2
+      pktAPID = tcPktDef.pktAPID
+      pktType = tcPktDef.pktType
+      pktSType = tcPktDef.pktSType
+    # write the data into the GUI
+    self.pktNameField.set(pktName)
+    self.pktDescrField.set(pktDescr)
+    self.pktDescrField2.set(pktDescr2)
+    self.pktAPIDfield.set(pktAPID)
+    self.pktTypeField.set(pktType)
+    self.pktSubtypeField.set(pktSType)
+
+# =============================================================================
+class TCpacketBrowser(tkSimpleDialog.Dialog, UI.TKI.AppGrid):
+  """Browser for TC packets"""
+  # ---------------------------------------------------------------------------
+  def __init__(self, master, title, prompt=""):
+    """Read the MIB for obtaining the initialisation data"""
+    # initialise the dialog
+    self.prompt = prompt
+    self.listboxCurrent = None
+    self.afterID = None
+    tkSimpleDialog.Dialog.__init__(self, master, title=title)
+    if self.afterID != None:
+      self.after_cancel(self.afterID)
+  # ---------------------------------------------------------------------------
+  def body(self, master):
+    """Intialise the dialog"""
+    row=0
+    if self.prompt != "":
+      label = Tkinter.Label(master, text=self.prompt)
+      label.grid(row=row, column=0, columnspan=4)
+      row += 1
+      label = Tkinter.Label(master)
+      label.grid(row=row, column=0, columnspan=4)
+      row += 1
+    # scrolled list box
+    self.slistbox = UI.TKI.ScrolledListbox(master, selectmode=Tkinter.SINGLE)
+    self.appGrid(self.slistbox, row=row, column=0, columnweight=1)
+    lrow = 0
+    for tcPktDef in SPACE.IF.s_definitions.getTCpktDefs():
+      packetName = tcPktDef.pktName
+      self.insertListboxRow(lrow, packetName)
+      lrow += 1
+    self.pollListbox()
+    # details
+    self.details = TCpacketDetails(master)
+    self.appGrid(self.details, row=row, column=1, columnweight=0)
+  # ---------------------------------------------------------------------------
+  def insertListboxRow(self, row, text):
+    """Inserts a row into self.slistbox"""
+    self.slistbox.list().insert(row, text)
+  # ---------------------------------------------------------------------------
+  def listboxHasChanged(self, pos):
+    """Callback when the selection of self.slistbox has been changed"""
+    if pos != None:
+      # display the packet data
+      tcPktDef = SPACE.IF.s_definitions.getTCpktDefByIndex(pos)
+      self.details.update(tcPktDef)
+  # ---------------------------------------------------------------------------
+  def pollListbox(self):
+    """Polls if the selection of self.slistbox has been changed"""
+    now = self.slistbox.list().curselection()
+    if now != self.listboxCurrent:
+      if len(now) > 0:
+        self.listboxHasChanged(int(now[0]))
+      else:
+        self.listboxHasChanged(None)
+      self.listboxCurrent = now
+    self.afterID = self.after(250, self.pollListbox)
+  # ---------------------------------------------------------------------------
+  def apply(self):
+    """Callback when the OK button is pressed"""
+    packetName = self.details.pktNameField.get()
+    if packetName != "":
+      self.result = packetName
+
 # =============================================================================
 class GUIview(UI.TKI.GUIwinView):
   """Implementation of the M&C Control layer"""
@@ -75,11 +198,17 @@ class GUIview(UI.TKI.GUIwinView):
   # ---------------------------------------------------------------------------
   def setPacketDataCallback(self):
     """Called when the SetPacketData menu entry is selected"""
-    LOG_WARNING("TCgui.setPacketDataCallback not implemented", "TC")
+    # do the dialog
+    dialog = TCpacketBrowser(self,
+      title="Set Packet Data Dialog",
+      prompt="Please select a packet.")
+    if dialog.result != None:
+      packetName = dialog.result
+      self.notifyModelTask(["SETPACKETDATA", packetName])
   # ---------------------------------------------------------------------------
   def sendPacketCallback(self):
     """Called when the SendPacket menu entry is selected"""
-    LOG_WARNING("TCgui.sendPacketCallback not implemented", "TC")
+    self.notifyModelTask(["SENDPACKET"])
   # ---------------------------------------------------------------------------
   def notifyStatus(self, status):
     """Generic callback when something changes in the model"""
@@ -98,7 +227,7 @@ class GUIview(UI.TKI.GUIwinView):
     """Called when the setPacketData function is succsssfully processed"""
     self.enableCommandMenuItem("SendPacket")
     self.menuButtons.setState("SND", Tkinter.NORMAL)
-    self.updateTMstatusField()
+    self.updateTCstatusField()
     self.packetField.set(MC.IF.s_configuration.tcPacketData.pktName)
   # ---------------------------------------------------------------------------
   def updateTCstatusField(self):

@@ -421,6 +421,19 @@ class TCpktDef(object):
     retVal += " pktSPDFdataSize = " + str(self.pktSPDFsize) + "\n"
     return retVal
 
+# =============================================================================
+class TCpacketInjectData(object):
+  """Data of a TC packet that can be injected"""
+  # ---------------------------------------------------------------------------
+  def __init__(self,
+               pktMnemonic,
+               dataField,
+               segmentationFlags):
+    """Initialisation with default data"""
+    self.pktName = pktMnemonic
+    self.dataField = dataField
+    self.segmentationFlags = segmentationFlags
+
 ##############
 # interfaces #
 ##############
@@ -484,6 +497,13 @@ class Definitions(object):
   # ---------------------------------------------------------------------------
   def getTCpktDefByName(self, name):
     """returns a TC packet definition"""
+    pass
+  # ---------------------------------------------------------------------------
+  def getTCpacketInjectData(self,
+                            pktMnemonic,
+                            dataField=None,
+                            segmentationFlags=CCSDS.PACKET.UNSEGMENTED):
+    """returns the data that are used for packet injection"""
     pass
 
 # =============================================================================

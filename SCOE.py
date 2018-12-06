@@ -292,7 +292,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
 
     # consistency check
     if len(argv) != 2 and len(argv) != 4:
-      LOG_WARNING("invalid parameters passed for TM connection", "SPACE")
+      LOG_WARNING("invalid parameters passed for setPacketData", "SPACE")
       return False
 
     # extract the arguments
@@ -306,7 +306,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     # check the packet data
     tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic, params, values)
     if tmPacketData == None:
-      LOG_WARNING("invalid data passed for TM connection", "SPACE")
+      LOG_WARNING("invalid data passed for setPacketData", "SPACE")
       return False
     # initialise the packet data
     SPACE.IF.s_configuration.tmPacketData = tmPacketData
@@ -324,7 +324,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
 
     # consistency check
     if len(argv) != 1 and len(argv) != 2 and len(argv) != 4:
-      LOG_WARNING("invalid parameters passed for TM connection", "SPACE")
+      LOG_WARNING("invalid parameters passed for sendPacketCmd", "SPACE")
       return False
 
     # extract the arguments
@@ -344,7 +344,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       # check the packet data
       tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic, params, values)
       if tmPacketData == None:
-        LOG_WARNING("invalid data passed for TM connection", "SPACE")
+        LOG_WARNING("invalid data passed for sendPacketCmd", "SPACE")
         return False
 
     # send the packet

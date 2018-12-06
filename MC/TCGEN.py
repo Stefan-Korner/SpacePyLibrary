@@ -57,7 +57,7 @@ class TCpacketGeneratorImpl(MC.IF.TCpacketGenerator):
       raise Error("invalid packet name for packet creation: " + pktName)
     binarySize = tcPktDef.pktSPsize
     applicationProcessId = tcPktDef.pktAPID
-    if reuse and spid in self.packetCache:
+    if reuse and pktName in self.packetCache:
       # reuse a packet with the same definition from the cache
       packet = self.packetCache[pktName]
       packet.setLen(binarySize)
@@ -140,4 +140,4 @@ class TCpacketGeneratorImpl(MC.IF.TCpacketGenerator):
 #############
 def init():
   # initialise singleton(s)
-  SPACE.IF.s_tcPacketGenerator = TCpacketGeneratorImpl()
+  MC.IF.s_tcPacketGenerator = TCpacketGeneratorImpl()
