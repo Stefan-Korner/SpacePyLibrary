@@ -225,11 +225,13 @@ class ApplicationSoftwareImpl(SPACE.IF.ApplicationSoftware):
           bus = SPACE.IF.MIL_BUS_PL
         else:
           # unexpected APID
+          LOG_ERROR("ASW: unexpected APID: " + str(apid), "SPACE")
           return False
         if forwardToBc and SPACE.IF.s_milBusController != None:
           if tcFunctionId == BC_Identify_FID:
             if SPACE.IF.s_milBusController.identify(bus):
               return self.sendBC_Identity(bus)
+            LOG_ERROR("ASW: BC_Identify failed", "SPACE")
             return False
           elif tcFunctionId == BC_SelfTest_FID:
             errorId = 1
@@ -239,10 +241,12 @@ class ApplicationSoftwareImpl(SPACE.IF.ApplicationSoftware):
           elif tcFunctionId == BC_GetSelfTestReport_FID:
             if SPACE.IF.s_milBusController.getSelfTestReport(bus):
               return self.sendBC_SelfTestReport(bus)
+            LOG_ERROR("ASW: BC_GetSelfTestReport failed", "SPACE")
             return False
           elif tcFunctionId == BC_Reset_FID:
             if SPACE.IF.s_milBusController.reset(bus):
               return self.sendBC_ResetResponse(bus)
+            LOG_ERROR("ASW: BC_Reset failed", "SPACE")
             return False
           elif tcFunctionId == BC_Configure_FID:
             return SPACE.IF.s_milBusController.configure(bus)
@@ -280,6 +284,7 @@ class ApplicationSoftwareImpl(SPACE.IF.ApplicationSoftware):
           if tcFunctionId == RT_Identify_FID:
             if SPACE.IF.s_milBusRemoteTerminals.identify(bus):
               return self.sendRT_Identity(bus)
+            LOG_ERROR("ASW: RT_Identify failed", "SPACE")
             return False
           elif tcFunctionId == RT_SelfTest_FID:
             errorId = 1
@@ -289,6 +294,7 @@ class ApplicationSoftwareImpl(SPACE.IF.ApplicationSoftware):
           elif tcFunctionId == RT_GetSelfTestReport_FID:
             if SPACE.IF.s_milBusRemoteTerminals.getSelfTestReport(bus):
               return self.sendRT_SelfTestReport(bus)
+            LOG_ERROR("ASW: RT_GetSelfTestReport failed", "SPACE")
             return False
           elif tcFunctionId == RT_Configure_FID:
             return SPACE.IF.s_milBusRemoteTerminals.configure(bus)
@@ -297,6 +303,7 @@ class ApplicationSoftwareImpl(SPACE.IF.ApplicationSoftware):
           elif tcFunctionId == RT_Reset_FID:
             if SPACE.IF.s_milBusRemoteTerminals.reset(bus):
               return self.sendRT_ResetResponse(bus)
+            LOG_ERROR("ASW: RT_Reset failed", "SPACE")
             return False
           elif tcFunctionId == RT_SAEnable_FID:
             return SPACE.IF.s_milBusRemoteTerminals.saEnable(bus)

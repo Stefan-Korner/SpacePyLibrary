@@ -135,9 +135,9 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("h  | help ...............provides this information", "TC")
     LOG("q  | quit ...............terminates SIM application", "TC")
     LOG("u  | dumpConfiguration...dumps the configuration", "TC")
-    LOG("p  | setPacketData <pktMnemonic>", "TC")
+    LOG("p  | setPacketData <pktMnemonic> <route>", "TC")
     LOG("                         predefine data for the next TC packet", "TC")
-    LOG("s  | sendPacket [<pktMnemonic>]", "TC")
+    LOG("s  | sendPacket [<pktMnemonic> <route>]", "TC")
     LOG("                         send predefined or specific TC packet", "TC")
     LOG_INFO("Available control commands:", "CNC")
     LOG("", "CNC")
@@ -227,14 +227,15 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     self.logMethod("setPacketDataCmd", "TC")
 
     # consistency check
-    if len(argv) != 2:
+    if len(argv) != 3:
       LOG_WARNING("invalid parameters passed for setPacketData", "TC")
       return False
 
     # extract the arguments
     pktMnemonic = argv[1]
+    route = argv[2]
     # check the packet data
-    tcPacketData = SPACE.IF.s_definitions.getTCpacketInjectData(pktMnemonic)
+    tcPacketData = SPACE.IF.s_definitions.getTCpacketInjectData(pktMnemonic, route)
     if tcPacketData == None:
       LOG_WARNING("invalid data passed for setPacketData", "TC")
       return False
@@ -251,7 +252,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     self.logMethod("sendPacketCmd", "TC")
 
     # consistency check
-    if len(argv) != 1 and len(argv) != 2:
+    if len(argv) != 1 and len(argv) != 3:
       LOG_WARNING("invalid parameters passed for sendPacket", "TC")
       return False
 
@@ -263,15 +264,16 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       tcPacketData = MC.IF.s_configuration.tcPacketData
     else:
       pktMnemonic = argv[1]
+      route = argv[2]
       # check the packet data
-      tcPacketData = SPACE.IF.s_definitions.getTCpacketInjectData(pktMnemonic)
+      tcPacketData = SPACE.IF.s_definitions.getTCpacketInjectData(pktMnemonic, route)
       if tcPacketData == None:
         LOG_WARNING("invalid data passed for sendPacket", "TC")
         return False
 
+    # send the packet
     try:
-      packetDU = MC.IF.s_tcPacketGenerator.getTCpacket(tcPacketData.pktName)
-      MC.IF.s_tcModel.pushTCpacket(packetDU)
+      MC.IF.s_tcModel.generateTCpacket(tcPacketData)
     except Exception as ex:
       LOG_WARNING("cannot send packet: " + str(ex), "TC")
       return False

@@ -48,6 +48,16 @@ class Client(EGSE.EDEN.Client):
     EGSE.IF.s_edenClientConfiguration.connected = False
     UTIL.TASK.s_processingTask.notifyEDENdisconnected()
   # ---------------------------------------------------------------------------
+  def pushTcSpace(self, tcPacketDu):
+    """Consumes a telecommand packet"""
+    # the CCSDS TC packet is not checked but directly send
+    self.sendTcScoe(tcPacketDu.getBufferString())
+  # ---------------------------------------------------------------------------
+  def pushTcScoe(self, tcPacketDu):
+    """Consumes a telecommand packet"""
+    # the CCSDS TC packet is not checked but directly send
+    self.sendTcScoe(tcPacketDu.getBufferString())
+  # ---------------------------------------------------------------------------
   def notifyTmSpace(self, tmPacket):
     """(TM,SPACE) received: overloaded from EGSE.EDEN.Client"""
     tmPacketDu = CCSDS.PACKET.TMpacket(tmPacket)
@@ -82,6 +92,16 @@ class Client2(EGSE.EDEN.Client):
     self.disconnectFromServer()
     EGSE.IF.s_edenClientConfiguration.connected2 = False
     UTIL.TASK.s_processingTask.notifyEDEN2disconnected()
+  # ---------------------------------------------------------------------------
+  def pushTcSpace(self, tcPacketDu):
+    """Consumes a telecommand packet"""
+    # the CCSDS TC packet is not checked but directly send
+    self.sendTcScoe(tcPacketDu.getBufferString())
+  # ---------------------------------------------------------------------------
+  def pushTcScoe(self, tcPacketDu):
+    """Consumes a telecommand packet"""
+    # the CCSDS TC packet is not checked but directly send
+    self.sendTcScoe(tcPacketDu.getBufferString())
   # ---------------------------------------------------------------------------
   def notifyTmSpace(self, tmPacket):
     """(TM,SPACE) received: overloaded from EGSE.EDEN.Client"""
