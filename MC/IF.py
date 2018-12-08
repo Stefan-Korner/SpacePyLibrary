@@ -50,7 +50,12 @@ class TMmodel(object):
 class TCmodel(object):
   """Telecommand model"""
   # ---------------------------------------------------------------------------
-  def pushTCpacket(self, tcPacketDu):
+  def generateTCpacket(self, tcPacketData):
+    """generates a TC packet"""
+    # shall return True for successful processing, otherwise False
+    return True
+  # ---------------------------------------------------------------------------
+  def pushTCpacket(self, tcPacketDu, route):
     """consumes a telecommand packet"""
     pass
 

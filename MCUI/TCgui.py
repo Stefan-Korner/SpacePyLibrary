@@ -58,9 +58,12 @@ class TCpacketDetails(Tkinter.Frame, UI.TKI.AppGrid):
     # --- filler ---
     filler = Tkinter.Label(self)
     self.appGrid(filler, row=7, columnspan=3, rowweight=0)
+    # --- route ---
+    self.routeField = UI.TKI.InputField(self, row=8, label="route:")
+    self.appGrid(self.routeField.field, row=8, column=1, columnspan=2, rowweight=0)
     # --- filler ---
     filler = Tkinter.Label(self)
-    self.appGrid(filler, row=8, columnspan=3, rowweight=0)
+    self.appGrid(filler, row=9, columnspan=3, rowweight=0)
   # ---------------------------------------------------------------------------
   def update(self, tcPktDef):
     """Update the packet fields"""
@@ -149,7 +152,8 @@ class TCpacketBrowser(tkSimpleDialog.Dialog, UI.TKI.AppGrid):
     """Callback when the OK button is pressed"""
     packetName = self.details.pktNameField.get()
     if packetName != "":
-      self.result = packetName
+      route = self.details.routeField.get()
+      self.result = [packetName, route]
 
 # =============================================================================
 class GUIview(UI.TKI.GUIwinView):
@@ -173,13 +177,15 @@ class GUIview(UI.TKI.GUIwinView):
     self.tcStatusField.setBackground(COLOR_INITIALISED)
     # packet
     self.packetField = UI.TKI.ValueField(self, row=2, label="Packet:")
+    # route
+    self.routeField = UI.TKI.ValueField(self, row=3, label="Route:")
     # log messages (default logger)
     self.messageLogger = UI.TKI.MessageLogger(self, "TC")
-    self.appGrid(self.messageLogger, row=3, columnspan=2)
+    self.appGrid(self.messageLogger, row=4, columnspan=2)
     # message line
     self.messageline = Tkinter.Message(self, relief=Tkinter.GROOVE)
     self.appGrid(self.messageline,
-                 row=4,
+                 row=5,
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,
@@ -203,8 +209,8 @@ class GUIview(UI.TKI.GUIwinView):
       title="Set Packet Data Dialog",
       prompt="Please select a packet.")
     if dialog.result != None:
-      packetName = dialog.result
-      self.notifyModelTask(["SETPACKETDATA", packetName])
+      packetName, route = dialog.result
+      self.notifyModelTask(["SETPACKETDATA", packetName, route])
   # ---------------------------------------------------------------------------
   def sendPacketCallback(self):
     """Called when the SendPacket menu entry is selected"""
@@ -229,6 +235,7 @@ class GUIview(UI.TKI.GUIwinView):
     self.menuButtons.setState("SND", Tkinter.NORMAL)
     self.updateTCstatusField()
     self.packetField.set(MC.IF.s_configuration.tcPacketData.pktName)
+    self.routeField.set(MC.IF.s_configuration.tcPacketData.route)
   # ---------------------------------------------------------------------------
   def updateTCstatusField(self):
     """updated the TC status field depending on the MC.IF.s_configuration"""

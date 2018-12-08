@@ -49,6 +49,11 @@ class TCclient(EGSE.CNC.TCclient):
     EGSE.IF.s_cncClientConfiguration.connected = False
     UTIL.TASK.s_processingTask.notifyCNCdisconnected()
   # ---------------------------------------------------------------------------
+  def pushTCpacket(self, tcPacketDu):
+    """Consumes a telecommand packet"""
+    # the CCSDS TC packet is not checked but directly send
+    self.sendCNCpacket(tcPacketDu.getBufferString())
+  # ---------------------------------------------------------------------------
   def notifyCNCresponse(self, cncTMpacketDU):
     """CnC response received: overloaded from EGSE.CNC.TCclient"""
     LOG_INFO("notifyCNCresponse: message = " + cncTMpacketDU.getCNCmessage(), "CNC")

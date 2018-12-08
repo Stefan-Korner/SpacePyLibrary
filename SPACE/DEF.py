@@ -438,6 +438,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
   # ---------------------------------------------------------------------------
   def getTCpacketInjectData(self,
                             pktMnemonic,
+                            route,
                             dataField=None,
                             segmentationFlags=CCSDS.PACKET.UNSEGMENTED):
     """
@@ -447,6 +448,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     if pktMnemonic not in self.definitionData.tcPktDefsNameMap:
       return None
     return SPACE.IF.TCpacketInjectData(pktMnemonic,
+                                       route,
                                        dataField,
                                        segmentationFlags)
 
