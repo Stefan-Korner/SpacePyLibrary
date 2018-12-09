@@ -104,6 +104,18 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       retStatus = self.connectEDEN2cmd(argv)
     elif (cmd == "F2") or (cmd == "DISCONNECTEDEN2"):
       retStatus = self.disconnectEDEN2cmd(argv)
+    elif (cmd == "N1") or (cmd == "CONNECTNCTRS1"):
+      retStatus = self.connectNCTRS1(argv)
+    elif (cmd == "O1") or (cmd == "DISCONNECTNCTRS1"):
+      retStatus = self.disconnectNCTRS1(argv)
+    elif (cmd == "N2") or (cmd == "CONNECTNCTRS2"):
+      retStatus = self.connectNCTRS2(argv)
+    elif (cmd == "O2") or (cmd == "DISCONNECTNCTRS2"):
+      retStatus = self.disconnectNCTRS2(argv)
+    elif (cmd == "N3") or (cmd == "CONNECTNCTRS3"):
+      retStatus = self.connectNCTRS3(argv)
+    elif (cmd == "O3") or (cmd == "DISCONNECTNCTRS3"):
+      retStatus = self.disconnectNCTRS3(argv)
     else:
       LOG_WARNING("invalid command " + argv[0])
       return -1
@@ -171,6 +183,12 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("h  | help ...............provides this information", "NCTRS")
     LOG("q  | quit ...............terminates SIM application", "NCTRS")
     LOG("u  | dumpConfiguration...dumps the configuration", "NCTRS")
+    LOG("n1 | connectNCTRS1.......connect to NCTRS port 1", "NCTRS")
+    LOG("o1 | disconnectNCTRS1....disconnect from NCTRS port 1", "NCTRS")
+    LOG("n2 | connectNCTRS2.......connect to NCTRS port 2", "NCTRS")
+    LOG("o2 | disconnectNCTRS2....disconnect from NCTRS port 2", "NCTRS")
+    LOG("n3 | connectNCTRS3.......connect to NCTRS port 3", "NCTRS")
+    LOG("o3 | disconnectNCTRS3....disconnect from NCTRS port 3", "NCTRS")
     return True
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
@@ -319,6 +337,30 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     self.logMethod("disconnectEDEN2cmd", "EDEN")
     CS.EDENclient.disconnectEDEN2()
   # ---------------------------------------------------------------------------
+  def connectNCTRS1cmd(self, argv):
+    """Decoded connectNCTRS1cmd command"""
+    self.logMethod("connectNCTRS1cmd", "NCTRS")
+  # ---------------------------------------------------------------------------
+  def disconnectNCTRS1cmd(self, argv):
+    """Decoded disconnectNCTRS1cmd command"""
+    self.logMethod("disconnectNCTRS1cmd", "NCTRS")
+  # ---------------------------------------------------------------------------
+  def connectNCTRS2cmd(self, argv):
+    """Decoded connectNCTRS2cmd command"""
+    self.logMethod("connectNCTRS2cmd", "NCTRS")
+  # ---------------------------------------------------------------------------
+  def disconnectNCTRS2cmd(self, argv):
+    """Decoded disconnectNCTRS2cmd command"""
+    self.logMethod("disconnectNCTRS2cmd", "NCTRS")
+  # ---------------------------------------------------------------------------
+  def connectNCTRS3cmd(self, argv):
+    """Decoded connectNCTRS3cmd command"""
+    self.logMethod("connectNCTRS3cmd", "NCTRS")
+  # ---------------------------------------------------------------------------
+  def disconnectNCTRS3cmd(self, argv):
+    """Decoded disconnectNCTRS3cmd command"""
+    self.logMethod("disconnectNCTRS3cmd", "NCTRS")
+  # ---------------------------------------------------------------------------
   def notifyCNCconnected(self):
     """CNC connection established"""
     self.notifyGUItask("CNC_CONNECTED")
@@ -356,6 +398,30 @@ class ModelTask(UTIL.TASK.ProcessingTask):
   def notifyEDEN2disconnected(self):
     """EDEN 2nd connection terminated"""
     self.notifyGUItask("EDEN_DISCONNECTED")
+  # ---------------------------------------------------------------------------
+  def notifyNCTRS1connected(self):
+    """NCTRS 1st connection established"""
+    self.notifyGUItask("NCTRS1_CONNECTED")
+  # ---------------------------------------------------------------------------
+  def notifyNCTRS1disconnected(self):
+    """NCTRS 1st connection terminated"""
+    self.notifyGUItask("NCTRS1_DISCONNECTED")
+  # ---------------------------------------------------------------------------
+  def notifyNCTRS2connected(self):
+    """NCTRS 2nd connection established"""
+    self.notifyGUItask("NCTRS2_CONNECTED")
+  # ---------------------------------------------------------------------------
+  def notifyNCTRS2disconnected(self):
+    """NCTRS 2nd connection terminated"""
+    self.notifyGUItask("NCTRS2_DISCONNECTED")
+  # ---------------------------------------------------------------------------
+  def notifyNCTRS3connected(self):
+    """NCTRS 3rd connection established"""
+    self.notifyGUItask("NCTRS3_CONNECTED")
+  # ---------------------------------------------------------------------------
+  def notifyNCTRS3disconnected(self):
+    """NCTRS 3rd connection terminated"""
+    self.notifyGUItask("NCTRS3_DISCONNECTED")
 
 #############
 # functions #
