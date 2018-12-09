@@ -20,6 +20,10 @@ import UTIL.DU, UTIL.SYS
 #############
 # constants #
 #############
+# ASW general
+ASW_TC_MIN_APID = 1234
+ASW_TC_MAX_APID = 1236
+
 # MIL Bus general
 
 # MIL Bus Controller
@@ -203,6 +207,10 @@ class ApplicationSoftwareImpl(SPACE.IF.ApplicationSoftware):
     """
     apid = tcPacketDu.applicationProcessId
     LOG_INFO("ApplicationSoftwareImpl.processTCpacket(" + str(apid) + ")", "SPACE")
+    # immediatly process standard TCs
+    if apid >= ASW_TC_MIN_APID and apid <= ASW_TC_MIN_APID:
+      LOG("--> Standard Telecommand", "SPACE")
+      return True
     # packet is a PUS Function Management command
     if tcPacketDu.serviceType == PUS.SERVICES.TC_FKT_TYPE:
       if tcPacketDu.serviceSubType == PUS.SERVICES.TC_FKT_PERFORM_FUNCTION:
