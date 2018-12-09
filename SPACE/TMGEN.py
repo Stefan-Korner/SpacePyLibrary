@@ -200,6 +200,7 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
         raise ValueError("binary size too small, must be >= " + str(minimumSize))
       binaryString = "\0" * binarySize
       packet = CCSDS.PACKET.TMpacket(binaryString)
+      packet.packetType = CCSDS.PACKET.TM_PACKET_TYPE
       packet.setPacketLength()
       packet.versionNumber = self.packetDefaults.ccsdsPacketVersionNumber
       packet.dataFieldHeaderFlag = 0
@@ -212,6 +213,7 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
         raise ValueError("binary size too small, must be >= " + str(minimumSize))
       binaryString = "\0" * binarySize
       packet = PUS.PACKET.TMpacket(binaryString)
+      packet.packetType = CCSDS.PACKET.TM_PACKET_TYPE
       packet.setPacketLength()
       packet.dataFieldHeaderFlag = 1
       packet.pusVersionNumber = PUS.PACKET.PUS_VERSION_NUMBER

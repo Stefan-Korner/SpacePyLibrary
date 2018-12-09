@@ -211,8 +211,9 @@ class ApplicationSoftwareImpl(SPACE.IF.ApplicationSoftware):
     if apid >= ASW_TC_MIN_APID and apid <= ASW_TC_MIN_APID:
       LOG("--> Standard Telecommand", "SPACE")
       return True
-    # packet is a PUS Function Management command
+    # processing of PUS telecommands
     if tcPacketDu.serviceType == PUS.SERVICES.TC_FKT_TYPE:
+      # packet is a PUS Function Management command
       if tcPacketDu.serviceSubType == PUS.SERVICES.TC_FKT_PERFORM_FUNCTION:
         tcFunctionId = tcPacketDu.getUnsigned(
           self.tcFunctionIdBytePos, self.tcFunctionIdByteSize)
