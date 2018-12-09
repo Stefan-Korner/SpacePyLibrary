@@ -58,6 +58,10 @@ class TCmodel(object):
   def pushTCpacket(self, tcPacketDu, route):
     """consumes a telecommand packet"""
     pass
+  # ---------------------------------------------------------------------------
+  def notifyTCack(self, tcAckSubType):
+    """notifies a PUS service 1 acknowledgement"""
+    pass
 
 # =============================================================================
 class TCpacketGenerator(object):

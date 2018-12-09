@@ -19,7 +19,8 @@ import CCSDS.DU, CCSDS.PACKET
 #############
 # -----------------------------------------------------------------------------
 # PUS service 1: Telecommand Verification Service 
-# SUBTYPES
+# TYPE / SUBTYPES
+TC_ACK_TYPE = 1
 TC_ACK_ACCEPT_SUCC = 1
 TC_ACK_ACCEPT_FAIL = 2
 TC_ACK_EXESTA_SUCC = 3

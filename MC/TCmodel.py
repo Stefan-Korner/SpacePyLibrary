@@ -16,6 +16,7 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CS.CNCclient, CS.EDENclient
 import EGSE.IF
 import MC.IF
+import PUS.SERVICES
 import UTIL.DU
 
 ###########
@@ -82,6 +83,31 @@ class TCmodel(MC.IF.TCmodel):
       LOG_ERROR("invalid route for TC packet: " + route, "TC")
       return False
     return True
+  # ---------------------------------------------------------------------------
+  def notifyTCack(self, tcAckSubType):
+    """
+    notifies a PUS service 1 acknowledgement:
+    implementation of MC.IF.TCmodel.notifyTCack
+    """
+    # packet is a PUS TC Acknowledgement command
+    if tcAckSubType == PUS.SERVICES.TC_ACK_ACCEPT_SUCC:
+      LOG_INFO("--> TC_ACK_ACCEPT_SUCC", "TC")
+    elif tcAckSubType == PUS.SERVICES.TC_ACK_ACCEPT_FAIL:
+      LOG_ERROR("--> TC_ACK_ACCEPT_FAIL", "TC")
+    elif tcAckSubType == PUS.SERVICES.TC_ACK_EXESTA_SUCC:
+      LOG_INFO("--> TC_ACK_EXESTA_SUCC", "TC")
+    elif tcAckSubType == PUS.SERVICES.TC_ACK_EXESTA_FAIL:
+      LOG_ERROR("--> TC_ACK_EXESTA_FAIL", "TC")
+    elif tcAckSubType == PUS.SERVICES.TC_ACK_EXEPRO_SUCC:
+      LOG_INFO("--> TC_ACK_EXEPRO_SUCC", "TC")
+    elif tcAckSubType == PUS.SERVICES.TC_ACK_EXEPRO_FAIL:
+      LOG_ERROR("--> TC_ACK_EXEPRO_FAIL", "TC")
+    elif tcAckSubType == PUS.SERVICES.TC_ACK_EXECUT_SUCC:
+      LOG_INFO("--> TC_ACK_EXECUT_SUCC", "TC")
+    elif tcAckSubType == PUS.SERVICES.TC_ACK_EXECUT_FAIL:
+      LOG_ERROR("--> TC_ACK_EXECUT_FAIL", "TC")
+    else:
+      LOG_ERROR("unexpected TC Acknowledgement SubType: " + str(tcAckSubType), "TC")
 
 #############
 # functions #

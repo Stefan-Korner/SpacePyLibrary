@@ -77,7 +77,7 @@ class TCpacketDetails(Tkinter.Frame, UI.TKI.AppGrid):
     if tcPktDef != None:
       pktName = tcPktDef.pktName
       pktDescr = tcPktDef.pktDescr
-      pktDescr = tcPktDef.pktDescr2
+      pktDescr2 = tcPktDef.pktDescr2
       pktAPID = tcPktDef.pktAPID
       pktType = tcPktDef.pktType
       pktSType = tcPktDef.pktSType

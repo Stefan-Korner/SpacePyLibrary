@@ -599,10 +599,6 @@ class ApplicationSoftware(object):
   def getRtPlAPID(self):
     pass
   # ---------------------------------------------------------------------------
-  def notifyMILdatablockDistribution(self, rtAddress, dataBlock):
-    """The mRT has received on the MIL Bus a data block from the BC"""
-    pass
-  # ---------------------------------------------------------------------------
   def notifyMILdatablockAcquisition(self, rtAddress, dataBlock):
     """The BC has received on the MIL Bus a data block from a RT"""
     pass

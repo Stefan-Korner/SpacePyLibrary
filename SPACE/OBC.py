@@ -67,14 +67,9 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     implementation of SPACE.IF.OnboardComputer.processTCpacket
     """
     LOG_INFO("processTCpacket", "SPACE")
-    LOG("APID =    " + str(tcPacketDu.applicationProcessId), "SPACE")
-    LOG("SSC =     " + str(tcPacketDu.sequenceControlCount), "SPACE")
     ok = True
     if tcPacketDu.dataFieldHeaderFlag == 1:
       # CCSDS packet is a PUS packet
-      object.__setattr__(tcPacketDu, "attributeMap2", PUS.PACKET.TC_PACKET_DATAFIELD_HEADER_ATTRIBUTES)
-      LOG("TYPE =    " + str(tcPacketDu.serviceType), "SPACE")
-      LOG("SUBTYPE = " + str(tcPacketDu.serviceSubType), "SPACE")
       # special handling if the packet is a PUS OBQ management command
       if tcPacketDu.serviceType == PUS.SERVICES.TC_OBQ_TYPE:
         if SPACE.IF.s_onboardQueue == None:
@@ -88,9 +83,6 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
       # send TC acknowledgements
       if ok:
         ok &= self.generateAcksFromTCpacket(tcPacketDu, ack1, ack2, ack3, ack4)
-    else:
-      LOG("non-PUS packet", "SPACE")
-      LOG("tcPacketDu = " + str(tcPacketDu), "SPACE")
     return ok
   # ---------------------------------------------------------------------------
   def generateEmptyTMpacket(self, pktMnemonic):
