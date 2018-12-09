@@ -105,17 +105,17 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     elif (cmd == "F2") or (cmd == "DISCONNECTEDEN2"):
       retStatus = self.disconnectEDEN2cmd(argv)
     elif (cmd == "N1") or (cmd == "CONNECTNCTRS1"):
-      retStatus = self.connectNCTRS1(argv)
+      retStatus = self.connectNCTRS1cmd(argv)
     elif (cmd == "O1") or (cmd == "DISCONNECTNCTRS1"):
-      retStatus = self.disconnectNCTRS1(argv)
+      retStatus = self.disconnectNCTRS1cmd(argv)
     elif (cmd == "N2") or (cmd == "CONNECTNCTRS2"):
-      retStatus = self.connectNCTRS2(argv)
+      retStatus = self.connectNCTRS2cmd(argv)
     elif (cmd == "O2") or (cmd == "DISCONNECTNCTRS2"):
-      retStatus = self.disconnectNCTRS2(argv)
+      retStatus = self.disconnectNCTRS2cmd(argv)
     elif (cmd == "N3") or (cmd == "CONNECTNCTRS3"):
-      retStatus = self.connectNCTRS3(argv)
+      retStatus = self.connectNCTRS3cmd(argv)
     elif (cmd == "O3") or (cmd == "DISCONNECTNCTRS3"):
-      retStatus = self.disconnectNCTRS3(argv)
+      retStatus = self.disconnectNCTRS3cmd(argv)
     else:
       LOG_WARNING("invalid command " + argv[0])
       return -1
