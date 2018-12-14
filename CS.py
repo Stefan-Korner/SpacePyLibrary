@@ -52,6 +52,7 @@ SYS_CONFIGURATION = [
   ["SYS_APP_MNEMO", "CS"],
   ["SYS_APP_NAME", "Control System"],
   ["SYS_APP_VERSION", "2.0"]]
+  ["IGNORE_IDLE_PACKETS", "1"]]
 
 ###########
 # classes #

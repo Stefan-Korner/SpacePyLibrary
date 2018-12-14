@@ -13,26 +13,30 @@
 # FRAME layer model                                                           *
 #******************************************************************************
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import CCSDS.PACKET, CCSDS.PACKETIZER
 import GRND.IF, GRND.NCTRS
-import UTIL.TASK
+import MC.IF
+import PUS.PACKET
+import UTIL.SYS, UTIL.TASK
 
 #############
 # constants #
 #############
 SEND_AS_PACKET = 0
 SEND_AS_FRAME = 1
-SEND_AS_CLTU = 1
+SEND_AS_CLTU = 2
 
 ###########
 # classes #
 ###########
 # =============================================================================
-class FrameModel():
+class FrameModel(CCSDS.PACKETIZER.Packetizer):
   """Implementation of the CS side frame processing"""
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise attributes only"""
-    pass
+    CCSDS.PACKETIZER.Packetizer.__init__(self)
+    self.ignoreIdlePackets = (UTIL.SYS.s_configuration.IGNORE_IDLE_PACKETS == "1")
   # ---------------------------------------------------------------------------
   def sendTCpacket(self, tcPacketDu, sendFormat):
     """sends a TM packet"""
@@ -56,14 +60,27 @@ class FrameModel():
     LOG_ERROR("invalid send format passed: " + str(sendFormat), "FRAME")
     return FALSE
   # ---------------------------------------------------------------------------
-  def receiveTMframe(self, tmFrameDu):
+  def notifyTMpacketCallback(self, binPacket):
+    """notifies when the next TM packet is assembled"""
+    # overloaded from Packetizer
+    if self.ignoreIdlePackets:
+      apid = CCSDS.PACKET.getApplicationProcessId(binPacket)
+      if apid == CCSDS.PACKET.IDLE_PKT_APID:
+        return
+    if CCSDS.PACKET.getDataFieldHeaderFlag(binPacket):
+      # we expect a PUS packet when there is a data field header
+      tmPacketDu = PUS.PACKET.TMpacket(binPacket)
+      LOG_INFO("PUS TM packet extracted", "FRAME")
+    else:
+      # default CCSDS packet
+      tmPacketDu = CCSDS.PACKET.TMpacket(binPacket)
+      LOG_INFO("CCSDS TM packet extracted", "FRAME")
+    MC.IF.s_tmModel.pushTMpacket(tmPacketDu, None)
+  # ---------------------------------------------------------------------------
+  def receiveTMframe(self, tmFrame):
     """TM frame received"""
     LOG_INFO("TM frame received", "FRAME")
-    self.receiveTMpacket("")
-  # ---------------------------------------------------------------------------
-  def receiveTMpacket(self, tmPacketDu):
-    """TM packet received"""
-    LOG_INFO("TM packet extracted", "FRAME")
+    self.pushTMframe(tmFrame)
 
 ####################
 # global variables #
