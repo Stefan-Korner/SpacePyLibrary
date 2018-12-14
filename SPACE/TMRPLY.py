@@ -216,5 +216,5 @@ class TMpacketReplayerImpl(SPACE.IF.TMpacketReplayer):
 # functions #
 #############
 def init():
-  # initialise singleton(s)
+  """initialise singleton(s)"""
   SPACE.IF.s_tmPacketReplayer = TMpacketReplayerImpl()

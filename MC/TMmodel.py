@@ -56,5 +56,5 @@ class TMmodel(MC.IF.TMmodel):
 # functions #
 #############
 def init():
-  # initialise singleton(s)
+  """initialise singleton(s)"""
   MC.IF.s_tmModel = TMmodel()

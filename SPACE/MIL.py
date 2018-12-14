@@ -259,7 +259,7 @@ class MILbusRemoteTerminalsImpl(SPACE.IF.MILbusRemoteTerminals):
 # functions #
 #############
 def init():
-  # initialise singleton(s)
+  """initialise singleton(s)"""
   SPACE.IF.s_milBus = MILbusImpl()
   SPACE.IF.s_milBusController = MILbusControllerImpl()
   SPACE.IF.s_milBusRemoteTerminals = MILbusRemoteTerminalsImpl()

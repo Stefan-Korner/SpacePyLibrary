@@ -141,5 +141,5 @@ class TCpacketGeneratorImpl(MC.IF.TCpacketGenerator):
 # functions #
 #############
 def init():
-  # initialise singleton(s)
+  """initialise singleton(s)"""
   MC.IF.s_tcPacketGenerator = TCpacketGeneratorImpl()

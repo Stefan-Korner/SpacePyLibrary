@@ -212,6 +212,6 @@ class CCSDSgroundSpace(LINK.IF.SpaceLink, LINK.IF.PacketLink):
 # functions #
 #############
 def init():
-  # initialise singleton(s)
+  """initialise singleton(s)"""
   LINK.IF.s_packetLink = CCSDSgroundSpace()
   LINK.IF.s_spaceLink = LINK.IF.s_packetLink

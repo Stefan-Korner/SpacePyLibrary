@@ -132,5 +132,5 @@ class TCmodel(MC.IF.TCmodel):
 # functions #
 #############
 def init():
-  # initialise singleton(s)
+  """initialise singleton(s)"""
   MC.IF.s_tcModel = TCmodel()
