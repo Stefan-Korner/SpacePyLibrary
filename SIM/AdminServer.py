@@ -31,7 +31,7 @@ class AdminSender(GRND.NCTRS.AdminMessageSender):
     """Overloaded from GRND.NCTRS.AdminMessageSender"""
     LOG_INFO("NCTRS admin message receiver (client) accepted", "GRND")
     # notify the status change
-    UTIL.TASK.s_processingTask.setTCconnected()
+    UTIL.TASK.s_processingTask.setAdminConnected()
     # establish TC link
     self.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_LINK_ESTABLISHED_TO_GS)
   # ---------------------------------------------------------------------------

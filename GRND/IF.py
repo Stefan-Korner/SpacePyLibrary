@@ -27,8 +27,33 @@ ACK_STRS = ["ENABLE_ACK", "ENABLE_NAK", "DISABLE_ACK"]
 # classes #
 ###########
 # =============================================================================
+class ClientConfiguration(object):
+  """NCTRS Client Configuration"""
+  # ---------------------------------------------------------------------------
+  def __init__(self):
+    """Initialise the connection relevant informations"""
+    self.nctrsHost = UTIL.SYS.s_configuration.NCTRS_HOST
+    self.nctrsTMconn = False
+    self.nctrsTMport = UTIL.SYS.s_configuration.NCTRS_TM_SERVER_PORT
+    self.nctrsTCconn = False
+    self.nctrsTCport = UTIL.SYS.s_configuration.NCTRS_TC_SERVER_PORT
+    self.nctrsAdminConn = False
+    self.nctrsAdminPort = UTIL.SYS.s_configuration.NCTRS_ADMIN_SERVER_PORT
+  # ---------------------------------------------------------------------------
+  def dump(self):
+    """Dumps the status of the configuration attributes"""
+    LOG_INFO("Ground segment configuration", "NCTRS")
+    LOG("NCTRS host = " + str(self.nctrsHost), "NCTRS")
+    LOG("NCTRS TM conn = " + str(self.nctrsTMconn), "NCTRS")
+    LOG("NCTRS TM port = " + str(self.nctrsTMport), "NCTRS")
+    LOG("NCTRS TC conn = " + str(self.nctrsTCconn), "NCTRS")
+    LOG("NCTRS TC port = " + str(self.nctrsTCport), "NCTRS")
+    LOG("NCTRS admin message conn = " + str(self.nctrsAdminConn), "NCTRS")
+    LOG("NCTRS admin message port = " + str(self.nctrsAdminPort), "NCTRS")
+
+# =============================================================================
 class Configuration(object):
-  """Configuration"""
+  """Server Configuration"""
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise the connection relevant informations"""
@@ -79,6 +104,8 @@ class TMmcsLink(object):
 ####################
 # global variables #
 ####################
+# client configuration is a singleton
+s_clientConfiguration = None
 # configuration is a singleton
 s_configuration = None
 # telemetry link is a singleton

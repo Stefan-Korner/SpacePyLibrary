@@ -487,6 +487,19 @@ class AdminMessageSender(UTIL.TCP.SingleClientReceivingServer):
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when the MCS has send data"""
+    try:
+      testData = self.dataSocket.recv(1);
+    except Exception as ex:
+      self.disconnectClient()
+      self.notifyConnectionClosed("")
+      return
+    # consistency check
+    testDataLen = len(testData)
+    if testDataLen == 0:
+      # client termination
+      self.disconnectClient()
+      self.notifyConnectionClosed("")
+      return
     LOG_ERROR("Admin message receiver has send data (unexpected)")
     self.disconnectClient()
     self.notifyConnectionClosed("-")

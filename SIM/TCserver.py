@@ -36,7 +36,7 @@ class NCTRStcReceiver(GRND.NCTRS.TCreceiver):
     """Overloaded from GRND.NCTRS.TCreceiver"""
     LOG_INFO("NCTRS TC sender (client) accepted", "GRND")
     # notify the status change
-    UTIL.TASK.s_processingTask.setAdminConnected()
+    UTIL.TASK.s_processingTask.setTCconnected()
   # ---------------------------------------------------------------------------
   def notifyTCpacketDataUnit(self, tcPktDu):
     """AD packet / BD segment received"""
