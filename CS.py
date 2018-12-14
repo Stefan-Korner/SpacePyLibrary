@@ -24,7 +24,7 @@
 #******************************************************************************
 import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CS.CNCclient, CS.CNCgui, CS.EDENclient, CS.EDENgui, CS.FRAMEgui, CS.NCTRSclient, CS.NCTRSgui
+import CS.CNCclient, CS.CNCgui, CS.EDENclient, CS.EDENgui, CS.FRAMEgui, CS.FRAMEmodel, CS.NCTRSclient, CS.NCTRSgui
 import EGSE.IF
 import GRND.IF
 import MC.IF, MC.TCGEN, MC.TCmodel, MC.TMmodel
@@ -421,6 +421,8 @@ class ModelTask(UTIL.TASK.ProcessingTask):
   def notifyNCTRS2connected(self):
     """NCTRS 2nd connection established"""
     self.notifyGUItask("NCTRS2_CONNECTED")
+    MC.IF.s_configuration.connected = True
+    self.notifyGUItask("TC_CONNECTED")
   # ---------------------------------------------------------------------------
   def notifyNCTRS2disconnected(self):
     """NCTRS 2nd connection terminated"""
@@ -540,6 +542,9 @@ MC.TCmodel.init()
 # create the TM model
 print "Create the TM model"
 MC.TMmodel.init()
+# create the frame model
+print "Create the frame model"
+CS.FRAMEmodel.init()
 
 # load the definition data
 print "load definition data (take some time) ..."
