@@ -126,5 +126,5 @@ class OnboardQueueImpl(SPACE.IF.OnboardQueue):
 # functions #
 #############
 def init():
-  # initialise singleton(s)
+  """initialise singleton(s)"""
   SPACE.IF.s_onboardQueue = OnboardQueueImpl()

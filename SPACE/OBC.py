@@ -358,5 +358,5 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
 # functions #
 #############
 def init(egseMode):
-  # initialise singleton(s)
+  """initialise singleton(s)"""
   SPACE.IF.s_onboardComputer = OnboardComputerImpl(egseMode)

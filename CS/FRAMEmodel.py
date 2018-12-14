@@ -77,6 +77,6 @@ s_frameModel = None
 # functions to encapsulate access to s_frameModel
 # -----------------------------------------------------------------------------
 def init():
-  # initialise singleton(s)
+  """initialise singleton(s)"""
   global s_frameModel
   s_frameModel = FrameModel()

@@ -456,7 +456,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
 # functions #
 #############
 def init():
-  # initialise singleton(s)
+  """initialise singleton(s)"""
   SPACE.IF.s_definitions = DefinitionsImpl()
 # -----------------------------------------------------------------------------
 def getBitWidth(paramPtc, paramPfc):

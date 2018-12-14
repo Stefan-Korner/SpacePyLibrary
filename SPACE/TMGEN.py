@@ -226,5 +226,5 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
 # functions #
 #############
 def init():
-  # initialise singleton(s)
+  """initialise singleton(s)"""
   SPACE.IF.s_tmPacketGenerator = TMpacketGeneratorImpl()

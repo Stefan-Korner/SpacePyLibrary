@@ -961,7 +961,7 @@ class EUCLIDpowerFEEsim_LPS_SAS(ApplicationSoftwareImpl):
 # functions #
 #############
 def init():
-  # initialise singleton(s)
+  """initialise singleton(s)"""
   mission = UTIL.SYS.s_configuration.ASW_MISSION
   if mission == "MTG":
     SPACE.IF.s_applicationSoftware = MTGapplicationSoftwareImpl()

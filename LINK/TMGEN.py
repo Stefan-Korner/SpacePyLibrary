@@ -154,5 +154,5 @@ class TMframeGeneratorImpl(LINK.IF.TMframeGenerator):
 # functions #
 #############
 def init():
-  # initialise singleton(s)
+  """initialise singleton(s)"""
   LINK.IF.s_tmFrameGenerator = TMframeGeneratorImpl()
