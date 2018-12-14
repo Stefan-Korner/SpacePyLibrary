@@ -50,7 +50,10 @@ class TMclient(GRND.NCTRS.TMreceiver):
   def notifyTMdataUnit(self, tmDu):
     """TM frame received: hook for derived classes"""
     LOG_INFO("TM frame received", "NCTRS")
-    CS.FRAMEmodel.s_frameModel.receiveTMframe("")
+    # extract the TM frame from the NCTRS data unit
+    # and send it to the frame processing
+    frame = tmDu.getFrame()
+    CS.FRAMEmodel.s_frameModel.receiveTMframe(frame)
 
 # =============================================================================
 class TCclient(GRND.NCTRS.TCsender):

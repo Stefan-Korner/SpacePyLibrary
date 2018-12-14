@@ -50,6 +50,12 @@ PRIMARY_HEADER_ATTRIBUTES = {
 # functions #
 #############
 # -----------------------------------------------------------------------------
+def getDataFieldHeaderFlag(binaryString, startPos=0):
+  """returns the data field header flag field"""
+  if (len(binaryString) - startPos) < PRIMARY_HEADER_BYTE_SIZE:
+    raise Error("packet header is too small")
+  return ((binaryString[startPos + 0] & 0x08) > 0)
+# -----------------------------------------------------------------------------
 def getApplicationProcessId(binaryString, startPos=0):
   """returns the application process id field"""
   if (len(binaryString) - startPos) < PRIMARY_HEADER_BYTE_SIZE:
