@@ -14,6 +14,7 @@
 #******************************************************************************
 import Tkinter
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import GRND.IF
 import UI.TKI
 
 #############
@@ -49,28 +50,28 @@ class GUIview(UI.TKI.GUIwinView):
                  sticky=Tkinter.EW)
     # NCTRS interface host
     self.nctrsHostField = UI.TKI.ValueField(self, row=1, label="NCTRS host:")
-    self.nctrsHostField.set("*** nctrsHost ***")
+    self.nctrsHostField.set(GRND.IF.s_clientConfiguration.nctrsHost)
     # NCTRS interface status
     self.nctrsStatusField1 = UI.TKI.ValueField(self, row=2, label="NCTRS interface status 1:")
     self.nctrsStatusField1.set("INIT")
     self.nctrsStatusField1.setBackground(COLOR_INITIALISED)
     # NCTRS interface port
     self.nctrsPortField1 = UI.TKI.ValueField(self, row=3, label="NCTRS interface port 1:")
-    self.nctrsPortField1.set("*** nctrsPort1 ***")
+    self.nctrsPortField1.set(GRND.IF.s_clientConfiguration.nctrsTMport)
     # NCTRS interface status 2
     self.nctrsStatusField2 = UI.TKI.ValueField(self, row=4, label="NCTRS interface status 2:")
     self.nctrsStatusField2.set("INIT")
     self.nctrsStatusField2.setBackground(COLOR_INITIALISED)
     # NCTRS interface port 2
     self.nctrsPortField2 = UI.TKI.ValueField(self, row=5, label="NCTRS interface port 2:")
-    self.nctrsPortField2.set("*** nctrsPort2 ***")
+    self.nctrsPortField2.set(GRND.IF.s_clientConfiguration.nctrsTCport)
     # NCTRS interface status 3
     self.nctrsStatusField3 = UI.TKI.ValueField(self, row=6, label="NCTRS interface status 3:")
     self.nctrsStatusField3.set("INIT")
     self.nctrsStatusField3.setBackground(COLOR_INITIALISED)
     # NCTRS interface port 3
     self.nctrsPortField3 = UI.TKI.ValueField(self, row=7, label="NCTRS interface port 3:")
-    self.nctrsPortField3.set("*** nctrsPort3 ***")
+    self.nctrsPortField3.set(GRND.IF.s_clientConfiguration.nctrsAdminPort)
     # log messages
     self.messageLogger = UI.TKI.MessageLogger(self, "NCTRS")
     self.appGrid(self.messageLogger, row=8, columnspan=2)

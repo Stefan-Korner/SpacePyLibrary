@@ -11,7 +11,7 @@
 # for more details.                                                           *
 #******************************************************************************
 # CNC client for connection to SCOE                                           *
-# implements implements CAIT-03474-ASTR_issue_3_EGSE_IRD.pdf                  *
+# implements CAIT-03474-ASTR_issue_3_EGSE_IRD.pdf                             *
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR

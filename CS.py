@@ -24,8 +24,9 @@
 #******************************************************************************
 import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CS.CNCclient, CS.CNCgui, CS.EDENclient, CS.EDENgui, CS.FRAMEgui, CS.NCTRSgui
+import CS.CNCclient, CS.CNCgui, CS.EDENclient, CS.EDENgui, CS.FRAMEgui, CS.NCTRSclient, CS.NCTRSgui
 import EGSE.IF
+import GRND.IF
 import MC.IF, MC.TCGEN, MC.TCmodel, MC.TMmodel
 import MCUI.CFGgui, MCUI.TMgui, MCUI.TCgui
 import SCOS.ENV
@@ -43,6 +44,10 @@ SYS_CONFIGURATION = [
   ["EDEN_HOST", "127.0.0.1"],
   ["EDEN_SERVER_PORT", "48569"],
   ["EDEN_SERVER_PORT2", "-1"],
+  ["NCTRS_HOST", "127.0.0.1"],
+  ["NCTRS_ADMIN_SERVER_PORT", "32010"],
+  ["NCTRS_TC_SERVER_PORT", "32009"],
+  ["NCTRS_TM_SERVER_PORT", "22104"],
   ["SYS_COLOR_LOG", "1"],
   ["SYS_APP_MNEMO", "CS"],
   ["SYS_APP_NAME", "Control System"],
@@ -340,26 +345,32 @@ class ModelTask(UTIL.TASK.ProcessingTask):
   def connectNCTRS1cmd(self, argv):
     """Decoded connectNCTRS1cmd command"""
     self.logMethod("connectNCTRS1cmd", "NCTRS")
+    CS.NCTRSclient.connectNCTRS1()
   # ---------------------------------------------------------------------------
   def disconnectNCTRS1cmd(self, argv):
     """Decoded disconnectNCTRS1cmd command"""
     self.logMethod("disconnectNCTRS1cmd", "NCTRS")
+    CS.NCTRSclient.disconnectNCTRS1()
   # ---------------------------------------------------------------------------
   def connectNCTRS2cmd(self, argv):
     """Decoded connectNCTRS2cmd command"""
     self.logMethod("connectNCTRS2cmd", "NCTRS")
+    CS.NCTRSclient.connectNCTRS2()
   # ---------------------------------------------------------------------------
   def disconnectNCTRS2cmd(self, argv):
     """Decoded disconnectNCTRS2cmd command"""
     self.logMethod("disconnectNCTRS2cmd", "NCTRS")
+    CS.NCTRSclient.disconnectNCTRS2()
   # ---------------------------------------------------------------------------
   def connectNCTRS3cmd(self, argv):
     """Decoded connectNCTRS3cmd command"""
     self.logMethod("connectNCTRS3cmd", "NCTRS")
+    CS.NCTRSclient.connectNCTRS3()
   # ---------------------------------------------------------------------------
   def disconnectNCTRS3cmd(self, argv):
     """Decoded disconnectNCTRS3cmd command"""
     self.logMethod("disconnectNCTRS3cmd", "NCTRS")
+    CS.NCTRSclient.disconnectNCTRS3()
   # ---------------------------------------------------------------------------
   def notifyCNCconnected(self):
     """CNC connection established"""
@@ -459,6 +470,7 @@ UTIL.SYS.s_configuration.setDefaults(SYS_CONFIGURATION)
 MC.IF.s_configuration = MC.IF.Configuration()
 EGSE.IF.s_cncClientConfiguration = EGSE.IF.CNCclientConfiguration()
 EGSE.IF.s_edenClientConfiguration = EGSE.IF.EDENclientConfiguration()
+GRND.IF.s_clientConfiguration = GRND.IF.ClientConfiguration()
 # initialise the request handler
 requestHandler = UTIL.TASK.RequestHandler(sys.argv)
 if requestHandler.helpRequested:
@@ -519,6 +531,9 @@ CS.CNCclient.createClients()
 # create the EDEN clients
 print "Create the EDENclients"
 CS.EDENclient.createClients()
+# create the NCTRS clients
+print "Create the NCTRSclients"
+CS.NCTRSclient.createClients()
 # create the TC model
 print "Create the TC model"
 MC.TCmodel.init()
