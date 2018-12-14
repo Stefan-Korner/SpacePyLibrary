@@ -16,6 +16,7 @@
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import GRND.IF, GRND.NCTRS
+import CS.FRAMEmodel
 import UTIL.TASK
 
 ###########
@@ -45,6 +46,11 @@ class TMclient(GRND.NCTRS.TMreceiver):
     self.disconnectFromServer()
     GRND.IF.s_clientConfiguration.nctrsTMconn = False
     UTIL.TASK.s_processingTask.notifyNCTRS1disconnected()
+  # ---------------------------------------------------------------------------
+  def notifyTMdataUnit(self, tmDu):
+    """TM frame received: hook for derived classes"""
+    LOG_INFO("TM frame received", "NCTRS")
+    CS.FRAMEmodel.s_frameModel.receiveTMframe("")
 
 # =============================================================================
 class TCclient(GRND.NCTRS.TCsender):
@@ -144,7 +150,7 @@ def disconnectNCTRS1():
      GRND.IF.s_clientConfiguration.nctrsTMport == "-1":
     LOG_ERROR("no NCTRS TM link configured", "NCTRS")
     return
-  s_tmClient.disconnecLink()
+  s_tmClient.disconnectLink()
 # -----------------------------------------------------------------------------
 def connectNCTRS2():
   """Connect NCTRS TC link"""
@@ -162,7 +168,7 @@ def disconnectNCTRS2():
      GRND.IF.s_clientConfiguration.nctrsTCport == "-1":
     LOG_ERROR("no NCTRS TC link configured", "NCTRS")
     return
-  s_tcClient.disconnecLink()
+  s_tcClient.disconnectLink()
 # -----------------------------------------------------------------------------
 def connectNCTRS3():
   """Connect NCTRS Admin link"""
@@ -180,4 +186,4 @@ def disconnectNCTRS3():
      GRND.IF.s_clientConfiguration.nctrsAdminPort == "-1":
     LOG_ERROR("no NCTRS Admin link configured", "NCTRS")
     return
-  s_adminClient.disconnecLink()
+  s_adminClient.disconnectLink()

@@ -13,8 +13,9 @@
 # Monitoring and Control (M&C) - Telecommand Model                            *
 #******************************************************************************
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CS.CNCclient, CS.EDENclient
+import CS.CNCclient, CS.EDENclient, CS.FRAMEmodel
 import EGSE.IF
+import GRND.IF
 import MC.IF
 import PUS.SERVICES
 import UTIL.DU
@@ -79,6 +80,24 @@ class TCmodel(MC.IF.TCmodel):
         LOG_ERROR("route EDEN2_SCOE is not initialized", "TC")
         return False
       CS.EDENclient.s_client2.pushTcScoe(tcPacketDu)
+    elif route == "NCTRS_PACKET":
+      if not GRND.IF.s_clientConfiguration.nctrsTCconn:
+        LOG_ERROR("route NCTRS is not initialized", "TC")
+        return False
+      return CS.FRAMEmodel.s_frameModel.sendTCpacket(tcPacketDu,
+        CS.FRAMEmodel.SEND_AS_PACKET)
+    elif route == "NCTRS_FRAME":
+      if not GRND.IF.s_clientConfiguration.nctrsTCconn:
+        LOG_ERROR("route NCTRS is not initialized", "TC")
+        return False
+      return CS.FRAMEmodel.s_frameModel.sendTCpacket(tcPacketDu,
+        CS.FRAMEmodel.SEND_AS_FRAME)
+    elif route == "NCTRS_CLTU":
+      if not GRND.IF.s_clientConfiguration.nctrsTCconn:
+        LOG_ERROR("route NCTRS is not initialized", "TC")
+        return False
+      return CS.FRAMEmodel.s_frameModel.sendTCpacket(tcPacketDu,
+        CS.FRAMEmodel.SEND_AS_CLTU)
     else:
       LOG_ERROR("invalid route for TC packet: " + route, "TC")
       return False
