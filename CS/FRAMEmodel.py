@@ -14,6 +14,7 @@
 #******************************************************************************
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.PACKET, CCSDS.PACKETIZER, CCSDS.TCENCODER
+import CS.NCTRSclient
 import GRND.IF, GRND.NCTRS
 import MC.IF
 import PUS.PACKET
@@ -43,19 +44,22 @@ class FrameModel(CCSDS.PACKETIZER.Packetizer, CCSDS.TCENCODER.TCencoder):
     """sends a TM packet"""
     if sendFormat == SEND_AS_PACKET:
       LOG_INFO("TC packet ready for sending", "FRAME")
-      return True
-    self.pushTCpacket(tcPacketDu.getBufferString(), sendFormat == SEND_AS_CLTU)
+      CS.NCTRSclient.s_tcClient.sendTCpacket(tcPacketDu.getBufferString())
+    else:
+      self.pushTCpacket(tcPacketDu.getBufferString(), sendFormat == SEND_AS_CLTU)
     return True
   # ---------------------------------------------------------------------------
   def notifyTCframeCallback(self, frameDU):
     """notifies when the next TC frame is assembled"""
     # overloaded from TCencoder
     LOG("FrameModel.notifyTCframeCallback" + frameDU.getDumpString(), "FRAME")
+    LOG_WARNING("frame cannot be directly sent, there is no NCTRS service", "FRAME")
   # ---------------------------------------------------------------------------
   def notifyCLTUcallback(self, cltu):
     """notifies when the next CLTU is assembled"""
     # overloaded from TCencoder
     LOG("FrameModel.notifyCLTUcallback" + UTIL.DU.array2str(cltu), "FRAME")
+    CS.NCTRSclient.s_tcClient.sendCltu(cltu)
   # ---------------------------------------------------------------------------
   def receiveTMframe(self, tmFrame):
     """TM frame received"""

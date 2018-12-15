@@ -13,12 +13,11 @@
 # EDEN client for connection to SCOE                                          *
 # implements Core_EGSE_AD03_GAL_REQ_ALS_SA_R_0002_EGSE_IRD_issue2.pdf         *
 #******************************************************************************
-import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.PACKET
 import EGSE.EDEN, EGSE.IF
 import MC.IF
-import UTIL.SYS, UTIL.TASK
+import UTIL.TASK
 
 ###########
 # classes #

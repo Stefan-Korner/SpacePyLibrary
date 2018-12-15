@@ -363,6 +363,18 @@ class TCsender(UTIL.TCP.SingleServerReceivingClient):
     # this operation does not verify the contents of the DU
     self.dataSocket.send(tcDu.getBufferString())
   # ---------------------------------------------------------------------------
+  def sendTCpacket(self, packetData):
+    """Send the TC packet to the TC receiver"""
+    packetDu = GRND.NCTRSDU.TCpacketDataUnit()
+    packetDu.setTCpacket(packetData)
+    self.sendTcDataUnit(packetDu)
+  # ---------------------------------------------------------------------------
+  def sendCltu(self, cltu):
+    """Send the CLTU to the TC receiver"""
+    cltuDu = GRND.NCTRSDU.TCcltuDataUnit()
+    cltuDu.setCltu(cltu)
+    self.sendTcDataUnit(cltuDu)
+  # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when NCTRS has send data"""
     # read the TC data unit header from the data socket

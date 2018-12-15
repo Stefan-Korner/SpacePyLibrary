@@ -13,12 +13,11 @@
 # CNC client for connection to SCOE                                           *
 # implements CAIT-03474-ASTR_issue_3_EGSE_IRD.pdf                             *
 #******************************************************************************
-import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.PACKET
 import EGSE.CNC, EGSE.IF
 import MC.IF
-import UTIL.SYS, UTIL.TASK
+import UTIL.TASK
 
 ###########
 # classes #

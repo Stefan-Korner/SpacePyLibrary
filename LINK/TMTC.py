@@ -69,9 +69,17 @@ class CCSDSgroundSpace(LINK.IF.SpaceLink, LINK.IF.PacketLink):
       LOG_ERROR("CLTU decoding failed", "LINK")
       return
     tcFrameDu = CCSDS.FRAME.TCframe(frame)
-    if not tcFrameDu.checkChecksum():
-      LOG_ERROR("invalid TC frame CRC", "LINK")
+    # remove the fill bytes from the end of the frame
+    frameLength = tcFrameDu.frameLength + 1
+    if frameLength > len(tcFrameDu):
+      LOG_ERROR("invalid TC frame length", "LINK")
       return
+    tcFrameDu.setLen(frameLength)
+    # check the frame
+    if CCSDS.FRAME.CRC_CHECK:
+      if not tcFrameDu.checkChecksum():
+        LOG_ERROR("invalid TC frame CRC", "LINK")
+        return
     # put the TC frame into the uplink queue to simulate the uplink delay
     receptionTime = UTIL.TIME.getActualTime() + UPLINK_DELAY_SEC
     self.uplinkQueue[receptionTime] = tcFrameDu
@@ -190,7 +198,7 @@ class CCSDSgroundSpace(LINK.IF.SpaceLink, LINK.IF.PacketLink):
       # wait for further segments
       return
     # all segments are available ---> merge
-    packetData = array.array("B", "")
+    packetData = array.array("B")
     for segmentDu in self.segmentDus:
       # extract the packet data from the segment
       try:

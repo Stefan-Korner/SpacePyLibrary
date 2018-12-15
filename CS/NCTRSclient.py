@@ -13,7 +13,6 @@
 # NCTRS client for connection to Ground Station via NCTRS interface           *
 # implements EGOS-NIS-NCTR-ICD-0002-i4r0.2 (Signed).pdf                       *
 #******************************************************************************
-import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import GRND.IF, GRND.NCTRS
 import CS.FRAMEmodel
@@ -48,7 +47,8 @@ class TMclient(GRND.NCTRS.TMreceiver):
     UTIL.TASK.s_processingTask.notifyNCTRS1disconnected()
   # ---------------------------------------------------------------------------
   def notifyTMdataUnit(self, tmDu):
-    """TM frame received: hook for derived classes"""
+    """TM frame received"""
+    # overloaded from GRND.NCTRS.TMreceiver
     LOG_INFO("TM frame received", "NCTRS")
     # extract the TM frame from the NCTRS data unit
     # and send it to the frame processing
@@ -80,6 +80,21 @@ class TCclient(GRND.NCTRS.TCsender):
     self.disconnectFromServer()
     GRND.IF.s_clientConfiguration.nctrsTCconn = False
     UTIL.TASK.s_processingTask.notifyNCTRS2disconnected()
+  # ---------------------------------------------------------------------------
+  def notifyTCpacketResponseDataUnit(self, tcPktRespDu):
+    """AD packet / BD segment response received"""
+    # overloaded from GRND.NCTRS.TCsender
+    LOG_INFO("TCsender.notifyTCpacketResponseDataUnit", "NCTRS")
+  # ---------------------------------------------------------------------------
+  def notifyTCcltuResponseDataUnit(self, tcCltuRespDu):
+    """CLTU response received"""
+    # overloaded from GRND.NCTRS.TCsender
+    LOG_INFO("TCsender.notifyTCcltuResponseDataUnit", "NCTRS")
+  # ---------------------------------------------------------------------------
+  def notifyTClinkStatusDataUnit(self, tcLinkStatDu):
+    """Link status received"""
+    # overloaded from GRND.NCTRS.TCsender
+    LOG_INFO("TCsender.notifyTClinkStatusDataUnit", "NCTRS")
 
 # =============================================================================
 class AdminClient(GRND.NCTRS.AdminMessageReceiver):
