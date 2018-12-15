@@ -154,13 +154,13 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
   # ---------------------------------------------------------------------------
   def notifyCNCcommand(self, cncCommandDU):
     """CnC command received: hook for derived classes"""
-    LOG_INFO("notifyCNCcommand: tcPacket = " + UTIL.DU.array2str(cncCommandDU.getBufferString()))
+    LOG_INFO("notifyCNCcommand: tcPacket = " + cncCommandDU.getDumpString())
     LOG_INFO("message = " + cncCommandDU.getCNCmessage())
     return True
   # ---------------------------------------------------------------------------
   def notifyCCSDScommand(self, ccsdsTCpacketDU):
     """CCSDS telecommand received: hook for derived classes"""
-    LOG_INFO("notifyCCSDScommand: tcPacket = " + UTIL.DU.array2str(ccsdsTCpacketDU.getBufferString()))
+    LOG_INFO("notifyCCSDScommand: tcPacket = " + ccsdsTCpacketDU.getDumpString())
     return True
   # ---------------------------------------------------------------------------
   def clientAccepted(self):
@@ -229,7 +229,7 @@ class TCclient(UTIL.TCP.SingleServerReceivingClient):
   # ---------------------------------------------------------------------------
   def notifyCNCresponse(self, cncTMpacketDU):
     """CnC response received: hook for derived classes"""
-    LOG_INFO("notifyCNCresponse: cncTMpacketDU = " + UTIL.DU.array2str(cncTMpacketDU.getBufferString()))
+    LOG_INFO("notifyCNCresponse: cncTMpacketDU = " + cncTMpacketDU.getDumpString())
     LOG_INFO("message = " + cncTMpacketDU.getCNCmessage())
     return True
 

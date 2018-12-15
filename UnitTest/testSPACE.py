@@ -91,7 +91,7 @@ def test_TMGENoperations():
     obtUTC=0.0,
     reuse=True)
   print("tmPacket =", tmPacket)
-  if UTIL.DU.array2str(tmPacket.getBufferString()) != "\n" + \
+  if tmPacket.getDumpString() != "\n" + \
     "0000 0C D2 C0 00 00 26 10 03 19 00 00 00 00 00 00 00 .....&..........\n" + \
     "0010 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n" + \
     "0020 00 00 00 00 00 00 00 00 00 00 00 A9 07          .............":
@@ -150,7 +150,7 @@ def test_TMGENoperations():
     obtUTC=0.0,
     reuse=True)
   print("tmPacket =", tmPacket)
-  if UTIL.DU.array2str(tmPacket.getBufferString()) != "\n" + \
+  if tmPacket.getDumpString() != "\n" + \
     "0000 0C D2 C0 01 00 26 10 03 19 00 00 00 00 00 00 00 .....&..........\n" + \
     "0010 00 00 AA 12 34 56 78 00 00 00 00 00 00 00 00 41 ....4Vx........A\n" + \
     "0020 20 00 00 40 24 00 00 00 00 00 00 BC 77           ..@$.......w":

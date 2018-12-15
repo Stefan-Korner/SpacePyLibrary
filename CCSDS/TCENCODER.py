@@ -57,7 +57,7 @@ class TCencoder():
     self.frameSequenceNumber = (self.frameSequenceNumber + 1) % 256
     if convertToCLTU:
       # create the CLTU from the frame
-      cltu = CCSDS.CLTU.encodeCltu(frameDU.buffer)
+      cltu = CCSDS.CLTU.encodeCltu(frameDU.getBuffer())
       self.notifyCLTUcallback(cltu)
     else:
       self.notifyTCframeCallback(frameDU)
@@ -65,7 +65,7 @@ class TCencoder():
   def notifyTCframeCallback(self, frameDU):
     """notifies when the next TC frame is assembled"""
     # shall be overloaded in derived class, default implementaion logs frame
-    LOG("TCencoder.notifyTCframeCallback" + UTIL.DU.array2str(frameDU.getBufferString()))
+    LOG("TCencoder.notifyTCframeCallback" + frameDU.getDumpString())
   # ---------------------------------------------------------------------------
   def notifyCLTUcallback(self, cltu):
     """notifies when the next CLTU is assembled"""
