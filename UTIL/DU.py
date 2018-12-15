@@ -86,7 +86,7 @@ class BinaryUnit(object):
     if self.attributesSize1 > self.usedBufferSize:
       # error
       return ""
-    return self.buffer[0:self.attributesSize1].tostring()
+    return self.buffer[0:self.attributesSize1]
   # ---------------------------------------------------------------------------
   def getBufferBody(self):
     """returns the body part of the buffer as binary string"""
@@ -96,7 +96,7 @@ class BinaryUnit(object):
     if self.attributesSize1 > self.usedBufferSize:
       # error
       return ""
-    return self.buffer[self.attributesSize1:self.usedBufferSize].tostring()
+    return self.buffer[self.attributesSize1:self.usedBufferSize]
   # ---------------------------------------------------------------------------
   def __lt__(self, other):
     """compares if self < other"""
