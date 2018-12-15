@@ -13,11 +13,11 @@
 # FRAME layer model                                                           *
 #******************************************************************************
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CCSDS.PACKET, CCSDS.PACKETIZER
+import CCSDS.PACKET, CCSDS.PACKETIZER, CCSDS.TCENCODER
 import GRND.IF, GRND.NCTRS
 import MC.IF
 import PUS.PACKET
-import UTIL.SYS, UTIL.TASK
+import UTIL.DU, UTIL.SYS, UTIL.TASK
 
 #############
 # constants #
@@ -30,12 +30,13 @@ SEND_AS_CLTU = 2
 # classes #
 ###########
 # =============================================================================
-class FrameModel(CCSDS.PACKETIZER.Packetizer):
+class FrameModel(CCSDS.PACKETIZER.Packetizer, CCSDS.TCENCODER.TCencoder):
   """Implementation of the CS side frame processing"""
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise attributes only"""
     CCSDS.PACKETIZER.Packetizer.__init__(self)
+    CCSDS.TCENCODER.TCencoder.__init__(self)
     self.ignoreIdlePackets = (UTIL.SYS.s_configuration.IGNORE_IDLE_PACKETS == "1")
   # ---------------------------------------------------------------------------
   def sendTCpacket(self, tcPacketDu, sendFormat):
@@ -43,22 +44,23 @@ class FrameModel(CCSDS.PACKETIZER.Packetizer):
     if sendFormat == SEND_AS_PACKET:
       LOG_INFO("TC packet ready for sending", "FRAME")
       return True
-    return self.sendTCframe("", sendFormat)
+    self.pushTCpacket(tcPacketDu.getBufferString(), sendFormat == SEND_AS_CLTU)
+    return True
   # ---------------------------------------------------------------------------
-  def sendTCframe(self, tcFrameDu, sendFormat):
-    """sends a TC frame"""
-    if sendFormat == SEND_AS_FRAME:
-      LOG_INFO("TC frame ready for sending", "FRAME")
-      return True
-    return self.sendTCcltu("", sendFormat)
+  def notifyTCframeCallback(self, frameDU):
+    """notifies when the next TC frame is assembled"""
+    # overloaded from TCencoder
+    LOG("FrameModel.notifyTCframeCallback" + UTIL.DU.array2str(frameDU.getBufferString()), "FRAME")
   # ---------------------------------------------------------------------------
-  def sendTCcltu(self, cltu, sendFormat):
-    """sends a command link transfer unit"""
-    if sendFormat == SEND_AS_CLTU:
-      LOG_INFO("CLTU ready for sending", "FRAME")
-      return True
-    LOG_ERROR("invalid send format passed: " + str(sendFormat), "FRAME")
-    return FALSE
+  def notifyCLTUcallback(self, cltu):
+    """notifies when the next CLTU is assembled"""
+    # overloaded from TCencoder
+    LOG("FrameModel.notifyCLTUcallback" + UTIL.DU.array2str(cltu), "FRAME")
+  # ---------------------------------------------------------------------------
+  def receiveTMframe(self, tmFrame):
+    """TM frame received"""
+    LOG_INFO("TM frame received", "FRAME")
+    self.pushTMframe(tmFrame)
   # ---------------------------------------------------------------------------
   def notifyTMpacketCallback(self, binPacket):
     """notifies when the next TM packet is assembled"""
@@ -76,11 +78,6 @@ class FrameModel(CCSDS.PACKETIZER.Packetizer):
       tmPacketDu = CCSDS.PACKET.TMpacket(binPacket)
       LOG_INFO("CCSDS TM packet extracted", "FRAME")
     MC.IF.s_tmModel.pushTMpacket(tmPacketDu, None)
-  # ---------------------------------------------------------------------------
-  def receiveTMframe(self, tmFrame):
-    """TM frame received"""
-    LOG_INFO("TM frame received", "FRAME")
-    self.pushTMframe(tmFrame)
 
 ####################
 # global variables #

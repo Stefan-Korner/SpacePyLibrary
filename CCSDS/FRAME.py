@@ -207,7 +207,7 @@ class TCframe(CCSDS.DU.DataUnit):
     return self.getBytes(TC_FRAME_HEADER_BYTE_SIZE, segmentByteSize)
   # ---------------------------------------------------------------------------
   def setSegment(self, segment):
-    """set the CLTU and the packetSize"""
+    """set the segment"""
     if self.controlCommandFlag != 0:
       raise AttributeError("setSegment() only possible when controlCommandFlag is 0")
     self.setLen(TC_FRAME_HEADER_BYTE_SIZE)
