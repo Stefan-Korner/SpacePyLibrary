@@ -45,7 +45,7 @@ class TCencoder():
     segmentDU.mapId = self.segmentMapId
     # create the frame from the segment
     frameDU = CCSDS.FRAME.TCframe()
-    frameDU.setSegment(segmentDU.getBufferString())
+    frameDU.setSegment(segmentDU.buffer)
     frameDU.versionNumber = self.frameVersionNumber
     frameDU.bypassFlag = self.frameBypassFlag
     frameDU.controlCommandFlag = self.frameControlCommandFlag
@@ -57,7 +57,7 @@ class TCencoder():
     self.frameSequenceNumber = (self.frameSequenceNumber + 1) % 256
     if convertToCLTU:
       # create the CLTU from the frame
-      cltu = CCSDS.CLTU.encodeCltu(frameDU.getBufferString())
+      cltu = CCSDS.CLTU.encodeCltu(frameDU.buffer)
       self.notifyCLTUcallback(cltu)
     else:
       self.notifyTCframeCallback(frameDU)
