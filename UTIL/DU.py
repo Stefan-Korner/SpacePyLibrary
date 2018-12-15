@@ -71,12 +71,16 @@ class BinaryUnit(object):
     """hook for initializing attributes, can be overloaded in derived class"""
     pass
   # ---------------------------------------------------------------------------
+  def getBuffer(self):
+    """returns the used elements of the buffer"""
+    return self.buffer[0:self.usedBufferSize]
+  # ---------------------------------------------------------------------------
   def getBufferString(self):
     """returns the used elements of the buffer as binary string"""
     return self.buffer[0:self.usedBufferSize].tostring()
   # ---------------------------------------------------------------------------
   def getBufferHeader(self):
-    """returns the header part of the buffer as binary string"""
+    """returns the header part of the buffer"""
     if self.attributesSize1 == None:
       # error
       return ""
@@ -86,7 +90,7 @@ class BinaryUnit(object):
     return self.buffer[0:self.attributesSize1]
   # ---------------------------------------------------------------------------
   def getBufferBody(self):
-    """returns the body part of the buffer as binary string"""
+    """returns the body part of the buffer"""
     if self.attributesSize1 == None:
       # error
       return ""
@@ -131,9 +135,13 @@ class BinaryUnit(object):
       return False
     return self.getBufferString().__ge-_(other.getBufferString())
   # ---------------------------------------------------------------------------
+  def getDumpString(self, maxLen=65536):
+    """returns the buffer in a readable data dump"""
+    return array2str(self.buffer, min(self.usedBufferSize, maxLen))
+  # ---------------------------------------------------------------------------
   def __str__(self):
     """returns a read-able representation"""
-    retStr = array2str(self.buffer, self.usedBufferSize)
+    retStr = self.getDumpString()
     if self.attributeMap1 != None:
       for name, fieldSpec in self.attributeMap1.iteritems():
         retStr += "\n" + name + " = "

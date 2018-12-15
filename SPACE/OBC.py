@@ -139,9 +139,9 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
       LOG_ERROR("packet creation failed: SPID = " + str(spid), "SPACE")
       return False
     if tmPacketDu.dataFieldHeaderFlag:
-      LOG("PUS Packet:" + UTIL.DU.array2str(tmPacketDu.getBufferString()[0:min(16,len(tmPacketDu))]), "SPACE")
+      LOG("PUS Packet:" + tmPacketDu.getDumpString(16), "SPACE")
     else:
-      LOG("CCSDS Packet:" + UTIL.DU.array2str(tmPacketDu.getBufferString()[0:min(16,len(tmPacketDu))]), "SPACE")
+      LOG("CCSDS Packet:" + tmPacketDu.getDumpString(16), "SPACE")
     # send the TM packet
     return self.pushTMpacket(tmPacketDu, ertUTC)
   # ---------------------------------------------------------------------------

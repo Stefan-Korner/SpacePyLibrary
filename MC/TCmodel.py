@@ -18,7 +18,6 @@ import EGSE.IF
 import GRND.IF
 import MC.IF
 import PUS.SERVICES
-import UTIL.DU
 
 ###########
 # classes #
@@ -41,9 +40,9 @@ class TCmodel(MC.IF.TCmodel):
       LOG_ERROR("packet creation failed: pktName = " + str(pktName), "TC")
       return False
     if tcPacketDu.dataFieldHeaderFlag:
-      LOG("PUS Packet:" + UTIL.DU.array2str(tcPacketDu.getBufferString()[0:min(16,len(tcPacketDu))]), "TC")
+      LOG("PUS Packet:" + tcPacketDu.getDumpString(16), "TC")
     else:
-      LOG("CCSDS Packet:" + UTIL.DU.array2str(tcPacketDu.getBufferString()[0:min(16,len(tcPacketDu))]), "TC")
+      LOG("CCSDS Packet:" + tcPacketDu.getDumpString(16), "TC")
     # send the TC packet
     route = tcPacketData.route
     return self.pushTCpacket(tcPacketDu, route)
@@ -100,6 +99,8 @@ class TCmodel(MC.IF.TCmodel):
         CS.FRAMEmodel.SEND_AS_CLTU)
     else:
       LOG_ERROR("invalid route for TC packet: " + route, "TC")
+      LOG("use instead: CNC | EDEN_SPACE | EDEN_SCOE | EDEN2_SPACE | EDEN2_SCOE |", "TC")
+      LOG("             NCTRS_PACKET | NCTRS_FRAME | NCTRS_CLTU", "TC")
       return False
     return True
   # ---------------------------------------------------------------------------

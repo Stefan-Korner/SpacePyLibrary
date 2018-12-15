@@ -50,7 +50,7 @@ class FrameModel(CCSDS.PACKETIZER.Packetizer, CCSDS.TCENCODER.TCencoder):
   def notifyTCframeCallback(self, frameDU):
     """notifies when the next TC frame is assembled"""
     # overloaded from TCencoder
-    LOG("FrameModel.notifyTCframeCallback" + UTIL.DU.array2str(frameDU.getBufferString()), "FRAME")
+    LOG("FrameModel.notifyTCframeCallback" + frameDU.getDumpString(), "FRAME")
   # ---------------------------------------------------------------------------
   def notifyCLTUcallback(self, cltu):
     """notifies when the next CLTU is assembled"""
