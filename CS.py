@@ -24,7 +24,7 @@
 #******************************************************************************
 import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CS.CNCclient, CS.CNCgui, CS.EDENclient, CS.EDENgui, CS.FRAMEgui, CS.FRAMEmodel, CS.NCTRSclient, CS.NCTRSgui
+import CS.CNCclient, CS.CNCgui, CS.EDENclient, CS.EDENgui, CS.FRAMEgui, CS.FRAMEmodel, CS.FRAMErply, CS.NCTRSclient, CS.NCTRSgui
 import EGSE.IF
 import GRND.IF
 import MC.IF, MC.TCGEN, MC.TCmodel, MC.TMmodel
@@ -110,6 +110,8 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       retStatus = self.connectEDEN2cmd(argv)
     elif (cmd == "F2") or (cmd == "DISCONNECTEDEN2"):
       retStatus = self.disconnectEDEN2cmd(argv)
+    elif (cmd == "RF") or (cmd == "REPLAYFRAMES"):
+      retStatus = self.replayFramesCmd(argv)
     elif (cmd == "N1") or (cmd == "CONNECTNCTRS1"):
       retStatus = self.connectNCTRS1cmd(argv)
     elif (cmd == "O1") or (cmd == "DISCONNECTNCTRS1"):
@@ -183,6 +185,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("h  | help ...............provides this information", "FRAME")
     LOG("q  | quit ...............terminates SIM application", "FRAME")
     LOG("u  | dumpConfiguration...dumps the configuration", "FRAME")
+    LOG("rf | replayFrames <replayFile> replays NCTRS frames", "FRAME")
     LOG_INFO("Available control commands:", "NCTRS")
     LOG("", "NCTRS")
     LOG("x  | exit ...............terminates client connection (only for TCP/IP clients)", "NCTRS")
@@ -342,6 +345,22 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     """Decoded disconnectEDEN2 command"""
     self.logMethod("disconnectEDEN2cmd", "EDEN")
     CS.EDENclient.disconnectEDEN2()
+  # ---------------------------------------------------------------------------
+  def replayFramesCmd(self, argv):
+    """Decoded replayFramesCmd command"""
+    self.logMethod("replayFramesCmd", "FRAME")
+
+    # consistency check
+    if len(argv) != 2:
+      LOG_WARNING("invalid parameters passed for replayFrames", "FRAME")
+      return False
+
+    # extract the arguments
+    replayFile = argv[1]
+
+    # start replay
+    frameRateMs = 1000.0
+    CS.FRAMErply.s_frameReplayer.startReplay(replayFile, frameRateMs)
   # ---------------------------------------------------------------------------
   def connectNCTRS1cmd(self, argv):
     """Decoded connectNCTRS1cmd command"""
@@ -546,6 +565,9 @@ MC.TMmodel.init()
 # create the frame model
 print "Create the frame model"
 CS.FRAMEmodel.init()
+# create the frame replayer
+print "Create the frame replayer"
+CS.FRAMErply.init()
 
 # load the definition data
 print "load definition data (take some time) ..."
