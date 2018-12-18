@@ -13,10 +13,15 @@
 # Ground Simulation - NCTRS Module                                            *
 # implements EGOS-NIS-NCTR-ICD-0002-i4r0.2 (Signed).pdf                       *
 #******************************************************************************
-import sys
+import socket, sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import GRND.IF, GRND.NCTRSDU
 import UTIL.TASK, UTIL.TCO, UTIL.TCP, UTIL.TIME
+
+#############
+# constants #
+#############
+SOCKET_TYPE = type(socket.socket())
 
 ###########
 # classes #
@@ -34,52 +39,16 @@ class TMreceiver(UTIL.TCP.SingleServerReceivingClient):
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when NCTRS has send data"""
-    # read the TM data unit header from the data socket
+    # read the TM data unit from the data socket
     try:
-      tmDuHeader = self.dataSocket.recv(GRND.NCTRSDU.TM_DU_HEADER_BYTE_SIZE);
+      tmDu = readNCTRSframe(self.dataSocket)
     except Exception as ex:
+      errorMessage = str(ex)
+      if errorMessage != "":
+        LOG_ERROR(errorMessage)
       self.disconnectFromServer()
-      self.notifyConnectionClosed(str(ex))
+      self.notifyConnectionClosed(errorMessage)
       return
-    # consistency check
-    tmDuHeaderLen = len(tmDuHeader)
-    if tmDuHeaderLen == 0:
-      # client termination
-      self.disconnectFromServer()
-      self.notifyConnectionClosed("")
-      return
-    if tmDuHeaderLen != GRND.NCTRSDU.TM_DU_HEADER_BYTE_SIZE:
-      LOG_ERROR("Read of TM DU header failed: invalid size: " + str(tmDuHeaderLen))
-      self.disconnectFromServer()
-      self.notifyConnectionClosed("invalid data")
-      return
-    tmDu = GRND.NCTRSDU.TMdataUnit(tmDuHeader)
-    # consistency check
-    packetSize = tmDu.packetSize
-    remainingSizeExpected = packetSize - GRND.NCTRSDU.TM_DU_HEADER_BYTE_SIZE
-    if remainingSizeExpected <= 0:
-      LOG_ERROR("Read of TM DU header failed: invalid packet size field: " + str(remainingSizeExpected))
-      self.disconnectFromServer()
-      self.notifyConnectionClosed("invalid data")
-      return
-    # read the remaining bytes for the TM data unit
-    # from the data socket
-    try:
-      tmRemaining = self.dataSocket.recv(remainingSizeExpected);
-    except Exception as ex:
-      LOG_ERROR("Read of remaining TM DU failed: " + str(ex))
-      self.disconnectFromServer()
-      self.notifyConnectionClosed("invalid data")
-      return
-    # consistency check
-    remainingSizeRead = len(tmRemaining)
-    if remainingSizeRead != remainingSizeExpected:
-      LOG_ERROR("Read of remaining TM DU failed: invalid remaining size: " + str(remainingSizeRead))
-      self.disconnectFromServer()
-      self.notifyConnectionClosed("invalid data")
-      return
-    # TM frame
-    tmDu.append(tmRemaining)
     self.notifyTMdataUnit(tmDu)
   # ---------------------------------------------------------------------------
   def notifyConnectionClosed(self, details):
@@ -597,3 +566,46 @@ class AdminMessageReceiver(UTIL.TCP.SingleServerReceivingClient):
     """Admin message response received"""
     LOG_ERROR("AdminMessageReceiver.messageDu not implemented")
     sys.exit(-1)
+
+#############
+# functions #
+#############
+def readNCTRSframe(fd):
+  """reads one NCTRS frame from fd, raise execption when there is an error"""
+  # read the TM data unit header
+  try:
+    if type(fd) == SOCKET_TYPE:
+      tmDuHeader = fd.recv(GRND.NCTRSDU.TM_DU_HEADER_BYTE_SIZE)
+    else:
+      tmDuHeader = fd.read(GRND.NCTRSDU.TM_DU_HEADER_BYTE_SIZE)
+  except Exception as ex:
+    raise Error(str(ex))
+  # consistency check
+  tmDuHeaderLen = len(tmDuHeader)
+  if tmDuHeaderLen == 0:
+    # end of file
+    raise Error("")
+  if tmDuHeaderLen != GRND.NCTRSDU.TM_DU_HEADER_BYTE_SIZE:
+    raise Error("Read of TM DU header failed: invalid size: " + str(tmDuHeaderLen))
+  tmDu = GRND.NCTRSDU.TMdataUnit(tmDuHeader)
+  # consistency check
+  packetSize = tmDu.packetSize
+  remainingSizeExpected = packetSize - GRND.NCTRSDU.TM_DU_HEADER_BYTE_SIZE
+  if remainingSizeExpected <= 0:
+    raise Error("Read of TM DU header failed: invalid packet size field: " + str(remainingSizeExpected))
+  # read the remaining bytes for the TM data unit
+  # from the data socket
+  try:
+    if type(fd) == SOCKET_TYPE:
+      tmRemaining = fd.recv(remainingSizeExpected)
+    else:
+      tmRemaining = fd.read(remainingSizeExpected)
+  except Exception as ex:
+    raise Error("Read of remaining TM DU failed: " + str(ex))
+  # consistency check
+  remainingSizeRead = len(tmRemaining)
+  if remainingSizeRead != remainingSizeExpected:
+    raise Error("Read of remaining TM DU failed: invalid remaining size: " + str(remainingSizeRead))
+  # TM frame
+  tmDu.append(tmRemaining)
+  return tmDu

@@ -12,4 +12,4 @@
 #******************************************************************************
 # Control System                                                              *
 #******************************************************************************
-__all__ = ["CNCclient", "CNCgui", "EDENclient", "EDENgui", "FRAMEgui", "FRAMEmodel", "NCTRSclient", "NCTRSgui"]
+__all__ = ["CNCclient", "CNCgui", "EDENclient", "EDENgui", "FRAMEgui", "FRAMEmodel", "FRAMErply", "NCTRSclient", "NCTRSgui"]
