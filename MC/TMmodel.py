@@ -26,6 +26,7 @@ class TMmodel(MC.IF.TMmodel):
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise attributes only"""
+    pass
   # ---------------------------------------------------------------------------
   def pushTMpacket(self, tmPacketDu, ertUTC):
     """
@@ -51,6 +52,9 @@ class TMmodel(MC.IF.TMmodel):
     else:
       LOG("non-PUS packet", "TM")
       LOG("tmPacketDu = " + str(tmPacketDu), "TM")
+    # forward the TM packet also to the TM recorder
+    # where the packet is recorded on demand
+    MC.IF.s_tmRecorder.pushTMpacket(tmPacketDu, ertUTC)
 
 #############
 # functions #
