@@ -19,9 +19,29 @@ Backlog of features that shall be implemented
 
 013 Support stringified time as TM parameter (TMGEN.py).
 
-014 Support COP-1 protocol for CCSDS frame layer (see related issued).
+014 Support COP-1 protocol for CCSDS frame layer (see related issue).
 
-015 Implement a rudimentary control system (CS).
+016 Implement TM parameter processing in CS TM model.
+
+017 Implement TC parameter encoding in CS TC model.
+
+018 Implement TC verification in CS TC model.
+
+019 Implement configuration info in CS CFG GUI.
+
+020 Update documentation to cover then new CS application.
+
+021 Harmonize Python2 and Python3 code.
+
+022 Support ERT time in CS.py.
+
+023 Implement system level end-to-end tests.
+
+024 Improve source code with consistent doc strings.
+
+025 Limit the number of lines in the logging panes of the GUI.
+
+026 Support multiple CnC and EDEN connections in CS.
 
 --------------------------------- implemented ---------------------------------
 
@@ -38,3 +58,5 @@ Backlog of features that shall be implemented
 010 Port to Python3 and create a maintenance branch for Python2.
 
 011 Change the license to MIT.
+
+015 Implement a rudimentary control system (CS).
