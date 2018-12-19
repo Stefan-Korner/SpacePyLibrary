@@ -14,6 +14,7 @@
 #******************************************************************************
 import Tkinter, tkFileDialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import CS.FRAMErply
 import SCOS.ENV
 import UI.TKI
 
@@ -76,8 +77,21 @@ class GUIview(UI.TKI.GUIwinView):
     """Generic callback when something changes in the model"""
     if status == "UPDATE_REPLAY":
       self.updateReplayNotify()
+    if status == "UPDATE_REPLAY_NR":
+      self.updateReplayNrNotify()
   # ---------------------------------------------------------------------------
   def updateReplayNotify(self):
     """Called when the replay state has changed"""
-    self.replayTMframesField.set("TODO: implementation needed")
-    LOG_ERROR("FRAMEgui.updateReplayNotify implementation needed", "FRAME")
+    if CS.FRAMErply.s_frameReplayer.running:
+      self.disableCommandMenuItem("ReplayFrames")
+      self.menuButtons.setState("RPLY", Tkinter.DISABLED)
+      self.replayTMframesField.set("Running")
+      self.lastFrameNr = 0
+    else:
+      self.enableCommandMenuItem("ReplayFrames")
+      self.menuButtons.setState("RPLY", Tkinter.NORMAL)
+      self.replayTMframesField.set("Stopped: Nr. frames = " + str(CS.FRAMErply.s_frameReplayer.frameNr))
+  # ---------------------------------------------------------------------------
+  def updateReplayNrNotify(self):
+    """Called when the next replay frame has been processed"""
+    self.replayTMframesField.set("Running: Nr. frames = " + str(CS.FRAMErply.s_frameReplayer.frameNr))
