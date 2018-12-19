@@ -29,6 +29,7 @@ class FrameReplayer(object):
     self.running = False
     self.nctrsFramesFile = None
     self.frameRateMs = None
+    self.frameNr = 0
   # ---------------------------------------------------------------------------
   def startReplay(self, replayFileName, frameRateMs):
     """starts reading NCTRS frames from a replay file"""
@@ -41,6 +42,8 @@ class FrameReplayer(object):
       return False
     self.frameRateMs = frameRateMs
     self.running = True
+    self.frameNr = 0
+    UTIL.TASK.s_processingTask.notifyGUItask("UPDATE_REPLAY")
     # read the first frame, other frames are read automatically
     self.readFrame()
   # ---------------------------------------------------------------------------
@@ -52,6 +55,7 @@ class FrameReplayer(object):
       self.nctrsFramesFile.close()
       self.nctrsFramesFile = None
     self.frameRateMs = None
+    UTIL.TASK.s_processingTask.notifyGUItask("UPDATE_REPLAY")
   # ---------------------------------------------------------------------------
   def readFrame(self):
     """reads the next NCTRS frame from the replay file"""
@@ -70,7 +74,9 @@ class FrameReplayer(object):
     # extract the TM frame from the NCTRS data unit
     # and send it to the frame processing
     frame = tmDu.getFrame()
+    self.frameNr += 1
     CS.FRAMEmodel.s_frameModel.receiveTMframe(frame)
+    UTIL.TASK.s_processingTask.notifyGUItask("UPDATE_REPLAY_NR")
     # read the next frame later
     UTIL.TASK.s_processingTask.createTimeHandler(self.frameRateMs,
                                                  self.readFrame)
