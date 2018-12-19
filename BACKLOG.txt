@@ -43,6 +43,10 @@ Backlog of features that shall be implemented
 
 026 Support multiple CnC and EDEN connections in CS.
 
+027 Implement new GUIs with PySide2 in version 4.
+
+028 Identify performance bottleneks and improve the code.
+
 --------------------------------- implemented ---------------------------------
 
 001 Remove the dependency to MIB files TPKTconnTable.dat, TPKTconfigTable.dat:
