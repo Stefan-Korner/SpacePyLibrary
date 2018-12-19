@@ -27,7 +27,7 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CS.CNCclient, CS.CNCgui, CS.EDENclient, CS.EDENgui, CS.FRAMEgui, CS.FRAMEmodel, CS.FRAMErply, CS.NCTRSclient, CS.NCTRSgui
 import EGSE.IF
 import GRND.IF
-import MC.IF, MC.TCGEN, MC.TCmodel, MC.TMmodel
+import MC.IF, MC.TCGEN, MC.TCmodel, MC.TMmodel, MC.TMrecorder
 import MCUI.CFGgui, MCUI.TMgui, MCUI.TCgui
 import SCOS.ENV
 import SPACE.DEF, SPACE.IF
@@ -48,6 +48,8 @@ SYS_CONFIGURATION = [
   ["NCTRS_ADMIN_SERVER_PORT", "32010"],
   ["NCTRS_TC_SERVER_PORT", "32009"],
   ["NCTRS_TM_SERVER_PORT", "22104"],
+  ["ERT_MISSION_EPOCH_STR", UTIL.TCO.TAI_MISSION_EPOCH_STR],
+  ["ERT_LEAP_SECONDS", str(UTIL.TCO.GPS_LEAP_SECONDS_2017)],
   ["SYS_COLOR_LOG", "1"],
   ["SYS_APP_MNEMO", "CS"],
   ["SYS_APP_NAME", "Control System"],
@@ -90,6 +92,10 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       retStatus = self.listPacketsCmd(argv)
     elif (cmd == "G") or (cmd == "GENERATE"):
       retStatus = self.generateCmd(argv)
+    elif (cmd == "RP") or (cmd == "RECORDPACKETS"):
+      retStatus = self.recordPacketsCmd(argv)
+    elif (cmd == "SR") or (cmd == "STOPPACKETRECORDER"):
+      retStatus = self.stopPacketRecorderCmd(argv)
     elif (cmd == "P") or (cmd == "SETPACKETDATA"):
       retStatus = self.setPacketDataCmd(argv)
     elif (cmd == "S") or (cmd == "SENDPACKET"):
@@ -145,10 +151,12 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("g  | generate............generates the testdata.sim file in testbin directory", "CFG")
     LOG_INFO("Available monitoring commands:", "TM")
     LOG("", "TM")
-    LOG("x  | exit ...............terminates client connection (only for TCP/IP clients)", "TM")
-    LOG("h  | help ...............provides this information", "TM")
-    LOG("q  | quit ...............terminates SIM application", "TM")
-    LOG("u  | dumpConfiguration...dumps the configuration", "TM")
+    LOG("x  | exit ................terminates client connection (only for TCP/IP clients)", "TM")
+    LOG("h  | help ................provides this information", "TM")
+    LOG("q  | quit ................terminates SIM application", "TM")
+    LOG("u  | dumpConfiguration....dumps the configuration", "TM")
+    LOG("rp | recordPackets <recordFile> records TM packets", "TM")
+    LOG("sr | stopPacketRecorder...stops recording of TM packets", "TM")
     LOG_INFO("Available control commands:", "TC")
     LOG("", "TC")
     LOG("x  | exit ...............terminates client connection (only for TCP/IP clients)", "TC")
@@ -247,6 +255,34 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     except Exception as ex:
       LOG_ERROR("Generation Error: " + str(ex), "CFG")
       return False
+    return True
+  # ---------------------------------------------------------------------------
+  def recordPacketsCmd(self, argv):
+    """Decoded recordPackets command"""
+    self.logMethod("recordPacketsCmd", "TM")
+    # consistency check
+    if MC.IF.s_tmRecorder.isRecording():
+      LOG_WARNING("Packet recording already started", "TM")
+      return False
+    if len(argv) != 2:
+      LOG_WARNING("invalid parameters passed for recordPackets", "TM")
+      return False
+    # extract the arguments
+    recordFileName = argv[1]
+    MC.IF.s_tmRecorder.startRecording(recordFileName);
+    return True
+  # ---------------------------------------------------------------------------
+  def stopPacketRecorderCmd(self, argv):
+    """Decoded stopPacketRecorder command"""
+    self.logMethod("stopPacketRecorderCmd", "TM")
+    # consistency check
+    if not MC.IF.s_tmRecorder.isRecording():
+      LOG_WARNING("Packet recording not started", "TM")
+      return False
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for stopPacketRecorder", "TM")
+      return False
+    MC.IF.s_tmRecorder.stopRecording();
     return True
   # ---------------------------------------------------------------------------
   def setPacketDataCmd(self, argv):
@@ -489,6 +525,10 @@ else:
   launchScriptName = sys.argv[1]
 # initialise the system configuration
 UTIL.SYS.s_configuration.setDefaults(SYS_CONFIGURATION)
+UTIL.TCO.setERTmissionEpochStr(UTIL.SYS.s_configuration.ERT_MISSION_EPOCH_STR)
+UTIL.TCO.setERTleapSeconds(int(UTIL.SYS.s_configuration.ERT_LEAP_SECONDS))
+
+
 MC.IF.s_configuration = MC.IF.Configuration()
 EGSE.IF.s_cncClientConfiguration = EGSE.IF.CNCclientConfiguration()
 EGSE.IF.s_edenClientConfiguration = EGSE.IF.EDENclientConfiguration()
@@ -562,6 +602,9 @@ MC.TCmodel.init()
 # create the TM model
 print "Create the TM model"
 MC.TMmodel.init()
+# create the TM recorder
+print "Create the TM recorder"
+MC.TMrecorder.init()
 # create the frame model
 print "Create the frame model"
 CS.FRAMEmodel.init()
