@@ -31,8 +31,6 @@ Backlog of features that shall be implemented
 
 020 Update documentation to cover then new CS application.
 
-021 Harmonize Python2 and Python3 code.
-
 022 Support ERT time in CS.py.
 
 023 Implement system level end-to-end tests.
@@ -64,3 +62,5 @@ Backlog of features that shall be implemented
 011 Change the license to MIT.
 
 015 Implement a rudimentary control system (CS).
+
+021 Harmonize Python2 and Python3 code.
