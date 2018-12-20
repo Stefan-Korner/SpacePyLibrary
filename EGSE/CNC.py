@@ -100,7 +100,7 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
     """Callback when the CCS has send data"""
     # read the packet header from the data socket
     try:
-      strBuffer = self.dataSocket.recv(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE);
+      strBuffer = self.dataSocket.recv(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE)
       packetHeader = array.array("B", strBuffer)
     except Exception as ex:
       self.disconnectClient()
@@ -125,7 +125,7 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
     # read the data field for the packet from the data socket
     dataFieldLength = tcPacketDU.packetLength + 1
     try:
-      dataField = self.dataSocket.recv(dataFieldLength);
+      dataField = self.dataSocket.recv(dataFieldLength)
     except Exception as ex:
       LOG_ERROR("Read of packet dataField failed: " + str(ex))
       return
@@ -187,7 +187,7 @@ class TCclient(UTIL.TCP.SingleServerReceivingClient):
     """Callback when the SCOE has send data"""
     # read the packet header from the data socket
     try:
-      packetHeader = self.dataSocket.recv(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE);
+      packetHeader = self.dataSocket.recv(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE)
     except Exception as ex:
       self.disconnectFromServer()
       self.notifyConnectionClosed(str(ex))
@@ -206,7 +206,7 @@ class TCclient(UTIL.TCP.SingleServerReceivingClient):
     # read the data field for the packet from the data socket
     dataFieldLength = cncTMpacketDU.packetLength + 1
     try:
-      dataField = self.dataSocket.recv(dataFieldLength);
+      dataField = self.dataSocket.recv(dataFieldLength)
     except Exception as ex:
       LOG_ERROR("Read of packet dataField failed: " + str(ex))
       return
@@ -276,7 +276,7 @@ class TMclient(UTIL.TCP.SingleServerReceivingClient):
     """Callback when the SCOE has send data"""
     # read the packet header from the data socket
     try:
-      packetHeader = self.dataSocket.recv(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE);
+      packetHeader = self.dataSocket.recv(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE)
     except Exception as ex:
       self.disconnectFromServer()
       self.notifyConnectionClosed(str(ex))
@@ -295,7 +295,7 @@ class TMclient(UTIL.TCP.SingleServerReceivingClient):
     # read the data field for the packet from the data socket
     dataFieldLength = ccsdsTMpacketDU.packetLength + 1
     try:
-      dataField = self.dataSocket.recv(dataFieldLength);
+      dataField = self.dataSocket.recv(dataFieldLength)
     except Exception as ex:
       LOG_ERROR("Read of packet dataField failed: " + str(ex))
       return

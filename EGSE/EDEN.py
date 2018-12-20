@@ -146,7 +146,7 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
     """Callback when the CCS has send data"""
     # read the PDU header from the data socket
     try:
-      pduHeader = self.dataSocket.recv(EGSE.EDENPDU.PDU_HEADER_BYTE_SIZE);
+      pduHeader = self.dataSocket.recv(EGSE.EDENPDU.PDU_HEADER_BYTE_SIZE)
     except Exception as ex:
       self.disconnectClient()
       self.notifyConnectionClosed(str(ex))
@@ -165,7 +165,7 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
     dataFieldLength = pdu.dataFieldLength
     if dataFieldLength > 0:
       try:
-        dataField = self.dataSocket.recv(dataFieldLength);
+        dataField = self.dataSocket.recv(dataFieldLength)
       except Exception as ex:
         LOG_ERROR("Read of PDU dataField failed: " + str(ex))
         return
@@ -284,7 +284,7 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
     """Callback when the SCOE has send data"""
     # read the PDU header from the data socket
     try:
-      pduHeader = self.dataSocket.recv(EGSE.EDENPDU.PDU_HEADER_BYTE_SIZE);
+      pduHeader = self.dataSocket.recv(EGSE.EDENPDU.PDU_HEADER_BYTE_SIZE)
     except Exception as ex:
       self.disconnectFromServer()
       self.notifyConnectionClosed(str(ex))
@@ -304,7 +304,7 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
     dataFieldLength = pdu.dataFieldLength
     if dataFieldLength > 0:
       try:
-        dataField = self.dataSocket.recv(dataFieldLength);
+        dataField = self.dataSocket.recv(dataFieldLength)
       except Exception as ex:
         LOG_ERROR("Read of PDU dataField failed: " + str(ex), "EDEN")
         return
