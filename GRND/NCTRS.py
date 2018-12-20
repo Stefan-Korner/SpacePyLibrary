@@ -143,7 +143,7 @@ class TCreceiver(UTIL.TCP.SingleClientReceivingServer):
     """Callback when the MCS has send data"""
     # read the TC data unit header from the data socket
     try:
-      tcDuHeader = self.dataSocket.recv(GRND.NCTRSDU.TC_DU_HEADER_BYTE_SIZE);
+      tcDuHeader = self.dataSocket.recv(GRND.NCTRSDU.TC_DU_HEADER_BYTE_SIZE)
     except Exception, ex:
       self.disconnectClient()
       self.notifyConnectionClosed(str(ex))
@@ -171,7 +171,7 @@ class TCreceiver(UTIL.TCP.SingleClientReceivingServer):
     # read the remaining bytes for the TC data unit
     # from the data socket
     try:
-      tcRemaining = self.dataSocket.recv(remainingSizeExpected);
+      tcRemaining = self.dataSocket.recv(remainingSizeExpected)
     except Exception, ex:
       LOG_ERROR("Read of remaining TC DU failed: " + str(ex))
       self.disconnectClient()
@@ -348,7 +348,7 @@ class TCsender(UTIL.TCP.SingleServerReceivingClient):
     """Callback when NCTRS has send data"""
     # read the TC data unit header from the data socket
     try:
-      tcDuHeader = self.dataSocket.recv(GRND.NCTRSDU.TC_DU_HEADER_BYTE_SIZE);
+      tcDuHeader = self.dataSocket.recv(GRND.NCTRSDU.TC_DU_HEADER_BYTE_SIZE)
     except Exception, ex:
       self.disconnectFromServer()
       self.notifyConnectionClosed(str(ex))
@@ -377,7 +377,7 @@ class TCsender(UTIL.TCP.SingleServerReceivingClient):
     # read the remaining bytes for the TC data unit
     # from the data socket
     try:
-      tcRemaining = self.dataSocket.recv(remainingSizeExpected);
+      tcRemaining = self.dataSocket.recv(remainingSizeExpected)
     except Exception, ex:
       LOG_ERROR("Read of remaining TC DU failed: " + str(ex))
       self.disconnectFromServer()
@@ -469,7 +469,7 @@ class AdminMessageSender(UTIL.TCP.SingleClientReceivingServer):
   def receiveCallback(self, socket, stateMask):
     """Callback when the MCS has send data"""
     try:
-      testData = self.dataSocket.recv(1);
+      testData = self.dataSocket.recv(1)
     except Exception as ex:
       self.disconnectClient()
       self.notifyConnectionClosed("")
@@ -512,7 +512,7 @@ class AdminMessageReceiver(UTIL.TCP.SingleServerReceivingClient):
     """Callback when NCTRS has send data"""
     # read the admin message unit header from the data socket
     try:
-      messageHeader = self.dataSocket.recv(GRND.NCTRSDU.MESSAGE_HEADER_BYTE_SIZE);
+      messageHeader = self.dataSocket.recv(GRND.NCTRSDU.MESSAGE_HEADER_BYTE_SIZE)
     except Exception, ex:
       self.disconnectFromServer()
       self.notifyConnectionClosed(str(ex))
@@ -541,7 +541,7 @@ class AdminMessageReceiver(UTIL.TCP.SingleServerReceivingClient):
     # read the remaining bytes for the TC data unit
     # from the data socket
     try:
-      messageRemaining = self.dataSocket.recv(remainingSizeExpected);
+      messageRemaining = self.dataSocket.recv(remainingSizeExpected)
     except Exception, ex:
       LOG_ERROR("Read of remaining admin message DU failed: " + str(ex))
       self.disconnectFromServer()

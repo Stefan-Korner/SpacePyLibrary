@@ -574,7 +574,7 @@ class RequestHandler(ConsoleHandler):
     # read the next set of byte from stdin
     tcpLineBuffer = self.tcpLineBuffer
     try:
-      tcpLineBuffer += self.clientSocket.recv(LINEBUFFERLEN);
+      tcpLineBuffer += self.clientSocket.recv(LINEBUFFERLEN)
       LOG("tcpLineBuffer: " + tcpLineBuffer)
     except:
       # read failed
