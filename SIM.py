@@ -13,6 +13,7 @@
 #******************************************************************************
 # Ground and Spacecraft simulator                                             *
 #******************************************************************************
+from __future__ import print_function
 import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import GRND.IF, GRND.NCTRSDU
@@ -1019,15 +1020,15 @@ def obqDisableAck4(*argv): UTIL.TASK.s_processingTask.obqDisableAck4Cmd(("", ) +
 # -----------------------------------------------------------------------------
 def printUsage(launchScriptName):
   """Prints the possible commandline options of the test driver"""
-  print ""
-  print "usage:"
-  print "------"
-  print ""
-  print launchScriptName
-  print "\t[ -i | -interpreter | -c | -cmdprompt | -bg | -background ]"
-  print "\t[ -n | -nogui ] [ -p <port> | -port <port> ]"
-  print "\t[ -l <logfile> | -logfile <logfile> ] [ -h | -help ]"
-  print ""
+  print("")
+  print("usage:")
+  print("------")
+  print("")
+  print(launchScriptName)
+  print("\t[ -i | -interpreter | -c | -cmdprompt | -bg | -background ]")
+  print("\t[ -n | -nogui ] [ -p <port> | -port <port> ]")
+  print("\t[ -l <logfile> | -logfile <logfile> ] [ -h | -help ]")
+  print("")
 
 ########
 # main #
@@ -1089,14 +1090,14 @@ else:
   modelTask = ModelTask(isParent=True)
 # register the TCP/IP server socket for remote control
 if requestHandler.portNr != 0:
-  print "register connect port..."
+  print("register connect port...")
   if not requestHandler.openConnectPort(UTIL.SYS.s_configuration.HOST):
     sys.exit(-1)
   connectSocket = requestHandler.connectSocket
   modelTask.createFileHandler(connectSocket, requestHandler.tcpConnectCallback)
 # register the requestHandler as console handler if requested
 if cmdPrompt:
-  print "register console handler..."
+  print("register console handler...")
   modelTask.registerConsoleHandler(requestHandler)
 
 # initialise singletons
@@ -1117,16 +1118,16 @@ LOG("Open the NCTRS admin message sender (server)")
 SIM.AdminServer.createAdminSender(UTIL.SYS.s_configuration.HOST)
 
 # load the definition data
-print "load definition data (take some time) ..."
+print("load definition data (take some time) ...")
 SPACE.IF.s_definitions.initDefinitions()
-print "definition data loaded"
+print("definition data loaded")
 
 # start the tasks
-print "start modelTask..."
+print("start modelTask...")
 modelTask.start()
 if guiMode:
-  print "start guiTask..."
+  print("start guiTask...")
   guiTask.start()
-  print "guiTask terminated"
+  print("guiTask terminated")
   modelTask.join()
-print "modelTask terminated"
+print("modelTask terminated")

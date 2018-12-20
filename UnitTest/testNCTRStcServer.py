@@ -13,6 +13,7 @@
 #******************************************************************************
 # Ground Simulation - Unit Tests                                              *
 #******************************************************************************
+from __future__ import print_function
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import UTIL.SYS
@@ -47,7 +48,7 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
         self.linkStatusCmd(argv)
       else:
         LOG_WARNING("Invalid command " + argv[0])
-    print "> ",
+    print("> ",  end='')
   # ---------------------------------------------------------------------------
   def helpCmd(self, argv):
     """Decoded help command"""

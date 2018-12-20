@@ -13,6 +13,7 @@
 #******************************************************************************
 # Unit Tests                                                                  *
 #******************************************************************************
+from __future__ import print_function
 import testDU, testNCTRSDU, testBCH, testCLTU, testCRC, testFRAME, testSEGMENT
 import testPACKET, testSPACE, testTIME
 
@@ -22,9 +23,9 @@ import testPACKET, testSPACE, testTIME
 # -----------------------------------------------------------------------------
 def testOne(testFkt):
   """invocation of a single unit test"""
-  print "-----", str(testFkt), "start"
+  print("-----", str(testFkt), "start")
   retVal = testFkt()
-  print "-----", str(testFkt), "done:", retVal
+  print("-----", str(testFkt), "done:", retVal)
   return retVal
 # -----------------------------------------------------------------------------
 def testAll():
@@ -57,6 +58,6 @@ def testAll():
 # main #
 ########
 if __name__ == "__main__":
-  print "***** testAll() start"
+  print("***** testAll() start")
   retVal = testAll()
-  print "***** testAll() done:", retVal
+  print("***** testAll() done:", retVal)

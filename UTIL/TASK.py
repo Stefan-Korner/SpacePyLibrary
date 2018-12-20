@@ -53,6 +53,7 @@
 #              provide a transparent integration of a GUI library             *
 #              (e.g. Tkinter). In this case the GUI occupies the ParentTask.  *
 #******************************************************************************
+from __future__ import print_function
 import os, signal, select, socket, struct, sys, threading, time
 if sys.platform == "win32":
   import msvcrt
@@ -384,7 +385,7 @@ class ConsoleHandler(object):
       nextChar = msvcrt.getche()
       if nextChar == "\r":
         completeLineRead = True
-        print ""
+        print("")
         break
       self.inputLine += nextChar
     if completeLineRead:

@@ -13,6 +13,7 @@
 #******************************************************************************
 # Ground Simulation - Unit Tests                                              *
 #******************************************************************************
+from __future__ import print_function
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import UTIL.SYS
@@ -54,7 +55,7 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
         self.directiveCmd(argv)
       else:
         LOG_WARNING("Invalid command " + argv[0])
-    print "> ",
+    print("> ", end='')
   # ---------------------------------------------------------------------------
   def helpCmd(self, argv):
     """Decoded help command"""
@@ -78,7 +79,7 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
   def packet1Cmd(self, argv):
     """Decoded packet1 command"""
     tcPktDu = GRND.NCTRSDU.TCpacketDataUnit()
-    print "tcPktDu =", tcPktDu
+    print("tcPktDu =", tcPktDu)
     self.tcSender.sendTcDataUnit(tcPktDu)
   # ---------------------------------------------------------------------------
   def packet2Cmd(self, argv):
@@ -92,7 +93,7 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
     okState, msg = CCSDS.CLTU.checkCLTU(cltu)
     if not okState:
       LOG_ERROR("CLTU check failed: " + msg)
-      print "cltu =", cltu
+      print("cltu =", cltu)
       return
     tcCltuDu = GRND.NCTRSDU.TCcltuDataUnit()
     tcCltuDu.setCltu(cltu)
@@ -107,7 +108,7 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
     tcCltuDu.tcId = testData.NCTRS_CLTU_01_tcId
     tcCltuDu.earliestProdTimeFlag = testData.NCTRS_CLTU_01_earliestProdTimeFlag
     tcCltuDu.latestProdTimeFlag = testData.NCTRS_CLTU_01_latestProdTimeFlag
-    print "tcCltuDu =", tcCltuDu
+    print("tcCltuDu =", tcCltuDu)
     self.tcSender.sendTcDataUnit(tcCltuDu)
   # ---------------------------------------------------------------------------
   def cltu1Cmd(self, argv):
@@ -116,7 +117,7 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
     okState, msg = CCSDS.CLTU.checkCltu(cltu)
     if not okState:
       LOG_ERROR("CLTU check failed: " + msg)
-      print "cltu =", cltu
+      print("cltu =", cltu)
       return
     tcCltuDu = GRND.NCTRSDU.TCcltuDataUnit()
     tcCltuDu.setCltu(cltu)
@@ -131,20 +132,20 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
     tcCltuDu.tcId = testData.NCTRS_CLTU_01_tcId
     tcCltuDu.earliestProdTimeFlag = testData.NCTRS_CLTU_01_earliestProdTimeFlag
     tcCltuDu.latestProdTimeFlag = testData.NCTRS_CLTU_01_latestProdTimeFlag
-    print "tcCltuDu =", tcCltuDu
+    print("tcCltuDu =", tcCltuDu)
     self.tcSender.sendTcDataUnit(tcCltuDu)
   # ---------------------------------------------------------------------------
   def cltu2Cmd(self, argv):
     """Decoded cltu2 command"""
     nctrsCltu = testData.NCTRS_CLTU_02
     tcCltuDu = GRND.NCTRSDU.TCcltuDataUnit(nctrsCltu)
-    print "tcCltuDu =", tcCltuDu
+    print("tcCltuDu =", tcCltuDu)
     self.tcSender.sendTcDataUnit(tcCltuDu)
   # ---------------------------------------------------------------------------
   def directiveCmd(self, argv):
     """Decoded directive command"""
     tcDirDu = GRND.NCTRSDU.TCdirectivesDataUnit()
-    print "tcDirDu =", tcDirDu
+    print("tcDirDu =", tcDirDu)
     self.tcSender.sendTcDataUnit(tcDirDu)
 
 # =============================================================================

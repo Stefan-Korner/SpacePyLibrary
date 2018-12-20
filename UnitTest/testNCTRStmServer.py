@@ -13,6 +13,7 @@
 #******************************************************************************
 # Ground Simulation - Unit Tests                                              *
 #******************************************************************************
+from __future__ import print_function
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import UTIL.SYS
@@ -45,7 +46,7 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
         self.frame2Cmd(argv)
       else:
         LOG_WARNING("Invalid command " + argv[0])
-    print "> ",
+    print("> ",  end='')
   # ---------------------------------------------------------------------------
   def helpCmd(self, argv):
     """Decoded help command"""
@@ -74,7 +75,7 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
     tmDu.earthReceptionTime = testData.NCTRS_TM_FRAME_01_earthReceptionTime
     tmDu.sequenceFlag = testData.NCTRS_TM_FRAME_01_sequenceFlag
     tmDu.qualityFlag = testData.NCTRS_TM_FRAME_01_qualityFlag
-    print "tmDu =", tmDu
+    print("tmDu =", tmDu)
     self.tmSender.sendTmDataUnit(tmDu)
   # ---------------------------------------------------------------------------
   def frame2Cmd(self, argv):

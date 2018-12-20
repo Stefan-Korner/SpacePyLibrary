@@ -22,6 +22,7 @@
 # The system supports the following protocol for MCS connection:              *
 # - NCTRS/NIS: implements EGOS-NIS-NCTR-ICD-0002-i4r0.2 (Signed).pdf          *
 #******************************************************************************
+from __future__ import print_function
 import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CS.CNCclient, CS.CNCgui, CS.EDENclient, CS.EDENgui, CS.FRAMEgui, CS.FRAMEmodel, CS.FRAMErply, CS.NCTRSclient, CS.NCTRSgui
@@ -502,15 +503,15 @@ def dumpConfiguration(*argv): UTIL.TASK.s_processingTask.dumpConfigurationCmd(("
 # -----------------------------------------------------------------------------
 def printUsage(launchScriptName):
   """Prints the possible commandline options of the test driver"""
-  print ""
-  print "usage:"
-  print "------"
-  print ""
-  print launchScriptName
-  print "\t[ -i | -interpreter | -c | -cmdprompt | -bg | -background ]"
-  print "\t[ -n | -nogui ] [ -p <port> | -port <port> ]"
-  print "\t[ -l <logfile> | -logfile <logfile> ] [ -h | -help ]"
-  print ""
+  print("")
+  print("usage:")
+  print("------")
+  print("")
+  print(launchScriptName)
+  print("\t[ -i | -interpreter | -c | -cmdprompt | -bg | -background ]")
+  print("\t[ -n | -nogui ] [ -p <port> | -port <port> ]")
+  print("\t[ -l <logfile> | -logfile <logfile> ] [ -h | -help ]")
+  print("")
 
 ########
 # main #
@@ -573,14 +574,14 @@ else:
   modelTask = ModelTask(isParent=True)
 # register the TCP/IP server socket for remote control
 if requestHandler.portNr != 0:
-  print "register connect port..."
+  print("register connect port...")
   if not requestHandler.openConnectPort(UTIL.SYS.s_configuration.HOST):
     sys.exit(-1)
   connectSocket = requestHandler.connectSocket
   modelTask.createFileHandler(connectSocket, requestHandler.tcpConnectCallback)
 # register the requestHandler as console handler if requested
 if cmdPrompt:
-  print "register console handler..."
+  print("register console handler...")
   modelTask.registerConsoleHandler(requestHandler)
 
 # initialise singletons
@@ -588,41 +589,41 @@ SPACE.DEF.init()
 MC.TCGEN.init()
 
 # create the CNC clients
-print "Create the CNCclients"
+print("Create the CNCclients")
 CS.CNCclient.createClients()
 # create the EDEN clients
-print "Create the EDENclients"
+print("Create the EDENclients")
 CS.EDENclient.createClients()
 # create the NCTRS clients
-print "Create the NCTRSclients"
+print("Create the NCTRSclients")
 CS.NCTRSclient.createClients()
 # create the TC model
-print "Create the TC model"
+print("Create the TC model")
 MC.TCmodel.init()
 # create the TM model
-print "Create the TM model"
+print("Create the TM model")
 MC.TMmodel.init()
 # create the TM recorder
-print "Create the TM recorder"
+print("Create the TM recorder")
 MC.TMrecorder.init()
 # create the frame model
-print "Create the frame model"
+print("Create the frame model")
 CS.FRAMEmodel.init()
 # create the frame replayer
-print "Create the frame replayer"
+print("Create the frame replayer")
 CS.FRAMErply.init()
 
 # load the definition data
-print "load definition data (take some time) ..."
+print("load definition data (take some time) ...")
 SPACE.IF.s_definitions.initDefinitions()
-print "definition data loaded"
+print("definition data loaded")
 
 # start the tasks
-print "start modelTask..."
+print("start modelTask...")
 modelTask.start()
 if guiMode:
-  print "start guiTask..."
+  print("start guiTask...")
   guiTask.start()
-  print "guiTask terminated"
+  print("guiTask terminated")
   modelTask.join()
-print "modelTask terminated"
+print("modelTask terminated")

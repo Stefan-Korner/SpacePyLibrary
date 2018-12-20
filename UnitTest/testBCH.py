@@ -13,6 +13,7 @@
 #******************************************************************************
 # Unit Tests                                                                  *
 #******************************************************************************
+from __future__ import print_function
 import UTIL.BCH, testData
 
 #############
@@ -30,7 +31,7 @@ def test_BCHoperations():
   sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_01[6])
   code = UTIL.BCH.encodeStop(sreg)
   if code != testData.BCH_BLOCK_01[7]:
-    print "BCH code wrong:", ("%02X" % code), "- should be", ("%02X" % testData.BCH_BLOCK_01[7])
+    print("BCH code wrong:", ("%02X" % code), "- should be", ("%02X" % testData.BCH_BLOCK_01[7]))
     return False
   sreg = UTIL.BCH.encodeStart()
   sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_02[0])
@@ -42,7 +43,7 @@ def test_BCHoperations():
   sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_02[6])
   code = UTIL.BCH.encodeStop(sreg)
   if code != testData.BCH_BLOCK_02[7]:
-    print "BCH code wrong:", ("%02X" % code), "- should be", ("%02X" % testData.BCH_BLOCK_02[7])
+    print("BCH code wrong:", ("%02X" % code), "- should be", ("%02X" % testData.BCH_BLOCK_02[7]))
     return False
   return True
 
@@ -50,6 +51,6 @@ def test_BCHoperations():
 # main #
 ########
 if __name__ == "__main__":
-  print "***** test_BCHoperations() start"
+  print("***** test_BCHoperations() start")
   retVal = test_BCHoperations()
-  print "***** test_BCHoperations() done:", retVal
+  print("***** test_BCHoperations() done:", retVal)

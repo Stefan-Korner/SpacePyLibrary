@@ -13,6 +13,7 @@
 #******************************************************************************
 # TASK + TKI framework - Unit Test: empty Model Task with TKinter GUI         *
 #******************************************************************************
+from __future__ import print_function
 import Tkinter
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import UI.TKI
@@ -84,10 +85,10 @@ if __name__ == "__main__":
   # register the console handler
   modelTask.registerConsoleHandler(consoleHandler)
   # start the tasks
-  print "start modelTask..."
+  print("start modelTask...")
   modelTask.start()
-  print "start guiTask..."
+  print("start guiTask...")
   guiTask.start()
-  print "guiTask terminated"
+  print("guiTask terminated")
   modelTask.join()
-  print "modelTask terminated"
+  print("modelTask terminated")
