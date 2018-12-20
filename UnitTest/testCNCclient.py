@@ -78,7 +78,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     cncTCpacketDU = EGSE.CNCPDU.TCpacket()
     cncTCpacketDU.applicationProcessId = 1234
     cncTCpacketDU.setCNCmessage(message)
-    s_client.sendCNCpacket(cncTCpacketDU)
+    s_client.sendCNCpacket(cncTCpacketDU.getBufferString())
 
 # =============================================================================
 class TCclient(EGSE.CNC.TCclient):

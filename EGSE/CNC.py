@@ -178,10 +178,10 @@ class TCclient(UTIL.TCP.SingleServerReceivingClient):
     modelTask = UTIL.TASK.s_processingTask
     UTIL.TCP.SingleServerReceivingClient.__init__(self, modelTask)
   # ---------------------------------------------------------------------------
-  def sendCNCpacket(self, cncTCpacketDU):
+  def sendCNCpacket(self, tcPacket):
     """Send a CnC TC packet to the SCOE"""
-    # this operation does not verify the contents of the cncTCpacketDU
-    self.dataSocket.send(cncTCpacketDU.getBufferString())
+    # this operation does not verify the contents of the tcPacket
+    self.dataSocket.send(tcPacket)
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when the SCOE has send data"""
