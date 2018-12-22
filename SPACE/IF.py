@@ -198,7 +198,7 @@ class TMpktDef(object):
         LOG_WARNING("param " + nameElements[0] + " has invalid commutation " + nameElements[1], "SPACE")
         return None
       bitPos = bitStartPos + (locLgocc * (commutation - 1))
-      paramExtraction = TMparamExtraction(bitPos, bitWidth, fieldName, paramDescr, valueType)
+      paramExtraction = TMparamExtraction(bitPos, bitWidth, paramName, paramDescr, valueType)
     return paramExtraction
   # ---------------------------------------------------------------------------
   def getParamExtractions(self):

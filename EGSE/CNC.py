@@ -113,7 +113,7 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
       self.notifyConnectionClosed("empty data read")
       return
     if packetHeaderLen != CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE:
-      LOG_ERROR("Read of CnC header failed: invalid size: " + str(pduHeaderLen))
+      LOG_ERROR("Read of CnC header failed: invalid size: " + str(packetHeaderLen))
       return
     packetVersionNumber = packetHeader[0] >> 5
     if packetVersionNumber == EGSE.CNCPDU.VERSION_NUMBER:
@@ -200,7 +200,7 @@ class TCclient(UTIL.TCP.SingleServerReceivingClient):
       self.notifyConnectionClosed("empty data read")
       return
     if packetHeaderLen != CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE:
-      LOG_ERROR("Read of CnC header failed: invalid size: " + str(pduHeaderLen))
+      LOG_ERROR("Read of CnC header failed: invalid size: " + str(packetHeaderLen))
       return
     cncTMpacketDU = EGSE.CNCPDU.CNCackNak(packetHeader)
     # read the data field for the packet from the data socket
@@ -289,7 +289,7 @@ class TMclient(UTIL.TCP.SingleServerReceivingClient):
       self.notifyConnectionClosed("empty data read")
       return
     if packetHeaderLen != CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE:
-      LOG_ERROR("Read of CCSDS packet header failed: invalid size: " + str(pduHeaderLen))
+      LOG_ERROR("Read of CCSDS packet header failed: invalid size: " + str(packetHeaderLen))
       return
     ccsdsTMpacketDU = CCSDS.PACKET.TMpacket(packetHeader)
     # read the data field for the packet from the data socket

@@ -95,7 +95,7 @@ class PacketizerImpl(CCSDS.PACKETIZER.Packetizer):
     elif self.frameDumpFormat == "CRYOSAT":
       self.generatePacketsFromCRYOSATframes(frameDumpFile)
     else:
-      LOG_ERROR("invalid frame dump format in config option TM_FRAME_FORMAT: " + frameDumpFormat)
+      LOG_ERROR("invalid frame dump format in config option TM_FRAME_FORMAT: " + self.frameDumpFormat)
       sys.exit(-1)
     # close files
     self.packetFile.close()
