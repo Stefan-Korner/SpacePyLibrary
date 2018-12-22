@@ -136,7 +136,7 @@ class BinaryUnit(object):
     """compares if self >= other"""
     if other == None:
       return False
-    return self.getBufferString().__ge-_(other.getBufferString())
+    return self.getBufferString().__ge__(other.getBufferString())
   # ---------------------------------------------------------------------------
   def getDumpString(self, maxLen=65536):
     """returns the buffer in a readable data dump"""

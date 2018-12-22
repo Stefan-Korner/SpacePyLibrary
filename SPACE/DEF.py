@@ -582,7 +582,7 @@ def getBitWidth(paramPtc, paramPfc):
     # saved synthetic parameter, N/A
     pass
   # illegal ptc/pfc combination
-  raise Exception("ptc/pfc combination " + str(self.paramPtc) + "/" + str(self.paramPfc) + " not supported")
+  raise Exception("ptc/pfc combination " + str(paramPtc) + "/" + str(paramPfc) + " not supported")
 # -----------------------------------------------------------------------------
 def getIsBytePos(plfRecord):
   """

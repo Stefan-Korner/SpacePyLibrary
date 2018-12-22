@@ -72,7 +72,7 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
   # ---------------------------------------------------------------------------
   def cltuResponseCmd(self, argv):
     """Decoded cltu response command"""
-    tcCltuDu = GRND.NCTRSDU.TCcltuResponseDataUnit()
+    tcCltuRespDu = GRND.NCTRSDU.TCcltuResponseDataUnit()
     self.tcReceiver.sendTcDataUnit(tcCltuRespDu)
   # ---------------------------------------------------------------------------
   def linkStatusCmd(self, argv):

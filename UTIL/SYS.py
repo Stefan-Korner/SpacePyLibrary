@@ -84,7 +84,7 @@ class DefaultLogger(Logger):
     # delegate also to child loggers
     if self.childDefaultLogger != None:
       self.childDefaultLogger.setColorLogging(enable)
-    for subsystem in self.childLoggers.values():
+    for childLogger in self.childLoggers.values():
       childLogger.setColorLogging(enable)
   # ---------------------------------------------------------------------------
   def _log(self, message, subsystem):

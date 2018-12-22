@@ -113,13 +113,9 @@ class TMframeGeneratorImpl(LINK.IF.TMframeGenerator):
                              reservedFrameDataSize
     if remainingFrameDataSize < 0:
       # TM packet does not fit into the frame
-      # ---> an exception must be raisedas long as
+      # ---> an exception must be raised as long as
       #      TM packet segmentation is not implemeted
-      raise Error("TM packet with SPID " + str(spid) + " does not fit into transfer frame")
-    createIdlePacket = (remainingFrameDataSize != 0)
-    if createIdlePacket:
-      tmIdlePacket = \
-        SPACE.IF.s_tmPacketGenerator.getIdlePacket(remainingFrameDataSize)
+      raise Error("TM packet does not fit into transfer frame")
     # create the transfer frame
     tmFrame = CCSDS.FRAME.TMframe(enableSecondaryHeader=enableSecondaryHeader)
     tmFrame.versionNumber = self.frameDefaults.versionNumber
@@ -142,7 +138,10 @@ class TMframeGeneratorImpl(LINK.IF.TMframeGenerator):
       tmFrame.secondaryHeaderSize = self.frameDefaults.secondaryHeaderSize
       tmFrame.virtualChannelFCountHigh = self.frameDefaults.virtualChannelFCountHigh
     tmFrame.append(tmDataPacket.getBufferString())
-    if createIdlePacket:
+    if remainingFrameDataSize != 0:
+      # create idle packet
+      tmIdlePacket = \
+        SPACE.IF.s_tmPacketGenerator.getIdlePacket(remainingFrameDataSize)
       tmFrame.append(tmIdlePacket.getBufferString())
     tmFrame.append(self.clcw.getBufferString())
     if CCSDS.FRAME.CRC_CHECK:
