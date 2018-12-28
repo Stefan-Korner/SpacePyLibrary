@@ -40,7 +40,7 @@ class TCPreceivingClient(UTIL.TCP.SingleServerReceivingClient):
     # read the next set of byte from the data socket
     tcpLineBuffer = self.tcpLineBuffer
     try:
-      tcpLineBuffer += self.dataSocket.recv(LINEBUFFERLEN)
+      tcpLineBuffer += self.dataSocket.recv(LINEBUFFERLEN).decode("ascii")
       LOG("tcpLineBuffer: " + tcpLineBuffer)
     except Exception, ex:
       # read failed
@@ -106,7 +106,7 @@ class TCPreceivingClient(UTIL.TCP.SingleServerReceivingClient):
 def initConfiguration():
   """initialise the system configuration"""
   UTIL.SYS.s_configuration.setDefaults([
-    ["HOST", "192.168.1.100"],
+    ["HOST", "127.0.0.1"],
     ["SERVER_PORT", "1234"]])
 # -----------------------------------------------------------------------------
 def createClient():
