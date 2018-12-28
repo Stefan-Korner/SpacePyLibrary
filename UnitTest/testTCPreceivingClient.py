@@ -40,7 +40,7 @@ class TCPreceivingClient(UTIL.TCP.SingleServerReceivingClient):
     # read the next set of byte from the data socket
     tcpLineBuffer = self.tcpLineBuffer
     try:
-      tcpLineBuffer += self.dataSocket.recv(LINEBUFFERLEN)
+      tcpLineBuffer += self.dataSocket.recv(LINEBUFFERLEN).decode("ascii")
       LOG("tcpLineBuffer: " + tcpLineBuffer)
     except Exception as ex:
       # read failed
@@ -82,7 +82,7 @@ class TCPreceivingClient(UTIL.TCP.SingleServerReceivingClient):
         # send the OK response back to the TECO
         retString = "OK\n";
         try:
-          self.dataSocket.send(retString)
+          self.dataSocket.send(retString.encode())
         except Exception as ex:
           LOG_ERROR("Send of OK response failed: " + str(ex))
       else:
@@ -90,7 +90,7 @@ class TCPreceivingClient(UTIL.TCP.SingleServerReceivingClient):
         # set the Error response back to the client:
         retString = "Error: execution failed (see log)!\n"
         try:
-          self.dataSocket.send(retString)
+          self.dataSocket.send(retString.encode())
         except Exception as ex:
           LOG_ERROR("Send of Error response failed: " + str(ex))
   # ---------------------------------------------------------------------------
@@ -106,7 +106,7 @@ class TCPreceivingClient(UTIL.TCP.SingleServerReceivingClient):
 def initConfiguration():
   """initialise the system configuration"""
   UTIL.SYS.s_configuration.setDefaults([
-    ["HOST", "192.168.1.100"],
+    ["HOST", "127.0.0.1"],
     ["SERVER_PORT", "1234"]])
 # -----------------------------------------------------------------------------
 def createClient():

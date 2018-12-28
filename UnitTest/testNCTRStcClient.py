@@ -183,8 +183,7 @@ def initConfiguration():
   """initialise the system configuration"""
   UTIL.SYS.s_configuration.setDefaults([
     ["SYS_COLOR_LOG", "1"],
-    ["HOST", "10.0.0.100"],
-    #["HOST", "192.168.178.46"],
+    ["HOST", "127.0.0.1"],
     ["NCTRS_TC_SERVER_PORT", "13007"]])
 # -----------------------------------------------------------------------------
 def createTCsender():

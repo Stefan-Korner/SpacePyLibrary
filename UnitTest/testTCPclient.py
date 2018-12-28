@@ -24,7 +24,7 @@ import UTIL.SYS, UTIL.TCP
 def initConfiguration():
   """initialise the system configuration"""
   UTIL.SYS.s_configuration.setDefaults([
-    ["HOST", "192.168.1.100"],
+    ["HOST", "127.0.0.1"],
     ["SERVER_PORT", "1234"]])
 # -----------------------------------------------------------------------------
 def createClient():
@@ -48,5 +48,5 @@ if __name__ == "__main__":
   dataSocket = createClient()
   # force termination of the server
   LOG("force server termination...")
-  dataSocket.send("quit\n")
+  dataSocket.send("quit\n".encode())
   dataSocket.close()

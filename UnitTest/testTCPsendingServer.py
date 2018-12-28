@@ -33,14 +33,14 @@ class TCPsendingServer(UTIL.TCP.Server):
     """Client has connected"""
     LOG("*** accepted ***")
     self.clientSocket = clientSocket
-    self.clientSocket.send("connected\n")
+    self.clientSocket.send("connected\n".encode())
     # prepare a timer that calls the after method one second ago
     UTIL.TASK.s_processingTask.createTimeHandler(1000, self.after)
   # ---------------------------------------------------------------------------
   def after(self):
     """Called from a timer 1 second after connect"""
     LOG("*** after ***")
-    self.clientSocket.send("quit\n")
+    self.clientSocket.send("quit\n".encode())
 
 #############
 # functions #
@@ -49,7 +49,7 @@ class TCPsendingServer(UTIL.TCP.Server):
 def initConfiguration():
   """initialise the system configuration"""
   UTIL.SYS.s_configuration.setDefaults([
-    ["HOST", "192.168.1.100"],
+    ["HOST", "127.0.0.1"],
     ["SERVER_PORT", "1234"]])
 # -----------------------------------------------------------------------------
 def createServer():
