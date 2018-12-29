@@ -234,24 +234,28 @@ class TCclient(UTIL.TCP.SingleServerReceivingClient):
     return True
 
 # =============================================================================
-class TMserver(UTIL.TCP.Server):
+class TMserver(UTIL.TCP.SingleClientReceivingServer):
   """CNC TM interface - SCOE side"""
   # ---------------------------------------------------------------------------
   def __init__(self, portNr):
     """Initialise attributes only"""
     modelTask = UTIL.TASK.s_processingTask
-    UTIL.TCP.Server.__init__(self, modelTask, portNr)
-    self.clientSocket = None
+    UTIL.TCP.SingleClientReceivingServer.__init__(self, modelTask, portNr)
   # ---------------------------------------------------------------------------
   def accepted(self, clientSocket):
     """Overloaded from SingleClientReceivingServer"""
-    self.clientSocket = clientSocket
+    UTIL.TCP.SingleClientReceivingServer.accepted(self, clientSocket)
     self.clientAccepted()
   # ---------------------------------------------------------------------------
   def sendTMpacket(self, tmPacket):
     """Send a CCSDS TM packet to the CCS"""
     # this operation does not verify the contents of the tmPacket
-    self.clientSocket.send(tmPacket)
+    self.dataSocket.send(tmPacket)
+  # ---------------------------------------------------------------------------
+  def receiveCallback(self, socket, stateMask):
+    """Callback when the CCS has closed the connection"""
+    self.disconnectClient()
+    self.notifyConnectionClosed("")
   # ---------------------------------------------------------------------------
   def notifyConnectionClosed(self, details):
     """TM connection closed by client"""

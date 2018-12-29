@@ -17,30 +17,49 @@ import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import UTIL.SYS, UTIL.TASK, UTIL.TCP
 
+#############
+# constants #
+#############
+MAXBYTESREAD = 256
+
 ###########
 # classes #
 ###########
 # =============================================================================
-class TCPsendingServer(UTIL.TCP.Server):
-  """Subclass of UTIL.TCP.Server"""
+class TCPsendingServer(UTIL.TCP.SingleClientReceivingServer):
+  """Subclass of UTIL.TCP.SingleClientReceivingServer"""
   # ---------------------------------------------------------------------------
   def __init__(self, portNr):
     modelTask = UTIL.TASK.s_processingTask
-    UTIL.TCP.Server.__init__(self, modelTask, portNr)
-    self.clientSocket = None
+    UTIL.TCP.SingleClientReceivingServer.__init__(self, modelTask, portNr)
   # ---------------------------------------------------------------------------
   def accepted(self, clientSocket):
-    """Client has connected"""
-    LOG("*** accepted ***")
-    self.clientSocket = clientSocket
-    self.clientSocket.send("connected\n".encode())
+    """Overloaded from SingleClientReceivingServer"""
+    UTIL.TCP.SingleClientReceivingServer.accepted(self, clientSocket)
+    self.dataSocket.send("connected\n".encode())
     # prepare a timer that calls the after method one second ago
     UTIL.TASK.s_processingTask.createTimeHandler(1000, self.after)
+  # ---------------------------------------------------------------------------
+  def receiveCallback(self, socket, stateMask):
+    """Callback when data are received"""
+    LOG("*** TCPsendingServer.receiveCallback ***")
+    try:
+      data = self.dataSocket.recv(MAXBYTESREAD)
+    except Exception as ex:
+      # read failed
+      LOG_ERROR("Read failed: " + str(ex))
+    if len(data) == 0:
+      LOG_ERROR("invalid data read, len(data) = " + str(len(data)))
+      LOG("client will be dis-connected...")
+      self.disconnectClient()
+    else:
+      LOG("data read, len(data) = " + str(len(data)))
+      LOG("data = " + data.decode("ascii"))      
   # ---------------------------------------------------------------------------
   def after(self):
     """Called from a timer 1 second after connect"""
     LOG("*** after ***")
-    self.clientSocket.send("quit\n".encode())
+    self.dataSocket.send("quit\n".encode())
 
 #############
 # functions #

@@ -77,19 +77,18 @@ class NCTRStmFields(object):
     self.qualityFlag = 0
 
 # =============================================================================
-class TMsender(UTIL.TCP.Server):
+class TMsender(UTIL.TCP.SingleClientReceivingServer):
   """NCTRS telemetry sender interface - NCTRS side"""
   # ---------------------------------------------------------------------------
   def __init__(self, portNr, nctrsTMfields):
     """Initialise attributes only"""
     modelTask = UTIL.TASK.s_processingTask
-    UTIL.TCP.Server.__init__(self, modelTask, portNr)
-    self.clientSocket = None
+    UTIL.TCP.SingleClientReceivingServer.__init__(self, modelTask, portNr)
     self.nctrsTMfields = nctrsTMfields
   # ---------------------------------------------------------------------------
   def accepted(self, clientSocket):
     """Overloaded from SingleClientReceivingServer"""
-    self.clientSocket = clientSocket
+    UTIL.TCP.SingleClientReceivingServer.accepted(self, clientSocket)
     self.clientAccepted()
   # ---------------------------------------------------------------------------
   def sendTmDataUnit(self, tmDu):
@@ -97,7 +96,7 @@ class TMsender(UTIL.TCP.Server):
     # ensure a correct size attribute
     tmDu.packetSize = len(tmDu)
     # this operation does not verify the contents of the DU
-    self.clientSocket.send(tmDu.getBufferString())
+    self.dataSocket.send(tmDu.getBufferString())
   # ---------------------------------------------------------------------------
   def sendFrame(self, tmFrame):
     """Send the TM frame to the TM receiver"""
@@ -112,6 +111,15 @@ class TMsender(UTIL.TCP.Server):
     tmDu.sequenceFlag = self.nctrsTMfields.sequenceFlag
     tmDu.qualityFlag = self.nctrsTMfields.qualityFlag
     self.sendTmDataUnit(tmDu)
+  # ---------------------------------------------------------------------------
+  def receiveCallback(self, socket, stateMask):
+    """Callback when the MCS has closed the connection"""
+    self.disconnectClient()
+    self.notifyConnectionClosed("")
+  # ---------------------------------------------------------------------------
+  def notifyConnectionClosed(self, details):
+    """Connection closed by client"""
+    LOG_WARNING("Connection closed by TMclient: " + details)
   # ---------------------------------------------------------------------------
   def clientAccepted(self):
     """hook for derived classes"""
