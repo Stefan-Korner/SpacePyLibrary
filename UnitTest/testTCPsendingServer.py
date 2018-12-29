@@ -48,6 +48,7 @@ class TCPsendingServer(UTIL.TCP.SingleClientReceivingServer):
     except Exception as ex:
       # read failed
       LOG_ERROR("Read failed: " + str(ex))
+      return
     if len(data) == 0:
       LOG_ERROR("invalid data read, len(data) = " + str(len(data)))
       LOG("client will be dis-connected...")
@@ -59,7 +60,10 @@ class TCPsendingServer(UTIL.TCP.SingleClientReceivingServer):
   def after(self):
     """Called from a timer 1 second after connect"""
     LOG("*** after ***")
-    self.dataSocket.send("quit\n".encode())
+    if self.dataSocket == None:
+      LOG_ERROR("uninitialized data socket")
+    else:
+      self.dataSocket.send("quit\n".encode())
 
 #############
 # functions #

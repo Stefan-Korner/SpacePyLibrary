@@ -48,6 +48,9 @@ class TCPserver(UTIL.TCP.SingleClientReceivingServer):
       LOG_ERROR("Read failed: " + str(ex))
       self.disconnectClient()
       return
+    if len(tcpLineBuffer) == 0:
+      LOG("*** E X I T ***")
+      sys.exit(-1)
     # handle the input: extract the lines from the line buffer
     lines = tcpLineBuffer.split("\n")
     # the last line has to be handled in a special way and can not be
