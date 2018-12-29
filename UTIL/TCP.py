@@ -131,18 +131,18 @@ class Client(object):
     return dataSocket
 
 # =============================================================================
-class Receiver(object):
-  """TCP/IP receiver"""
+class DataSocketHandler(object):
+  """TCP/IP data socket handler"""
   # ---------------------------------------------------------------------------
   def __init__(self, task):
     """Initialise attributes only"""
     self.task = task
     self.dataSocket = None
   # ---------------------------------------------------------------------------
-  def enableReceiveSocket(self, dataSocket):
-    """Enables the socket for reception"""
+  def enableDataSocket(self, dataSocket):
+    """Enables the data socket"""
     if self.dataSocket != None:
-      LOG_ERROR("Receive socket already open!")
+      LOG_ERROR("Data socket already open!")
       return
     self.dataSocket = dataSocket
     # register the data socket
@@ -151,14 +151,14 @@ class Receiver(object):
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when data are received"""
-    LOG_ERROR("Receiver.receiveCallback not implemented")
+    LOG_ERROR("DataSocketHandler.receiveCallback not implemented")
     sys.exit(-1)
   # ---------------------------------------------------------------------------
-  def disableReceiveSocket(self):
-    """Disables the receive socket"""
+  def disableDataSocket(self):
+    """Disables the data socket socket"""
     # check if the receive socket is already open
     if self.dataSocket == None:
-      LOG_ERROR("Receive socket not open!")
+      LOG_ERROR("Data socket not open!")
       return
     # unregister the receive socket
     self.task.deleteFileHandler(self.dataSocket)
@@ -170,44 +170,44 @@ class Receiver(object):
     self.dataSocket = None
 
 # =============================================================================
-class SingleClientReceivingServer(Server, Receiver):
+class SingleClientReceivingServer(Server, DataSocketHandler):
   """TCP/IP server that receives data from a single client"""
   # ---------------------------------------------------------------------------
   def __init__(self, task, portNr):
     """Delegates to parent implementations"""
     Server.__init__(self, task, portNr)
-    Receiver.__init__(self, task)
+    DataSocketHandler.__init__(self, task)
   # ---------------------------------------------------------------------------
   def accepted(self, clientSocket):
     """Overloaded from Server"""
     # unregister the connect socket
     self.task.deleteFileHandler(self.connectSocket)
     # enable the client socket for data reception
-    self.enableReceiveSocket(clientSocket)
+    self.enableDataSocket(clientSocket)
   # ---------------------------------------------------------------------------
   def disconnectClient(self):
     """Disonnects the client"""
-    self.disableReceiveSocket()
+    self.disableDataSocket()
     # register the connect socket
     self.task.createFileHandler(self.connectSocket,
                                 self.connectCallback)
 
 # =============================================================================
-class SingleServerReceivingClient(Client, Receiver):
+class SingleServerReceivingClient(Client, DataSocketHandler):
   """TCP/IP client that receives data from a single server"""
   # ---------------------------------------------------------------------------
   def __init__(self, task):
     """Delegates to parent implementations"""
     Client.__init__(self)
-    Receiver.__init__(self, task)
+    DataSocketHandler.__init__(self, task)
   # ---------------------------------------------------------------------------
   def connectToServer(self, serverHost, serverPort):
     """Overloaded from Client"""
     dataSocket = Client.connectToServer(self, serverHost, serverPort)
     # use the data socket for data reception
-    self.enableReceiveSocket(dataSocket)
+    self.enableDataSocket(dataSocket)
     return dataSocket
   # ---------------------------------------------------------------------------
   def disconnectFromServer(self):
     """Disonnects from server"""
-    self.disableReceiveSocket()
+    self.disableDataSocket()
