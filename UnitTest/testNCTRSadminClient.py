@@ -38,7 +38,7 @@ class AdminReceiver(GRND.NCTRS.AdminMessageReceiver):
     """Admin message response received"""
     LOG("")
     LOG("*** notifyAdminMessageDataUnit ***")
-    LOG("message = " + messageDu.getMessage().decode("ascii"))
+    LOG("message = " + messageDu.getMessage())
     LOG("messageDu = " + str(messageDu))
 
 #############

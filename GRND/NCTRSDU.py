@@ -385,7 +385,7 @@ class AdminMessageDataUnit(CCSDS.DU.DataUnit):
     """returns the admin message"""
     # the packetSize must contain the correct size
     headerByteSize = MESSAGE_HEADER_BYTE_SIZE
-    return self.getBytes(headerByteSize, self.packetSize - headerByteSize).tostring()
+    return self.getBytes(headerByteSize, self.packetSize - headerByteSize).tostring().decode("ascii")
   # ---------------------------------------------------------------------------
   def setMessage(self, message):
     """set the admin message and the packetSize"""
