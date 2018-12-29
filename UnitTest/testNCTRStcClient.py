@@ -15,23 +15,28 @@
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import UTIL.SYS
+import UTIL.SYS, UTIL.TASK
 import GRND.NCTRS, GRND.NCTRSDU, GRND.NCTRSDUhelpers
 import CCSDS.CLTU
 import testData
+
+####################
+# global variables #
+####################
+# TC sender is a singleton
+s_tcSender = None
 
 ###########
 # classes #
 ###########
 # =============================================================================
-class ConsoleHandler(UTIL.SYS.ConsoleHandler):
-  """Subclass of UTIL.SYS.ConsoleHandler"""
-  def __init__(self, tcSender):
+class ModelTask(UTIL.TASK.ProcessingTask):
+  """Subclass of UTIL.TASK.ProcessingTask"""
+  def __init__(self):
     """Initialise attributes only"""
-    UTIL.SYS.ConsoleHandler.__init__(self)
-    self.tcSender = tcSender
+    UTIL.TASK.ProcessingTask.__init__(self, isParent=True)
   # ---------------------------------------------------------------------------
-  def process(self, argv):
+  def notifyCommand(self, argv):
     """Callback for processing the input arguments"""
     if len(argv) > 0:
       # decode the command
@@ -54,7 +59,8 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
         self.directiveCmd(argv)
       else:
         LOG_WARNING("Invalid command " + argv[0])
-    print("> ", end='')
+        self.helpCmd([])
+    return 0
   # ---------------------------------------------------------------------------
   def helpCmd(self, argv):
     """Decoded help command"""
@@ -73,13 +79,13 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
     """Decoded quit command"""
-    UTIL.SYS.s_eventLoop.stop()
+    UTIL.TASK.s_parentTask.stop()
   # ---------------------------------------------------------------------------
   def packet1Cmd(self, argv):
     """Decoded packet1 command"""
-    tcPktDu = GRND.NCTRSDU.TCpacketDataUnit()
-    print("tcPktDu =", tcPktDu)
-    self.tcSender.sendTcDataUnit(tcPktDu)
+    global s_tcSender
+    packetData = testData.TC_PACKET_01
+    s_tcSender.sendTCpacket(packetData)
   # ---------------------------------------------------------------------------
   def packet2Cmd(self, argv):
     """Decoded packet2 command"""
@@ -87,6 +93,7 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
   # ---------------------------------------------------------------------------
   def frameCmd(self, argv):
     """Decoded frame command"""
+    global s_tcSender
     frame = testData.TC_FRAME_01
     cltu = CCSDS.CLTU.encodeCLTU(frame)
     okState, msg = CCSDS.CLTU.checkCLTU(cltu)
@@ -108,10 +115,11 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
     tcCltuDu.earliestProdTimeFlag = testData.NCTRS_CLTU_01_earliestProdTimeFlag
     tcCltuDu.latestProdTimeFlag = testData.NCTRS_CLTU_01_latestProdTimeFlag
     print("tcCltuDu =", tcCltuDu)
-    self.tcSender.sendTcDataUnit(tcCltuDu)
+    s_tcSender.sendTcDataUnit(tcCltuDu)
   # ---------------------------------------------------------------------------
   def cltu1Cmd(self, argv):
     """Decoded cltu1 command"""
+    global s_tcSender
     cltu = testData.CLTU_01
     okState, msg = CCSDS.CLTU.checkCltu(cltu)
     if not okState:
@@ -132,27 +140,29 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
     tcCltuDu.earliestProdTimeFlag = testData.NCTRS_CLTU_01_earliestProdTimeFlag
     tcCltuDu.latestProdTimeFlag = testData.NCTRS_CLTU_01_latestProdTimeFlag
     print("tcCltuDu =", tcCltuDu)
-    self.tcSender.sendTcDataUnit(tcCltuDu)
+    s_tcSender.sendTcDataUnit(tcCltuDu)
   # ---------------------------------------------------------------------------
   def cltu2Cmd(self, argv):
     """Decoded cltu2 command"""
+    global s_tcSender
     nctrsCltu = testData.NCTRS_CLTU_02
     tcCltuDu = GRND.NCTRSDU.TCcltuDataUnit(nctrsCltu)
     print("tcCltuDu =", tcCltuDu)
-    self.tcSender.sendTcDataUnit(tcCltuDu)
+    s_tcSender.sendTcDataUnit(tcCltuDu)
   # ---------------------------------------------------------------------------
   def directiveCmd(self, argv):
     """Decoded directive command"""
+    global s_tcSender
     tcDirDu = GRND.NCTRSDU.TCdirectivesDataUnit()
     print("tcDirDu =", tcDirDu)
-    self.tcSender.sendTcDataUnit(tcDirDu)
+    s_tcSender.sendTcDataUnit(tcDirDu)
 
 # =============================================================================
 class TCsender(GRND.NCTRS.TCsender):
   """Subclass of GRND.NCTRS.TCsender"""
-  def __init__(self, eventLoop):
+  def __init__(self):
     """Initialise attributes only"""
-    GRND.NCTRS.TCsender.__init__(self, eventLoop)
+    GRND.NCTRS.TCsender.__init__(self)
   # ---------------------------------------------------------------------------
   def notifyTCpacketResponseDataUnit(self, tcPktRespDu):
     """AD packet / BD segment response received"""
@@ -188,12 +198,12 @@ def initConfiguration():
 # -----------------------------------------------------------------------------
 def createTCsender():
   """create the NCTRS TC receiver"""
-  tcSender = TCsender(UTIL.SYS.s_eventLoop)
-  if not tcSender.connectToServer(
+  global s_tcSender
+  s_tcSender = TCsender()
+  if not s_tcSender.connectToServer(
     serverHost=UTIL.SYS.s_configuration.HOST,
     serverPort=int(UTIL.SYS.s_configuration.NCTRS_TC_SERVER_PORT)):
     sys.exit(-1)
-  return tcSender
 
 ########
 # main #
@@ -201,13 +211,15 @@ def createTCsender():
 if __name__ == "__main__":
   # initialise the system configuration
   initConfiguration()
+  # initialise the console handler
+  consoleHandler = UTIL.TASK.ConsoleHandler()
+  # initialise the model
+  modelTask = ModelTask()
+  # register the console handler
+  modelTask.registerConsoleHandler(consoleHandler)
   # create the NCTRS TC sender
   LOG("Open the NCTRS TC sender (client)")
-  tcSender = createTCsender()
-  # register a console handler for interaction
-  consoleHandler = ConsoleHandler(tcSender)
-  # start the event loop
-  LOG("Start the event loop...")
-  consoleHandler.process([])
-  UTIL.SYS.s_eventLoop.start()
-  sys.exit(0)
+  createTCsender()
+  # start the tasks
+  LOG("start modelTask...")
+  modelTask.start()

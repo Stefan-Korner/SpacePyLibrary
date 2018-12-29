@@ -15,35 +15,30 @@
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import UTIL.SYS
+import UTIL.SYS, UTIL.TASK
 import GRND.NCTRS, GRND.NCTRSDU
+
+####################
+# global variables #
+####################
+# Admin receiver is a singletons
+s_adminReceiver = None
 
 ###########
 # classes #
 ###########
 # =============================================================================
-class ConsoleHandler(UTIL.SYS.ConsoleHandler):
-  """Subclass of UTIL.SYS.ConsoleHandler"""
-  def __init__(self):
-    """Initialise attributes only"""
-    UTIL.SYS.ConsoleHandler.__init__(self)
-  # ---------------------------------------------------------------------------
-  def process(self, argv):
-    """Callback for processing the input arguments"""
-    UTIL.SYS.s_eventLoop.stop()
-
-# =============================================================================
 class AdminReceiver(GRND.NCTRS.AdminMessageReceiver):
   """Subclass of GRND.NCTRS.AdminMessageReceiver"""
-  def __init__(self, eventLoop):
+  def __init__(self):
     """Initialise attributes only"""
-    GRND.NCTRS.AdminMessageReceiver.__init__(self, eventLoop)
+    GRND.NCTRS.AdminMessageReceiver.__init__(self)
   # ---------------------------------------------------------------------------
   def notifyAdminMessageDataUnit(self, messageDu):
     """Admin message response received"""
     LOG("")
     LOG("*** notifyAdminMessageDataUnit ***")
-    LOG("message = " + messageDu.getMessage())
+    LOG("message = " + messageDu.getMessage().decode("ascii"))
     LOG("messageDu = " + str(messageDu))
 
 #############
@@ -59,12 +54,12 @@ def initConfiguration():
 # -----------------------------------------------------------------------------
 def createAdminReceiver():
   """create the NCTRS admin receiver"""
-  adminReceiver = AdminReceiver(UTIL.SYS.s_eventLoop)
-  if not adminReceiver.connectToServer(
+  global s_adminReceiver
+  s_adminReceiver = AdminReceiver()
+  if not s_adminReceiver.connectToServer(
     serverHost=UTIL.SYS.s_configuration.HOST,
     serverPort=int(UTIL.SYS.s_configuration.NCTRS_ADMIN_SERVER_PORT)):
     sys.exit(-1)
-  return adminReceiver
 
 ########
 # main #
@@ -72,13 +67,15 @@ def createAdminReceiver():
 if __name__ == "__main__":
   # initialise the system configuration
   initConfiguration()
+  # initialise the console handler
+  consoleHandler = UTIL.TASK.ConsoleHandler()
+  # initialise the model
+  modelTask = UTIL.TASK.ProcessingTask(isParent=True)
+  # register the console handler
+  modelTask.registerConsoleHandler(consoleHandler)
   # create the NCTRS admin receiver
   LOG("Open the NCTRS admin receiver (client)")
-  adminReceiver = createAdminReceiver()
-  # register a console handler for interaction
-  consoleHandler = ConsoleHandler()
-  # start the event loop
-  LOG("Start the event loop...")
-  consoleHandler.process([])
-  UTIL.SYS.s_eventLoop.start()
-  sys.exit(0)
+  createAdminReceiver()
+  # start the tasks
+  LOG("start modelTask...")
+  modelTask.start()

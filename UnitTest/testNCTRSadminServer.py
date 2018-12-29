@@ -15,21 +15,26 @@
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import UTIL.SYS
+import UTIL.SYS, UTIL.TASK
 import GRND.NCTRS
+
+####################
+# global variables #
+####################
+# Admin sender is a singleton
+s_adminSender = None
 
 ###########
 # classes #
 ###########
 # =============================================================================
-class ConsoleHandler(UTIL.SYS.ConsoleHandler):
-  """Subclass of UTIL.SYS.ConsoleHandler"""
-  def __init__(self, adminSender):
+class ModelTask(UTIL.TASK.ProcessingTask):
+  """Subclass of UTIL.TASK.ProcessingTask"""
+  def __init__(self):
     """Initialise attributes only"""
-    UTIL.SYS.ConsoleHandler.__init__(self)
-    self.adminSender = adminSender
+    UTIL.TASK.ProcessingTask.__init__(self, isParent=True)
   # ---------------------------------------------------------------------------
-  def process(self, argv):
+  def notifyCommand(self, argv):
     """Callback for processing the input arguments"""
     if len(argv) > 0:
       # decode the command
@@ -64,7 +69,8 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
         self.tcMessage15Cmd(argv)
       else:
         LOG_WARNING("Invalid command " + argv[0])
-    print("> ",  end='')
+        self.helpCmd([])
+    return 0
   # ---------------------------------------------------------------------------
   def helpCmd(self, argv):
     """Decoded help command"""
@@ -89,62 +95,74 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
     """Decoded quit command"""
-    UTIL.SYS.s_eventLoop.stop()
+    UTIL.TASK.s_parentTask.stop()
   # ---------------------------------------------------------------------------
   def tmMessage1Cmd(self, argv):
     """Decoded ADMIN_MSG_TM_LINK_FLOW command"""
-    self.adminSender.sendAdminMessageTM(GRND.NCTRSDU.ADMIN_MSG_TM_LINK_FLOW)
+    global s_adminSender
+    s_adminSender.sendAdminMessageTM(GRND.NCTRSDU.ADMIN_MSG_TM_LINK_FLOW)
   # ---------------------------------------------------------------------------
   def tmMessage2Cmd(self, argv):
     """Decoded ADMIN_MSG_TM_LINK_NOFLOW command"""
-    self.adminSender.sendAdminMessageTM(GRND.NCTRSDU.ADMIN_MSG_TM_LINK_NOFLOW)
+    global s_adminSender
+    s_adminSender.sendAdminMessageTM(GRND.NCTRSDU.ADMIN_MSG_TM_LINK_NOFLOW)
   # ---------------------------------------------------------------------------
   def tcMessage1Cmd(self, argv):
     """Decoded ADMIN_MSG_TC_LINK_ESTABLISHED_TO_GS command"""
-    self.adminSender.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_LINK_ESTABLISHED_TO_GS)
+    global s_adminSender
+    s_adminSender.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_LINK_ESTABLISHED_TO_GS)
   # ---------------------------------------------------------------------------
   def tcMessage3Cmd(self, argv):
     """Decoded ADMIN_MSG_TC_LINK_CLOSED_TO_GS command"""
-    self.adminSender.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_LINK_CLOSED_TO_GS)
+    global s_adminSender
+    s_adminSender.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_LINK_CLOSED_TO_GS)
   # ---------------------------------------------------------------------------
   def tcMessage4Cmd(self, argv):
     """Decoded ADMIN_MSG_TC_LINK_ABORTED_TO_GS command"""
-    self.adminSender.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_LINK_ABORTED_TO_GS)
+    global s_adminSender
+    s_adminSender.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_LINK_ABORTED_TO_GS)
   # ---------------------------------------------------------------------------
   def tcMessage5Cmd(self, argv):
     """Decoded ADMIN_MSG_TC_LINK_ABORTED_FROM_GS command"""
-    self.adminSender.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_LINK_ABORTED_FROM_GS)
+    global s_adminSender
+    s_adminSender.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_LINK_ABORTED_FROM_GS)
   # ---------------------------------------------------------------------------
   def tcMessage6Cmd(self, argv):
     """Decoded ADMIN_MSG_TC_AD_SERVICE_AVAILABLE_FROM_GS command"""
-    self.adminSender.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_AD_SERVICE_AVAILABLE_FROM_GS)
+    global s_adminSender
+    s_adminSender.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_AD_SERVICE_AVAILABLE_FROM_GS)
   # ---------------------------------------------------------------------------
   def tcMessage7Cmd(self, argv):
     """Decoded ADMIN_MSG_TC_AD_SERVICE_FAILE_IN_GS command"""
-    self.adminSender.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_AD_SERVICE_FAILE_IN_GS)
+    global s_adminSender
+    s_adminSender.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_AD_SERVICE_FAILE_IN_GS)
   # ---------------------------------------------------------------------------
   def tcMessage9Cmd(self, argv):
     """Decoded ADMIN_MSG_TC_AD_SERVICE_TERMINATED_IN_GS command"""
-    self.adminSender.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_AD_SERVICE_TERMINATED_IN_GS)
+    global s_adminSender
+    s_adminSender.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_AD_SERVICE_TERMINATED_IN_GS)
   # ---------------------------------------------------------------------------
   def tcMessage13Cmd(self, argv):
     """Decoded ADMIN_MSG_TC_AD_SERVICE_WILL_TERM_IN_GS_BD command"""
-    self.adminSender.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_AD_SERVICE_WILL_TERM_IN_GS_BD)
+    global s_adminSender
+    s_adminSender.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_AD_SERVICE_WILL_TERM_IN_GS_BD)
   # ---------------------------------------------------------------------------
   def tcMessage14Cmd(self, argv):
     """Decoded ADMIN_MSG_TC_AD_SERVICE_WILL_TERM_IN_GS command"""
-    self.adminSender.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_AD_SERVICE_WILL_TERM_IN_GS)
+    global s_adminSender
+    s_adminSender.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_AD_SERVICE_WILL_TERM_IN_GS)
   # ---------------------------------------------------------------------------
   def tcMessage15Cmd(self, argv):
     """Decoded ADMIN_MSG_TC_ALL_SERVICES_WILL_TERM_IN_GS command"""
-    self.adminSender.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_ALL_SERVICES_WILL_TERM_IN_GS)
+    global s_adminSender
+    s_adminSender.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_ALL_SERVICES_WILL_TERM_IN_GS)
 
 # =============================================================================
 class AdminSender(GRND.NCTRS.AdminMessageSender):
   """Subclass of GRND.NCTRS.AdminMessageSender"""
-  def __init__(self, eventLoop, portNr, groundstationName):
+  def __init__(self, portNr, groundstationName):
     """Initialise attributes only"""
-    GRND.NCTRS.AdminMessageSender.__init__(self, eventLoop, portNr, groundstationName)
+    GRND.NCTRS.AdminMessageSender.__init__(self, portNr, groundstationName)
   # ---------------------------------------------------------------------------
   def clientAccepted(self):
     LOG_INFO("NCTRS admin receiver (client) accepted")
@@ -162,18 +180,18 @@ def initConfiguration():
   """initialise the system configuration"""
   UTIL.SYS.s_configuration.setDefaults([
     ["SYS_COLOR_LOG", "1"],
+    ["HOST", "127.0.0.1"],
     ["NCTRS_ADMIN_SERVER_PORT", "13006"],
     ["GROUND_STATION_NAME", "ESA G/S "]])
 # -----------------------------------------------------------------------------
 def createAdminSender():
   """create the NCTRS admin message sender"""
-  adminSender = AdminSender(
-    UTIL.SYS.s_eventLoop,
+  global s_adminSender
+  s_adminSender = AdminSender(
     portNr=int(UTIL.SYS.s_configuration.NCTRS_ADMIN_SERVER_PORT),
     groundstationName=UTIL.SYS.s_configuration.GROUND_STATION_NAME)
-  if not adminSender.openConnectPort():
+  if not s_adminSender.openConnectPort(UTIL.SYS.s_configuration.HOST):
     sys.exit(-1)
-  return adminSender
 
 ########
 # main #
@@ -181,13 +199,15 @@ def createAdminSender():
 if __name__ == "__main__":
   # initialise the system configuration
   initConfiguration()
+  # initialise the console handler
+  consoleHandler = UTIL.TASK.ConsoleHandler()
+  # initialise the model
+  modelTask = ModelTask()
+  # register the console handler
+  modelTask.registerConsoleHandler(consoleHandler)
   # create the NCTRS admin message sender
   LOG("Open the NCTRS admin message sender (server)")
-  adminSender = createAdminSender()
-  # register a console handler for interaction
-  consoleHandler = ConsoleHandler(adminSender)
-  # start the event loop
-  LOG("Start the event loop...")
-  consoleHandler.process([])
-  UTIL.SYS.s_eventLoop.start()
-  sys.exit(0)
+  createAdminSender()
+  # start the tasks
+  LOG("start modelTask...")
+  modelTask.start()

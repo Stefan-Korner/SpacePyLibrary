@@ -29,7 +29,7 @@ s_server = None
 ###########
 # =============================================================================
 class ModelTask(UTIL.TASK.ProcessingTask):
-  """Subclass of UTIL.SYS.ConsoleHandler"""
+  """Subclass of UTIL.TASK.ProcessingTask"""
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise attributes only"""
@@ -66,7 +66,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
   # ---------------------------------------------------------------------------
   def cmdAnswCmd(self, argv):
     """Decoded (CMD,ANSW) command"""
-    global s_client
+    global s_server
     if len(argv) != 2:
       LOG_WARNING("Invalid command argument(s)")
       LOG("usage: cmd_answ <message>")

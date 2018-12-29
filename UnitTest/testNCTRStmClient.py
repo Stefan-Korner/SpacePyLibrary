@@ -15,9 +15,15 @@
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import UTIL.SYS
+import UTIL.SYS, UTIL.TASK
 import GRND.NCTRS, GRND.NCTRSDU, GRND.NCTRSDUhelpers
 import testData
+
+####################
+# global variables #
+####################
+# TM receiver is a singletons
+s_tmReceiver = None
 
 ###########
 # classes #
@@ -25,9 +31,9 @@ import testData
 # =============================================================================
 class TMreceiver(GRND.NCTRS.TMreceiver):
   """Subclass of GRND.NCTRS.TMreceiver"""
-  def __init__(self, eventLoop):
+  def __init__(self):
     """Initialise attributes only"""
-    GRND.NCTRS.TMreceiver.__init__(self, eventLoop)
+    GRND.NCTRS.TMreceiver.__init__(self)
   # ---------------------------------------------------------------------------
   def notifyTMdataUnit(self, tmDu):
     """TM frame received"""
@@ -52,12 +58,12 @@ def initConfiguration():
 # -----------------------------------------------------------------------------
 def createTMreceiver():
   """create the NCTRS TM receiver"""
-  tmReceiver = TMreceiver(UTIL.SYS.s_eventLoop)
-  if not tmReceiver.connectToServer(
+  global s_tmReceiver
+  s_tmReceiver = TMreceiver()
+  if not s_tmReceiver.connectToServer(
     serverHost=UTIL.SYS.s_configuration.HOST,
     serverPort=int(UTIL.SYS.s_configuration.NCTRS_TM_SERVER_PORT)):
     sys.exit(-1)
-  return tmReceiver
 
 ########
 # main #
@@ -65,12 +71,15 @@ def createTMreceiver():
 if __name__ == "__main__":
   # initialise the system configuration
   initConfiguration()
+  # initialise the console handler
+  consoleHandler = UTIL.TASK.ConsoleHandler()
+  # initialise the model
+  modelTask = UTIL.TASK.ProcessingTask(isParent=True)
+  # register the console handler
+  modelTask.registerConsoleHandler(consoleHandler)
   # create the NCTRS TM receiver
   LOG("Open the NCTRS TM receiver (client)")
-  tmReceiver = createTMreceiver()
-  # register a console handler for termination
-  consoleHandler = UTIL.SYS.ConsoleHandler()
-  # start the event loop
-  LOG("Start the event loop...")
-  UTIL.SYS.s_eventLoop.start()
-  sys.exit(0)
+  createTMreceiver()
+  # start the tasks
+  LOG("start modelTask...")
+  modelTask.start()
