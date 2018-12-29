@@ -26,17 +26,17 @@ import UTIL.TASK, UTIL.TCP, UTIL.TIME
 ###########
 
 # =============================================================================
-class TCserver(UTIL.TCP.SingleClientReceivingServer):
+class TCserver(UTIL.TCP.SingleClientServer):
   """CNC TC interface - SCOE side"""
   # ---------------------------------------------------------------------------
   def __init__(self, portNr):
     """Initialise attributes only"""
     modelTask = UTIL.TASK.s_processingTask
-    UTIL.TCP.SingleClientReceivingServer.__init__(self, modelTask, portNr)
+    UTIL.TCP.SingleClientServer.__init__(self, modelTask, portNr)
   # ---------------------------------------------------------------------------
   def accepted(self, clientSocket):
-    """Overloaded from SingleClientReceivingServer"""
-    UTIL.TCP.SingleClientReceivingServer.accepted(self, clientSocket)
+    """Overloaded from SingleClientServer"""
+    UTIL.TCP.SingleClientServer.accepted(self, clientSocket)
     self.clientAccepted()
   # ---------------------------------------------------------------------------
   def sendCNCackNak(self, cncCommandDU, okStatus):
@@ -168,7 +168,7 @@ class TCserver(UTIL.TCP.SingleClientReceivingServer):
     pass
 
 # =============================================================================
-class TCclient(UTIL.TCP.SingleServerReceivingClient):
+class TCclient(UTIL.TCP.Client):
   """CNC TC interface - CCS side"""
   # connectToServer and disconnectFromServer are inherited
   # and must be handled in a proper way from the application
@@ -176,7 +176,7 @@ class TCclient(UTIL.TCP.SingleServerReceivingClient):
   def __init__(self):
     """Initialise attributes only"""
     modelTask = UTIL.TASK.s_processingTask
-    UTIL.TCP.SingleServerReceivingClient.__init__(self, modelTask)
+    UTIL.TCP.Client.__init__(self, modelTask)
   # ---------------------------------------------------------------------------
   def sendCNCpacket(self, tcPacket):
     """Send a CnC TC packet to the SCOE"""
@@ -234,17 +234,17 @@ class TCclient(UTIL.TCP.SingleServerReceivingClient):
     return True
 
 # =============================================================================
-class TMserver(UTIL.TCP.SingleClientReceivingServer):
+class TMserver(UTIL.TCP.SingleClientServer):
   """CNC TM interface - SCOE side"""
   # ---------------------------------------------------------------------------
   def __init__(self, portNr):
     """Initialise attributes only"""
     modelTask = UTIL.TASK.s_processingTask
-    UTIL.TCP.SingleClientReceivingServer.__init__(self, modelTask, portNr)
+    UTIL.TCP.SingleClientServer.__init__(self, modelTask, portNr)
   # ---------------------------------------------------------------------------
   def accepted(self, clientSocket):
-    """Overloaded from SingleClientReceivingServer"""
-    UTIL.TCP.SingleClientReceivingServer.accepted(self, clientSocket)
+    """Overloaded from SingleClientServer"""
+    UTIL.TCP.SingleClientServer.accepted(self, clientSocket)
     self.clientAccepted()
   # ---------------------------------------------------------------------------
   def sendTMpacket(self, tmPacket):
@@ -266,7 +266,7 @@ class TMserver(UTIL.TCP.SingleClientReceivingServer):
     pass
 
 # =============================================================================
-class TMclient(UTIL.TCP.SingleServerReceivingClient):
+class TMclient(UTIL.TCP.Client):
   """CNC TM interface - CCS side"""
   # connectToServer and disconnectFromServer are inherited
   # and must be handled in a proper way from the application
@@ -274,7 +274,7 @@ class TMclient(UTIL.TCP.SingleServerReceivingClient):
   def __init__(self):
     """Initialise attributes only"""
     modelTask = UTIL.TASK.s_processingTask
-    UTIL.TCP.SingleServerReceivingClient.__init__(self, modelTask)
+    UTIL.TCP.Client.__init__(self, modelTask)
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when the SCOE has send data"""

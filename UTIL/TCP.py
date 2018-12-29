@@ -20,7 +20,7 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 ###########
 # =============================================================================
 class Server(object):
-  """TCP/IP server"""
+  """TCP/IP server, only handles the connect socket"""
   # ---------------------------------------------------------------------------
   def __init__(self, task, portNr):
     """Initialise attributes only"""
@@ -147,8 +147,8 @@ class DataSocketHandler(object):
     self.dataSocket = None
 
 # =============================================================================
-class SingleClientReceivingServer(Server, DataSocketHandler):
-  """TCP/IP server that receives data from a single client"""
+class SingleClientServer(Server, DataSocketHandler):
+  """TCP/IP server that handles a single client"""
   # ---------------------------------------------------------------------------
   def __init__(self, task, portNr):
     """Delegates to parent implementations"""
@@ -170,8 +170,8 @@ class SingleClientReceivingServer(Server, DataSocketHandler):
                                 self.connectCallback)
 
 # =============================================================================
-class SingleServerReceivingClient(DataSocketHandler):
-  """TCP/IP client that receives data from a single server"""
+class Client(DataSocketHandler):
+  """TCP/IP client"""
   # ---------------------------------------------------------------------------
   def __init__(self, task):
     """Delegates to parent implementation"""

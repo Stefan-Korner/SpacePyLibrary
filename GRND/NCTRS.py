@@ -27,7 +27,7 @@ SOCKET_TYPE = type(socket.socket())
 # classes #
 ###########
 # =============================================================================
-class TMreceiver(UTIL.TCP.SingleServerReceivingClient):
+class TMreceiver(UTIL.TCP.Client):
   """NCTRS telemetry receiver interface - SCOS side"""
   # connectToServer and disconnectFromServer are inherited
   # and must be handled in a proper way from the application
@@ -35,7 +35,7 @@ class TMreceiver(UTIL.TCP.SingleServerReceivingClient):
   def __init__(self):
     """Initialise attributes only"""
     modelTask = UTIL.TASK.s_processingTask
-    UTIL.TCP.SingleServerReceivingClient.__init__(self, modelTask)
+    UTIL.TCP.Client.__init__(self, modelTask)
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when NCTRS has send data"""
@@ -77,18 +77,18 @@ class NCTRStmFields(object):
     self.qualityFlag = 0
 
 # =============================================================================
-class TMsender(UTIL.TCP.SingleClientReceivingServer):
+class TMsender(UTIL.TCP.SingleClientServer):
   """NCTRS telemetry sender interface - NCTRS side"""
   # ---------------------------------------------------------------------------
   def __init__(self, portNr, nctrsTMfields):
     """Initialise attributes only"""
     modelTask = UTIL.TASK.s_processingTask
-    UTIL.TCP.SingleClientReceivingServer.__init__(self, modelTask, portNr)
+    UTIL.TCP.SingleClientServer.__init__(self, modelTask, portNr)
     self.nctrsTMfields = nctrsTMfields
   # ---------------------------------------------------------------------------
   def accepted(self, clientSocket):
-    """Overloaded from SingleClientReceivingServer"""
-    UTIL.TCP.SingleClientReceivingServer.accepted(self, clientSocket)
+    """Overloaded from SingleClientServer"""
+    UTIL.TCP.SingleClientServer.accepted(self, clientSocket)
     self.clientAccepted()
   # ---------------------------------------------------------------------------
   def sendTmDataUnit(self, tmDu):
@@ -126,18 +126,18 @@ class TMsender(UTIL.TCP.SingleClientReceivingServer):
     pass
 
 # =============================================================================
-class TCreceiver(UTIL.TCP.SingleClientReceivingServer):
+class TCreceiver(UTIL.TCP.SingleClientServer):
   """NCTRS telecommand receiver interface - NCTRS side"""
   # ---------------------------------------------------------------------------
   def __init__(self, portNr, groundstationId):
     """Initialise attributes only"""
     modelTask = UTIL.TASK.s_processingTask
-    UTIL.TCP.SingleClientReceivingServer.__init__(self, modelTask, portNr)
+    UTIL.TCP.SingleClientServer.__init__(self, modelTask, portNr)
     self.groundstationId = groundstationId
   # ---------------------------------------------------------------------------
   def accepted(self, clientSocket):
-    """Overloaded from SingleClientReceivingServer"""
-    UTIL.TCP.SingleClientReceivingServer.accepted(self, clientSocket)
+    """Overloaded from SingleClientServer"""
+    UTIL.TCP.SingleClientServer.accepted(self, clientSocket)
     self.clientAccepted()
   # ---------------------------------------------------------------------------
   def sendTcDataUnit(self, tcDu):
@@ -323,7 +323,7 @@ class TCreceiver(UTIL.TCP.SingleClientReceivingServer):
     self.sendTcDataUnit(tcRespDu)
 
 # =============================================================================
-class TCsender(UTIL.TCP.SingleServerReceivingClient):
+class TCsender(UTIL.TCP.Client):
   """NCTRS telecommand sender interface - SCOS side"""
   # connectToServer and disconnectFromServer are inherited
   # and must be handled in a proper way from the application
@@ -331,7 +331,7 @@ class TCsender(UTIL.TCP.SingleServerReceivingClient):
   def __init__(self):
     """Initialise attributes only"""
     modelTask = UTIL.TASK.s_processingTask
-    UTIL.TCP.SingleServerReceivingClient.__init__(self, modelTask)
+    UTIL.TCP.Client.__init__(self, modelTask)
   # ---------------------------------------------------------------------------
   def sendTcDataUnit(self, tcDu):
     """Send the TC data unit to the TC receiver"""
@@ -436,18 +436,18 @@ class TCsender(UTIL.TCP.SingleServerReceivingClient):
     sys.exit(-1)
 
 # =============================================================================
-class AdminMessageSender(UTIL.TCP.SingleClientReceivingServer):
+class AdminMessageSender(UTIL.TCP.SingleClientServer):
   """NCTRS admin message sender interface - NCTRS side"""
   # ---------------------------------------------------------------------------
   def __init__(self, portNr, groundstationName):
     """Initialise attributes only"""
     modelTask = UTIL.TASK.s_processingTask
-    UTIL.TCP.SingleClientReceivingServer.__init__(self, modelTask, portNr)
+    UTIL.TCP.SingleClientServer.__init__(self, modelTask, portNr)
     self.groundstationName = groundstationName
   # ---------------------------------------------------------------------------
   def accepted(self, clientSocket):
-    """Overloaded from SingleClientReceivingServer"""
-    UTIL.TCP.SingleClientReceivingServer.accepted(self, clientSocket)
+    """Overloaded from SingleClientServer"""
+    UTIL.TCP.SingleClientServer.accepted(self, clientSocket)
     self.clientAccepted()
   # ---------------------------------------------------------------------------
   def sendAdminMessageDataUnit(self, messageDu):
@@ -506,7 +506,7 @@ class AdminMessageSender(UTIL.TCP.SingleClientReceivingServer):
     pass
 
 # =============================================================================
-class AdminMessageReceiver(UTIL.TCP.SingleServerReceivingClient):
+class AdminMessageReceiver(UTIL.TCP.Client):
   """NCTRS admin message receiver interface - SCOS side"""
   # connectToServer and disconnectFromServer are inherited
   # and must be handled in a proper way from the application
@@ -514,7 +514,7 @@ class AdminMessageReceiver(UTIL.TCP.SingleServerReceivingClient):
   def __init__(self):
     """Initialise attributes only"""
     modelTask = UTIL.TASK.s_processingTask
-    UTIL.TCP.SingleServerReceivingClient.__init__(self, modelTask)
+    UTIL.TCP.Client.__init__(self, modelTask)
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when NCTRS has send data"""
