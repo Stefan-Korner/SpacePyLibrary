@@ -108,29 +108,6 @@ class Server(object):
     self.connectSocket = None
 
 # =============================================================================
-class Client(object):
-  """TCP/IP client"""
-  # ---------------------------------------------------------------------------
-  def __init__(self):
-    """Initialise attributes only"""
-  # ---------------------------------------------------------------------------
-  def connectToServer(self, serverHost, serverPort):
-    """Connects to the server"""
-    # create the data socket
-    try:
-      dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    except Exception, ex:
-      LOG_ERROR("Creation of data socket failed: " + str(ex))
-      return None
-    # connect the data socket to the server
-    try:
-      dataSocket.connect((serverHost, serverPort))
-    except Exception, ex:
-      LOG_ERROR("Connection to server " + str(serverPort) + "@" + serverHost + " failed: " + str(ex))
-      return None
-    return dataSocket
-
-# =============================================================================
 class DataSocketHandler(object):
   """TCP/IP data socket handler"""
   # ---------------------------------------------------------------------------
@@ -193,18 +170,28 @@ class SingleClientReceivingServer(Server, DataSocketHandler):
                                 self.connectCallback)
 
 # =============================================================================
-class SingleServerReceivingClient(Client, DataSocketHandler):
+class SingleServerReceivingClient(DataSocketHandler):
   """TCP/IP client that receives data from a single server"""
   # ---------------------------------------------------------------------------
   def __init__(self, task):
-    """Delegates to parent implementations"""
-    Client.__init__(self)
+    """Delegates to parent implementation"""
     DataSocketHandler.__init__(self, task)
   # ---------------------------------------------------------------------------
   def connectToServer(self, serverHost, serverPort):
-    """Overloaded from Client"""
-    dataSocket = Client.connectToServer(self, serverHost, serverPort)
-    # use the data socket for data reception
+    """Connects to the server"""
+    # create the data socket
+    try:
+      dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    except Exception as ex:
+      LOG_ERROR("Creation of data socket failed: " + str(ex))
+      return None
+    # connect the data socket to the server
+    try:
+      dataSocket.connect((serverHost, serverPort))
+    except Exception as ex:
+      LOG_ERROR("Connection to server " + str(serverPort) + "@" + serverHost + " failed: " + str(ex))
+      return None
+    # use the data socket
     self.enableDataSocket(dataSocket)
     return dataSocket
   # ---------------------------------------------------------------------------

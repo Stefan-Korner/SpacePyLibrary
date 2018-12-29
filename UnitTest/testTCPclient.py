@@ -15,7 +15,7 @@
 #******************************************************************************
 import os, sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import UTIL.SYS, UTIL.TCP
+import UTIL.SYS, UTIL.TASK, UTIL.TCP
 
 #############
 # functions #
@@ -29,13 +29,12 @@ def initConfiguration():
 # -----------------------------------------------------------------------------
 def createClient():
   """create the TCP client"""
-  client = UTIL.TCP.Client()
-  dataSocket = client.connectToServer(
+  client = UTIL.TCP.SingleServerReceivingClient(UTIL.TASK.s_processingTask)
+  if not client.connectToServer(
     UTIL.SYS.s_configuration.HOST,
-    int(UTIL.SYS.s_configuration.SERVER_PORT))
-  if not dataSocket:
+    int(UTIL.SYS.s_configuration.SERVER_PORT)):
     sys.exit(-1)
-  return dataSocket
+  return client.dataSocket
 
 ########
 # main #
@@ -43,10 +42,15 @@ def createClient():
 if __name__ == "__main__":
   # initialise the system configuration
   initConfiguration()
+  # initialise the console handler
+  consoleHandler = UTIL.TASK.ConsoleHandler()
+  # initialise the model
+  modelTask = UTIL.TASK.ProcessingTask(isParent=True)
+  # register the console handler
+  modelTask.registerConsoleHandler(consoleHandler)
   # create the TCP client
   LOG("Open the TCP client")
   dataSocket = createClient()
   # force termination of the server
   LOG("force server termination...")
   dataSocket.send("quit\n")
-  dataSocket.close()
