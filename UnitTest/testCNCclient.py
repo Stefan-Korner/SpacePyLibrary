@@ -31,7 +31,7 @@ s_client2 = None
 ###########
 # =============================================================================
 class ModelTask(UTIL.TASK.ProcessingTask):
-  """Subclass of UTIL.SYS.ConsoleHandler"""
+  """Subclass of UTIL.TASK.ProcessingTask"""
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise attributes only"""

@@ -16,22 +16,27 @@
 from __future__ import print_function
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import UTIL.SYS
+import UTIL.SYS, UTIL.TASK
 import GRND.NCTRS
 import testData
+
+####################
+# global variables #
+####################
+# TM sender is a singleton
+s_tmSender = None
 
 ###########
 # classes #
 ###########
 # =============================================================================
-class ConsoleHandler(UTIL.SYS.ConsoleHandler):
-  """Subclass of UTIL.SYS.ConsoleHandler"""
-  def __init__(self, tmSender):
+class ModelTask(UTIL.TASK.ProcessingTask):
+  """Subclass of UTIL.TASK.ProcessingTask"""
+  def __init__(self):
     """Initialise attributes only"""
-    UTIL.SYS.ConsoleHandler.__init__(self)
-    self.tmSender = tmSender
+    UTIL.TASK.ProcessingTask.__init__(self, isParent=True)
   # ---------------------------------------------------------------------------
-  def process(self, argv):
+  def notifyCommand(self, argv):
     """Callback for processing the input arguments"""
     if len(argv) > 0:
       # decode the command
@@ -46,7 +51,8 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
         self.frame2Cmd(argv)
       else:
         LOG_WARNING("Invalid command " + argv[0])
-    print("> ",  end='')
+        self.helpCmd([])
+    return 0
   # ---------------------------------------------------------------------------
   def helpCmd(self, argv):
     """Decoded help command"""
@@ -61,10 +67,11 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
     """Decoded quit command"""
-    UTIL.SYS.s_eventLoop.stop()
+    UTIL.TASK.s_parentTask.stop()
   # ---------------------------------------------------------------------------
   def frame1Cmd(self, argv):
     """Decoded frame1 command"""
+    global s_tmSender
     frame = testData.TM_FRAME_01
     tmDu = GRND.NCTRSDU.TMdataUnit()
     tmDu.setFrame(frame)
@@ -76,19 +83,19 @@ class ConsoleHandler(UTIL.SYS.ConsoleHandler):
     tmDu.sequenceFlag = testData.NCTRS_TM_FRAME_01_sequenceFlag
     tmDu.qualityFlag = testData.NCTRS_TM_FRAME_01_qualityFlag
     print("tmDu =", tmDu)
-    self.tmSender.sendTmDataUnit(tmDu)
+    s_tmSender.sendTmDataUnit(tmDu)
   # ---------------------------------------------------------------------------
   def frame2Cmd(self, argv):
     """Decoded frame2 command"""
     frame = testData.TM_FRAME_01
-    self.tmSender.sendFrame(frame)
+    s_tmSender.sendFrame(frame)
 
 # =============================================================================
 class TMsender(GRND.NCTRS.TMsender):
   """Subclass of GRND.NCTRS.TMsender"""
-  def __init__(self, eventLoop, portNr, nctrsTMfields):
+  def __init__(self, portNr, nctrsTMfields):
     """Initialise attributes only"""
-    GRND.NCTRS.TMsender.__init__(self, eventLoop, portNr, nctrsTMfields)
+    GRND.NCTRS.TMsender.__init__(self, portNr, nctrsTMfields)
   # ---------------------------------------------------------------------------
   def clientAccepted(self):
     LOG_INFO("NCTRS TM receiver (client) accepted")
@@ -101,20 +108,20 @@ def initConfiguration():
   """initialise the system configuration"""
   UTIL.SYS.s_configuration.setDefaults([
     ["SYS_COLOR_LOG", "1"],
+    ["HOST", "127.0.0.1"],
     ["NCTRS_TM_SERVER_PORT", "2502"],
     ["SPACECRAFT_ID", "758"]])
 # -----------------------------------------------------------------------------
 def createTMsender():
   """create the NCTRS TM sender"""
+  global s_tmSender
   nctrsTMfields = GRND.NCTRS.NCTRStmFields()
   nctrsTMfields.spacecraftId = int(UTIL.SYS.s_configuration.SPACECRAFT_ID)
-  tmSender = TMsender(
-    UTIL.SYS.s_eventLoop,
+  s_tmSender = TMsender(
     portNr=int(UTIL.SYS.s_configuration.NCTRS_TM_SERVER_PORT),
     nctrsTMfields=nctrsTMfields)
-  if not tmSender.openConnectPort():
+  if not s_tmSender.openConnectPort(UTIL.SYS.s_configuration.HOST):
     sys.exit(-1)
-  return tmSender
 
 ########
 # main #
@@ -122,13 +129,15 @@ def createTMsender():
 if __name__ == "__main__":
   # initialise the system configuration
   initConfiguration()
+  # initialise the console handler
+  consoleHandler = UTIL.TASK.ConsoleHandler()
+  # initialise the model
+  modelTask = ModelTask()
+  # register the console handler
+  modelTask.registerConsoleHandler(consoleHandler)
   # create the NCTRS TM sender
   LOG("Open the NCTRS TM sender (server)")
-  tmSender = createTMsender()
-  # register a console handler for interaction
-  consoleHandler = ConsoleHandler(tmSender)
-  # start the event loop
-  LOG("Start the event loop...")
-  consoleHandler.process([])
-  UTIL.SYS.s_eventLoop.start()
-  sys.exit(0)
+  createTMsender()
+  # start the tasks
+  LOG("start modelTask...")
+  modelTask.start()

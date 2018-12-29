@@ -40,7 +40,7 @@ class TCPreceivingClient(UTIL.TCP.SingleServerReceivingClient):
     # read the next set of byte from the data socket
     tcpLineBuffer = self.tcpLineBuffer
     try:
-      tcpLineBuffer += self.dataSocket.recv(LINEBUFFERLEN).decode("ascii")
+      tcpLineBuffer += self.dataSocket.recv(LINEBUFFERLEN)
       LOG("tcpLineBuffer: " + tcpLineBuffer)
     except Exception, ex:
       # read failed
