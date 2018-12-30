@@ -29,7 +29,7 @@ def initConfiguration():
 # -----------------------------------------------------------------------------
 def createClient():
   """create the TCP client"""
-  client = UTIL.TCP.SingleServerReceivingClient(UTIL.TASK.s_processingTask)
+  client = UTIL.TCP.Client(UTIL.TASK.s_processingTask)
   if not client.connectToServer(
     UTIL.SYS.s_configuration.HOST,
     int(UTIL.SYS.s_configuration.SERVER_PORT)):

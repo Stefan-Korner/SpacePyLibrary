@@ -26,12 +26,12 @@ LINEBUFFERLEN = 256
 # classes #
 ###########
 # =============================================================================
-class TCPreceivingClient(UTIL.TCP.SingleServerReceivingClient):
-  """Subclass of UTIL.TCP.SingleServerReceivingClient"""
+class TCPreceivingClient(UTIL.TCP.Client):
+  """Subclass of UTIL.TCP.Client"""
   # ---------------------------------------------------------------------------
   def __init__(self):
     modelTask = UTIL.TASK.s_processingTask
-    UTIL.TCP.SingleServerReceivingClient.__init__(self, modelTask)
+    UTIL.TCP.Client.__init__(self, modelTask)
     self.tcpLineBuffer = ""
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):

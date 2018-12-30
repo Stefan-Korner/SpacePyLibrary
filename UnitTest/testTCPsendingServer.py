@@ -26,16 +26,16 @@ MAXBYTESREAD = 256
 # classes #
 ###########
 # =============================================================================
-class TCPsendingServer(UTIL.TCP.SingleClientReceivingServer):
-  """Subclass of UTIL.TCP.SingleClientReceivingServer"""
+class TCPsendingServer(UTIL.TCP.SingleClientServer):
+  """Subclass of UTIL.TCP.SingleClientServer"""
   # ---------------------------------------------------------------------------
   def __init__(self, portNr):
     modelTask = UTIL.TASK.s_processingTask
-    UTIL.TCP.SingleClientReceivingServer.__init__(self, modelTask, portNr)
+    UTIL.TCP.SingleClientServer.__init__(self, modelTask, portNr)
   # ---------------------------------------------------------------------------
   def accepted(self, clientSocket):
-    """Overloaded from SingleClientReceivingServer"""
-    UTIL.TCP.SingleClientReceivingServer.accepted(self, clientSocket)
+    """Overloaded from SingleClientServer"""
+    UTIL.TCP.SingleClientServer.accepted(self, clientSocket)
     self.dataSocket.send("connected\n")
     # prepare a timer that calls the after method one second ago
     UTIL.TASK.s_processingTask.createTimeHandler(1000, self.after)

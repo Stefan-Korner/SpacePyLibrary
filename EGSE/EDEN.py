@@ -23,17 +23,17 @@ import UTIL.TASK, UTIL.TCP, UTIL.TIME
 ###########
 
 # =============================================================================
-class Server(UTIL.TCP.SingleClientReceivingServer):
+class Server(UTIL.TCP.SingleClientServer):
   """EDEN PDU interface - SCOE side"""
   # ---------------------------------------------------------------------------
   def __init__(self, portNr):
     """Initialise attributes only"""
     modelTask = UTIL.TASK.s_processingTask
-    UTIL.TCP.SingleClientReceivingServer.__init__(self, modelTask, portNr)
+    UTIL.TCP.SingleClientServer.__init__(self, modelTask, portNr)
   # ---------------------------------------------------------------------------
   def accepted(self, clientSocket):
-    """Overloaded from SingleClientReceivingServer"""
-    UTIL.TCP.SingleClientReceivingServer.accepted(self, clientSocket)
+    """Overloaded from SingleClientServer"""
+    UTIL.TCP.SingleClientServer.accepted(self, clientSocket)
     self.clientAccepted()
   # ---------------------------------------------------------------------------
   def sendPDU(self, pdu):
@@ -242,7 +242,7 @@ class Server(UTIL.TCP.SingleClientReceivingServer):
     pass
 
 # =============================================================================
-class Client(UTIL.TCP.SingleServerReceivingClient):
+class Client(UTIL.TCP.Client):
   """EDEN PDU interface - CCS side"""
   # connectToServer and disconnectFromServer are inherited
   # and must be handled in a proper way from the application
@@ -250,7 +250,7 @@ class Client(UTIL.TCP.SingleServerReceivingClient):
   def __init__(self):
     """Initialise attributes only"""
     modelTask = UTIL.TASK.s_processingTask
-    UTIL.TCP.SingleServerReceivingClient.__init__(self, modelTask)
+    UTIL.TCP.Client.__init__(self, modelTask)
   # ---------------------------------------------------------------------------
   def sendPDU(self, pdu):
     """Send the PDU to the SCOE"""
