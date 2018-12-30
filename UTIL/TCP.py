@@ -19,6 +19,75 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 # classes #
 ###########
 # =============================================================================
+class DataSocketHandler(object):
+  """TCP/IP data socket handler"""
+  # ---------------------------------------------------------------------------
+  def __init__(self, task):
+    """Initialise attributes only"""
+    self.task = task
+    self.dataSocket = None
+  # ---------------------------------------------------------------------------
+  def enableDataSocket(self, dataSocket):
+    """Enables the data socket"""
+    if self.dataSocket != None:
+      LOG_ERROR("Data socket already open!")
+      return
+    self.dataSocket = dataSocket
+    # register the data socket
+    self.task.createFileHandler(self.dataSocket,
+                                self.receiveCallback)
+  # ---------------------------------------------------------------------------
+  def receiveCallback(self, socket, stateMask):
+    """Callback when data are received"""
+    LOG_ERROR("DataSocketHandler.receiveCallback not implemented")
+    sys.exit(-1)
+  # ---------------------------------------------------------------------------
+  def disableDataSocket(self):
+    """Disables the data socket socket"""
+    # check if the receive socket is already open
+    if self.dataSocket == None:
+      LOG_ERROR("Data socket not open!")
+      return
+    # unregister the receive socket
+    self.task.deleteFileHandler(self.dataSocket)
+    # close the data socket
+    try:
+      self.dataSocket.close()
+    except Exception as ex:
+      LOG_ERROR("Close of data socket failed: " + str(ex))
+    self.dataSocket = None
+
+# =============================================================================
+class Client(DataSocketHandler):
+  """TCP/IP client"""
+  # ---------------------------------------------------------------------------
+  def __init__(self, task):
+    """Delegates to parent implementation"""
+    DataSocketHandler.__init__(self, task)
+  # ---------------------------------------------------------------------------
+  def connectToServer(self, serverHost, serverPort):
+    """Connects to the server"""
+    # create the data socket
+    try:
+      dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    except Exception as ex:
+      LOG_ERROR("Creation of data socket failed: " + str(ex))
+      return None
+    # connect the data socket to the server
+    try:
+      dataSocket.connect((serverHost, serverPort))
+    except Exception as ex:
+      LOG_ERROR("Connection to server " + str(serverPort) + "@" + serverHost + " failed: " + str(ex))
+      return None
+    # use the data socket
+    self.enableDataSocket(dataSocket)
+    return dataSocket
+  # ---------------------------------------------------------------------------
+  def disconnectFromServer(self):
+    """Disonnects from server"""
+    self.disableDataSocket()
+
+# =============================================================================
 class Server(object):
   """TCP/IP server, only handles the connect socket"""
   # ---------------------------------------------------------------------------
@@ -108,45 +177,6 @@ class Server(object):
     self.connectSocket = None
 
 # =============================================================================
-class DataSocketHandler(object):
-  """TCP/IP data socket handler"""
-  # ---------------------------------------------------------------------------
-  def __init__(self, task):
-    """Initialise attributes only"""
-    self.task = task
-    self.dataSocket = None
-  # ---------------------------------------------------------------------------
-  def enableDataSocket(self, dataSocket):
-    """Enables the data socket"""
-    if self.dataSocket != None:
-      LOG_ERROR("Data socket already open!")
-      return
-    self.dataSocket = dataSocket
-    # register the data socket
-    self.task.createFileHandler(self.dataSocket,
-                                self.receiveCallback)
-  # ---------------------------------------------------------------------------
-  def receiveCallback(self, socket, stateMask):
-    """Callback when data are received"""
-    LOG_ERROR("DataSocketHandler.receiveCallback not implemented")
-    sys.exit(-1)
-  # ---------------------------------------------------------------------------
-  def disableDataSocket(self):
-    """Disables the data socket socket"""
-    # check if the receive socket is already open
-    if self.dataSocket == None:
-      LOG_ERROR("Data socket not open!")
-      return
-    # unregister the receive socket
-    self.task.deleteFileHandler(self.dataSocket)
-    # close the data socket
-    try:
-      self.dataSocket.close()
-    except Exception as ex:
-      LOG_ERROR("Close of data socket failed: " + str(ex))
-    self.dataSocket = None
-
-# =============================================================================
 class SingleClientServer(Server, DataSocketHandler):
   """TCP/IP server that handles a single client"""
   # ---------------------------------------------------------------------------
@@ -174,33 +204,3 @@ class SingleClientServer(Server, DataSocketHandler):
     # register the connect socket
     self.task.createFileHandler(self.connectSocket,
                                 self.connectCallback)
-
-# =============================================================================
-class Client(DataSocketHandler):
-  """TCP/IP client"""
-  # ---------------------------------------------------------------------------
-  def __init__(self, task):
-    """Delegates to parent implementation"""
-    DataSocketHandler.__init__(self, task)
-  # ---------------------------------------------------------------------------
-  def connectToServer(self, serverHost, serverPort):
-    """Connects to the server"""
-    # create the data socket
-    try:
-      dataSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    except Exception as ex:
-      LOG_ERROR("Creation of data socket failed: " + str(ex))
-      return None
-    # connect the data socket to the server
-    try:
-      dataSocket.connect((serverHost, serverPort))
-    except Exception as ex:
-      LOG_ERROR("Connection to server " + str(serverPort) + "@" + serverHost + " failed: " + str(ex))
-      return None
-    # use the data socket
-    self.enableDataSocket(dataSocket)
-    return dataSocket
-  # ---------------------------------------------------------------------------
-  def disconnectFromServer(self):
-    """Disonnects from server"""
-    self.disableDataSocket()
