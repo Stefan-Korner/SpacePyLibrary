@@ -43,27 +43,17 @@ class TCPsendingServer(UTIL.TCP.SingleClientServer):
   def receiveCallback(self, socket, stateMask):
     """Callback when data are received"""
     LOG("*** TCPsendingServer.receiveCallback ***")
-    try:
-      data = self.dataSocket.recv(MAXBYTESREAD)
-    except Exception as ex:
-      # read failed
-      LOG_ERROR("Read failed: " + str(ex))
+    data = self.recv(MAXBYTESREAD)
+    if data == None:
+      # client is automatically disconnected
       return
-    if len(data) == 0:
-      LOG_ERROR("invalid data read, len(data) = " + str(len(data)))
-      LOG("client will be dis-connected...")
-      self.disconnectClient()
-    else:
-      LOG("data read, len(data) = " + str(len(data)))
-      LOG("data = " + data.decode("ascii"))      
+    LOG("data read, len(data) = " + str(len(data)))
+    LOG("data = " + data.decode("ascii"))      
   # ---------------------------------------------------------------------------
   def after(self):
     """Called from a timer 1 second after connect"""
     LOG("*** after ***")
-    if self.dataSocket == None:
-      LOG_ERROR("uninitialized data socket")
-    else:
-      self.dataSocket.send("quit\n")
+    self.send("quit\n")
 
 #############
 # functions #

@@ -38,15 +38,12 @@ class TCPreceivingClient(UTIL.TCP.Client):
     """Callback when a server has send data"""
     LOG("*** receiveCallback ***")
     # read the next set of byte from the data socket
-    tcpLineBuffer = self.tcpLineBuffer
-    try:
-      tcpLineBuffer += self.dataSocket.recv(LINEBUFFERLEN)
-      LOG("tcpLineBuffer: " + tcpLineBuffer)
-    except Exception, ex:
-      # read failed
-      LOG_ERROR("Read failed: " + str(ex))
-      self.disconnectClient()
+    data = self.recv(LINEBUFFERLEN)
+    if data == None:
+      # client is automatically disconnected
       return
+    tcpLineBuffer = self.tcpLineBuffer
+    tcpLineBuffer += data
     # handle the input: extract the lines from the line buffer
     lines = tcpLineBuffer.split("\n")
     # the last line has to be handled in a special way and can not be
@@ -81,18 +78,12 @@ class TCPreceivingClient(UTIL.TCP.Client):
         LOG("OK")
         # send the OK response back to the TECO
         retString = "OK\n";
-        try:
-          self.dataSocket.send(retString)
-        except Exception, ex:
-          LOG_ERROR("Send of OK response failed: " + str(ex))
+        self.send(retString)
       else:
         LOG_ERROR(str(pstatus))
         # set the Error response back to the client:
         retString = "Error: execution failed (see log)!\n"
-        try:
-          self.dataSocket.send(retString)
-        except Exception, ex:
-          LOG_ERROR("Send of Error response failed: " + str(ex))
+        self.send(retString)
   # ---------------------------------------------------------------------------
   def processLine(self, line):
     """Callback when a client has send a data line"""

@@ -34,7 +34,7 @@ def createClient():
     UTIL.SYS.s_configuration.HOST,
     int(UTIL.SYS.s_configuration.SERVER_PORT)):
     sys.exit(-1)
-  return client.dataSocket
+  return client
 
 ########
 # main #
@@ -50,7 +50,7 @@ if __name__ == "__main__":
   modelTask.registerConsoleHandler(consoleHandler)
   # create the TCP client
   LOG("Open the TCP client")
-  dataSocket = createClient()
+  client = createClient()
   # force termination of the server
   LOG("force server termination...")
-  dataSocket.send("quit\n")
+  client.send("quit\n")
