@@ -16,7 +16,7 @@
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.PACKET
-import EGSE.CNC
+import EGSE.CNC, EGSE.IF
 import UTIL.SYS, UTIL.TASK
 import testData
 
@@ -107,6 +107,8 @@ class TMserver(EGSE.CNC.TMserver):
 def initConfiguration():
   """initialise the system configuration"""
   UTIL.SYS.s_configuration.setDefaults([
+    ["SYS_COLOR_LOG", "1"],
+    ["EGSE_PROTOCOL", "CNC"],
     ["HOST", "127.0.0.1"],
     ["CCS_SERVER_PORT", "48569"],
     ["CCS_SERVER_PORT2", "48570"]])
@@ -114,6 +116,7 @@ def initConfiguration():
 def createServers():
   """create the CNC servers"""
   global s_server, s_server2
+  EGSE.IF.s_serverConfiguration = EGSE.IF.ServerConfiguration()
   s_server = TCserver(portNr=int(UTIL.SYS.s_configuration.CCS_SERVER_PORT))
   if not s_server.openConnectPort(UTIL.SYS.s_configuration.HOST):
     sys.exit(-1)

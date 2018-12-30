@@ -75,7 +75,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       LOG("or:    1 <message>")
       return
     message = argv[1]
-    cncTCpacketDU = EGSE.CNCPDU.TCpacket()
+    cncTCpacketDU = EGSE.CNCPDU.CNCcommand()
     cncTCpacketDU.applicationProcessId = 1234
     cncTCpacketDU.setCNCmessage(message)
     s_client.sendCNCpacket(cncTCpacketDU.getBufferString())
@@ -101,6 +101,7 @@ class TMclient(EGSE.CNC.TMclient):
 def initConfiguration():
   """initialise the system configuration"""
   UTIL.SYS.s_configuration.setDefaults([
+    ["SYS_COLOR_LOG", "1"],
     ["HOST", "127.0.0.1"],
     ["CCS_SERVER_PORT", "48569"],
     ["CCS_SERVER_PORT2", "48570"]])

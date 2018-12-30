@@ -15,7 +15,7 @@
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import EGSE.EDEN
+import EGSE.EDEN, EGSE.IF
 import UTIL.SYS, UTIL.TASK
 
 ####################
@@ -93,12 +93,16 @@ class Server(EGSE.EDEN.Server):
 def initConfiguration():
   """initialise the system configuration"""
   UTIL.SYS.s_configuration.setDefaults([
+    ["SYS_COLOR_LOG", "1"],
+    ["EGSE_PROTOCOL", "EDEN"],
     ["HOST", "127.0.0.1"],
-    ["CCS_SERVER_PORT", "48569"]])
+    ["CCS_SERVER_PORT", "48569"],
+    ["CCS_SERVER_PORT2", "-1"]])
 # -----------------------------------------------------------------------------
 def createServer():
   """create the EDEN server"""
   global s_server
+  EGSE.IF.s_serverConfiguration = EGSE.IF.ServerConfiguration()
   s_server = Server(portNr=int(UTIL.SYS.s_configuration.CCS_SERVER_PORT))
   if not s_server.openConnectPort(UTIL.SYS.s_configuration.HOST):
     sys.exit(-1)

@@ -60,7 +60,7 @@ class CNCcommand(CCSDS.PACKET.TCpacket):
   # ---------------------------------------------------------------------------
   def getCNCmessage(self):
     """extracts a string"""
-    return self.getDataField().tostring()
+    return self.getDataField().tostring().decode("ascii")
   # ---------------------------------------------------------------------------
   def setCNCmessage(self, message):
     """set a string"""
@@ -81,7 +81,7 @@ class CNCackNak(CCSDS.PACKET.TMpacket):
   # ---------------------------------------------------------------------------
   def getCNCmessage(self):
     """extracts a string"""
-    return self.getDataField().tostring()
+    return self.getDataField().tostring().decode("ascii")
   # ---------------------------------------------------------------------------
   def setCNCmessage(self, message):
     """set a string"""

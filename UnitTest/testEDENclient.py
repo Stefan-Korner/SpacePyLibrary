@@ -116,6 +116,7 @@ class Client(EGSE.EDEN.Client):
 def initConfiguration():
   """initialise the system configuration"""
   UTIL.SYS.s_configuration.setDefaults([
+    ["SYS_COLOR_LOG", "1"],
     ["HOST", "127.0.0.1"],
     ["CCS_SERVER_PORT", "48569"]])
 # -----------------------------------------------------------------------------
