@@ -28,9 +28,7 @@ SOCKET_TYPE = type(socket.socket())
 ###########
 # =============================================================================
 class TMreceiver(UTIL.TCP.Client):
-  """NCTRS telemetry receiver interface - SCOS side"""
-  # connectToServer and disconnectFromServer are inherited
-  # and must be handled in a proper way from the application
+  """NCTRS telemetry receiver interface - MCS side"""
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise attributes only"""
@@ -39,21 +37,19 @@ class TMreceiver(UTIL.TCP.Client):
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when NCTRS has send data"""
-    # read the TM data unit from the data socket
+    # read the TM data unit
     try:
+      # note: automatic failure handling of derived method
+      #       UTIL.TCP.Client.recvError() cannot be used here,
+      #       because the derived method UTIL.TCP.Client.recv()
+      #       cannot be used by readNCTRSframe()
       tmDu = readNCTRSframe(self.dataSocket)
     except Exception as ex:
-      errorMessage = str(ex)
-      if errorMessage != "":
-        LOG_ERROR(errorMessage)
+      # explicit failure handling
+      LOG_ERROR("TMreceiver: " + str(ex))
       self.disconnectFromServer()
-      self.notifyConnectionClosed(errorMessage)
       return
     self.notifyTMdataUnit(tmDu)
-  # ---------------------------------------------------------------------------
-  def notifyConnectionClosed(self, details):
-    """Connection closed by server"""
-    LOG_WARNING("Connection closed by TMserver: " + details)
   # ---------------------------------------------------------------------------
   def notifyTMdataUnit(self, tmDu):
     """TM frame received: hook for derived classes"""
@@ -91,7 +87,7 @@ class TMsender(UTIL.TCP.SingleClientServer):
     # ensure a correct size attribute
     tmDu.packetSize = len(tmDu)
     # this operation does not verify the contents of the DU
-    self.dataSocket.send(tmDu.getBufferString())
+    self.send(tmDu.getBufferString())
   # ---------------------------------------------------------------------------
   def sendFrame(self, tmFrame):
     """Send the TM frame to the TM receiver"""
@@ -109,12 +105,8 @@ class TMsender(UTIL.TCP.SingleClientServer):
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when the MCS has closed the connection"""
-    self.disconnectClient()
-    self.notifyConnectionClosed("")
-  # ---------------------------------------------------------------------------
-  def notifyConnectionClosed(self, details):
-    """Connection closed by client"""
-    LOG_WARNING("Connection closed by TMclient: " + details)
+    # preform a dummy recv to force connection handling
+    self.recv(1)
 
 # =============================================================================
 class TCreceiver(UTIL.TCP.SingleClientServer):
@@ -131,27 +123,20 @@ class TCreceiver(UTIL.TCP.SingleClientServer):
     # ensure a correct size attribute
     tcDu.packetSize = len(tcDu)
     # this operation does not verify the contents of the DU
-    self.dataSocket.send(tcDu.getBufferString())
+    self.send(tcDu.getBufferString())
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when the MCS has send data"""
-    # read the TC data unit header from the data socket
-    try:
-      tcDuHeader = self.dataSocket.recv(GRND.NCTRSDU.TC_DU_HEADER_BYTE_SIZE)
-    except Exception as ex:
-      self.disconnectClient()
-      self.notifyConnectionClosed(str(ex))
+    # read the TC data unit header
+    tcDuHeader = self.recv(GRND.NCTRSDU.TC_DU_HEADER_BYTE_SIZE)
+    if tcDuHeader == None:
+      # failure handling was done automatically by derived logic
       return
     # consistency check
     tcDuHeaderLen = len(tcDuHeader)
-    if tcDuHeaderLen == 0:
-      self.disconnectClient()
-      self.notifyConnectionClosed("")
-      return
     if tcDuHeaderLen != GRND.NCTRSDU.TC_DU_HEADER_BYTE_SIZE:
       LOG_ERROR("Read of TC DU header failed: invalid size: " + str(tcDuHeaderLen))
       self.disconnectClient()
-      self.notifyConnectionClosed("invalid data")
       return
     tcDu = GRND.NCTRSDU.TCdataUnit(tcDuHeader)
     # consistency check
@@ -160,23 +145,17 @@ class TCreceiver(UTIL.TCP.SingleClientServer):
     if remainingSizeExpected <= 0:
       LOG_ERROR("Read of TC DU header failed: invalid packet size field: " + str(remainingSizeExpected))
       self.disconnectClient()
-      self.notifyConnectionClosed("invalid data")
       return
     # read the remaining bytes for the TC data unit
-    # from the data socket
-    try:
-      tcRemaining = self.dataSocket.recv(remainingSizeExpected)
-    except Exception as ex:
-      LOG_ERROR("Read of remaining TC DU failed: " + str(ex))
-      self.disconnectClient()
-      self.notifyConnectionClosed("invalid data")
+    tcRemaining = self.recv(remainingSizeExpected)
+    if tcRemaining == None:
+      # failure handling was done automatically by derived logic
       return
     # consistency check
     remainingSizeRead = len(tcRemaining)
     if remainingSizeRead != remainingSizeExpected:
       LOG_ERROR("Read of remaining TC DU failed: invalid remaining size: " + str(remainingSizeRead))
       self.disconnectClient()
-      self.notifyConnectionClosed("invalid data")
       return
     dataUnitType = tcDu.dataUnitType
     try:
@@ -195,13 +174,8 @@ class TCreceiver(UTIL.TCP.SingleClientServer):
       else:
         LOG_ERROR("Read of TC DU header failed: invalid dataUnitType: " + str(dataUnitType))
         self.disconnectClient()
-        self.notifyConnectionClosed("invalid data")
     except Exception as ex:
       LOG_ERROR("Processing of received data unit failed: " + str(ex))
-  # ---------------------------------------------------------------------------
-  def notifyConnectionClosed(self, details):
-    """Connection closed by client"""
-    LOG_WARNING("Connection closed by TCclient: " + details)
   # ---------------------------------------------------------------------------
   def notifyTCpacketDataUnit(self, tcPktDu):
     """AD packet / BD segment received"""
@@ -307,8 +281,6 @@ class TCreceiver(UTIL.TCP.SingleClientServer):
 # =============================================================================
 class TCsender(UTIL.TCP.Client):
   """NCTRS telecommand sender interface - SCOS side"""
-  # connectToServer and disconnectFromServer are inherited
-  # and must be handled in a proper way from the application
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise attributes only"""
@@ -320,7 +292,7 @@ class TCsender(UTIL.TCP.Client):
     # ensure a correct size attribute
     tcDu.packetSize = len(tcDu)
     # this operation does not verify the contents of the DU
-    self.dataSocket.send(tcDu.getBufferString())
+    self.send(tcDu.getBufferString())
   # ---------------------------------------------------------------------------
   def sendTCpacket(self, packetData):
     """Send the TC packet to the TC receiver"""
@@ -336,24 +308,16 @@ class TCsender(UTIL.TCP.Client):
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when NCTRS has send data"""
-    # read the TC data unit header from the data socket
-    try:
-      tcDuHeader = self.dataSocket.recv(GRND.NCTRSDU.TC_DU_HEADER_BYTE_SIZE)
-    except Exception as ex:
-      self.disconnectFromServer()
-      self.notifyConnectionClosed(str(ex))
+    # read the TC data unit header
+    tcDuHeader = self.recv(GRND.NCTRSDU.TC_DU_HEADER_BYTE_SIZE)
+    if tcDuHeader == None:
+      # failure handling was done automatically by derived logic
       return
     # consistency check
     tcDuHeaderLen = len(tcDuHeader)
-    if tcDuHeaderLen == 0:
-      # client termination
-      self.disconnectFromServer()
-      self.notifyConnectionClosed("")
-      return
     if tcDuHeaderLen != GRND.NCTRSDU.TC_DU_HEADER_BYTE_SIZE:
       LOG_ERROR("Read of TC DU header failed: invalid size: " + str(tcDuHeaderLen))
       self.disconnectFromServer()
-      self.notifyConnectionClosed("invalid data")
       return
     tcDu = GRND.NCTRSDU.TCdataUnit(tcDuHeader)
     # consistency check
@@ -362,23 +326,17 @@ class TCsender(UTIL.TCP.Client):
     if remainingSizeExpected <= 0:
       LOG_ERROR("Read of TC DU header failed: invalid packet size field: " + str(remainingSizeExpected))
       self.disconnectFromServer()
-      self.notifyConnectionClosed("invalid data")
       return
     # read the remaining bytes for the TC data unit
-    # from the data socket
-    try:
-      tcRemaining = self.dataSocket.recv(remainingSizeExpected)
-    except Exception as ex:
-      LOG_ERROR("Read of remaining TC DU failed: " + str(ex))
-      self.disconnectFromServer()
-      self.notifyConnectionClosed("invalid data")
+    tcRemaining = self.recv(remainingSizeExpected)
+    if tcRemaining == None:
+      # failure handling was done automatically by derived logic
       return
     # consistency check
     remainingSizeRead = len(tcRemaining)
     if remainingSizeRead != remainingSizeExpected:
       LOG_ERROR("Read of remaining TC DU failed: invalid remaining size: " + str(remainingSizeRead))
       self.disconnectFromServer()
-      self.notifyConnectionClosed("invalid data")
       return
     dataUnitType = tcDu.dataUnitType
     if dataUnitType == GRND.NCTRSDU.TC_PACKET_RESPONSE_DU_TYPE:
@@ -396,11 +354,6 @@ class TCsender(UTIL.TCP.Client):
     else:
       LOG_ERROR("Read of TC DU header failed: invalid dataUnitType: " + str(dataUnitType))
       self.disconnectFromServer()
-      self.notifyConnectionClosed("invalid data")
-  # ---------------------------------------------------------------------------
-  def notifyConnectionClosed(self, details):
-    """Connection closed by server"""
-    LOG_WARNING("Connection closed by TCserver: " + details)
   # ---------------------------------------------------------------------------
   def notifyTCpacketResponseDataUnit(self, tcPktRespDu):
     """AD packet / BD segment response received"""
@@ -432,7 +385,7 @@ class AdminMessageSender(UTIL.TCP.SingleClientServer):
     # ensure a correct size attribute
     messageDu.packetSize = len(messageDu)
     # this operation does not verify the contents of the DU
-    self.dataSocket.send(messageDu.getBufferString())
+    self.send(messageDu.getBufferString())
   # ---------------------------------------------------------------------------
   def sendAdminMessageTM(self, eventId):
     """Send the TM admin message data unit"""
@@ -453,26 +406,8 @@ class AdminMessageSender(UTIL.TCP.SingleClientServer):
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when the MCS has send data"""
-    try:
-      testData = self.dataSocket.recv(1)
-    except Exception as ex:
-      self.disconnectClient()
-      self.notifyConnectionClosed("")
-      return
-    # consistency check
-    testDataLen = len(testData)
-    if testDataLen == 0:
-      # client termination
-      self.disconnectClient()
-      self.notifyConnectionClosed("")
-      return
-    LOG_ERROR("Admin message receiver has send data (unexpected)")
-    self.disconnectClient()
-    self.notifyConnectionClosed("-")
-  # ---------------------------------------------------------------------------
-  def notifyConnectionClosed(self, details):
-    """Connection closed by client"""
-    LOG_WARNING("Connection closed by admin message client: " + details)
+    # preform a dummy recv to force connection handling
+    self.recv(1)
   # ---------------------------------------------------------------------------
   def notifyError(self, errorMessage, data):
     """error notification: hook for derived classes"""
@@ -480,9 +415,7 @@ class AdminMessageSender(UTIL.TCP.SingleClientServer):
 
 # =============================================================================
 class AdminMessageReceiver(UTIL.TCP.Client):
-  """NCTRS admin message receiver interface - SCOS side"""
-  # connectToServer and disconnectFromServer are inherited
-  # and must be handled in a proper way from the application
+  """NCTRS admin message receiver interface - MCS side"""
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise attributes only"""
@@ -491,24 +424,16 @@ class AdminMessageReceiver(UTIL.TCP.Client):
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when NCTRS has send data"""
-    # read the admin message unit header from the data socket
-    try:
-      messageHeader = self.dataSocket.recv(GRND.NCTRSDU.MESSAGE_HEADER_BYTE_SIZE)
-    except Exception as ex:
-      self.disconnectFromServer()
-      self.notifyConnectionClosed(str(ex))
+    # read the admin message unit header
+    messageHeader = self.recv(GRND.NCTRSDU.MESSAGE_HEADER_BYTE_SIZE)
+    if messageHeader == None:
+      # failure handling was done automatically by derived logic
       return
     # consistency check
     messageHeaderLen = len(messageHeader)
-    if messageHeaderLen == 0:
-      # client termination
-      self.disconnectFromServer()
-      self.notifyConnectionClosed("")
-      return
     if messageHeaderLen != GRND.NCTRSDU.MESSAGE_HEADER_BYTE_SIZE:
       LOG_ERROR("Read of admin message DU header failed: invalid size: " + str(messageHeaderLen))
       self.disconnectFromServer()
-      self.notifyConnectionClosed("invalid data")
       return
     messageDu = GRND.NCTRSDU.AdminMessageDataUnit(messageHeader)
     # consistency check
@@ -517,31 +442,21 @@ class AdminMessageReceiver(UTIL.TCP.Client):
     if remainingSizeExpected <= 0:
       LOG_ERROR("Read of admin message DU header failed: invalid packet size field: " + str(remainingSizeExpected))
       self.disconnectFromServer()
-      self.notifyConnectionClosed("invalid data")
       return
     # read the remaining bytes for the TC data unit
-    # from the data socket
-    try:
-      messageRemaining = self.dataSocket.recv(remainingSizeExpected)
-    except Exception as ex:
-      LOG_ERROR("Read of remaining admin message DU failed: " + str(ex))
-      self.disconnectFromServer()
-      self.notifyConnectionClosed("invalid data")
+    messageRemaining = self.recv(remainingSizeExpected)
+    if messageRemaining == None:
+      # failure handling was done automatically by derived logic
       return
     # consistency check
     remainingSizeRead = len(messageRemaining)
     if remainingSizeRead != remainingSizeExpected:
       LOG_ERROR("Read of remaining admin message DU failed: invalid remaining size: " + str(remainingSizeRead))
       self.disconnectFromServer()
-      self.notifyConnectionClosed("invalid data")
       return
     # set the message
     messageDu.setMessage(messageRemaining)
     self.notifyAdminMessageDataUnit(messageDu)
-  # ---------------------------------------------------------------------------
-  def notifyConnectionClosed(self, details):
-    """Connection closed by server"""
-    LOG_WARNING("Connection closed by TCserver: " + details)
   # ---------------------------------------------------------------------------
   def notifyAdminMessageDataUnit(self, messageDu):
     """Admin message response received"""
@@ -564,8 +479,11 @@ def readNCTRSframe(fd):
   # consistency check
   tmDuHeaderLen = len(tmDuHeader)
   if tmDuHeaderLen == 0:
-    # end of file
-    raise Error("")
+    if type(fd) == SOCKET_TYPE:
+      raise Error("empty data read")
+    else:
+      # end of file
+      raise Error("")
   if tmDuHeaderLen != GRND.NCTRSDU.TM_DU_HEADER_BYTE_SIZE:
     raise Error("Read of TM DU header failed: invalid size: " + str(tmDuHeaderLen))
   tmDu = GRND.NCTRSDU.TMdataUnit(tmDuHeader)
@@ -575,7 +493,6 @@ def readNCTRSframe(fd):
   if remainingSizeExpected <= 0:
     raise Error("Read of TM DU header failed: invalid packet size field: " + str(remainingSizeExpected))
   # read the remaining bytes for the TM data unit
-  # from the data socket
   try:
     if type(fd) == SOCKET_TYPE:
       tmRemaining = fd.recv(remainingSizeExpected)
