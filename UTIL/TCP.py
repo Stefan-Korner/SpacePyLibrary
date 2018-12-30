@@ -161,6 +161,12 @@ class SingleClientServer(Server, DataSocketHandler):
     self.task.deleteFileHandler(self.connectSocket)
     # enable the client socket for data reception
     self.enableDataSocket(clientSocket)
+    # call the hook
+    self.clientAccepted()
+  # ---------------------------------------------------------------------------
+  def clientAccepted(self):
+    """hook for derived classes"""
+    pass
   # ---------------------------------------------------------------------------
   def disconnectClient(self):
     """Disonnects the client"""

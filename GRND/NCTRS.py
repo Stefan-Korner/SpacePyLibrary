@@ -86,11 +86,6 @@ class TMsender(UTIL.TCP.SingleClientServer):
     UTIL.TCP.SingleClientServer.__init__(self, modelTask, portNr)
     self.nctrsTMfields = nctrsTMfields
   # ---------------------------------------------------------------------------
-  def accepted(self, clientSocket):
-    """Overloaded from SingleClientServer"""
-    UTIL.TCP.SingleClientServer.accepted(self, clientSocket)
-    self.clientAccepted()
-  # ---------------------------------------------------------------------------
   def sendTmDataUnit(self, tmDu):
     """Send the TM data unit to the TM receiver"""
     # ensure a correct size attribute
@@ -120,10 +115,6 @@ class TMsender(UTIL.TCP.SingleClientServer):
   def notifyConnectionClosed(self, details):
     """Connection closed by client"""
     LOG_WARNING("Connection closed by TMclient: " + details)
-  # ---------------------------------------------------------------------------
-  def clientAccepted(self):
-    """hook for derived classes"""
-    pass
 
 # =============================================================================
 class TCreceiver(UTIL.TCP.SingleClientServer):
@@ -134,11 +125,6 @@ class TCreceiver(UTIL.TCP.SingleClientServer):
     modelTask = UTIL.TASK.s_processingTask
     UTIL.TCP.SingleClientServer.__init__(self, modelTask, portNr)
     self.groundstationId = groundstationId
-  # ---------------------------------------------------------------------------
-  def accepted(self, clientSocket):
-    """Overloaded from SingleClientServer"""
-    UTIL.TCP.SingleClientServer.accepted(self, clientSocket)
-    self.clientAccepted()
   # ---------------------------------------------------------------------------
   def sendTcDataUnit(self, tcDu):
     """Send the TC data unit to the TC sender"""
@@ -291,10 +277,6 @@ class TCreceiver(UTIL.TCP.SingleClientServer):
     LOG_ERROR("TCreceiver.notifyTCdirectivesDataUnit not implemented")
     sys.exit(-1)
   # ---------------------------------------------------------------------------
-  def clientAccepted(self):
-    """hook for derived classes"""
-    pass
-  # ---------------------------------------------------------------------------
   def notifyError(self, errorMessage, data):
     """error notification: hook for derived classes"""
     pass
@@ -445,11 +427,6 @@ class AdminMessageSender(UTIL.TCP.SingleClientServer):
     UTIL.TCP.SingleClientServer.__init__(self, modelTask, portNr)
     self.groundstationName = groundstationName
   # ---------------------------------------------------------------------------
-  def accepted(self, clientSocket):
-    """Overloaded from SingleClientServer"""
-    UTIL.TCP.SingleClientServer.accepted(self, clientSocket)
-    self.clientAccepted()
-  # ---------------------------------------------------------------------------
   def sendAdminMessageDataUnit(self, messageDu):
     """Send the admin message data unit to the admin message receiver"""
     # ensure a correct size attribute
@@ -496,10 +473,6 @@ class AdminMessageSender(UTIL.TCP.SingleClientServer):
   def notifyConnectionClosed(self, details):
     """Connection closed by client"""
     LOG_WARNING("Connection closed by admin message client: " + details)
-  # ---------------------------------------------------------------------------
-  def clientAccepted(self):
-    """hook for derived classes"""
-    pass
   # ---------------------------------------------------------------------------
   def notifyError(self, errorMessage, data):
     """error notification: hook for derived classes"""
