@@ -39,18 +39,13 @@ class TCPserver(UTIL.TCP.SingleClientServer):
     """Callback when a client has send data"""
     LOG("*** receiveCallback ***")
     # read the next set of byte from the data socket
-    tcpLineBuffer = self.tcpLineBuffer
-    try:
-      tcpLineBuffer += self.dataSocket.recv(LINEBUFFERLEN).decode("ascii")
-      LOG("tcpLineBuffer: " + tcpLineBuffer)
-    except Exception as ex:
-      # read failed
-      LOG_ERROR("Read failed: " + str(ex))
-      self.disconnectClient()
+    data = self.recv(LINEBUFFERLEN)
+    if data == None:
+      # client is automatically disconnected
       return
-    if len(tcpLineBuffer) == 0:
-      LOG("*** E X I T ***")
-      sys.exit(-1)
+    tcpLineBuffer = self.tcpLineBuffer
+    tcpLineBuffer += data.decode("ascii")
+    LOG("tcpLineBuffer: " + tcpLineBuffer)
     # handle the input: extract the lines from the line buffer
     lines = tcpLineBuffer.split("\n")
     # the last line has to be handled in a special way and can not be
@@ -73,10 +68,7 @@ class TCPserver(UTIL.TCP.SingleClientServer):
         LOG("Exit requested")
         # send the OK response back to the client
         retString = "OK\n"
-        try:
-          self.dataSocket.send(retString.encode())
-        except Exception as ex:
-          LOG_ERROR("Send of OK response failed: " + str(ex))
+        self.send(retString.encode())
         # terminate the client connection
         self.disconnectClient();
         return
@@ -84,10 +76,7 @@ class TCPserver(UTIL.TCP.SingleClientServer):
         LOG("Quit requested")
         # send the OK response back to the client
         retString = "OK\n"
-        try:
-          self.dataSocket.send(retString.encode())
-        except Exception as ex:
-          LOG_ERROR("Send of OK response failed: " + str(ex))
+        self.send(retString.encode())
         # terminate the client connection
         self.disconnectClient();
         sys.exit(0)
@@ -97,18 +86,12 @@ class TCPserver(UTIL.TCP.SingleClientServer):
         LOG("OK")
         # send the OK response back to the TECO
         retString = "OK\n";
-        try:
-          self.dataSocket.send(retString.encode())
-        except Exception as ex:
-          LOG_ERROR("Send of OK response failed: " + str(ex))
+        self.send(retString.encode())
       else:
         LOG_ERROR(str(pstatus))
         # set the Error response back to the client:
         retString = "Error: execution failed (see log)!\n"
-        try:
-          self.dataSocket.send(retString.encode())
-        except Exception as ex:
-          LOG_ERROR("Send of Error response failed: " + str(ex))
+        self.send(retString.encode())
   # ---------------------------------------------------------------------------
   def processLine(self, line):
     """Callback when a client has send a data line"""

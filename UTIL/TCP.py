@@ -42,6 +42,37 @@ class DataSocketHandler(object):
     LOG_ERROR("DataSocketHandler.receiveCallback not implemented")
     sys.exit(-1)
   # ---------------------------------------------------------------------------
+  def recv(self, maxBytes):
+    """Read bytes from the data socket"""
+    try:
+      bytes = self.dataSocket.recv(maxBytes)
+    except Exception as ex:
+      self.recvError(str(ex))
+      return None
+    if len(bytes) == 0:
+      self.recvError("empty data read")
+      return None
+    return bytes
+  # ---------------------------------------------------------------------------
+  def recvError(self, errorMessage):
+    """Read bytes from the data socket has failed"""
+    LOG_ERROR("DataSocketHandler.recvError: " + errorMessage)
+  # ---------------------------------------------------------------------------
+  def send(self, bytes):
+    """Send bytes to the data socket"""
+    try:
+      nrBytes = self.dataSocket.send(bytes)
+    except Exception as ex:
+      self.sendError(str(ex))
+      return 0
+    if nrBytes == 0:
+      self.sendError("empty data send")
+    return nrBytes
+  # ---------------------------------------------------------------------------
+  def sendError(self, errorMessage):
+    """Send bytes from the data socket has failed"""
+    LOG_ERROR("DatotaSocketHandler.sendError: " + errorMessage)
+  # ---------------------------------------------------------------------------
   def disableDataSocket(self):
     """Disables the data socket socket"""
     # check if the receive socket is already open
@@ -81,11 +112,41 @@ class Client(DataSocketHandler):
       return None
     # use the data socket
     self.enableDataSocket(dataSocket)
+    # call the hook
+    self.connected()
     return dataSocket
+  # ---------------------------------------------------------------------------
+  def connected(self):
+    """hook for derived classes"""
+    LOG_INFO("Client.connected")
+  # ---------------------------------------------------------------------------
+  def recvError(self, errorMessage):
+    """
+    Read bytes from the data socket has failed,
+    overloaded from DataSocketHandler
+    """
+    LOG_ERROR("Client.recvError: " + errorMessage)
+    # default implementation: disconnect from server
+    self.disconnectFromServer()
+  # ---------------------------------------------------------------------------
+  def sendError(self, errorMessage):
+    """
+    Send bytes from the data socket has failed,
+    overloaded from DataSocketHandler
+    """
+    LOG_ERROR("Client.sendError: " + errorMessage)
+    # default implementation: disconnect from server
+    self.disconnectFromServer()
   # ---------------------------------------------------------------------------
   def disconnectFromServer(self):
     """Disonnects from server"""
     self.disableDataSocket()
+    # call the hook
+    self.disconnected()
+  # ---------------------------------------------------------------------------
+  def disconnected(self):
+    """hook for derived classes"""
+    LOG_WARNING("Client.disconnected")
 
 # =============================================================================
 class Server(object):
@@ -196,7 +257,25 @@ class SingleClientServer(Server, DataSocketHandler):
   # ---------------------------------------------------------------------------
   def clientAccepted(self):
     """hook for derived classes"""
-    pass
+    LOG_INFO("SingleClientServer.clientAccepted")
+  # ---------------------------------------------------------------------------
+  def recvError(self, errorMessage):
+    """
+    Read bytes from the data socket has failed,
+    overloaded from DataSocketHandler
+    """
+    LOG_ERROR("SingleClientServer.recvError: " + errorMessage)
+    # default implementation: disconnect client
+    self.disconnectClient()
+  # ---------------------------------------------------------------------------
+  def sendError(self, errorMessage):
+    """
+    Send bytes from the data socket has failed,
+    overloaded from DataSocketHandler
+    """
+    LOG_ERROR("SingleClientServer.sendError: " + errorMessage)
+    # default implementation: disconnect client
+    self.disconnectClient()
   # ---------------------------------------------------------------------------
   def disconnectClient(self):
     """Disonnects the client"""
@@ -204,3 +283,9 @@ class SingleClientServer(Server, DataSocketHandler):
     # register the connect socket
     self.task.createFileHandler(self.connectSocket,
                                 self.connectCallback)
+    # call the hook
+    self.clientDisconnected()
+  # ---------------------------------------------------------------------------
+  def clientDisconnected(self):
+    """hook for derived classes"""
+    LOG_WARNING("SingleClientServer.clientDisconnected")
