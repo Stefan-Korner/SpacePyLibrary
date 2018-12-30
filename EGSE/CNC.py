@@ -34,11 +34,6 @@ class TCserver(UTIL.TCP.SingleClientServer):
     modelTask = UTIL.TASK.s_processingTask
     UTIL.TCP.SingleClientServer.__init__(self, modelTask, portNr)
   # ---------------------------------------------------------------------------
-  def accepted(self, clientSocket):
-    """Overloaded from SingleClientServer"""
-    UTIL.TCP.SingleClientServer.accepted(self, clientSocket)
-    self.clientAccepted()
-  # ---------------------------------------------------------------------------
   def sendCNCackNak(self, cncCommandDU, okStatus):
     """Send a CnC ACK or NAK as response to a CnC TC packet to the CCS"""
     # format the response message according to the cncCommandDU
@@ -162,10 +157,6 @@ class TCserver(UTIL.TCP.SingleClientServer):
     """CCSDS telecommand received: hook for derived classes"""
     LOG_INFO("notifyCCSDScommand: tcPacket = " + ccsdsTCpacketDU.getDumpString())
     return True
-  # ---------------------------------------------------------------------------
-  def clientAccepted(self):
-    """hook for derived classes"""
-    pass
 
 # =============================================================================
 class TCclient(UTIL.TCP.Client):
@@ -242,11 +233,6 @@ class TMserver(UTIL.TCP.SingleClientServer):
     modelTask = UTIL.TASK.s_processingTask
     UTIL.TCP.SingleClientServer.__init__(self, modelTask, portNr)
   # ---------------------------------------------------------------------------
-  def accepted(self, clientSocket):
-    """Overloaded from SingleClientServer"""
-    UTIL.TCP.SingleClientServer.accepted(self, clientSocket)
-    self.clientAccepted()
-  # ---------------------------------------------------------------------------
   def sendTMpacket(self, tmPacket):
     """Send a CCSDS TM packet to the CCS"""
     # this operation does not verify the contents of the tmPacket
@@ -260,10 +246,6 @@ class TMserver(UTIL.TCP.SingleClientServer):
   def notifyConnectionClosed(self, details):
     """TM connection closed by client"""
     LOG_WARNING("TM connection closed by CCS: " + details)
-  # ---------------------------------------------------------------------------
-  def clientAccepted(self):
-    """hook for derived classes"""
-    pass
 
 # =============================================================================
 class TMclient(UTIL.TCP.Client):

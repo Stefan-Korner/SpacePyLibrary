@@ -31,11 +31,6 @@ class Server(UTIL.TCP.SingleClientServer):
     modelTask = UTIL.TASK.s_processingTask
     UTIL.TCP.SingleClientServer.__init__(self, modelTask, portNr)
   # ---------------------------------------------------------------------------
-  def accepted(self, clientSocket):
-    """Overloaded from SingleClientServer"""
-    UTIL.TCP.SingleClientServer.accepted(self, clientSocket)
-    self.clientAccepted()
-  # ---------------------------------------------------------------------------
   def sendPDU(self, pdu):
     """Send the PDU to CCS"""
     # this operation does not verify the contents of the PDU
@@ -236,10 +231,6 @@ class Server(UTIL.TCP.SingleClientServer):
   def notifyCmdExec(self, message):
     """(CMD,EXEC) received: hook for derived classes"""
     LOG_INFO("notifyCmdExec: message = " + message)
-  # ---------------------------------------------------------------------------
-  def clientAccepted(self):
-    """hook for derived classes"""
-    pass
 
 # =============================================================================
 class Client(UTIL.TCP.Client):
