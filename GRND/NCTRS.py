@@ -35,6 +35,24 @@ class TMreceiver(UTIL.TCP.Client):
     modelTask = UTIL.TASK.s_processingTask
     UTIL.TCP.Client.__init__(self, modelTask)
   # ---------------------------------------------------------------------------
+  def recvError(self, errorMessage):
+    """
+    Read bytes from the data socket has failed,
+    overloaded from UTIL.TCP.Client
+    """
+    LOG_ERROR("TMreceiver.recvError: " + errorMessage, "NCTRS")
+    # default implementation: disconnect from server
+    self.disconnectFromServer()
+  # ---------------------------------------------------------------------------
+  def sendError(self, errorMessage):
+    """
+    Send bytes from the data socket has failed,
+    overloaded from UTIL.TCP.Client
+    """
+    LOG_ERROR("TMreceiver.sendError: " + errorMessage, "NCTRS")
+    # default implementation: disconnect from server
+    self.disconnectFromServer()
+  # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when NCTRS has send data"""
     # read the TM data unit
@@ -46,8 +64,7 @@ class TMreceiver(UTIL.TCP.Client):
       tmDu = readNCTRSframe(self.dataSocket)
     except Exception, ex:
       # explicit failure handling
-      LOG_ERROR("TMreceiver: " + str(ex))
-      self.disconnectFromServer()
+      self.recvError(str(ex))
       return
     self.notifyTMdataUnit(tmDu)
   # ---------------------------------------------------------------------------
@@ -288,6 +305,24 @@ class TCsender(UTIL.TCP.Client):
     modelTask = UTIL.TASK.s_processingTask
     UTIL.TCP.Client.__init__(self, modelTask)
   # ---------------------------------------------------------------------------
+  def recvError(self, errorMessage):
+    """
+    Read bytes from the data socket has failed,
+    overloaded from UTIL.TCP.Client
+    """
+    LOG_ERROR("TCsender.recvError: " + errorMessage, "NCTRS")
+    # default implementation: disconnect from server
+    self.disconnectFromServer()
+  # ---------------------------------------------------------------------------
+  def sendError(self, errorMessage):
+    """
+    Send bytes from the data socket has failed,
+    overloaded from UTIL.TCP.Client
+    """
+    LOG_ERROR("TCsender.sendError: " + errorMessage, "NCTRS")
+    # default implementation: disconnect from server
+    self.disconnectFromServer()
+  # ---------------------------------------------------------------------------
   def sendTcDataUnit(self, tcDu):
     """Send the TC data unit to the TC receiver"""
     # ensure a correct size attribute
@@ -317,7 +352,7 @@ class TCsender(UTIL.TCP.Client):
     # consistency check
     tcDuHeaderLen = len(tcDuHeader)
     if tcDuHeaderLen != GRND.NCTRSDU.TC_DU_HEADER_BYTE_SIZE:
-      LOG_ERROR("Read of TC DU header failed: invalid size: " + str(tcDuHeaderLen))
+      LOG_ERROR("Read of TC DU header failed: invalid size: " + str(tcDuHeaderLen), "NCTRS")
       self.disconnectFromServer()
       return
     tcDu = GRND.NCTRSDU.TCdataUnit(tcDuHeader)
@@ -325,7 +360,7 @@ class TCsender(UTIL.TCP.Client):
     packetSize = tcDu.packetSize
     remainingSizeExpected = packetSize - GRND.NCTRSDU.TC_DU_HEADER_BYTE_SIZE
     if remainingSizeExpected <= 0:
-      LOG_ERROR("Read of TC DU header failed: invalid packet size field: " + str(remainingSizeExpected))
+      LOG_ERROR("Read of TC DU header failed: invalid packet size field: " + str(remainingSizeExpected), "NCTRS")
       self.disconnectFromServer()
       return
     # read the remaining bytes for the TC data unit
@@ -336,7 +371,7 @@ class TCsender(UTIL.TCP.Client):
     # consistency check
     remainingSizeRead = len(tcRemaining)
     if remainingSizeRead != remainingSizeExpected:
-      LOG_ERROR("Read of remaining TC DU failed: invalid remaining size: " + str(remainingSizeRead))
+      LOG_ERROR("Read of remaining TC DU failed: invalid remaining size: " + str(remainingSizeRead), "NCTRS")
       self.disconnectFromServer()
       return
     dataUnitType = tcDu.dataUnitType
@@ -353,22 +388,22 @@ class TCsender(UTIL.TCP.Client):
       tcDu.append(tcRemaining, GRND.NCTRSDU.TC_LINK_STATUS_ATTRIBUTES)
       self.notifyTClinkStatusDataUnit(tcDu)
     else:
-      LOG_ERROR("Read of TC DU header failed: invalid dataUnitType: " + str(dataUnitType))
+      LOG_ERROR("Read of TC DU header failed: invalid dataUnitType: " + str(dataUnitType), "NCTRS")
       self.disconnectFromServer()
   # ---------------------------------------------------------------------------
   def notifyTCpacketResponseDataUnit(self, tcPktRespDu):
     """AD packet / BD segment response received"""
-    LOG_ERROR("TCsender.notifyTCpacketResponseDataUnit not implemented")
+    LOG_ERROR("TCsender.notifyTCpacketResponseDataUnit not implemented", "NCTRS")
     sys.exit(-1)
   # ---------------------------------------------------------------------------
   def notifyTCcltuResponseDataUnit(self, tcCltuRespDu):
     """CLTU response received"""
-    LOG_ERROR("TCsender.notifyTCcltuResponseDataUnit not implemented")
+    LOG_ERROR("TCsender.notifyTCcltuResponseDataUnit not implemented", "NCTRS")
     sys.exit(-1)
   # ---------------------------------------------------------------------------
   def notifyTClinkStatusDataUnit(self, tcLinkStatDu):
     """Link status received"""
-    LOG_ERROR("TCsender.notifyTClinkStatusDataUnit not implemented")
+    LOG_ERROR("TCsender.notifyTClinkStatusDataUnit not implemented", "NCTRS")
     sys.exit(-1)
 
 # =============================================================================
@@ -423,6 +458,24 @@ class AdminMessageReceiver(UTIL.TCP.Client):
     modelTask = UTIL.TASK.s_processingTask
     UTIL.TCP.Client.__init__(self, modelTask)
   # ---------------------------------------------------------------------------
+  def recvError(self, errorMessage):
+    """
+    Read bytes from the data socket has failed,
+    overloaded from UTIL.TCP.Client
+    """
+    LOG_ERROR("AdminMessageReceiver.recvError: " + errorMessage, "NCTRS")
+    # default implementation: disconnect from server
+    self.disconnectFromServer()
+  # ---------------------------------------------------------------------------
+  def sendError(self, errorMessage):
+    """
+    Send bytes from the data socket has failed,
+    overloaded from UTIL.TCP.Client
+    """
+    LOG_ERROR("AdminMessageReceiver.sendError: " + errorMessage, "NCTRS")
+    # default implementation: disconnect from server
+    self.disconnectFromServer()
+  # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when NCTRS has send data"""
     # read the admin message unit header
@@ -433,7 +486,7 @@ class AdminMessageReceiver(UTIL.TCP.Client):
     # consistency check
     messageHeaderLen = len(messageHeader)
     if messageHeaderLen != GRND.NCTRSDU.MESSAGE_HEADER_BYTE_SIZE:
-      LOG_ERROR("Read of admin message DU header failed: invalid size: " + str(messageHeaderLen))
+      LOG_ERROR("Read of admin message DU header failed: invalid size: " + str(messageHeaderLen), "NCTRS")
       self.disconnectFromServer()
       return
     messageDu = GRND.NCTRSDU.AdminMessageDataUnit(messageHeader)
@@ -441,7 +494,7 @@ class AdminMessageReceiver(UTIL.TCP.Client):
     packetSize = messageDu.packetSize
     remainingSizeExpected = packetSize - GRND.NCTRSDU.MESSAGE_HEADER_BYTE_SIZE
     if remainingSizeExpected <= 0:
-      LOG_ERROR("Read of admin message DU header failed: invalid packet size field: " + str(remainingSizeExpected))
+      LOG_ERROR("Read of admin message DU header failed: invalid packet size field: " + str(remainingSizeExpected), "NCTRS")
       self.disconnectFromServer()
       return
     # read the remaining bytes for the TC data unit
@@ -452,7 +505,7 @@ class AdminMessageReceiver(UTIL.TCP.Client):
     # consistency check
     remainingSizeRead = len(messageRemaining)
     if remainingSizeRead != remainingSizeExpected:
-      LOG_ERROR("Read of remaining admin message DU failed: invalid remaining size: " + str(remainingSizeRead))
+      LOG_ERROR("Read of remaining admin message DU failed: invalid remaining size: " + str(remainingSizeRead), "NCTRS")
       self.disconnectFromServer()
       return
     # set the message
@@ -461,7 +514,7 @@ class AdminMessageReceiver(UTIL.TCP.Client):
   # ---------------------------------------------------------------------------
   def notifyAdminMessageDataUnit(self, messageDu):
     """Admin message response received"""
-    LOG_ERROR("AdminMessageReceiver.messageDu not implemented")
+    LOG_ERROR("AdminMessageReceiver.messageDu not implemented", "NCTRS")
     sys.exit(-1)
 
 #############

@@ -238,6 +238,24 @@ class Client(UTIL.TCP.Client):
     modelTask = UTIL.TASK.s_processingTask
     UTIL.TCP.Client.__init__(self, modelTask)
   # ---------------------------------------------------------------------------
+  def recvError(self, errorMessage):
+    """
+    Read bytes from the data socket has failed,
+    overloaded from UTIL.TCP.Client
+    """
+    LOG_ERROR("Client.recvError: " + errorMessage, "EDEN")
+    # default implementation: disconnect from server
+    self.disconnectFromServer()
+  # ---------------------------------------------------------------------------
+  def sendError(self, errorMessage):
+    """
+    Send bytes from the data socket has failed,
+    overloaded from UTIL.TCP.Client
+    """
+    LOG_ERROR("Client.sendError: " + errorMessage, "EDEN")
+    # default implementation: disconnect from server
+    self.disconnectFromServer()
+  # ---------------------------------------------------------------------------
   def sendPDU(self, pdu):
     """Send the PDU to the SCOE"""
     # this operation does not verify the contents of the DU

@@ -161,6 +161,24 @@ class TCclient(UTIL.TCP.Client):
     modelTask = UTIL.TASK.s_processingTask
     UTIL.TCP.Client.__init__(self, modelTask)
   # ---------------------------------------------------------------------------
+  def recvError(self, errorMessage):
+    """
+    Read bytes from the data socket has failed,
+    overloaded from UTIL.TCP.Client
+    """
+    LOG_ERROR("TCclient.recvError: " + errorMessage, "CNC")
+    # default implementation: disconnect from server
+    self.disconnectFromServer()
+  # ---------------------------------------------------------------------------
+  def sendError(self, errorMessage):
+    """
+    Send bytes from the data socket has failed,
+    overloaded from UTIL.TCP.Client
+    """
+    LOG_ERROR("TCclient.sendError: " + errorMessage, "CNC")
+    # default implementation: disconnect from server
+    self.disconnectFromServer()
+  # ---------------------------------------------------------------------------
   def sendCNCpacket(self, tcPacket):
     """Send a CnC TC packet to the SCOE"""
     # this operation does not verify the contents of the tcPacket
@@ -176,7 +194,7 @@ class TCclient(UTIL.TCP.Client):
     # consistency check
     packetHeaderLen = len(packetHeader)
     if packetHeaderLen != CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE:
-      LOG_ERROR("Read of CnC header failed: invalid size: " + str(packetHeaderLen))
+      LOG_ERROR("Read of CnC header failed: invalid size: " + str(packetHeaderLen), "CNC")
       self.disconnectFromServer()
       return
     cncTMpacketDU = EGSE.CNCPDU.CNCackNak(packetHeader)
@@ -189,22 +207,22 @@ class TCclient(UTIL.TCP.Client):
     # consistency check
     remainingSizeRead = len(dataField)
     if remainingSizeRead != dataFieldLength:
-      LOG_ERROR("Read of remaining packet failed: invalid remaining size: " + str(remainingSizeRead))
+      LOG_ERROR("Read of remaining packet failed: invalid remaining size: " + str(remainingSizeRead), "CNC")
       self.disconnectFromServer()
       return
     cncTMpacketDU.setCNCmessage(dataField)
     # dispatch the CnC response
     try:
-      LOG_INFO("CNC.TCclient.receiveCallback(CnC response)")
+      LOG_INFO("CNC.TCclient.receiveCallback(CnC response)", "CNC")
       self.notifyCNCresponse(cncTMpacketDU)
     except Exception, ex:
-      LOG_ERROR("Processing of received CnC response failed: " + str(ex))
+      LOG_ERROR("Processing of received CnC response failed: " + str(ex), "CNC")
       self.disconnectFromServer()
   # ---------------------------------------------------------------------------
   def notifyCNCresponse(self, cncTMpacketDU):
     """CnC response received: hook for derived classes"""
-    LOG("notifyCNCresponse: cncTMpacketDU = " + cncTMpacketDU.getDumpString())
-    LOG("message = " + cncTMpacketDU.getCNCmessage())
+    LOG("notifyCNCresponse: cncTMpacketDU = " + cncTMpacketDU.getDumpString(), "CNC")
+    LOG("message = " + cncTMpacketDU.getCNCmessage(), "CNC")
     return True
 
 # =============================================================================
@@ -237,6 +255,24 @@ class TMclient(UTIL.TCP.Client):
     modelTask = UTIL.TASK.s_processingTask
     UTIL.TCP.Client.__init__(self, modelTask)
   # ---------------------------------------------------------------------------
+  def recvError(self, errorMessage):
+    """
+    Read bytes from the data socket has failed,
+    overloaded from UTIL.TCP.Client
+    """
+    LOG_ERROR("TMclient.recvError: " + errorMessage, "CNC")
+    # default implementation: disconnect from server
+    self.disconnectFromServer()
+  # ---------------------------------------------------------------------------
+  def sendError(self, errorMessage):
+    """
+    Send bytes from the data socket has failed,
+    overloaded from UTIL.TCP.Client
+    """
+    LOG_ERROR("TMclient.sendError: " + errorMessage, "CNC")
+    # default implementation: disconnect from server
+    self.disconnectFromServer()
+  # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when the SCOE has send data"""
     # read the packet header from the data socket
@@ -247,7 +283,7 @@ class TMclient(UTIL.TCP.Client):
     # consistency check
     packetHeaderLen = len(packetHeader)
     if packetHeaderLen != CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE:
-      LOG_ERROR("Read of CCSDS packet header failed: invalid size: " + str(packetHeaderLen))
+      LOG_ERROR("Read of CCSDS packet header failed: invalid size: " + str(packetHeaderLen), "CNC")
       self.disconnectFromServer()
       return
     ccsdsTMpacketDU = CCSDS.PACKET.TMpacket(packetHeader)
@@ -260,21 +296,21 @@ class TMclient(UTIL.TCP.Client):
     # consistency check
     remainingSizeRead = len(dataField)
     if remainingSizeRead != dataFieldLength:
-      LOG_ERROR("Read of remaining packet failed: invalid remaining size: " + str(remainingSizeRead))
+      LOG_ERROR("Read of remaining packet failed: invalid remaining size: " + str(remainingSizeRead), "CNC")
       self.disconnectFromServer()
       return
     ccsdsTMpacketDU.append(dataField)
     # dispatch the CCSDS tm packet
     try:
-      LOG_INFO("CNC.TMclient.receiveCallback(TM packet)")
+      LOG_INFO("CNC.TMclient.receiveCallback(TM packet)", "CNC")
       self.notifyTMpacket(ccsdsTMpacketDU.getBufferString())
     except Exception, ex:
-      LOG_ERROR("Processing of received TM packet failed: " + str(ex))
+      LOG_ERROR("Processing of received TM packet failed: " + str(ex), "CNC")
       self.disconnectFromServer()
   # ---------------------------------------------------------------------------
   def notifyTMpacket(self, tmPacket):
     """TM packet received: hook for derived classes"""
-    LOG("notifyTMpacket: tmPacket = " + UTIL.DU.array2str(tmPacket))
+    LOG("notifyTMpacket: tmPacket = " + UTIL.DU.array2str(tmPacket), "CNC")
   # ---------------------------------------------------------------------------
   def notifyError(self, errorMessage, data):
     """error notification: hook for derived classes"""
