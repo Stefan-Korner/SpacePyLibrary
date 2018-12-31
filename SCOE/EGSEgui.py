@@ -141,8 +141,12 @@ class GUIview(UI.TKI.GUIwinView):
     """Generic callback when something changes in the model"""
     if status == "CCS_CONNECTED":
       self.ccsConnectedNotify()
+    elif status == "CCS_DISCONNECTED":
+      self.ccsDisconnectedNotify()
     elif status == "CCS_CONNECTED2":
       self.ccsConnected2Notify()
+    elif status == "CCS_DISCONNECTED2":
+      self.ccsDisconnected2Notify()
     elif status == "EGSE_ENABLED_ACK1":
       self.egseEnabledAck1Notify()
     elif status == "EGSE_ENABLED_NAK1":
@@ -161,10 +165,20 @@ class GUIview(UI.TKI.GUIwinView):
     self.ccsStatusField.set("CONNECTED")
     self.ccsStatusField.setBackground(COLOR_CONNECTED)
   # ---------------------------------------------------------------------------
+  def ccsDisconnectedNotify(self):
+    """Called when the CCS disconnect function is successfully processed"""
+    self.ccsStatusField.set("DISCONNECTED")
+    self.ccsStatusField.setBackground(COLOR_INITIALISED)
+  # ---------------------------------------------------------------------------
   def ccsConnected2Notify(self):
     """Called when the CCS 2nd connect function is successfully processed"""
     self.ccsStatusField2.set("CONNECTED")
     self.ccsStatusField2.setBackground(COLOR_CONNECTED)
+  # ---------------------------------------------------------------------------
+  def ccsDisconnected2Notify(self):
+    """Called when the CCS 2nd disconnect function is successfully processed"""
+    self.ccsStatusField2.set("DISCONNECTED")
+    self.ccsStatusField2.setBackground(COLOR_INITIALISED)
   # ---------------------------------------------------------------------------
   def egseEnabledAck1Notify(self):
     """Called when the egseEnabledAck1 function is succsssfully processed"""

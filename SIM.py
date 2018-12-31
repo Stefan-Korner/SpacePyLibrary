@@ -954,15 +954,30 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     SPACE.IF.s_configuration.connected = True
     self.notifyGUItask("TM_CONNECTED")
   # ---------------------------------------------------------------------------
+  def setTMdisconnected(self):
+    """TM disconnection established"""
+    GRND.IF.s_configuration.nctrsTMconn = False
+    self.notifyGUItask("TM_DISCONNECTED")
+  # ---------------------------------------------------------------------------
   def setTCconnected(self):
     """TC connection established"""
     GRND.IF.s_configuration.nctrsTCconn = True
     self.notifyGUItask("TC_CONNECTED")
   # ---------------------------------------------------------------------------
+  def setTCdisconnected(self):
+    """TC disconnection established"""
+    GRND.IF.s_configuration.nctrsTCconn = False
+    self.notifyGUItask("TC_DISCONNECTED")
+  # ---------------------------------------------------------------------------
   def setAdminConnected(self):
     """Admin notification connection established"""
     GRND.IF.s_configuration.nctrsAdminConn = True
     self.notifyGUItask("ADMIN_CONNECTED")
+  # ---------------------------------------------------------------------------
+  def setAdminDisconnected(self):
+    """Admin notification disconnection established"""
+    GRND.IF.s_configuration.nctrsAdminConn = False
+    self.notifyGUItask("ADMIN_DISCONNECTED")
 
 #############
 # functions #

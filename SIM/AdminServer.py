@@ -28,12 +28,18 @@ class AdminSender(GRND.NCTRS.AdminMessageSender):
     GRND.NCTRS.AdminMessageSender.__init__(self, portNr, groundstationName)
   # ---------------------------------------------------------------------------
   def clientAccepted(self):
-    """Overloaded from GRND.NCTRS.AdminMessageSender"""
+    """hook for derived classes"""
     LOG_INFO("NCTRS admin message receiver (client) accepted", "GRND")
     # notify the status change
     UTIL.TASK.s_processingTask.setAdminConnected()
     # establish TC link
     self.sendAdminMessageTC(GRND.NCTRSDU.ADMIN_MSG_TC_LINK_ESTABLISHED_TO_GS)
+  # ---------------------------------------------------------------------------
+  def clientDisconnected(self):
+    """hook for derived classes"""
+    LOG_WARNING("NCTRS admin message receiver (client) disconnected", "GRND")
+    # notify the status change
+    UTIL.TASK.s_processingTask.setAdminDisconnected()
   # ---------------------------------------------------------------------------
   def notifyError(self, errorMessage, data):
     """error notification"""

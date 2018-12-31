@@ -635,12 +635,22 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     SPACE.IF.s_configuration.connected = True
     self.notifyGUItask("TM_CONNECTED")
   # ---------------------------------------------------------------------------
+  def setCCSdisconnected(self):
+    """CCS disconnection established"""
+    EGSE.IF.s_serverConfiguration.connected = False
+    self.notifyGUItask("CCS_DISCONNECTED")
+  # ---------------------------------------------------------------------------
   def setCCSconnected2(self):
     """CCS 2nd connection established"""
     EGSE.IF.s_serverConfiguration.connected2 = True
     self.notifyGUItask("CCS_CONNECTED2")
     SPACE.IF.s_configuration.connected = True
     self.notifyGUItask("TM_CONNECTED")
+  # ---------------------------------------------------------------------------
+  def setCCSdisconnected2(self):
+    """CCS 2nd disconnection established"""
+    EGSE.IF.s_serverConfiguration.connected2 = False
+    self.notifyGUItask("CCS_DISCONNECTED2")
 
 #############
 # functions #

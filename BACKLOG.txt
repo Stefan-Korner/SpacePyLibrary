@@ -13,8 +13,6 @@ Backlog of features that shall be implemented
 
 008 Support ERT time in FRAME2PACKET.py
 
-009 Support clean dis-connect for NCTRS/EDEN/CnC interfaces.
-
 012 Use unittest framework.
 
 013 Support stringified time as TM parameter (TMGEN.py).
@@ -58,6 +56,8 @@ Backlog of features that shall be implemented
     repository on github (https://github.com/Stefan-Korner/SpacePyLibrary.git).
 
 004 Support signed integers from the MIB.
+
+009 Support clean dis-connect for NCTRS/EDEN/CnC interfaces.
 
 010 Port to Python3 and create a maintenance branch for Python2.
 

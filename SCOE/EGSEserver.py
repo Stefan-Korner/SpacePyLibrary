@@ -36,10 +36,16 @@ class CNCtcServer(EGSE.CNC.TCserver):
     EGSE.CNC.TCserver.__init__(self, portNr)
   # ---------------------------------------------------------------------------
   def clientAccepted(self):
-    """Overloaded from EGSE.CNC.TCserver"""
+    """hook for derived classes"""
     LOG_INFO("CCS client accepted", "EGSE")
     # notify the status change
     UTIL.TASK.s_processingTask.setCCSconnected()
+  # ---------------------------------------------------------------------------
+  def clientDisconnected(self):
+    """hook for derived classes"""
+    LOG_WARNING("CCS client disconnected", "EGSE")
+    # notify the status change
+    UTIL.TASK.s_processingTask.setCCSdisconnected()
   # ---------------------------------------------------------------------------
   def notifyError(self, errorMessage, data):
     """error notification"""
@@ -67,10 +73,16 @@ class CNCtmServer(EGSE.CNC.TMserver, EGSE.IF.CCSlink):
     EGSE.CNC.TMserver.__init__(self, portNr)
   # ---------------------------------------------------------------------------
   def clientAccepted(self):
-    """Overloaded from EGSE.CNC.TMserver"""
-    LOG_INFO("CCS client accepted", "EGSE")
+    """hook for derived classes"""
+    LOG_INFO("CCS client 2 accepted", "EGSE")
     # notify the status change
     UTIL.TASK.s_processingTask.setCCSconnected2()
+  # ---------------------------------------------------------------------------
+  def clientDisconnected(self):
+    """hook for derived classes"""
+    LOG_WARNING("CCS client 2 disconnected", "EGSE")
+    # notify the status change
+    UTIL.TASK.s_processingTask.setCCSdisconnected2()
   # ---------------------------------------------------------------------------
   def pushTMpacket(self, tmPacketDu):
     """
@@ -98,10 +110,16 @@ class EDENserver(EGSE.EDEN.Server, EGSE.IF.CCSlink):
     EGSE.EDEN.Server.__init__(self, portNr)
   # ---------------------------------------------------------------------------
   def clientAccepted(self):
-    """Overloaded from EGSE.EDEN.Server"""
+    """hook for derived classes"""
     LOG_INFO("CCS client accepted", "EGSE")
     # notify the status change
     UTIL.TASK.s_processingTask.setCCSconnected()
+  # ---------------------------------------------------------------------------
+  def clientDisconnected(self):
+    """hook for derived classes"""
+    LOG_WARNING("CCS client disconnected", "EGSE")
+    # notify the status change
+    UTIL.TASK.s_processingTask.setCCSdisconnected()
   # ---------------------------------------------------------------------------
   def pushTMpacket(self, tmPacketDu):
     """
@@ -144,10 +162,16 @@ class EDENserver2(EGSE.EDEN.Server):
     EGSE.EDEN.Server.__init__(self, portNr)
   # ---------------------------------------------------------------------------
   def clientAccepted(self):
-    """Overloaded from EGSE.EDEN.Server"""
-    LOG_INFO("CCS client accepted", "EGSE")
+    """hook for derived classes"""
+    LOG_INFO("CCS client 2 accepted", "EGSE")
     # notify the status change
     UTIL.TASK.s_processingTask.setCCSconnected2()
+  # ---------------------------------------------------------------------------
+  def clientDisconnected(self):
+    """hook for derived classes"""
+    LOG_WARNING("CCS client 2 disconnected", "EGSE")
+    # notify the status change
+    UTIL.TASK.s_processingTask.setCCSdisconnected2()
   # ---------------------------------------------------------------------------
   def notifyError(self, errorMessage, data):
     """error notification"""
