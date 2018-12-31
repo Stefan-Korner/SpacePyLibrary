@@ -26,23 +26,19 @@ class TMclient(GRND.NCTRS.TMreceiver):
   """Subclass of GRND.NCTRS.TMreceiver"""
   # this client only receives NCTRS TM data units
   # ---------------------------------------------------------------------------
-  def __init__(self, hostName, portNr):
+  def __init__(self):
     """Initialise attributes only"""
     GRND.NCTRS.TMreceiver.__init__(self)
-    self.hostName = hostName
-    self.portNr = portNr
   # ---------------------------------------------------------------------------
-  def connectLink(self):
-    """Connects TM link to NCTRS server"""
-    if self.connectToServer(self.hostName, self.portNr):
-      GRND.IF.s_clientConfiguration.nctrsTMconn = True
-      UTIL.TASK.s_processingTask.notifyNCTRS1connected()
-    else:
-      LOG_ERROR("Connect TM link failed", "NCTRS")
+  def connected(self):
+    """hook for derived classes"""
+    LOG_INFO("TMclient.connected", "NCTRS")
+    GRND.IF.s_clientConfiguration.nctrsTMconn = True
+    UTIL.TASK.s_processingTask.notifyNCTRS1connected()
   # ---------------------------------------------------------------------------
-  def disconnectLink(self):
-    """Disconnects TM link from NCTRS server"""
-    self.disconnectFromServer()
+  def disconnected(self):
+    """hook for derived classes"""
+    LOG_WARNING("TMclient.disconnected", "NCTRS")
     GRND.IF.s_clientConfiguration.nctrsTMconn = False
     UTIL.TASK.s_processingTask.notifyNCTRS1disconnected()
   # ---------------------------------------------------------------------------
@@ -61,23 +57,19 @@ class TCclient(GRND.NCTRS.TCsender):
   # this client sends NCTRS TC data units
   # and receives automatically TC response data units
   # ---------------------------------------------------------------------------
-  def __init__(self, hostName, portNr):
+  def __init__(self):
     """Initialise attributes only"""
     GRND.NCTRS.TCsender.__init__(self)
-    self.hostName = hostName
-    self.portNr = portNr
   # ---------------------------------------------------------------------------
-  def connectLink(self):
-    """Connects TC link to NCTRS server"""
-    if self.connectToServer(self.hostName, self.portNr):
-      GRND.IF.s_clientConfiguration.nctrsTCconn = True
-      UTIL.TASK.s_processingTask.notifyNCTRS2connected()
-    else:
-      LOG_ERROR("Connect TC link failed", "NCTRS")
+  def connected(self):
+    """hook for derived classes"""
+    LOG_INFO("TCclient.connected", "NCTRS")
+    GRND.IF.s_clientConfiguration.nctrsTCconn = True
+    UTIL.TASK.s_processingTask.notifyNCTRS2connected()
   # ---------------------------------------------------------------------------
-  def disconnectLink(self):
-    """Disconnects TC link from NCTRS server"""
-    self.disconnectFromServer()
+  def disconnected(self):
+    """hook for derived classes"""
+    LOG_WARNING("TCclient.disconnected", "NCTRS")
     GRND.IF.s_clientConfiguration.nctrsTCconn = False
     UTIL.TASK.s_processingTask.notifyNCTRS2disconnected()
   # ---------------------------------------------------------------------------
@@ -101,23 +93,19 @@ class AdminClient(GRND.NCTRS.AdminMessageReceiver):
   """Subclass of GRND.NCTRS.AdminMessageReceiver"""
   # this client only receives NCTRS admin message data units
   # ---------------------------------------------------------------------------
-  def __init__(self, hostName, portNr):
+  def __init__(self):
     """Initialise attributes only"""
     GRND.NCTRS.AdminMessageReceiver.__init__(self)
-    self.hostName = hostName
-    self.portNr = portNr
   # ---------------------------------------------------------------------------
-  def connectLink(self):
-    """Connects admin message link to NCTRS server"""
-    if self.connectToServer(self.hostName, self.portNr):
-      GRND.IF.s_clientConfiguration.nctrsAdminConn = True
-      UTIL.TASK.s_processingTask.notifyNCTRS3connected()
-    else:
-      LOG_ERROR("Connect admin message link failed", "NCTRS")
+  def connected(self):
+    """hook for derived classes"""
+    LOG_INFO("AdminClient.connected", "NCTRS")
+    GRND.IF.s_clientConfiguration.nctrsAdminConn = True
+    UTIL.TASK.s_processingTask.notifyNCTRS3connected()
   # ---------------------------------------------------------------------------
-  def disconnectLink(self):
-    """Disconnects admin message link from NCTRS server"""
-    self.disconnectFromServer()
+  def disconnected(self):
+    """hook for derived classes"""
+    LOG_WARNING("AdminClient.disconnected", "NCTRS")
     GRND.IF.s_clientConfiguration.nctrsAdminConn = False
     UTIL.TASK.s_processingTask.notifyNCTRS3disconnected()
   # ---------------------------------------------------------------------------
@@ -145,63 +133,69 @@ def createClients():
   if nctrsHost == "":
     LOG_INFO("no NCTRS connection configured", "NCTRS")
     return
-  nctrsTMport = int(GRND.IF.s_clientConfiguration.nctrsTMport)
-  s_tmClient = TMclient(nctrsHost, nctrsTMport)
-  nctrsTCport = int(GRND.IF.s_clientConfiguration.nctrsTCport)
-  s_tcClient = TCclient(nctrsHost, nctrsTCport)
-  nctrsAdminPort = int(GRND.IF.s_clientConfiguration.nctrsAdminPort)
-  s_adminClient = AdminClient(nctrsHost, nctrsAdminPort)
+  s_tmClient = TMclient()
+  s_tcClient = TCclient()
+  s_adminClient = AdminClient()
 # -----------------------------------------------------------------------------
 def connectNCTRS1():
   """Connect NCTRS TM link"""
   LOG_INFO("Connect NCTRS TM link", "NCTRS")
-  if GRND.IF.s_clientConfiguration.nctrsHost == "" or \
-     GRND.IF.s_clientConfiguration.nctrsTMport == "-1":
+  nctrsHost = GRND.IF.s_clientConfiguration.nctrsHost
+  nctrsTMport = GRND.IF.s_clientConfiguration.nctrsTMport
+  if nctrsHost == "" or nctrsTMport == "-1":
     LOG_ERROR("no NCTRS TM link configured", "NCTRS")
     return
-  s_tmClient.connectLink()
+  if not s_tmClient.connectToServer(nctrsHost, int(nctrsTMport)):
+    LOG_ERROR("Connect TM link failed", "NCTRS")
 # -----------------------------------------------------------------------------
 def disconnectNCTRS1():
   """Disonnect NCTRS TM link"""
   LOG_INFO("Disonnect NCTRS TM link", "NCTRS")
-  if GRND.IF.s_clientConfiguration.nctrsHost == "" or \
-     GRND.IF.s_clientConfiguration.nctrsTMport == "-1":
+  nctrsHost = GRND.IF.s_clientConfiguration.nctrsHost
+  nctrsTMport = GRND.IF.s_clientConfiguration.nctrsTMport
+  if nctrsHost == "" or nctrsTMport == "-1":
     LOG_ERROR("no NCTRS TM link configured", "NCTRS")
     return
-  s_tmClient.disconnectLink()
+  s_tmClient.disconnectFromServer()
 # -----------------------------------------------------------------------------
 def connectNCTRS2():
   """Connect NCTRS TC link"""
   LOG_INFO("Connect NCTRS TC link", "NCTRS")
-  if GRND.IF.s_clientConfiguration.nctrsHost == "" or \
-     GRND.IF.s_clientConfiguration.nctrsTCport == "-1":
+  nctrsHost = GRND.IF.s_clientConfiguration.nctrsHost
+  nctrsTCport = GRND.IF.s_clientConfiguration.nctrsTCport
+  if nctrsHost == "" or nctrsTCport == "-1":
     LOG_ERROR("no NCTRS TC link configured", "NCTRS")
     return
-  s_tcClient.connectLink()
+  if not s_tcClient.connectToServer(nctrsHost, int(nctrsTCport)):
+    LOG_ERROR("Connect TC link failed", "NCTRS")
 # -----------------------------------------------------------------------------
 def disconnectNCTRS2():
   """Disonnect NCTRS TC link"""
   LOG_INFO("Disonnect NCTRS TC link", "NCTRS")
-  if GRND.IF.s_clientConfiguration.nctrsHost == "" or \
-     GRND.IF.s_clientConfiguration.nctrsTCport == "-1":
+  nctrsHost = GRND.IF.s_clientConfiguration.nctrsHost
+  nctrsTCport = GRND.IF.s_clientConfiguration.nctrsTCport
+  if nctrsHost == "" or nctrsTCport == "-1":
     LOG_ERROR("no NCTRS TC link configured", "NCTRS")
     return
-  s_tcClient.disconnectLink()
+  s_tcClient.disconnectFromServer()
 # -----------------------------------------------------------------------------
 def connectNCTRS3():
   """Connect NCTRS Admin link"""
   LOG_INFO("Connect NCTRS Admin link", "NCTRS")
-  if GRND.IF.s_clientConfiguration.nctrsHost == "" or \
-     GRND.IF.s_clientConfiguration.nctrsAdminPort == "-1":
+  nctrsHost = GRND.IF.s_clientConfiguration.nctrsHost
+  nctrsAdminPort = GRND.IF.s_clientConfiguration.nctrsAdminPort
+  if nctrsHost == "" or nctrsAdminPort == "-1":
     LOG_ERROR("no NCTRS Admin link configured", "NCTRS")
     return
-  s_adminClient.connectLink()
+  if not s_adminClient.connectToServer(nctrsHost, int(nctrsAdminPort)):
+    LOG_ERROR("Connect admin message link failed", "NCTRS")
 # -----------------------------------------------------------------------------
 def disconnectNCTRS3():
   """Disonnect NCTRS Admin link"""
   LOG_INFO("Disonnect NCTRS Admin link", "NCTRS")
-  if GRND.IF.s_clientConfiguration.nctrsHost == "" or \
-     GRND.IF.s_clientConfiguration.nctrsAdminPort == "-1":
+  nctrsHost = GRND.IF.s_clientConfiguration.nctrsHost
+  nctrsAdminPort = GRND.IF.s_clientConfiguration.nctrsAdminPort
+  if nctrsHost == "" or nctrsAdminPort == "-1":
     LOG_ERROR("no NCTRS Admin link configured", "NCTRS")
     return
-  s_adminClient.disconnectLink()
+  s_adminClient.disconnectFromServer()

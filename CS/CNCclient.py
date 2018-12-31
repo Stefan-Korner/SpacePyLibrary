@@ -28,23 +28,19 @@ class TCclient(EGSE.CNC.TCclient):
   # this client sends CnC commands
   # and receives automatically ACK/NAK CnC responses
   # ---------------------------------------------------------------------------
-  def __init__(self, hostName, portNr):
+  def __init__(self):
     """Initialise attributes only"""
     EGSE.CNC.TCclient.__init__(self)
-    self.hostName = hostName
-    self.portNr = portNr
   # ---------------------------------------------------------------------------
-  def connectTClink(self):
-    """Connects TC link to server (e.g. SCOE)"""
-    if self.connectToServer(self.hostName, self.portNr):
-      EGSE.IF.s_cncClientConfiguration.connected = True
-      UTIL.TASK.s_processingTask.notifyCNCconnected()
-    else:
-      LOG_ERROR("Connect TC link failed", "CNC")
+  def connected(self):
+    """hook for derived classes"""
+    LOG_INFO("TCclient.connected", "CNC")
+    EGSE.IF.s_cncClientConfiguration.connected = True
+    UTIL.TASK.s_processingTask.notifyCNCconnected()
   # ---------------------------------------------------------------------------
-  def disconnectTClink(self):
-    """Disconnects TC link from server (e.g. SCOE)"""
-    self.disconnectFromServer()
+  def disconnected(self):
+    """hook for derived classes"""
+    LOG_WARNING("TCclient.disconnected", "CNC")
     EGSE.IF.s_cncClientConfiguration.connected = False
     UTIL.TASK.s_processingTask.notifyCNCdisconnected()
   # ---------------------------------------------------------------------------
@@ -63,23 +59,19 @@ class TMclient(EGSE.CNC.TMclient):
   """Subclass of EGSE.CNC.TMclient"""
   # this client only receives CCSDS TM packets
   # ---------------------------------------------------------------------------
-  def __init__(self, hostName, portNr):
+  def __init__(self):
     """Initialise attributes only"""
     EGSE.CNC.TMclient.__init__(self)
-    self.hostName = hostName
-    self.portNr = portNr
   # ---------------------------------------------------------------------------
-  def connectTMlink(self):
-    """Connects TM link to server (e.g. SCOE)"""
-    if self.connectToServer(self.hostName, self.portNr):
-      EGSE.IF.s_cncClientConfiguration.connected2 = True
-      UTIL.TASK.s_processingTask.notifyCNC2connected()
-    else:
-      LOG_ERROR("Connect TM link failed", "CNC")
+  def connected(self):
+    """hook for derived classes"""
+    LOG_INFO("TMclient.connected", "CNC")
+    EGSE.IF.s_cncClientConfiguration.connected2 = True
+    UTIL.TASK.s_processingTask.notifyCNC2connected()
   # ---------------------------------------------------------------------------
-  def disconnectTMlink(self):
-    """Disconnects TM link from server (e.g. SCOE)"""
-    self.disconnectFromServer()
+  def disconnected(self):
+    """hook for derived classes"""
+    LOG_WARNING("TMclient.disconnected", "CNC")
     EGSE.IF.s_cncClientConfiguration.connected2 = False
     UTIL.TASK.s_processingTask.notifyCNC2disconnected()
   # ---------------------------------------------------------------------------
@@ -108,43 +100,47 @@ def createClients():
   if cncHost == "":
     LOG_INFO("no CNC connection configured", "CNC")
     return
-  cncPort = int(EGSE.IF.s_cncClientConfiguration.cncPort)
-  s_client = TCclient(cncHost, cncPort)
-  cncPort2 = int(EGSE.IF.s_cncClientConfiguration.cncPort2)
-  s_client2 = TMclient(cncHost, cncPort2)
+  s_client = TCclient()
+  s_client2 = TMclient()
 # -----------------------------------------------------------------------------
 def connectCNC():
   """Connect CNC TC link"""
   LOG_INFO("Connect CNC TC link", "CNC")
-  if EGSE.IF.s_cncClientConfiguration.cncHost == "" or \
-     EGSE.IF.s_cncClientConfiguration.cncPort == "-1":
+  cncHost = EGSE.IF.s_cncClientConfiguration.cncHost
+  cncPort = EGSE.IF.s_cncClientConfiguration.cncPort
+  if cncHost == "" or cncPort == "-1":
     LOG_ERROR("no CNC TC link configured", "CNC")
     return
-  s_client.connectTClink()
+  if not s_client.connectToServer(cncHost, int(cncPort)):
+    LOG_ERROR("Connect TC link failed", "CNC")
 # -----------------------------------------------------------------------------
 def disconnectCNC():
   """Disonnect CNC TC link"""
   LOG_INFO("Disonnect CNC TC link", "CNC")
-  if EGSE.IF.s_cncClientConfiguration.cncHost == "" or \
-     EGSE.IF.s_cncClientConfiguration.cncPort == "-1":
+  cncHost = EGSE.IF.s_cncClientConfiguration.cncHost
+  cncPort = EGSE.IF.s_cncClientConfiguration.cncPort
+  if cncHost == "" or cncPort == "-1":
     LOG_ERROR("no CNC TC link configured", "CNC")
     return
-  s_client.disconnectTClink()
+  s_client.disconnectFromServer()
 # -----------------------------------------------------------------------------
 def connectCNC2():
   """Connect CNC TM link"""
   LOG_INFO("Connect CNC TM link", "CNC")
-  if EGSE.IF.s_cncClientConfiguration.cncHost == "" or \
-     EGSE.IF.s_cncClientConfiguration.cncPort2 == "-1":
+  cncHost = EGSE.IF.s_cncClientConfiguration.cncHost
+  cncPort2 = EGSE.IF.s_cncClientConfiguration.cncPort2
+  if cncHost == "" or cncPort2 == "-1":
     LOG_ERROR("no CNC TM link configured", "CNC")
     return
-  s_client2.connectTMlink()
+  if not s_client2.connectToServer(cncHost, int(cncPort2)):
+    LOG_ERROR("Connect TM link failed", "CNC")
 # -----------------------------------------------------------------------------
 def disconnectCNC2():
   """Disonnect CNC TM link"""
   LOG_INFO("Disonnect CNC TM link", "CNC")
-  if EGSE.IF.s_cncClientConfiguration.cncHost == "" or \
-     EGSE.IF.s_cncClientConfiguration.cncPort2 == "-1":
+  cncHost = EGSE.IF.s_cncClientConfiguration.cncHost
+  cncPort2 = EGSE.IF.s_cncClientConfiguration.cncPort2
+  if cncHost == "" or cncPort2 == "-1":
     LOG_ERROR("no CNC TM link configured", "CNC")
     return
-  s_client2.disconnectTMlink()
+  s_client2.disconnectFromServer()
