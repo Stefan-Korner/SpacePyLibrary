@@ -33,10 +33,16 @@ class NCTRStcReceiver(GRND.NCTRS.TCreceiver):
     GRND.NCTRS.TCreceiver.__init__(self, portNr, groundstationId)
   # ---------------------------------------------------------------------------
   def clientAccepted(self):
-    """Overloaded from GRND.NCTRS.TCreceiver"""
+    """hook for derived classes"""
     LOG_INFO("NCTRS TC sender (client) accepted", "GRND")
     # notify the status change
     UTIL.TASK.s_processingTask.setTCconnected()
+  # ---------------------------------------------------------------------------
+  def clientDisconnected(self):
+    """hook for derived classes"""
+    LOG_WARNING("NCTRS TC sender (client) disconnected", "GRND")
+    # notify the status change
+    UTIL.TASK.s_processingTask.setTCdisconnected()
   # ---------------------------------------------------------------------------
   def notifyTCpacketDataUnit(self, tcPktDu):
     """AD packet / BD segment received"""

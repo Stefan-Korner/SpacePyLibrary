@@ -30,10 +30,16 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
     GRND.NCTRS.TMsender.__init__(self, portNr, nctrsTMfields)
   # ---------------------------------------------------------------------------
   def clientAccepted(self):
-    """Overloaded from GRND.NCTRS.TMsender"""
+    """hook for derived classes"""
     LOG_INFO("NCTRS TM receiver (client) accepted", "GRND")
     # notify the status change
     UTIL.TASK.s_processingTask.setTMconnected()
+  # ---------------------------------------------------------------------------
+  def clientDisconnected(self):
+    """hook for derived classes"""
+    LOG_WARNING("NCTRS TM receiver (client) disconnected", "GRND")
+    # notify the status change
+    UTIL.TASK.s_processingTask.setTMdisconnected()
   # ---------------------------------------------------------------------------
   def pushTMframe(self, tmFrameDu, ertUTC):
     """

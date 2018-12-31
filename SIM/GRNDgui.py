@@ -175,10 +175,16 @@ class GUIview(UI.TKI.GUIwinView):
     """Generic callback when something changes in the model"""
     if status == "TM_CONNECTED":
       self.tmConnectedNotify()
+    elif status == "TM_DISCONNECTED":
+      self.tmDisconnectedNotify()
     elif status == "TC_CONNECTED":
       self.tcConnectedNotify()
+    elif status == "TC_DISCONNECTED":
+      self.tcDisconnectedNotify()
     elif status == "ADMIN_CONNECTED":
       self.adminConnectedNotify()
+    elif status == "ADMIN_DISCONNECTED":
+      self.adminDisconnectedNotify()
     elif status == "GRND_ENABLED_ACK1":
       self.grndEnabledAck1Notify()
     elif status == "GRND_ENABLED_NAK1":
@@ -201,15 +207,30 @@ class GUIview(UI.TKI.GUIwinView):
     self.tmStatusField.set("CONNECTED")
     self.tmStatusField.setBackground(COLOR_CONNECTED)
   # ---------------------------------------------------------------------------
+  def tmDisconnectedNotify(self):
+    """Called when the TM disconnect function is successfully processed"""
+    self.tmStatusField.set("DISCONNECTED")
+    self.tmStatusField.setBackground(COLOR_INITIALISED)
+  # ---------------------------------------------------------------------------
   def tcConnectedNotify(self):
     """Called when the TC connect function is successfully processed"""
     self.tcStatusField.set("CONNECTED")
     self.tcStatusField.setBackground(COLOR_CONNECTED)
   # ---------------------------------------------------------------------------
+  def tcDisconnectedNotify(self):
+    """Called when the TC disconnect function is successfully processed"""
+    self.tcStatusField.set("DISCONNECTED")
+    self.tcStatusField.setBackground(COLOR_INITIALISED)
+  # ---------------------------------------------------------------------------
   def adminConnectedNotify(self):
     """Called when the admin connect function is successfully processed"""
     self.adminStatusField.set("CONNECTED")
     self.adminStatusField.setBackground(COLOR_CONNECTED)
+  # ---------------------------------------------------------------------------
+  def adminDisconnectedNotify(self):
+    """Called when the admin disconnect function is successfully processed"""
+    self.adminStatusField.set("DISCONNECTED")
+    self.adminStatusField.setBackground(COLOR_INITIALISED)
   # ---------------------------------------------------------------------------
   def grndEnabledAck1Notify(self):
     """Called when the grndEnabledAck1 function is succsssfully processed"""
