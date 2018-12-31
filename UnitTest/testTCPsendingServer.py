@@ -48,7 +48,7 @@ class TCPsendingServer(UTIL.TCP.SingleClientServer):
       # client is automatically disconnected
       return
     LOG("data read, len(data) = " + str(len(data)))
-    LOG("data = " + data.decode("ascii"))      
+    LOG("data = " + data)      
   # ---------------------------------------------------------------------------
   def after(self):
     """Called from a timer 1 second after connect"""

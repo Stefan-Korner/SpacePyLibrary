@@ -65,7 +65,7 @@ class FrameReplayer(object):
     # read the next NCTRS frame
     try:
       tmDu = GRND.NCTRS.readNCTRSframe(self.nctrsFramesFile)
-    except Exception as ex:
+    except Exception, ex:
       errorMessage = str(ex)
       if errorMessage != "":
         LOG_ERROR(errorMessage)

@@ -234,7 +234,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     try:
       for tcPktDef in SPACE.IF.s_definitions.getTCpktDefs():
         LOG(tcPktDef.pktName + " (" + str(tcPktDef.pktAPID) + "," + str(tcPktDef.pktType) + "," + str(tcPktDef.pktSType) + ") - " + tcPktDef.pktDescr, "CFG")
-    except Exception as ex:
+    except Exception, ex:
       LOG_ERROR("MIB Error: " + str(ex), "CFG")
       return False
     return True
@@ -253,7 +253,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       # update the TM definitions to ensure an actual testdata.sim
       SPACE.IF.s_definitions.createDefinitions()
       LOG(definitionFileName + " generated", "CFG")
-    except Exception as ex:
+    except Exception, ex:
       LOG_ERROR("Generation Error: " + str(ex), "CFG")
       return False
     return True
@@ -338,7 +338,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     # send the packet
     try:
       MC.IF.s_tcModel.generateTCpacket(tcPacketData)
-    except Exception as ex:
+    except Exception, ex:
       LOG_WARNING("cannot send packet: " + str(ex), "TC")
       return False
     return True

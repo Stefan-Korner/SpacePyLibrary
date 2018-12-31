@@ -176,6 +176,7 @@ class TCreceiver(UTIL.TCP.SingleClientServer):
         self.disconnectClient()
     except Exception, ex:
       LOG_ERROR("Processing of received data unit failed: " + str(ex))
+      self.disconnectClient()
   # ---------------------------------------------------------------------------
   def notifyTCpacketDataUnit(self, tcPktDu):
     """AD packet / BD segment received"""

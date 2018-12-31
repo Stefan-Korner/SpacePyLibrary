@@ -63,7 +63,7 @@ class TCserver(UTIL.TCP.SingleClientServer):
     cncAckNakDU.sequenceControlCount = ssc
     cncAckNakDU.segmentationFlags = CCSDS.PACKET.UNSEGMENTED
     cncAckNakDU.setCNCmessage(responseMessage)
-    self.dataSocket.send(cncAckNakDU.getBufferString())
+    self.send(cncAckNakDU.getBufferString())
   # ---------------------------------------------------------------------------
   def sendTCackNak(self, ccsdsTCpacketDU, okStatus):
     """Send a TC ACK or NAK as response to a CCSDSC TC packet to the CCS"""
@@ -89,26 +89,21 @@ class TCserver(UTIL.TCP.SingleClientServer):
       tcAckNakDU.setNAK()
     PUS.SERVICES.service1_setTCackAPID(tcAckNakDU, apid)
     PUS.SERVICES.service1_setTCackSSC(tcAckNakDU, ssc)
-    self.dataSocket.send(tcAckNakDU.getBufferString())
+    self.send(tcAckNakDU.getBufferString())
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when the CCS has send data"""
     # read the packet header from the data socket
-    try:
-      strBuffer = self.dataSocket.recv(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE)
-      packetHeader = array.array("B", strBuffer)
-    except Exception, ex:
-      self.disconnectClient()
-      self.notifyConnectionClosed(str(ex))
+    strBuffer = self.recv(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE)
+    if strBuffer == None:
+      # failure handling was done automatically by derived logic
       return
+    packetHeader = array.array("B", strBuffer)
     # consistency check
     packetHeaderLen = len(packetHeader)
-    if packetHeaderLen == 0:
-      self.disconnectClient()
-      self.notifyConnectionClosed("empty data read")
-      return
     if packetHeaderLen != CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE:
       LOG_ERROR("Read of CnC header failed: invalid size: " + str(packetHeaderLen))
+      self.disconnectClient()
       return
     packetVersionNumber = packetHeader[0] >> 5
     if packetVersionNumber == EGSE.CNCPDU.VERSION_NUMBER:
@@ -119,15 +114,15 @@ class TCserver(UTIL.TCP.SingleClientServer):
       tcPacketDU = CCSDS.PACKET.TCpacket(packetHeader)
     # read the data field for the packet from the data socket
     dataFieldLength = tcPacketDU.packetLength + 1
-    try:
-      dataField = self.dataSocket.recv(dataFieldLength)
-    except Exception, ex:
-      LOG_ERROR("Read of packet dataField failed: " + str(ex))
+    dataField = self.recv(dataFieldLength)
+    if dataField == None:
+      # failure handling was done automatically by derived logic
       return
     # consistency check
     remainingSizeRead = len(dataField)
     if remainingSizeRead != dataFieldLength:
       LOG_ERROR("Read of remaining packet failed: invalid remaining size: " + str(remainingSizeRead))
+      self.disconnectClient()
       return
     tcPacketDU.setDataField(dataField)
     # dispatch the telecommand
@@ -142,20 +137,17 @@ class TCserver(UTIL.TCP.SingleClientServer):
         self.sendTCackNak(tcPacketDU, okStatus)
     except Exception, ex:
       LOG_ERROR("Processing of received CnC command failed: " + str(ex))
-  # ---------------------------------------------------------------------------
-  def notifyConnectionClosed(self, details):
-    """TC connection closed by client"""
-    LOG_WARNING("TC connection closed by CCS: " + details)
+      self.disconnectClient()
   # ---------------------------------------------------------------------------
   def notifyCNCcommand(self, cncCommandDU):
     """CnC command received: hook for derived classes"""
-    LOG_INFO("notifyCNCcommand: tcPacket = " + cncCommandDU.getDumpString())
-    LOG_INFO("message = " + cncCommandDU.getCNCmessage())
+    LOG("notifyCNCcommand: tcPacket = " + cncCommandDU.getDumpString())
+    LOG("message = " + cncCommandDU.getCNCmessage())
     return True
   # ---------------------------------------------------------------------------
   def notifyCCSDScommand(self, ccsdsTCpacketDU):
     """CCSDS telecommand received: hook for derived classes"""
-    LOG_INFO("notifyCCSDScommand: tcPacket = " + ccsdsTCpacketDU.getDumpString())
+    LOG("notifyCCSDScommand: tcPacket = " + ccsdsTCpacketDU.getDumpString())
     return True
 
 # =============================================================================
@@ -172,39 +164,33 @@ class TCclient(UTIL.TCP.Client):
   def sendCNCpacket(self, tcPacket):
     """Send a CnC TC packet to the SCOE"""
     # this operation does not verify the contents of the tcPacket
-    self.dataSocket.send(tcPacket)
+    self.send(tcPacket)
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when the SCOE has send data"""
     # read the packet header from the data socket
-    try:
-      packetHeader = self.dataSocket.recv(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE)
-    except Exception, ex:
-      self.disconnectFromServer()
-      self.notifyConnectionClosed(str(ex))
+    packetHeader = self.recv(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE)
+    if packetHeader == None:
+      # failure handling was done automatically by derived logic
       return
     # consistency check
     packetHeaderLen = len(packetHeader)
-    if packetHeaderLen == 0:
-      # client termination
-      self.disconnectFromServer()
-      self.notifyConnectionClosed("empty data read")
-      return
     if packetHeaderLen != CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE:
       LOG_ERROR("Read of CnC header failed: invalid size: " + str(packetHeaderLen))
+      self.disconnectFromServer()
       return
     cncTMpacketDU = EGSE.CNCPDU.CNCackNak(packetHeader)
     # read the data field for the packet from the data socket
     dataFieldLength = cncTMpacketDU.packetLength + 1
-    try:
-      dataField = self.dataSocket.recv(dataFieldLength)
-    except Exception, ex:
-      LOG_ERROR("Read of packet dataField failed: " + str(ex))
+    dataField = self.recv(dataFieldLength)
+    if dataField == None:
+      # failure handling was done automatically by derived logic
       return
     # consistency check
     remainingSizeRead = len(dataField)
     if remainingSizeRead != dataFieldLength:
       LOG_ERROR("Read of remaining packet failed: invalid remaining size: " + str(remainingSizeRead))
+      self.disconnectFromServer()
       return
     cncTMpacketDU.setCNCmessage(dataField)
     # dispatch the CnC response
@@ -213,15 +199,12 @@ class TCclient(UTIL.TCP.Client):
       self.notifyCNCresponse(cncTMpacketDU)
     except Exception, ex:
       LOG_ERROR("Processing of received CnC response failed: " + str(ex))
-  # ---------------------------------------------------------------------------
-  def notifyConnectionClosed(self, details):
-    """Connection closed by server"""
-    LOG_WARNING("Connection closed by SCOE: " + details)
+      self.disconnectFromServer()
   # ---------------------------------------------------------------------------
   def notifyCNCresponse(self, cncTMpacketDU):
     """CnC response received: hook for derived classes"""
-    LOG_INFO("notifyCNCresponse: cncTMpacketDU = " + cncTMpacketDU.getDumpString())
-    LOG_INFO("message = " + cncTMpacketDU.getCNCmessage())
+    LOG("notifyCNCresponse: cncTMpacketDU = " + cncTMpacketDU.getDumpString())
+    LOG("message = " + cncTMpacketDU.getCNCmessage())
     return True
 
 # =============================================================================
@@ -236,16 +219,12 @@ class TMserver(UTIL.TCP.SingleClientServer):
   def sendTMpacket(self, tmPacket):
     """Send a CCSDS TM packet to the CCS"""
     # this operation does not verify the contents of the tmPacket
-    self.dataSocket.send(tmPacket)
+    self.send(tmPacket)
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when the CCS has closed the connection"""
-    self.disconnectClient()
-    self.notifyConnectionClosed("")
-  # ---------------------------------------------------------------------------
-  def notifyConnectionClosed(self, details):
-    """TM connection closed by client"""
-    LOG_WARNING("TM connection closed by CCS: " + details)
+    # preform a dummy recv to force connection handling
+    self.recv(1)
 
 # =============================================================================
 class TMclient(UTIL.TCP.Client):
@@ -261,34 +240,28 @@ class TMclient(UTIL.TCP.Client):
   def receiveCallback(self, socket, stateMask):
     """Callback when the SCOE has send data"""
     # read the packet header from the data socket
-    try:
-      packetHeader = self.dataSocket.recv(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE)
-    except Exception, ex:
-      self.disconnectFromServer()
-      self.notifyConnectionClosed(str(ex))
+    packetHeader = self.recv(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE)
+    if packetHeader == None:
+      # failure handling was done automatically by derived logic
       return
     # consistency check
     packetHeaderLen = len(packetHeader)
-    if packetHeaderLen == 0:
-      # client termination
-      self.disconnectFromServer()
-      self.notifyConnectionClosed("empty data read")
-      return
     if packetHeaderLen != CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE:
       LOG_ERROR("Read of CCSDS packet header failed: invalid size: " + str(packetHeaderLen))
+      self.disconnectFromServer()
       return
     ccsdsTMpacketDU = CCSDS.PACKET.TMpacket(packetHeader)
     # read the data field for the packet from the data socket
     dataFieldLength = ccsdsTMpacketDU.packetLength + 1
-    try:
-      dataField = self.dataSocket.recv(dataFieldLength)
-    except Exception, ex:
-      LOG_ERROR("Read of packet dataField failed: " + str(ex))
+    dataField = self.recv(dataFieldLength)
+    if dataField == None:
+      # failure handling was done automatically by derived logic
       return
     # consistency check
     remainingSizeRead = len(dataField)
     if remainingSizeRead != dataFieldLength:
       LOG_ERROR("Read of remaining packet failed: invalid remaining size: " + str(remainingSizeRead))
+      self.disconnectFromServer()
       return
     ccsdsTMpacketDU.append(dataField)
     # dispatch the CCSDS tm packet
@@ -297,14 +270,11 @@ class TMclient(UTIL.TCP.Client):
       self.notifyTMpacket(ccsdsTMpacketDU.getBufferString())
     except Exception, ex:
       LOG_ERROR("Processing of received TM packet failed: " + str(ex))
-  # ---------------------------------------------------------------------------
-  def notifyConnectionClosed(self, details):
-    """Connection closed by server"""
-    LOG_WARNING("Connection closed by TMserver: " + details)
+      self.disconnectFromServer()
   # ---------------------------------------------------------------------------
   def notifyTMpacket(self, tmPacket):
     """TM packet received: hook for derived classes"""
-    LOG_INFO("notifyTMpacket: tmPacket = " + UTIL.DU.array2str(tmPacket))
+    LOG("notifyTMpacket: tmPacket = " + UTIL.DU.array2str(tmPacket))
   # ---------------------------------------------------------------------------
   def notifyError(self, errorMessage, data):
     """error notification: hook for derived classes"""
