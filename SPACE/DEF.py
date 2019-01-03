@@ -23,8 +23,6 @@ import UTIL.DU, UTIL.SYS
 #############
 # constants #
 #############
-# size values in byte
-SCOS_PACKET_HEADER_SIZE = 64
 # reserved data space for packets when no size is defined in the MIB
 TM_PKT_DEFAULT_DATAFIELD_DATA_SPACE = 16
 
