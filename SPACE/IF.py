@@ -149,7 +149,6 @@ class TMpktDef(object):
     self.pktPI2wid = None
     self.pktPI2val = None
     self.pktSPsize = None
-    self.pktS2Ksize = None
     self.pktSPDFsize = None
     self.pktSPDFdataSize = None
     self.paramLinks = None
@@ -295,7 +294,6 @@ class TMpktDef(object):
     retVal += " pktPI2wid = " + str(self.pktPI2wid) + "\n"
     retVal += " pktPI2val = " + str(self.pktPI2val) + "\n"
     retVal += " pktSPsize = " + str(self.pktSPsize) + "\n"
-    retVal += " pktS2Ksize = " + str(self.pktS2Ksize) + "\n"
     retVal += " pktSPDFsize = " + str(self.pktSPDFsize) + "\n"
     retVal += " pktSPDFdataSize = " + str(self.pktSPDFsize) + "\n"
     retVal += " paramLinks =\n"

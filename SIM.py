@@ -50,6 +50,7 @@ SYS_CONFIGURATION = [
   ["TC_TT_PKT_BYTE_OFFSET", "<<shall be passed as environment variable>>"],
   ["TM_CYCLIC_MNEMO", "<<shall be passed as environment variable>>"],
   ["TM_CYCLIC_PERIOD_MS", "5000"],
+  ["TM_PKT_SIZE_ADD", "0"],
   ["TM_TT_TIME_FORMAT", "CUC4"],
   ["TM_TT_TIME_BYTE_OFFSET", "<<shall be passed as environment variable>>"],
   ["TM_RECORD_FORMAT", "CRYOSAT"],
