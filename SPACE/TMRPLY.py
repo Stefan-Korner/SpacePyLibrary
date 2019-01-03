@@ -15,7 +15,6 @@
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.PACKET
 import PUS.PACKET
-import SCOS.ENV
 import SPACE.IF
 import UTIL.SYS, UTIL.TIME
 

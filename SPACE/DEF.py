@@ -20,6 +20,14 @@ import SCOS.ENV, SCOS.MIB
 import SPACE.IF
 import UTIL.DU
 
+#############
+# constants #
+#############
+# size values in byte
+SCOS_PACKET_HEADER_SIZE = 64
+# reserved data space for packets when no size is defined in the MIB
+TM_PKT_DEFAULT_DATAFIELD_DATA_SPACE = 16
+
 ###########
 # classes #
 ###########
@@ -42,7 +50,13 @@ class DefinitionsImpl(SPACE.IF.Definitions):
   """Manager for definition data"""
   # ---------------------------------------------------------------------------
   def __init__(self):
+    self.definitionFileName = SCOS.ENV.s_environment.getRuntimeRoot() + \
+        "/testbin/testdata.sim"
     self.definitionData = None
+  # ---------------------------------------------------------------------------
+  def getDefinitionFileName(self):
+    """get the testdata.sim file name incl. path"""
+    return self.definitionFileName
   # ---------------------------------------------------------------------------
   def createTMpktDef(self, pidRecord, picRecord, tpcfRecord):
     """creates a TM packet definition"""
@@ -97,16 +111,16 @@ class DefinitionsImpl(SPACE.IF.Definitions):
       #                     packet header (ESA convention) or it does not
       #                     contain this additional offset
       #                     --> check the value of tpcfRecord.tpcfSize
-      #                         if it is > SCOS.ENV.SCOS_PACKET_HEADER_SIZE
+      #                         if it is > SCOS_PACKET_HEADER_SIZE
       #                         then we expect that the value contains
-      #                         the SCOS.ENV.SCOS_PACKET_HEADER_SIZE
-      if pktSize > SCOS.ENV.SCOS_PACKET_HEADER_SIZE:
-        # we expect that the size includes SCOS.ENV.SCOS_PACKET_HEADER_SIZE
+      #                         the SCOS_PACKET_HEADER_SIZE
+      if pktSize > SCOS_PACKET_HEADER_SIZE:
+        # we expect that the size includes SCOS_PACKET_HEADER_SIZE
         tmPktDef.pktS2Ksize = pktSize
-        tmPktDef.pktSPsize = pktSize - SCOS.ENV.SCOS_PACKET_HEADER_SIZE
+        tmPktDef.pktSPsize = pktSize - SCOS_PACKET_HEADER_SIZE
       else:
         # the packet size only includes the CCSDS packet size
-        tmPktDef.pktS2Ksize = pktSize + SCOS.ENV.SCOS_PACKET_HEADER_SIZE
+        tmPktDef.pktS2Ksize = pktSize + SCOS_PACKET_HEADER_SIZE
         tmPktDef.pktSPsize = pktSize
       tmPktDef.pktSPDFsize = tmPktDef.pktSPsize - \
                              CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE
@@ -115,13 +129,13 @@ class DefinitionsImpl(SPACE.IF.Definitions):
         tmPktDef.pktSPDFdataSize -= CCSDS.DU.CRC_BYTE_SIZE
     else:
       # pktSize == 0
-      tmPktDef.pktSPDFdataSize = SCOS.ENV.TM_PKT_DEFAULT_DATAFIELD_DATA_SPACE
+      tmPktDef.pktSPDFdataSize = TM_PKT_DEFAULT_DATAFIELD_DATA_SPACE
       tmPktDef.pktSPDFsize = tmPktDef.pktDFHsize + tmPktDef.pktSPDFdataSize
       if tmPktDef.pktCheck:
         tmPktDef.pktSPDFsize += CCSDS.DU.CRC_BYTE_SIZE
       tmPktDef.pktSPsize = tmPktDef.pktSPDFsize + \
                            CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE
-      tmPktDef.pktS2Ksize = SCOS.ENV.SCOS_PACKET_HEADER_SIZE + \
+      tmPktDef.pktS2Ksize = SCOS_PACKET_HEADER_SIZE + \
                             tmPktDef.pktSPsize
     # raw value extractions
     tmPktDef.paramLinks = {}
@@ -285,7 +299,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     d = time.localtime()
     self.definitionData.creationTime = "%04d.%02d.%02d %02d:%02d:%02d" % d[:6]
     # save the definitions
-    fileName = SCOS.ENV.s_environment.definitionFileName()
+    fileName = self.definitionFileName
     try:
       file = open(fileName, "wb")
       pickle.dump(self.definitionData, file)
@@ -300,7 +314,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     """
     if self.definitionData == None:
       # try to load the definition data
-      fileName = SCOS.ENV.s_environment.definitionFileName()
+      fileName = self.definitionFileName
       try:
         os.stat(fileName)
         try:

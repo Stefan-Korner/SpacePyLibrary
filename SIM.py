@@ -18,7 +18,6 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import GRND.IF, GRND.NCTRSDU
 import LINK.IF, LINK.TMGEN, LINK.TMTC
 import PUS.PACKET, PUS.SERVICES
-import SCOS.ENV
 import SIM.TMserver, SIM.TCserver, SIM.AdminServer, SIM.GRNDgui, SIM.LINKgui
 import SPACE.DEF, SPACE.IF, SPACE.OBC, SPACE.OBQ, SPACE.TMGEN, SPACE.TMRPLY
 import SPACEUI.SPACEgui, SPACEUI.OBQgui
@@ -788,7 +787,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       LOG_WARNING("invalid parameters passed", "SPACE")
       return False
     # generate the testdata.sim file
-    definitionFileName = SCOS.ENV.s_environment.definitionFileName()
+    definitionFileName = SPACE.IF.s_definitions.getDefinitionFileName()
     LOG("generate to " + definitionFileName, "SPACE")
     try:
       # update the TM definitions to ensure an actual testdata.sim

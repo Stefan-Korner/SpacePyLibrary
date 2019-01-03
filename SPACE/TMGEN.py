@@ -31,6 +31,8 @@ class TMpacketDefaults(object):
     self.ccsdsPacketVersionNumber = 0
     self.ccsdsPacketSegmentationFlags = CCSDS.PACKET.UNSEGMENTED
     self.idlePacketAPID = CCSDS.PACKET.IDLE_PKT_APID
+    # only applicable for PUS packets
+    self.hasTmTT = (int(UTIL.SYS.s_configuration.TM_TT_TIME_BYTE_OFFSET) > 0)
 
 # =============================================================================
 class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
@@ -41,7 +43,6 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
     self.packetCache = {}
     self.sequenceCounters = {}
     self.packetDefaults = TMpacketDefaults()
-    self.hasTmTT = (int(UTIL.SYS.s_configuration.TM_TT_TIME_BYTE_OFFSET) > 0)
   # ---------------------------------------------------------------------------
   def getIdlePacket(self, packetSize):
     """
@@ -170,7 +171,7 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
             byteLength = bitLength // 8
             packet.setString(bytePos, byteLength, paramValue)
     # re-calculate the time stamp
-    if tmPktDef.pktHasDFhdr and self.hasTmTT:
+    if tmPktDef.pktHasDFhdr and self.packetDefaults.hasTmTT:
       if obtUTC == None:
         obtUTC = UTIL.TIME.getActualTime()
       obtTime = UTIL.TCO.correlateToOBTmissionEpoch(obtUTC)
