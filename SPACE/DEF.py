@@ -18,7 +18,7 @@ import CCSDS.DU, CCSDS.PACKET
 import PUS.PACKET
 import SCOS.ENV, SCOS.MIB
 import SPACE.IF
-import UTIL.DU
+import UTIL.DU, UTIL.SYS
 
 #############
 # constants #
@@ -107,21 +107,13 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     #                     --> only rely on tpcfRecord.tpcfSize if it is > 0
     if pktSize > 0:
       # packet size defined: take it
-      # tpcfRecord.tpcfSize optionally contains the size of the SCOS-2000
-      #                     packet header (ESA convention) or it does not
-      #                     contain this additional offset
-      #                     --> check the value of tpcfRecord.tpcfSize
-      #                         if it is > SCOS_PACKET_HEADER_SIZE
-      #                         then we expect that the value contains
-      #                         the SCOS_PACKET_HEADER_SIZE
-      if pktSize > SCOS_PACKET_HEADER_SIZE:
-        # we expect that the size includes SCOS_PACKET_HEADER_SIZE
-        tmPktDef.pktS2Ksize = pktSize
-        tmPktDef.pktSPsize = pktSize - SCOS_PACKET_HEADER_SIZE
-      else:
-        # the packet size only includes the CCSDS packet size
-        tmPktDef.pktS2Ksize = pktSize + SCOS_PACKET_HEADER_SIZE
-        tmPktDef.pktSPsize = pktSize
+      # tpcfRecord.tpcfSize optionally contains in addition the size of the
+      #                     SCOS-2000 packet header (ESA convention) or it
+      #                     does not contain this additional offset. This must
+      #                     be considered via the configuration entry
+      #                     TM_PKT_SIZE_ADD
+      tmPktDef.pktSPsize = pktSize + \
+          int(UTIL.SYS.s_configuration.TM_PKT_SIZE_ADD)
       tmPktDef.pktSPDFsize = tmPktDef.pktSPsize - \
                              CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE
       tmPktDef.pktSPDFdataSize = tmPktDef.pktSPDFsize - tmPktDef.pktDFHsize
@@ -135,8 +127,6 @@ class DefinitionsImpl(SPACE.IF.Definitions):
         tmPktDef.pktSPDFsize += CCSDS.DU.CRC_BYTE_SIZE
       tmPktDef.pktSPsize = tmPktDef.pktSPDFsize + \
                            CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE
-      tmPktDef.pktS2Ksize = SCOS_PACKET_HEADER_SIZE + \
-                            tmPktDef.pktSPsize
     # raw value extractions
     tmPktDef.paramLinks = {}
     return tmPktDef
