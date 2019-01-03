@@ -16,16 +16,6 @@ import os, sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import UTIL.SYS
 
-#############
-# constants #
-#############
-# size values in byte
-SCOS_PACKET_HEADER_SIZE = 64
-# reserved data space for packets when no size is defined in the MIB
-TM_PKT_DEFAULT_DATAFIELD_DATA_SPACE = 16
-# default value from the CCSDS standard
-TRANSFER_FRAME_SECONDARY_HEADER_SIZE = 4
-
 ###########
 # classes #
 ###########
@@ -41,6 +31,10 @@ class Environment(object):
       LOG_ERROR("TESTENV not initialised")
       sys.exit(-1)
   # ---------------------------------------------------------------------------
+  def getRuntimeRoot(self):
+    """Get the runtime root directory where the data are stored"""
+    return self.runtimeRoot
+  # ---------------------------------------------------------------------------
   def mibDir(self):
     """Get the MIB directory"""
     return self.runtimeRoot + "/data/ASCII"
@@ -48,26 +42,6 @@ class Environment(object):
   def tmFilesDir(self):
     """Get the TM replay files directory"""
     return self.runtimeRoot + "/data/tmFiles"
-  # ---------------------------------------------------------------------------
-  def definitionFileName(self):
-    """Get the testdata.sim file name"""
-    return self.runtimeRoot + "/testbin/testdata.sim"
-  # ---------------------------------------------------------------------------
-  def getSpacecraftID(self):
-    """Returns the spacecraft ID"""
-    return int(UTIL.SYS.s_configuration.SPACECRAFT_ID)
-  # ---------------------------------------------------------------------------
-  def getVirtualChannelID(self):
-    """Returns the Virtual Channel ID"""
-    return int(UTIL.SYS.s_configuration.TM_VIRTUAL_CHANNEL_ID)
-  # ---------------------------------------------------------------------------
-  def getTransferFrameSize(self):
-    """Returns the transfer frame size"""
-    return int(UTIL.SYS.s_configuration.TM_TRANSFER_FRAME_SIZE)
-  # ---------------------------------------------------------------------------
-  def transferFrameHasSecondaryHeader(self):
-    """Returns if the transfer frame has a secondary header"""
-    return (UTIL.SYS.s_configuration.TM_TRANSFER_FRAME_HAS_SEC_HDR == "1")
 
 ####################
 # global variables #

@@ -30,7 +30,6 @@ import EGSE.IF
 import GRND.IF
 import MC.IF, MC.TCGEN, MC.TCmodel, MC.TMmodel, MC.TMrecorder
 import MCUI.CFGgui, MCUI.TMgui, MCUI.TCgui
-import SCOS.ENV
 import SPACE.DEF, SPACE.IF
 import UI.TKI
 import UTIL.SYS, UTIL.TCO, UTIL.TASK
@@ -247,7 +246,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       LOG_WARNING("invalid parameters passed", "CFG")
       return False
     # generate the testdata.sim file
-    definitionFileName = SCOS.ENV.s_environment.definitionFileName()
+    definitionFileName = SPACE.IF.s_definitions.getDefinitionFileName()
     LOG("generate to " + definitionFileName, "CFG")
     try:
       # update the TM definitions to ensure an actual testdata.sim

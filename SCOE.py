@@ -22,7 +22,6 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import EGSE.IF
 import PUS.PACKET, PUS.SERVICES
 import SCOE.EGSEserver, SCOE.EGSEgui
-import SCOS.ENV
 import SPACE.ASW, SPACE.DEF, SPACE.IF, SPACE.MIL, SPACE.OBC, SPACE.TMGEN, SPACE.TMRPLY
 import SPACEUI.SPACEgui, SPACEUI.MILgui
 import UI.TKI
@@ -601,7 +600,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       LOG_WARNING("invalid parameters passed", "SPACE")
       return False
     # generate the testdata.sim file
-    definitionFileName = SCOS.ENV.s_environment.definitionFileName()
+    definitionFileName = SPACE.IF.s_definitions.getDefinitionFileName()
     LOG("generate to " + definitionFileName, "SPACE")
     try:
       # update the TM definitions to ensure an actual testdata.sim

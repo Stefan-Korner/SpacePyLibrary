@@ -443,6 +443,10 @@ class TCpacketInjectData(object):
 class Definitions(object):
   """Interface for definition data"""
   # ---------------------------------------------------------------------------
+  def getDefinitionFileName(self):
+    """get the testdata.sim file name incl. path"""
+    pass
+  # ---------------------------------------------------------------------------
   def createDefinitions(self):
     """creates the definition data"""
     pass
