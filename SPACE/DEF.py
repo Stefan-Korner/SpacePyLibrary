@@ -20,12 +20,6 @@ import SCOS.ENV, SCOS.MIB
 import SPACE.IF
 import UTIL.DU, UTIL.SYS
 
-#############
-# constants #
-#############
-# reserved data space for packets when no size is defined in the MIB
-TM_PKT_DEFAULT_DATAFIELD_DATA_SPACE = 16
-
 ###########
 # classes #
 ###########
@@ -118,13 +112,11 @@ class DefinitionsImpl(SPACE.IF.Definitions):
       if tmPktDef.pktCheck:
         tmPktDef.pktSPDFdataSize -= CCSDS.DU.CRC_BYTE_SIZE
     else:
-      # pktSize == 0
-      tmPktDef.pktSPDFdataSize = TM_PKT_DEFAULT_DATAFIELD_DATA_SPACE
-      tmPktDef.pktSPDFsize = tmPktDef.pktDFHsize + tmPktDef.pktSPDFdataSize
-      if tmPktDef.pktCheck:
-        tmPktDef.pktSPDFsize += CCSDS.DU.CRC_BYTE_SIZE
-      tmPktDef.pktSPsize = tmPktDef.pktSPDFsize + \
-                           CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE
+      # pktSize == 0: this will be overwritten via tmPktDef.updateSPsize() in
+      #               a the processing step 4) of createTMdefinitions()
+      tmPktDef.pktSPsize = 0
+      tmPktDef.pktSPDFsize = 0
+      tmPktDef.pktSPDFdataSize = 0
     # raw value extractions
     tmPktDef.paramLinks = {}
     return tmPktDef
@@ -232,6 +224,11 @@ class DefinitionsImpl(SPACE.IF.Definitions):
         continue
       tmParamDefs.append(tmParamDef)
     tmParamDefs.sort()
+    # step 3) update packet definitions
+    # tmPktDefs is the driving list for the post processing
+    for tmPktDef in tmPktDefs:
+      tmPktDef.updateSPsize()
+    # step 4) update the global container attributes
     self.definitionData.tmPktDefs = tmPktDefs
     self.definitionData.tmPktDefsSpidMap = tmPktDefsSpidMap
     self.definitionData.tmPktSpidNameMap = tmPktSpidNameMap

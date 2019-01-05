@@ -14,7 +14,7 @@
 #******************************************************************************
 import string
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CCSDS.PACKET
+import CCSDS.DU, CCSDS.PACKET
 import UTIL.DU, UTIL.SYS
 
 #############
@@ -181,6 +181,37 @@ class TMpktDef(object):
     nextBitPos1 = bitPos1 + bitWidth1
     nextBitPos2 = bitPos2 + bitWidth2
     return (nextBitPos1 > bitPos2 and nextBitPos2 > bitPos1)
+  # ---------------------------------------------------------------------------
+  def updateSPsize(self):
+    """updates the source packet size from parameter positions"""
+    totalBitEndPos = 0
+    # search the end position of all parameters
+    for paramName, paramToPacket in self.paramLinks.items():
+      paramDef = paramToPacket.paramDef
+      bitWidth = paramDef.bitWidth
+      locOffby = paramToPacket.locOffby
+      locOffbi =  paramToPacket.locOffbi
+      locNbocc = paramToPacket.locNbocc
+      locLgocc = paramToPacket.locLgocc
+      bitStartPos = locOffbi + (locOffby * 8)
+      for i in range(paramToPacket.locNbocc):
+        fieldName = paramDef.getCommutatedParamName(i)
+        bitPos = bitStartPos + (locLgocc * i)
+        bitEndPos = bitPos + bitWidth
+        if bitEndPos > totalBitEndPos:
+          totalBitEndPos = bitEndPos
+    # update source packet size
+    totalByteEndPos = (totalBitEndPos + 7) // 8
+    if self.pktCheck:
+      pktSPsize = totalByteEndPos + CCSDS.DU.CRC_BYTE_SIZE
+    else:
+      pktSPsize = totalByteEndPos
+    if self.pktSPsize < pktSPsize:
+      self.pktSPsize = pktSPsize
+    # update also other related attributes
+    self.pktSPDFsize = self.pktSPsize - CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE
+    if self.pktHasDFhdr:
+      self.pktSPDFdataSize = self.pktSPDFsize - self.pktDFHsize
   # ---------------------------------------------------------------------------
   def getParamExtraction(self, paramName):
     """returns a parameter extraction of a related parameters"""

@@ -583,10 +583,12 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     if len(argv) != 1:
       LOG_WARNING("invalid parameters passed", "SPACE")
       return False
-    # read the MIB 
+    # dump the packet definitions
     try:
       for tmPktDef in SPACE.IF.s_definitions.getTMpktDefs():
-        LOG(tmPktDef.pktName + " (SPID = " + str(tmPktDef.pktSPID) + ") - " + tmPktDef.pktDescr, "SPACE")
+        LOG("TM: " + tmPktDef.pktName + " (SPID = " + str(tmPktDef.pktSPID) + ") - " + tmPktDef.pktDescr, "SPACE")
+      for tcPktDef in SPACE.IF.s_definitions.getTCpktDefs():
+        LOG("TC: " + tcPktDef.pktName + " (APID = " + str(tcPktDef.pktAPID) + ", TYPE = " + str(tcPktDef.pktType) + ", STPYE = " + str(tcPktDef.pktSType) + ") - " + tcPktDef.pktDescr, "SPACE")
     except Exception as ex:
       LOG_ERROR("MIB Error: " + str(ex), "SPACE")
       return False
