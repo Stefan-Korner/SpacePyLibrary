@@ -122,7 +122,7 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
       dataFieldOffset, dataFieldData = dataField
       minExpectedPacketSize = dataFieldOffset + len(dataFieldData)
       if tmPktDef.pktCheck:
-        minExpectedPacketSize += 2
+        minExpectedPacketSize += CCSDS.DU.CRC_BYTE_SIZE
       # re-size the packet if needed
       if len(packet) < minExpectedPacketSize:
         packet.setLen(minExpectedPacketSize)

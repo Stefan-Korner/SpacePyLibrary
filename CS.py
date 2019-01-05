@@ -229,10 +229,12 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     if len(argv) != 1:
       LOG_WARNING("invalid parameters passed", "CFG")
       return False
-    # read the MIB 
+    # dump the packet definitions
     try:
+      for tmPktDef in SPACE.IF.s_definitions.getTMpktDefs():
+        LOG("TM: " + tmPktDef.pktName + " (SPID = " + str(tmPktDef.pktSPID) + ") - " + tmPktDef.pktDescr, "CFG")
       for tcPktDef in SPACE.IF.s_definitions.getTCpktDefs():
-        LOG(tcPktDef.pktName + " (" + str(tcPktDef.pktAPID) + "," + str(tcPktDef.pktType) + "," + str(tcPktDef.pktSType) + ") - " + tcPktDef.pktDescr, "CFG")
+        LOG("TC: " + tcPktDef.pktName + " (APID = " + str(tcPktDef.pktAPID) + ", TYPE = " + str(tcPktDef.pktType) + ", STPYE = " + str(tcPktDef.pktSType) + ") - " + tcPktDef.pktDescr, "CFG")
     except Exception, ex:
       LOG_ERROR("MIB Error: " + str(ex), "CFG")
       return False
