@@ -94,4 +94,3 @@ class Packetizer():
     """notifies when the next TM packet is assembled"""
     # shall be overloaded in derived class, default implementaion logs packet
     LOG("Packetizer.notifyTMpacketCallback" + UTIL.DU.array2str(binPacket))
-
