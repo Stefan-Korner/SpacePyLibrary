@@ -45,6 +45,10 @@ class Assembler():
     """finalize a telemetry frame with an idle packet"""
     pass
   # ---------------------------------------------------------------------------
+  def flushTMframeOrIdleFrame(self):
+    """finalize a telemetry frame with an idle packet or create an idle frame"""
+    pass
+  # ---------------------------------------------------------------------------
   def notifyTMframeCallback(self, binFrame):
     """notifies when the next TM frame is assembled"""
     # shall be overloaded in derived class, default implementaion logs frame
