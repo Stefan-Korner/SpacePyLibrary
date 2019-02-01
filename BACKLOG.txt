@@ -42,6 +42,10 @@ Backlog of features that shall be implemented
 
 029 Cleanup string and TCP buffer handling.
 
+030 Change initialization order in TMGEN when PUS packets are constructed.
+
+031 Support variable TM packets.
+
 --------------------------------- implemented ---------------------------------
 
 001 Remove the dependency to MIB files TPKTconnTable.dat, TPKTconfigTable.dat:
