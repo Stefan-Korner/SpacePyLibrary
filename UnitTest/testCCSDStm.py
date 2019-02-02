@@ -16,6 +16,7 @@
 from __future__ import print_function
 import testData
 import CCSDS.ASSEMBLER, CCSDS.FRAME, CCSDS.PACKET, CCSDS.PACKETIZER
+import UTIL.SYS
 
 ####################
 # global variables #
@@ -65,12 +66,27 @@ class Packetizer(CCSDS.PACKETIZER.Packetizer):
 #############
 # functions #
 #############
-def test_AssemblerPacketizer():
-  """function to test TM frame assembling and packetizing"""
-  global s_assembler, s_packetizer, s_tmBinFrame, s_tmBinPacket, s_tmIdleBinPacket
+# -----------------------------------------------------------------------------
+def initConfiguration():
+  """initialise the system configuration"""
+  UTIL.SYS.s_configuration.setDefaults([
+  ["SPACECRAFT_ID", "758"],
+  ["TM_VIRTUAL_CHANNEL_ID", "0"],
+  ["TM_TRANSFER_FRAME_SIZE", "1115"],
+  ["TM_TRANSFER_FRAME_HAS_SEC_HDR", "0"]])
+# -----------------------------------------------------------------------------
+def test_setup():
+  """setup the environment"""
+  global s_assembler, s_packetizer
+  # initialise the system configuration
+  initConfiguration()
   s_assembler = Assembler()
   s_packetizer = Packetizer()
-  # test 1: pass an idle frame through Assembler and Packetizer
+  return True
+# -----------------------------------------------------------------------------
+def test_idleFrame():
+  """pass an idle frame through Assembler and Packetizer"""
+  global s_assembler, s_packetizer, s_tmBinFrame, s_tmBinPacket, s_tmIdleBinPacket
   s_tmBinFrame = None
   s_tmBinPacket = None
   s_tmIdleBinPacket = None
@@ -89,9 +105,15 @@ def test_AssemblerPacketizer():
   if s_tmIdleBinPacket != None:
     print("unexpected idle packet passed via idle frame")
     return False
-  # test 2: pass a single packet through Assembler and Packetizer
-  tmPacket = CCSDS.PACKET.TMpacket(testData.TM_PACKET_01)
+  return True
+# -----------------------------------------------------------------------------
+def test_singlePacket():
+  """pass a single packet through Assembler and Packetizer"""
+  global s_assembler, s_packetizer, s_tmBinFrame, s_tmBinPacket, s_tmIdleBinPacket
   s_tmBinFrame = None
+  s_tmBinPacket = None
+  s_tmIdleBinPacket = None
+  tmPacket = CCSDS.PACKET.TMpacket(testData.TM_PACKET_01)
   s_assembler.pushTMpacket(tmPacket.getBuffer())
   if s_tmBinFrame != None:
     print("unexpected frame passed")
@@ -126,6 +148,12 @@ def test_AssemblerPacketizer():
 # main #
 ########
 if __name__ == "__main__":
-  print("***** test_AssemblerPacketizer() start")
-  retVal = test_AssemblerPacketizer()
-  print("***** test_AssemblerPacketizer() done:", retVal)
+  print("***** test_setup() start")
+  retVal = test_setup()
+  print("***** test_setup() done:", retVal)
+  print("***** test_idleFrame() start")
+  retVal = test_idleFrame()
+  print("***** test_idleFrame() done:", retVal)
+  print("***** test_singlePacket() start")
+  retVal = test_singlePacket()
+  print("***** test_singlePacket() done:", retVal)
