@@ -92,8 +92,7 @@ class Assembler():
   # ---------------------------------------------------------------------------
   def __init__(self):
     """default constructor"""
-    #self.pendingFrame = None
-    self.pendingBinPacket = None
+    self.pendingFrame = None
     self.idlePacketSequenceCounter = 0
     self.masterChannelFrameCount = 0
     self.virtualChannelFrameCount = 0
@@ -137,32 +136,25 @@ class Assembler():
     return (self.pendingFrame != None)
   # ---------------------------------------------------------------------------
   def pushTMpacket(self, binPacket):
-    """consumes a telemetry packet"""
     # TODO: replace the code with the correct spillover packet implementation
-    self.pendingBinPacket = binPacket
-  # ---------------------------------------------------------------------------
-  def flushTMframe(self):
-    """finalize a telemetry frame with an idle packet"""
-    # TODO: replace the code with the correct spillover packet implementation
-    if self.pendingBinPacket == None:
+    if self.pendingFrame != None:
+      LOG_ERROR("Multiple TM packets in frame not supported")
       return
-    # create the idle packet
-    reservedFrameDataSize = CCSDS.FRAME.TM_FRAME_PRIMARY_HEADER_BYTE_SIZE + \
-                            len(self.pendingBinPacket) + \
-                            CCSDS.FRAME.CLCW_BYTE_SIZE
-    enableSecondaryHeader = (self.frameDefaults.secondaryHeaderFlag == 1)
-    if enableSecondaryHeader:
-      reservedFrameDataSize += CCSDS.FRAME.TM_FRAME_SECONDARY_HEADER_BYTE_SIZE
-    if CCSDS.FRAME.CRC_CHECK:
-      reservedFrameDataSize += 2
-    remainingFrameDataSize = self.frameDefaults.transferFrameSize - \
-                             reservedFrameDataSize
+    self.createPendingFrame()
+    remainingFrameDataSize = self.remainingFrameDataSize(len(binPacket))
     if remainingFrameDataSize < 0:
       # TM packet does not fit into the frame
       # ---> an exception must be raised as long as
       #      TM packet segmentation is not implemeted
       raise Error("TM packet does not fit into transfer frame")
-    # create the transfer frame
+    self.pendingFrame.append(binPacket)
+  # ---------------------------------------------------------------------------
+  def createPendingFrame(self):
+    """
+    creates the TM frames only with the headers
+    packet or packet fragments are appended later
+    """
+    enableSecondaryHeader = (self.frameDefaults.secondaryHeaderFlag == 1)
     tmFrame = CCSDS.FRAME.TMframe(enableSecondaryHeader=enableSecondaryHeader)
     tmFrame.versionNumber = self.frameDefaults.versionNumber
     tmFrame.spacecraftId = self.frameDefaults.spacecraftId
@@ -183,17 +175,42 @@ class Assembler():
       tmFrame.secondaryHeaderVersionNr = self.frameDefaults.secondaryHeaderVersionNr
       tmFrame.secondaryHeaderSize = self.frameDefaults.secondaryHeaderSize
       tmFrame.virtualChannelFCountHigh = self.frameDefaults.virtualChannelFCountHigh
-    tmFrame.append(self.pendingBinPacket)
-    if remainingFrameDataSize != 0:
-      # create idle packet
-      tmIdlePacket = self.getIdlePacket(remainingFrameDataSize)
-      tmFrame.append(tmIdlePacket.getBufferString())
-    tmFrame.append(self.clcw.getBufferString())
+    self.pendingFrame = tmFrame
+  # ---------------------------------------------------------------------------
+  def remainingFrameDataSize(self, nextPacketSize):
+    """checks if a packet can be added to the pending frame"""
+    # TODO: replace the code with the correct spillover packet implementation
+    reservedFrameDataSize = CCSDS.FRAME.TM_FRAME_PRIMARY_HEADER_BYTE_SIZE + \
+                            nextPacketSize + \
+                            CCSDS.FRAME.CLCW_BYTE_SIZE
+    if self.pendingFrame.secondaryHeaderFlag == 1:
+      reservedFrameDataSize += CCSDS.FRAME.TM_FRAME_SECONDARY_HEADER_BYTE_SIZE
     if CCSDS.FRAME.CRC_CHECK:
-      tmFrame.append("\0" * CCSDS.DU.CRC_BYTE_SIZE)
-      tmFrame.setChecksum()
-    self.notifyTMframeCallback(tmFrame.getBuffer())
-    self.tmFrame = None
+      reservedFrameDataSize += CCSDS.FRAME.CRC_BYTE_SIZE
+    return self.frameDefaults.transferFrameSize - reservedFrameDataSize
+  # ---------------------------------------------------------------------------
+  def flushTMframe(self):
+    """finalize a telemetry frame with an idle packet"""
+    if self.pendingFrame == None:
+      return
+    # append idle packet
+    remainingFrameDataSize = self.frameDefaults.transferFrameSize - \
+                             len(self.pendingFrame)
+    idlePacketSize = remainingFrameDataSize - CCSDS.FRAME.CLCW_BYTE_SIZE
+    if CCSDS.FRAME.CRC_CHECK:
+      idlePacketSize -= CCSDS.FRAME.CRC_BYTE_SIZE
+    if idlePacketSize > 0:
+      tmIdlePacket = self.getIdlePacket(remainingFrameDataSize)
+      self.pendingFrame.append(tmIdlePacket.getBufferString())
+    # append CLCW
+    self.pendingFrame.append(self.clcw.getBufferString())
+    # append CRC
+    if CCSDS.FRAME.CRC_CHECK:
+      self.pendingFrame.append("\0" * CCSDS.DU.CRC_BYTE_SIZE)
+      self.pendingFrame.setChecksum()
+    # frame complete
+    self.notifyTMframeCallback(self.pendingFrame.getBuffer())
+    self.pendingFrame = None
   # ---------------------------------------------------------------------------
   def getIdlePacket(self, packetSize):
     """creates an idle packet for filling space in the frame"""
