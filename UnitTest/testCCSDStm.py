@@ -93,6 +93,9 @@ def test_idleFrame():
   if s_tmBinFrame == None:
     print("expected idle frame missing")
     return False
+  if len(s_tmBinFrame) != s_assembler.frameDefaults.transferFrameSize:
+    print("expected idle frame has invalid size: " + str(len(s_tmBinFrame)))
+    return False
   tmFrame = CCSDS.FRAME.TMframe(s_tmBinFrame)
   firstHeaderPointer = tmFrame.firstHeaderPointer
   if firstHeaderPointer != CCSDS.FRAME.IDLE_FRAME_PATTERN:
@@ -126,6 +129,9 @@ def test_singlePacket():
   s_assembler.flushTMframe()
   if s_tmBinFrame == None:
     print("expected frame missing")
+    return False
+  if len(s_tmBinFrame) != s_assembler.frameDefaults.transferFrameSize:
+    print("expected frame has invalid size: " + str(len(s_tmBinFrame)))
     return False
   if s_tmBinPacket == None:
     print("expected packet missing")

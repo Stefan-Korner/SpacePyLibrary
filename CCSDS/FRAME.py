@@ -20,7 +20,6 @@ import CCSDS.DU, CCSDS.PACKET
 # constants #
 #############
 CRC_CHECK = True
-CRC_BYTE_SIZE = 2
 IDLE_FRAME_PATTERN = 0x07FE
 NO_FIRST_PACKET_PATTERN = 0x07FF
 
@@ -124,7 +123,7 @@ class TMframe(CCSDS.DU.DataUnit):
     # calculate data field stop position
     dataFieldStopBytePos = len(self)
     if CRC_CHECK:
-      dataFieldStopBytePos -= CRC_BYTE_SIZE
+      dataFieldStopBytePos -= CCSDS.DU.CRC_BYTE_SIZE
     if self.operationalControlField == 1:
       dataFieldStopBytePos -= CLCW_BYTE_SIZE
     # default initializations
