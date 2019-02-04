@@ -20,12 +20,30 @@ import UTIL.CRC, testData
 #############
 def test_CRCoperation():
   """function to test the CRC calculation"""
+  crc = UTIL.CRC.calculate(testData.TM_PACKET_02[:-2])
+  expectedCrc = (0x0100 * testData.TM_PACKET_02[-2]) + testData.TM_PACKET_02[-1]
+  if crc != expectedCrc:
+    print("CRC", ("%04X" % crc), "does not match the expected one: ", ("%04X" % expectedCrc))
+    return False
+  print("CRC =", ("%04X" % crc), " ---> OK")
+
+  crc = UTIL.CRC.calculate(testData.TM_PACKET_03[:-2])
+  expectedCrc = (0x0100 * testData.TM_PACKET_03[-2]) + testData.TM_PACKET_03[-1]
+  if crc != expectedCrc:
+    print("CRC", ("%04X" % crc), "does not match the expected one: ", ("%04X" % expectedCrc))
+    return False
+  print("CRC =", ("%04X" % crc), " ---> OK")
+
   crc = UTIL.CRC.calculate(testData.TC_PACKET_01[:-2])
   expectedCrc = (0x0100 * testData.TC_PACKET_01[-2]) + testData.TC_PACKET_01[-1]
   if crc != expectedCrc:
     print("CRC", ("%04X" % crc), "does not match the expected one: ", ("%04X" % expectedCrc))
     return False
   print("CRC =", ("%04X" % crc), " ---> OK")
+
+
+
+
   crc = UTIL.CRC.calculate(testData.TC_FRAME_01[:-2])
   expectedCrc = (0x0100 * testData.TC_FRAME_01[-2]) + testData.TC_FRAME_01[-1]
   if crc != expectedCrc:

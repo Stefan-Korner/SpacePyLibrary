@@ -206,7 +206,7 @@ class Assembler():
   # ---------------------------------------------------------------------------
   def emptyFrameFreeSpace(self):
     """free space of an empty frame, considers a CRC"""
-    usedSpace = TM_FRAME_PRIMARY_HEADER_BYTE_SIZE + CCSDS.FRAME.CLCW_BYTE_SIZE
+    usedSpace = CCSDS.FRAME.TM_FRAME_PRIMARY_HEADER_BYTE_SIZE + CCSDS.FRAME.CLCW_BYTE_SIZE
     if self.frameDefaults.secondaryHeaderFlag == 1:
       usedSpace += CCSDS.FRAME.TM_FRAME_SECONDARY_HEADER_BYTE_SIZE
     if CCSDS.FRAME.CRC_CHECK:
