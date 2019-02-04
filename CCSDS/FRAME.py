@@ -154,11 +154,13 @@ class TMframe(CCSDS.DU.DataUnit):
       packetSize = CCSDS.PACKET.getPacketSize(packetsField, nextPacketBytePos)
       remainingPacketSize = packetsFieldSize - nextPacketBytePos
       if packetSize > remainingPacketSize:
-        trailingFragment = packetsField[nextPacketBytePos:remainingPacketSize]
+        trailingFragmentEndPos = nextPacketBytePos + remainingPacketSize
+        trailingFragment = packetsField[nextPacketBytePos:trailingFragmentEndPos]
         break
-      nextPacket = packetsField[nextPacketBytePos:packetSize]
+      nextPacketEndPos = nextPacketBytePos + packetSize
+      nextPacket = packetsField[nextPacketBytePos:nextPacketEndPos]
       packets.append(nextPacket)
-      nextPacketBytePos += packetSize
+      nextPacketBytePos = nextPacketEndPos
     # packet extraction finished
     return (leadingFragment, packets, trailingFragment)
 

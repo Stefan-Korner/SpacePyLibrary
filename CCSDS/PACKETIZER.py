@@ -83,7 +83,7 @@ class Packetizer():
     if trailingFragment:
       expectedPacketSize = CCSDS.PACKET.getPacketSize(trailingFragment)
       # consistency check
-      if len(trailingFragment) >= 0 or expectedPacketSize:
+      if len(trailingFragment) >= expectedPacketSize:
         LOG_ERROR("invalid TM packet fragment size at TM frame end")
         self.reset()
       else:
