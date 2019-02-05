@@ -22,6 +22,7 @@ import PUS.PACKET
 #############
 def test_PACKET_DUoperations():
   """function to test the PUS packets"""
+  # default TM packet
   tmPacket = CCSDS.PACKET.TMpacket()
   print("tmPacket =", tmPacket)
   print("")
@@ -98,9 +99,87 @@ def test_PACKET_DUoperations():
   if not tmPusPacket2.checkChecksum():
     print("tmPusPacket2 has invalid checksum")
     return False
+  # TM_PACKET_03 has a checksum
+  tmPusPacket3 = PUS.PACKET.TMpacket(testData.TM_PACKET_03)
+  if tmPusPacket3.versionNumber != testData.TM_PACKET_03_versionNumber:
+    print("tmPusPacket3 versionNumber wrong:", tmPusPacket3.versionNumber, "- should be", testData.TM_PACKET_03_versionNumber)
+    return False
+  if tmPusPacket3.packetType != testData.TM_PACKET_03_packetType:
+    print("tmPusPacket3 packetType wrong:", tmPusPacket3.packetType, "- should be", testData.TM_PACKET_03_packetType)
+    return False
+  if tmPusPacket3.dataFieldHeaderFlag != testData.TM_PACKET_03_dataFieldHeaderFlag:
+    print("tmPusPacket3 dataFieldHeaderFlag wrong:", tmPusPacket3.dataFieldHeaderFlag, "- should be", testData.TM_PACKET_03_dataFieldHeaderFlag)
+    return False
+  if tmPusPacket3.applicationProcessId != testData.TM_PACKET_03_applicationProcessId:
+    print("tmPusPacket3 applicationProcessId wrong:", tmPusPacket3.applicationProcessId, "- should be", testData.TM_PACKET_03_applicationProcessId)
+    return False
+  if tmPusPacket3.segmentationFlags != testData.TM_PACKET_03_segmentationFlags:
+    print("tmPusPacket3 segmentationFlags wrong:", tmPusPacket3.segmentationFlags, "- should be", testData.TM_PACKET_03_segmentationFlags)
+    return False
+  if tmPusPacket3.sequenceControlCount != testData.TM_PACKET_03_sequenceControlCount:
+    print("tmPusPacket3 sequenceControlCount wrong:", tmPusPacket3.sequenceControlCount, "- should be", testData.TM_PACKET_03_sequenceControlCount)
+    return False
+  if tmPusPacket3.packetLength != testData.TM_PACKET_03_packetLength:
+    print("tmPusPacket3 packetLength wrong:", tmPusPacket3.packetLength, "- should be", testData.TM_PACKET_03_packetLength)
+    return False
+  if tmPusPacket3.pusVersionNumber != testData.TM_PACKET_03_pusVersionNumber:
+    print("tmPusPacket3 pusVersionNumber wrong:", tmPusPacket3.pusVersionNumber, "- should be", testData.TM_PACKET_03_pusVersionNumber)
+    return False
+  if tmPusPacket3.serviceType != testData.TM_PACKET_03_serviceType:
+    print("tmPusPacket3 serviceType wrong:", tmPusPacket3.serviceType, "- should be", testData.TM_PACKET_03_serviceType)
+    return False
+  if tmPusPacket3.serviceSubType != testData.TM_PACKET_03_serviceSubType:
+    print("tmPusPacket3 serviceSubType wrong:", tmPusPacket3.serviceSubType, "- should be", testData.TM_PACKET_03_serviceSubType)
+    return False
+  if not tmPusPacket3.checkPacketLength():
+    print("tmPusPacket3 has inconsistent packetLength")
+    return False
+  if not tmPusPacket3.checkChecksum():
+    print("tmPusPacket3 has invalid checksum")
+    return False
+  # TM_PACKET_04 has a checksum
+  tmPusPacket4 = PUS.PACKET.TMpacket(testData.TM_PACKET_04)
+  if tmPusPacket4.versionNumber != testData.TM_PACKET_04_versionNumber:
+    print("tmPusPacket4 versionNumber wrong:", tmPusPacket4.versionNumber, "- should be", testData.TM_PACKET_04_versionNumber)
+    return False
+  if tmPusPacket4.packetType != testData.TM_PACKET_04_packetType:
+    print("tmPusPacket4 packetType wrong:", tmPusPacket4.packetType, "- should be", testData.TM_PACKET_04_packetType)
+    return False
+  if tmPusPacket4.dataFieldHeaderFlag != testData.TM_PACKET_04_dataFieldHeaderFlag:
+    print("tmPusPacket4 dataFieldHeaderFlag wrong:", tmPusPacket4.dataFieldHeaderFlag, "- should be", testData.TM_PACKET_04_dataFieldHeaderFlag)
+    return False
+  if tmPusPacket4.applicationProcessId != testData.TM_PACKET_04_applicationProcessId:
+    print("tmPusPacket4 applicationProcessId wrong:", tmPusPacket4.applicationProcessId, "- should be", testData.TM_PACKET_04_applicationProcessId)
+    return False
+  if tmPusPacket4.segmentationFlags != testData.TM_PACKET_04_segmentationFlags:
+    print("tmPusPacket4 segmentationFlags wrong:", tmPusPacket4.segmentationFlags, "- should be", testData.TM_PACKET_04_segmentationFlags)
+    return False
+  if tmPusPacket4.sequenceControlCount != testData.TM_PACKET_04_sequenceControlCount:
+    print("tmPusPacket4 sequenceControlCount wrong:", tmPusPacket4.sequenceControlCount, "- should be", testData.TM_PACKET_04_sequenceControlCount)
+    return False
+  if tmPusPacket4.packetLength != testData.TM_PACKET_04_packetLength:
+    print("tmPusPacket4 packetLength wrong:", tmPusPacket4.packetLength, "- should be", testData.TM_PACKET_04_packetLength)
+    return False
+  if tmPusPacket4.pusVersionNumber != testData.TM_PACKET_04_pusVersionNumber:
+    print("tmPusPacket4 pusVersionNumber wrong:", tmPusPacket4.pusVersionNumber, "- should be", testData.TM_PACKET_04_pusVersionNumber)
+    return False
+  if tmPusPacket4.serviceType != testData.TM_PACKET_04_serviceType:
+    print("tmPusPacket4 serviceType wrong:", tmPusPacket4.serviceType, "- should be", testData.TM_PACKET_04_serviceType)
+    return False
+  if tmPusPacket4.serviceSubType != testData.TM_PACKET_04_serviceSubType:
+    print("tmPusPacket4 serviceSubType wrong:", tmPusPacket4.serviceSubType, "- should be", testData.TM_PACKET_04_serviceSubType)
+    return False
+  if not tmPusPacket4.checkPacketLength():
+    print("tmPusPacket4 has inconsistent packetLength")
+    return False
+  if not tmPusPacket4.checkChecksum():
+    print("tmPusPacket4 has invalid checksum")
+    return False
+  # default TC packet
   tcPacket = CCSDS.PACKET.TCpacket()
   print("tcPacket =", tcPacket)
   print("")
+  # TC_PACKET_01 has a checksum
   tcPusPacket = PUS.PACKET.TCpacket(testData.TC_PACKET_01)
   if tcPusPacket.versionNumber != testData.TC_PACKET_01_versionNumber:
     print("tcPusPacket versionNumber wrong:", tcPusPacket.versionNumber, "- should be", testData.TC_PACKET_01_versionNumber)
