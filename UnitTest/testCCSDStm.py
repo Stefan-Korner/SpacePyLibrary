@@ -249,6 +249,60 @@ def test_spilloverPacket():
     print("idle packet corrupted during frame assembling and packetizing")
     return False
   return True
+# -----------------------------------------------------------------------------
+def test_spillover2Frames():
+  """pass 5 packets to force a spillover packet"""
+  global s_assembler, s_packetizer, s_tmBinFrames, s_tmBinPackets
+  s_tmBinFrames = []
+  s_tmBinPackets = []
+  tm1Packet = CCSDS.PACKET.TMpacket(testData.TM_PACKET_02)
+  s_assembler.pushTMpacket(tm1Packet.getBuffer())
+  if len(s_tmBinFrames) != 0:
+    print("invalid number of frames")
+    return False
+  if len(s_tmBinPackets) != 0:
+    print("invalid number of packets")
+    return False
+  tm2Packet = CCSDS.PACKET.TMpacket(testData.TM_PACKET_04)
+  s_assembler.pushTMpacket(tm2Packet.getBuffer())
+  if len(s_tmBinFrames) != 2:
+    print("invalid number of frames")
+    return False
+  if len(s_tmBinPackets) != 1:
+    print("invalid number of packets")
+    return False
+  s_assembler.flushTMframe()
+  if len(s_tmBinFrames) != 3:
+    print("invalid number of frames")
+    return False
+  if len(s_tmBinPackets) != 3:
+    print("invalid number of packets")
+    return False
+  binFrame = s_tmBinFrames[0]
+  if len(binFrame) != s_assembler.frameDefaults.transferFrameSize:
+    print("expected frame 1 has invalid size: " + str(len(binFrame)))
+    return False
+  binFrame = s_tmBinFrames[1]
+  if len(binFrame) != s_assembler.frameDefaults.transferFrameSize:
+    print("expected frame 2 has invalid size: " + str(len(binFrame)))
+    return False
+  binFrame = s_tmBinFrames[2]
+  if len(binFrame) != s_assembler.frameDefaults.transferFrameSize:
+    print("expected frame 3 has invalid size: " + str(len(binFrame)))
+    return False
+  receivedTmPacket = CCSDS.PACKET.TMpacket(s_tmBinPackets[0])
+  if receivedTmPacket != tm1Packet:
+    print("packet 1 corrupted during frame assembling and packetizing")
+    return False
+  receivedTmPacket = CCSDS.PACKET.TMpacket(s_tmBinPackets[1])
+  if receivedTmPacket != tm2Packet:
+    print("packet 2 corrupted during frame assembling and packetizing")
+    return False
+  receivedTmPacket = CCSDS.PACKET.TMpacket(s_tmBinPackets[2])
+  if receivedTmPacket.applicationProcessId != CCSDS.PACKET.IDLE_PKT_APID:
+    print("idle packet corrupted during frame assembling and packetizing")
+    return False
+  return True
 
 ########
 # main #
@@ -269,3 +323,6 @@ if __name__ == "__main__":
   print("***** test_spilloverPacket() start")
   retVal = test_spilloverPacket()
   print("***** test_spilloverPacket() done:", retVal)
+  print("***** test_spillover2Frames() start")
+  retVal = test_spillover2Frames()
+  print("***** test_spillover2Frames() done:", retVal)

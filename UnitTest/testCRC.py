@@ -35,6 +35,13 @@ def test_CRCoperation():
     return False
   print("CRC =", ("%04X" % crc), " ---> OK")
 
+  crc = UTIL.CRC.calculate(testData.TM_PACKET_04[:-2])
+  expectedCrc = (0x0100 * testData.TM_PACKET_04[-2]) + testData.TM_PACKET_04[-1]
+  if crc != expectedCrc:
+    print("CRC", ("%04X" % crc), "does not match the expected one: ", ("%04X" % expectedCrc))
+    return False
+  print("CRC =", ("%04X" % crc), " ---> OK")
+
   crc = UTIL.CRC.calculate(testData.TC_PACKET_01[:-2])
   expectedCrc = (0x0100 * testData.TC_PACKET_01[-2]) + testData.TC_PACKET_01[-1]
   if crc != expectedCrc:
