@@ -21,6 +21,7 @@ import CCSDS.DU
 #############
 TM_PACKET_TYPE = 0
 TC_PACKET_TYPE = 1
+PACKET_MIN_BYTE_SIZE = 7
 MIN_DATA_FIELD_BYTE_SIZE = 0x0000 + 1
 MAX_DATA_FIELD_BYTE_SIZE = 0xFFFF + 1
 IDLE_PKT_APID = 2047
@@ -71,6 +72,24 @@ def getPacketLength(binaryString, startPos=0):
 def getPacketSize(binaryString, startPos=0):
   """returns the packet size derived from the packet length field"""
   return (getPacketLength(binaryString, startPos) + 7)
+# -----------------------------------------------------------------------------
+def createIdlePacket(packetByteSize=PACKET_MIN_BYTE_SIZE):
+  """creates an idle packet for filling space in the frame"""
+  # the idle packet is a TM packet without a secondary header (CCSDS)
+  # and zeros in the data field and 0 in the sequence counter
+  minimumSize = PACKET_MIN_BYTE_SIZE
+  if packetByteSize < PACKET_MIN_BYTE_SIZE:
+    raise ValueError("binary size too small, must be >= " + str(PACKET_MIN_BYTE_SIZE))
+  binaryString = "\0" * packetByteSize
+  idlePacket = CCSDS.PACKET.TMpacket(binaryString)
+  idlePacket.packetType = CCSDS.PACKET.TM_PACKET_TYPE
+  idlePacket.setPacketLength()
+  idlePacket.versionNumber = 0
+  idlePacket.dataFieldHeaderFlag = 0
+  idlePacket.segmentationFlags = CCSDS.PACKET.UNSEGMENTED
+  idlePacket.applicationProcessId = CCSDS.PACKET.IDLE_PKT_APID
+  idlePacket.sequenceControlCount = 0
+  return idlePacket
 
 ###########
 # classes #

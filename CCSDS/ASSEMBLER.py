@@ -78,26 +78,15 @@ class CLCWdefaults(object):
     self.reportValue = 0
 
 # =============================================================================
-class IdlePacketDefaults(object):
-  """Default values for IDLE packet creation"""
-  # ---------------------------------------------------------------------------
-  def __init__(self):
-    """default constructor"""
-    # PUS packets already have these defaults
-    self.ccsdsPacketVersionNumber = 0
-
-# =============================================================================
 class Assembler():
   """Converter from TM packets to TM frames"""
   # ---------------------------------------------------------------------------
   def __init__(self):
     """default constructor"""
     self.pendingFrame = None
-    self.idlePacketSequenceCounter = 0
     self.masterChannelFrameCount = 0
     self.virtualChannelFrameCount = 0
     self.frameDefaults = TMframeDefaults()
-    self.idlePacketDefaults = IdlePacketDefaults()
     self.initCLCW()
   # ---------------------------------------------------------------------------
   def initCLCW(self):
@@ -141,8 +130,7 @@ class Assembler():
     binPacketLen = len(binPacket)
     # insert small IDLE packets until the TM packet can be inserted
     while self.idlePacketMustBeInserted(binPacketLen):
-      idlePacket = self.getIdlePacket(CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE +
-                                      CCSDS.DU.CRC_BYTE_SIZE)
+      idlePacket = CCSDS.PACKET.createIdlePacket()
       self.pendingFrame.append(idlePacket.getBufferString())
     # add the TM packet directly or the first fragment
     freeSpace = self.pendingFrameFreeSpace()
@@ -238,31 +226,6 @@ class Assembler():
     lastFrameFreeSpace = emptyFrameFreeSpace - lastFragmentSize
     return lastFrameFreeSpace < CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE
   # ---------------------------------------------------------------------------
-  def getIdlePacket(self, packetSize):
-    """creates an idle packet for filling space in the frame"""
-    # note: there is a similar code in SPACE.TMGEN
-    # the idle packet is a TM packet without a secondary header (CCSDS)
-    # but with a CRC (if an application expects a CRC)
-    if packetSize < (CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE + CCSDS.DU.CRC_BYTE_SIZE):
-      raise Error("no sufficient space for idle packet")
-    minimumSize = CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE
-    if packetSize < minimumSize:
-      raise ValueError("binary size too small, must be >= " + str(minimumSize))
-    binaryString = "\0" * packetSize
-    idlePacket = CCSDS.PACKET.TMpacket(binaryString)
-    idlePacket.packetType = CCSDS.PACKET.TM_PACKET_TYPE
-    idlePacket.setPacketLength()
-    idlePacket.versionNumber = self.idlePacketDefaults.ccsdsPacketVersionNumber
-    idlePacket.dataFieldHeaderFlag = 0
-    idlePacket.segmentationFlags = CCSDS.PACKET.UNSEGMENTED
-    idlePacket.applicationProcessId = CCSDS.PACKET.IDLE_PKT_APID
-    # re-calculate the sequence counter
-    self.idlePacketSequenceCounter = (self.idlePacketSequenceCounter + 1) % 16384
-    idlePacket.sequenceControlCount = self.idlePacketSequenceCounter
-    # re-calculate the CRC
-    idlePacket.setChecksum()
-    return idlePacket
-  # ---------------------------------------------------------------------------
   def flushTMframe(self):
     """finalize a telemetry frame with an idle packet"""
     if self.pendingFrame == None:
@@ -270,7 +233,7 @@ class Assembler():
     # append idle packet
     idlePacketSize = self.pendingFrameFreeSpace()
     if idlePacketSize > 0:
-      tmIdlePacket = self.getIdlePacket(idlePacketSize)
+      tmIdlePacket = CCSDS.PACKET.createIdlePacket(idlePacketSize)
       self.pendingFrame.append(tmIdlePacket.getBufferString())
     # append CLCW
     self.pendingFrame.append(self.clcw.getBufferString())
