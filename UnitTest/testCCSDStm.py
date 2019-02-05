@@ -68,7 +68,8 @@ def initConfiguration():
   ["SPACECRAFT_ID", "758"],
   ["TM_VIRTUAL_CHANNEL_ID", "0"],
   ["TM_TRANSFER_FRAME_SIZE", "1115"],
-  ["TM_TRANSFER_FRAME_HAS_SEC_HDR", "0"]])
+  ["TM_TRANSFER_FRAME_HAS_SEC_HDR", "0"],
+  ["TM_TRANSFER_FRAME_HAS_N_PKTS", "0"]])
 # -----------------------------------------------------------------------------
 def test_setup():
   """setup the environment"""
@@ -82,6 +83,8 @@ def test_setup():
 def test_idleFrame():
   """pass an idle frame through Assembler and Packetizer"""
   global s_assembler, s_packetizer, s_tmBinFrames, s_tmBinPackets
+  s_assembler.reset()
+  s_packetizer.reset()
   s_tmBinFrames = []
   s_tmBinPackets = []
   s_assembler.flushTMframeOrIdleFrame()
@@ -102,9 +105,100 @@ def test_idleFrame():
     return False
   return True
 # -----------------------------------------------------------------------------
-def test_singlePacket():
+def test_singlePacket_1():
   """pass a single packet through Assembler and Packetizer"""
+  # multiPacketMode = False
   global s_assembler, s_packetizer, s_tmBinFrames, s_tmBinPackets
+  s_assembler.reset()
+  s_packetizer.reset()
+  s_tmBinFrames = []
+  s_tmBinPackets = []
+  tmPacket = CCSDS.PACKET.TMpacket(testData.TM_PACKET_01)
+  s_assembler.pushTMpacket(tmPacket.getBuffer())
+  if len(s_tmBinFrames) != 1:
+    print("invalid number of frames")
+    return False
+  if len(s_tmBinPackets) != 2:
+    print("invalid number of packets")
+    return False
+  s_assembler.flushTMframe()
+  if len(s_tmBinFrames) != 1:
+    print("invalid number of frames")
+    return False
+  if len(s_tmBinPackets) != 2:
+    print("invalid number of packets")
+    return False
+  binFrame = s_tmBinFrames[0]
+  if len(binFrame) != s_assembler.frameDefaults.transferFrameSize:
+    print("expected frame has invalid size: " + str(len(binFrame)))
+    return False
+  receivedTmPacket = CCSDS.PACKET.TMpacket(s_tmBinPackets[0])
+  if receivedTmPacket != tmPacket:
+    print("packet corrupted during frame assembling and packetizing")
+    return False
+  receivedTmPacket = CCSDS.PACKET.TMpacket(s_tmBinPackets[1])
+  if receivedTmPacket.applicationProcessId != CCSDS.PACKET.IDLE_PKT_APID:
+    print("idle packet corrupted during frame assembling and packetizing")
+    return False
+  return True
+# -----------------------------------------------------------------------------
+def test_doublePacket_1():
+  """pass 2 packets through Assembler and Packetizer"""
+  # multiPacketMode = False
+  global s_assembler, s_packetizer, s_tmBinFrames, s_tmBinPackets
+  s_assembler.reset()
+  s_packetizer.reset()
+  s_tmBinFrames = []
+  s_tmBinPackets = []
+  tm1Packet = CCSDS.PACKET.TMpacket(testData.TM_PACKET_01)
+  s_assembler.pushTMpacket(tm1Packet.getBuffer())
+  tm2Packet = CCSDS.PACKET.TMpacket(testData.TM_PACKET_02)
+  s_assembler.pushTMpacket(tm2Packet.getBuffer())
+  if len(s_tmBinFrames) != 2:
+    print("invalid number of frames")
+    return False
+  if len(s_tmBinPackets) != 4:
+    print("invalid number of packets")
+    return False
+  s_assembler.flushTMframe()
+  if len(s_tmBinFrames) != 2:
+    print("invalid number of frames")
+    return False
+  if len(s_tmBinPackets) != 4:
+    print("invalid number of packets")
+    return False
+  binFrame = s_tmBinFrames[0]
+  if len(binFrame) != s_assembler.frameDefaults.transferFrameSize:
+    print("expected frame 1 has invalid size: " + str(len(binFrame)))
+    return False
+  binFrame = s_tmBinFrames[1]
+  if len(binFrame) != s_assembler.frameDefaults.transferFrameSize:
+    print("expected frame 2 has invalid size: " + str(len(binFrame)))
+    return False
+  receivedTmPacket = CCSDS.PACKET.TMpacket(s_tmBinPackets[0])
+  if receivedTmPacket != tm1Packet:
+    print("packet 1 corrupted during frame assembling and packetizing")
+    return False
+  receivedTmPacket = CCSDS.PACKET.TMpacket(s_tmBinPackets[1])
+  if receivedTmPacket.applicationProcessId != CCSDS.PACKET.IDLE_PKT_APID:
+    print("idle packet 1 corrupted during frame assembling and packetizing")
+    return False
+  receivedTmPacket = CCSDS.PACKET.TMpacket(s_tmBinPackets[2])
+  if receivedTmPacket != tm2Packet:
+    print("packet 2 corrupted during frame assembling and packetizing")
+    return False
+  receivedTmPacket = CCSDS.PACKET.TMpacket(s_tmBinPackets[3])
+  if receivedTmPacket.applicationProcessId != CCSDS.PACKET.IDLE_PKT_APID:
+    print("idle packet 2 corrupted during frame assembling and packetizing")
+    return False
+  return True
+# -----------------------------------------------------------------------------
+def test_singlePacket_n():
+  """pass a single packet through Assembler and Packetizer"""
+  # multiPacketMode = True
+  global s_assembler, s_packetizer, s_tmBinFrames, s_tmBinPackets
+  s_assembler.reset()
+  s_packetizer.reset()
   s_tmBinFrames = []
   s_tmBinPackets = []
   tmPacket = CCSDS.PACKET.TMpacket(testData.TM_PACKET_01)
@@ -136,9 +230,12 @@ def test_singlePacket():
     return False
   return True
 # -----------------------------------------------------------------------------
-def test_doublePacket():
+def test_doublePacket_n():
   """pass 2 packets through Assembler and Packetizer"""
+  # multiPacketMode = True
   global s_assembler, s_packetizer, s_tmBinFrames, s_tmBinPackets
+  s_assembler.reset()
+  s_packetizer.reset()
   s_tmBinFrames = []
   s_tmBinPackets = []
   tm1Packet = CCSDS.PACKET.TMpacket(testData.TM_PACKET_01)
@@ -179,6 +276,8 @@ def test_doublePacket():
 def test_spilloverPacket():
   """pass 5 packets to force a spillover packet"""
   global s_assembler, s_packetizer, s_tmBinFrames, s_tmBinPackets
+  s_assembler.reset()
+  s_packetizer.reset()
   s_tmBinFrames = []
   s_tmBinPackets = []
   tm1Packet = CCSDS.PACKET.TMpacket(testData.TM_PACKET_01)
@@ -253,6 +352,8 @@ def test_spilloverPacket():
 def test_spillover2Frames():
   """pass 5 packets to force a spillover packet"""
   global s_assembler, s_packetizer, s_tmBinFrames, s_tmBinPackets
+  s_assembler.reset()
+  s_packetizer.reset()
   s_tmBinFrames = []
   s_tmBinPackets = []
   tm1Packet = CCSDS.PACKET.TMpacket(testData.TM_PACKET_02)
@@ -314,12 +415,19 @@ if __name__ == "__main__":
   print("***** test_idleFrame() start")
   retVal = test_idleFrame()
   print("***** test_idleFrame() done:", retVal)
-  print("***** test_singlePacket() start")
-  retVal = test_singlePacket()
-  print("***** test_singlePacket() done:", retVal)
-  print("***** test_doublePacket() start")
-  retVal = test_doublePacket()
-  print("***** test_doublePacket() done:", retVal)
+  print("***** test_singlePacket_1() start")
+  retVal = test_singlePacket_1()
+  print("***** test_singlePacket_1() done:", retVal)
+  print("***** test_doublePacket_1() start")
+  retVal = test_doublePacket_1()
+  print("***** test_doublePacket_1() done:", retVal)
+  s_assembler.multiPacketMode = True
+  print("***** test_singlePacket_n() start")
+  retVal = test_singlePacket_n()
+  print("***** test_singlePacket_n() done:", retVal)
+  print("***** test_doublePacket_n() start")
+  retVal = test_doublePacket_n()
+  print("***** test_doublePacket_n() done:", retVal)
   print("***** test_spilloverPacket() start")
   retVal = test_spilloverPacket()
   print("***** test_spilloverPacket() done:", retVal)

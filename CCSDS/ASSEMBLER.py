@@ -83,6 +83,10 @@ class Assembler():
   # ---------------------------------------------------------------------------
   def __init__(self):
     """default constructor"""
+    if UTIL.SYS.s_configuration.TM_TRANSFER_FRAME_HAS_N_PKTS == "1":
+      self.multiPacketMode = True
+    else:
+      self.multiPacketMode = False
     self.pendingFrame = None
     self.masterChannelFrameCount = 0
     self.virtualChannelFrameCount = 0
@@ -125,6 +129,19 @@ class Assembler():
     return (self.pendingFrame != None)
   # ---------------------------------------------------------------------------
   def pushTMpacket(self, binPacket):
+    if not self.multiPacketMode:
+      # simplified processing for single packet mode
+      if self.pendingFrame != None:
+        LOG_ERROR("unexpected pending frame")
+      self.createPendingFrame()
+      binPacketLen = len(binPacket)
+      if self.pendingFrameFreeSpace() < binPacketLen:
+        LOG_ERROR("packet too big for insert into frame")
+        return
+      self.pendingFrame.append(binPacket)
+      self.flushTMframe()
+      return
+    # multi packet mode
     if self.pendingFrame == None:
       self.createPendingFrame()
     binPacketLen = len(binPacket)
