@@ -165,7 +165,7 @@ class GUIview(UI.TKI.GUIwinView):
   def tcFrameNotify(self):
     """Called when a TC frame is added to / removed from the queue"""
     # update the CLCW status field
-    clcw = LINK.IF.s_tmFrameGenerator.getCLCW()
+    clcw = LINK.IF.s_groundLink.getCLCW()
     txt = "CLCW=" + str(clcw.reportValue)
     self.clcwStatusField.set(txt)
     # update the queue display
