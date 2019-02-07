@@ -16,7 +16,7 @@
 import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import GRND.IF, GRND.NCTRSDU
-import LINK.IF, LINK.TMGEN, LINK.TMTC
+import LINK.IF, LINK.TMTC
 import PUS.PACKET, PUS.SERVICES
 import SIM.TMserver, SIM.TCserver, SIM.AdminServer, SIM.GRNDgui, SIM.LINKgui
 import SPACE.DEF, SPACE.IF, SPACE.OBC, SPACE.OBQ, SPACE.TMGEN, SPACE.TMRPLY
@@ -419,7 +419,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       return False
 
     # set the CLCW sequenceNumber
-    LINK.IF.s_tmFrameGenerator.setCLCWcount(reportValue)
+    LINK.IF.s_groundLink.setCLCWcount(reportValue)
     return True
   # ---------------------------------------------------------------------------
   def enableCLCWcmd(self, argv):
@@ -457,7 +457,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       return False
     clcwDefaults = LINK.IF.CLCWdefaults()
     clcwDefaults.lockout = 1
-    LINK.IF.s_tmFrameGenerator.initCLCW(clcwDefaults)
+    LINK.IF.s_groundLink.initCLCW(clcwDefaults)
     # notify the GUI
     self.notifyGUItask("LOCKOUT_SET")
     return True
@@ -470,7 +470,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       return False
     clcwDefaults = LINK.IF.CLCWdefaults()
     clcwDefaults.lockout = 0
-    LINK.IF.s_tmFrameGenerator.initCLCW(clcwDefaults)
+    LINK.IF.s_groundLink.initCLCW(clcwDefaults)
     # notify the GUI
     self.notifyGUItask("LOCKOUT_RESET")
     return True
@@ -1124,7 +1124,6 @@ SPACE.OBQ.init()
 SPACE.TMGEN.init()
 SPACE.TMRPLY.init()
 LINK.TMTC.init()
-LINK.TMGEN.init()
 
 # create the NCTRS servers
 LOG("Open the NCTRS TM sender (server)")

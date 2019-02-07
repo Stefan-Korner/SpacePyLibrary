@@ -14,7 +14,7 @@
 #******************************************************************************
 import array
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CCSDS.CLTU, CCSDS.FRAME, CCSDS.PACKET, CCSDS.SEGMENT, CCSDS.SEGMENThelpers
+import CCSDS.ASSEMBLER, CCSDS.CLTU, CCSDS.FRAME, CCSDS.PACKET, CCSDS.SEGMENT, CCSDS.SEGMENThelpers
 import GRND.IF
 import LINK.IF
 import SPACE.IF
@@ -31,17 +31,19 @@ DOWNLINK_DELAY_SEC = 2
 # classes #
 ###########
 # =============================================================================
-class CCSDSgroundSpace(LINK.IF.SpaceLink, LINK.IF.PacketLink):
+class CCSDSgroundSpace(CCSDS.ASSEMBLER.Assembler, LINK.IF.SpaceLink, LINK.IF.GroundLink):
   """
   Implementation of the space and packet link,
   connects the ground segment with the space segment
   """
   # ---------------------------------------------------------------------------
   def __init__(self):
-    """Initialise attributes only"""
+    """Initialise parent class and attributes"""
+    CCSDS.ASSEMBLER.Assembler.__init__(self)
     self.segmentDus = []
     self.uplinkQueue = {}
     self.downlinkQueue = {}
+    self.ertUTC = None
     self.checkCyclicCallback()
   # ---------------------------------------------------------------------------
   def getUplinkQueue(self):
@@ -85,17 +87,22 @@ class CCSDSgroundSpace(LINK.IF.SpaceLink, LINK.IF.PacketLink):
     self.uplinkQueue[receptionTime] = tcFrameDu
     UTIL.TASK.s_processingTask.notifyGUItask("TC_FRAME")
   # ---------------------------------------------------------------------------
-  def pushTMpacket(self, tmPacketDu, ertUTC):
+  def pushTMpacketAndERT(self, tmPacketDu, ertUTC):
     """
-    consumes a telemetry packet:
-    implementation of LINK.IF.PacketLink.pushTMpacket
+    consumes a telemetry packet with ERT
+    implementation of LINK.IF.GroundLink.pushTMpacketAndERT
     """
-    tmFrameDu = LINK.IF.s_tmFrameGenerator.getTMframe(tmPacketDu)
-    if tmFrameDu == None:
-      LOG_ERROR("cannot determine frame for packet", "LINK")
+    self.ertUTC = ertUTC
+    CCSDS.ASSEMBLER.Assembler.pushTMpacket(self, tmPacketDu.getBuffer())
+  # ---------------------------------------------------------------------------
+  def notifyTMframeCallback(self, tmFrameDu):
+    """
+    notifies when the next TM frame is assembled:
+    implementation of CCSDS.ASSEMBLER.Assembler.notifyTMframeCallback
+    """
     # put the TM frame into the downlink queue to simulate the downlink delay
     receptionTime = UTIL.TIME.getActualTime() + DOWNLINK_DELAY_SEC
-    self.downlinkQueue[receptionTime] = (tmFrameDu, ertUTC)
+    self.downlinkQueue[receptionTime] = (tmFrameDu, self.ertUTC)
     UTIL.TASK.s_processingTask.notifyGUItask("TM_FRAME")
   # ---------------------------------------------------------------------------
   def checkCyclicCallback(self):
@@ -221,5 +228,5 @@ class CCSDSgroundSpace(LINK.IF.SpaceLink, LINK.IF.PacketLink):
 #############
 def init():
   """initialise singleton(s)"""
-  LINK.IF.s_packetLink = CCSDSgroundSpace()
-  LINK.IF.s_spaceLink = LINK.IF.s_packetLink
+  LINK.IF.s_groundLink = CCSDSgroundSpace()
+  LINK.IF.s_spaceLink = LINK.IF.s_groundLink

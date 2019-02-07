@@ -30,27 +30,6 @@ class Configuration(object):
     LOG_INFO("Space link configuration", "LINK")
     LOG("Enable CLCW = " + str(self.enableCLCW), "LINK")
 
-# =============================================================================
-class CLCWdefaults(object):
-  """Default values for CLCW"""
-  # ---------------------------------------------------------------------------
-  def __init__(self):
-    """default constructor"""
-    self.type = 0
-    self.version = 0
-    self.statusField = 0
-    self.copInEffect = 1
-    self.virtualChannelId = 0
-    self.spareField = 0
-    self.noRfAvailable = 0
-    self.noBitLock = 0
-    self.lockout = 0
-    self.wait = 0
-    self.retransmit = 0
-    self.farmBcounter = 0
-    self.reportType = 0
-    self.reportValue = 0
-
 ##############
 # interfaces #
 ##############
@@ -71,18 +50,14 @@ class SpaceLink(object):
     pass
 
 # =============================================================================
-class PacketLink(object):
-  """Interface to the packet link"""
+class GroundLink(object):
+  """Interface to the ground"""
   # ---------------------------------------------------------------------------
-  def pushTMpacket(self, tmPacketDu, ertUTC):
-    """consumes a telemetry packet"""
+  def pushTMpacketAndERT(self, tmPacketDu, ertUTC):
+    """consumes a telemetry packet with ERT"""
     pass
-
-# =============================================================================
-class TMframeGenerator(object):
-  """Interface of the generator for telemetry packets"""
   # ---------------------------------------------------------------------------
-  def initCLCW(self, clcwDefaults=CLCWdefaults()):
+  def initCLCW(self, clcwDefaults):
     """initialise CLCW"""
   # ---------------------------------------------------------------------------
   def getCLCW(self):
@@ -104,7 +79,5 @@ class TMframeGenerator(object):
 s_configuration = None
 # space link is a singleton
 s_spaceLink = None
-# packet link is a singleton
-s_packetLink = None
-# telemetry frame generator is a singleton
-s_tmFrameGenerator = None
+# ground link is a singleton
+s_groundLink = None

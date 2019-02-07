@@ -78,7 +78,7 @@ class CLCWdefaults(object):
     self.reportValue = 0
 
 # =============================================================================
-class Assembler():
+class Assembler(object):
   """Converter from TM packets to TM frames"""
   # ---------------------------------------------------------------------------
   def __init__(self):
@@ -91,11 +91,10 @@ class Assembler():
     self.masterChannelFrameCount = 0
     self.virtualChannelFrameCount = 0
     self.frameDefaults = TMframeDefaults()
-    self.initCLCW()
+    self.initCLCW(CLCWdefaults())
   # ---------------------------------------------------------------------------
-  def initCLCW(self):
+  def initCLCW(self, clcwDefaults):
     """initialise CLCW"""
-    clcwDefaults = CLCWdefaults()
     self.clcw = CCSDS.FRAME.CLCW()
     self.clcw.type = clcwDefaults.type
     self.clcw.version = clcwDefaults.version
@@ -259,7 +258,7 @@ class Assembler():
       self.pendingFrame.append("\0" * CCSDS.DU.CRC_BYTE_SIZE)
       self.pendingFrame.setChecksum()
     # frame complete
-    self.notifyTMframeCallback(self.pendingFrame.getBuffer())
+    self.notifyTMframeCallback(self.pendingFrame)
     self.pendingFrame = None
   # ---------------------------------------------------------------------------
   def flushTMframeOrIdleFrame(self):
@@ -271,7 +270,7 @@ class Assembler():
     self.pendingFrame.firstHeaderPointer = CCSDS.FRAME.IDLE_FRAME_PATTERN
     self.flushTMframe()
   # ---------------------------------------------------------------------------
-  def notifyTMframeCallback(self, binFrame):
+  def notifyTMframeCallback(self, tmFrameDu):
     """notifies when the next TM frame is assembled"""
     # shall be overloaded in derived class, default implementaion logs frame
-    LOG("Assembler.notifyTMframeCallback" + UTIL.DU.array2str(binFrame))
+    LOG("Assembler.notifyTMframeCallback" + UTIL.DU.array2str(tmFrameDu.getBuffer()))

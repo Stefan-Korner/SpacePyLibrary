@@ -240,7 +240,7 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     if self.egseMode:
       EGSE.IF.s_ccsLink.pushTMpacket(tmPacketDu)
     else:
-      LINK.IF.s_packetLink.pushTMpacket(tmPacketDu, ertUTC)
+      LINK.IF.s_groundLink.pushTMpacketAndERT(tmPacketDu, ertUTC)
     return True
   # ---------------------------------------------------------------------------
   def replayPackets(self, replayFileName):

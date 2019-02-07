@@ -37,10 +37,11 @@ class Assembler(CCSDS.ASSEMBLER.Assembler):
     """Initialise attributes only"""
     CCSDS.ASSEMBLER.Assembler.__init__(self)
   # ---------------------------------------------------------------------------
-  def notifyTMframeCallback(self, binFrame):
+  def notifyTMframeCallback(self, tmFrameDu):
     """notifies when the next TM frame is assembled"""
     # overloaded from CCSDS.ASSEMBLER.Assembler
     global s_packetizer, s_tmBinFrames
+    binFrame = tmFrameDu.getBuffer()
     s_tmBinFrames.append(binFrame)
     s_packetizer.pushTMframe(binFrame)
 
