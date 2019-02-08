@@ -4,8 +4,6 @@ Backlog of features that shall be implemented
 005 Support cyclic packet replay definitions where packet are defined with
     a repitition cycle time.
 
-006 Support spillover TM packets for LINK subsystem.
-
 007 Support multiple virtual channels by the Packetizer.
 
 008 Support ERT time in FRAME2PACKET.py
@@ -60,6 +58,8 @@ Backlog of features that shall be implemented
     repository on github (https://github.com/Stefan-Korner/SpacePyLibrary.git).
 
 004 Support signed integers from the MIB.
+
+006 Support spillover TM packets for LINK subsystem.
 
 009 Support clean dis-connect for NCTRS/EDEN/CnC interfaces.
 
