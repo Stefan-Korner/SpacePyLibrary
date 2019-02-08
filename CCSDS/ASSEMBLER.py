@@ -182,7 +182,7 @@ class Assembler(object):
   # ---------------------------------------------------------------------------
   def createPendingFrame(self):
     """
-    creates the TM frames only with the headers
+    creates the TM frames only with the headers -->
     packet or packet fragments are appended later
     """
     enableSecondaryHeader = (self.frameDefaults.secondaryHeaderFlag == 1)
@@ -266,7 +266,7 @@ class Assembler(object):
     if self.pendingFrame != None:
       self.flushTMframe()
       return
-    self.pendingFrame = CCSDS.FRAME.TMframe()
+    self.createPendingFrame()
     self.pendingFrame.firstHeaderPointer = CCSDS.FRAME.IDLE_FRAME_PATTERN
     self.flushTMframe()
   # ---------------------------------------------------------------------------

@@ -49,7 +49,8 @@ class GUIview(UI.TKI.GUIwinView):
                  sticky=Tkinter.EW)
     # checkbuttons
     self.checkButtons = UI.TKI.Checkbuttons(self,
-      [["CLCW", self.clcwCallback, True, COLOR_ON_OK],
+      [["TM_FLOW", self.tmFlowCallback, False, COLOR_ON_OK],
+       ["CLCW", self.clcwCallback, True, COLOR_ON_OK],
        ["LOCK", self.lockoutCallback, False, COLOR_ON_NOK]])
     self.appGrid(self.checkButtons,
                  row=1,
@@ -108,6 +109,10 @@ class GUIview(UI.TKI.GUIwinView):
     implementation of UI.TKI.GUIwinView.fillCommandMenuItems
     """
     self.addCommandMenuItem(label="SetCLCW", command=self.setCLCWcallback)
+    self.addCommandMenuItem(label="EnableTMflow", command=self.EnableTMflowCallback)
+    self.addCommandMenuItem(label="DisableTMflow", command=self.DisableTMflowCallback, enabled=False)
+    self.addCommandMenuItem(label="EnableCLCW", command=self.enableCLCWcallback, enabled=False)
+    self.addCommandMenuItem(label="DisableCLCW", command=self.disableCLCWcallback)
     self.addCommandMenuItem(label="EnableCLCW", command=self.enableCLCWcallback, enabled=False)
     self.addCommandMenuItem(label="DisableCLCW", command=self.disableCLCWcallback)
     self.addCommandMenuItem(label="SetLockout", command=self.setLockoutCallback)
@@ -120,6 +125,19 @@ class GUIview(UI.TKI.GUIwinView):
                                        initialvalue="0")
     if clcwStr != None:
       self.notifyModelTask(["SETCLCW", clcwStr])
+  # ---------------------------------------------------------------------------
+  def EnableTMflowCallback(self):
+    """Called when the EnableTMflow menu entry is selected"""
+    self.notifyModelTask(["ENABLETMFLOW"])
+  def DisableTMflowCallback(self):
+    """Called when the DisableTMflow menu entry is selected"""
+    self.notifyModelTask(["DISABLETMFLOW"])
+  def tmFlowCallback(self):
+    """Called when the TM_FLOW checkbutton is pressed"""
+    if self.checkButtons.getButtonPressed("TM_FLOW"):
+      self.notifyModelTask(["ENABLETMFLOW"])
+    else:
+      self.notifyModelTask(["DISABLETMFLOW"])
   # ---------------------------------------------------------------------------
   def enableCLCWcallback(self):
     """Called when the EnableCLCW menu entry is selected"""
@@ -153,6 +171,10 @@ class GUIview(UI.TKI.GUIwinView):
       self.tcFrameNotify()
     elif status == "TM_FRAME":
       self.tmFrameNotify()
+    elif status == "ENABLED_TM_FLOW":
+      self.enabledTMflowNotify()
+    elif status == "DISABLED_TM_FLOW":
+      self.disabledTMflowNotify()
     elif status == "ENABLED_CLCW":
       self.enabledCLCWnotify()
     elif status == "DISABLED_CLCW":
@@ -184,7 +206,7 @@ class GUIview(UI.TKI.GUIwinView):
       entryPos += 1
   # ---------------------------------------------------------------------------
   def tmFrameNotify(self):
-    """Called when a TC frame is added to / removed from the queue"""
+    """Called when a TM frame is added to / removed from the queue"""
     # update the queue display
     self.downlinkQueueContents.list().delete(0, Tkinter.END)
     self.downlinkQueueContents.list().insert(0, QUEUE_HEADER1)
@@ -203,6 +225,18 @@ class GUIview(UI.TKI.GUIwinView):
                                     tmFrameDu.masterChannelFrameCount)
       self.downlinkQueueContents.list().insert(entryPos, rowText)
       entryPos += 1
+  # ---------------------------------------------------------------------------
+  def enabledTMflowNotify(self):
+    """Called when the enabledTMflow function is succsssfully processed"""
+    self.disableCommandMenuItem("EnableTMflow")
+    self.enableCommandMenuItem("DisableTMflow")
+    self.checkButtons.setButtonPressed("TM_FLOW", True)
+  # ---------------------------------------------------------------------------
+  def disabledTMflowNotify(self):
+    """Called when the disabledTMflow function is succsssfully processed"""
+    self.enableCommandMenuItem("EnableTMflow")
+    self.disableCommandMenuItem("DisableTMflow")
+    self.checkButtons.setButtonPressed("TM_FLOW", False)
   # ---------------------------------------------------------------------------
   def enabledCLCWnotify(self):
     """Called when the enabledCLCW function is succsssfully processed"""

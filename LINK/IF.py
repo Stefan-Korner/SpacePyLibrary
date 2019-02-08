@@ -23,11 +23,13 @@ class Configuration(object):
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise the connection relevant informations"""
+    self.enableTMflow = False
     self.enableCLCW = True
   # ---------------------------------------------------------------------------
   def dump(self):
     """Dumps the status of the configuration attributes"""
     LOG_INFO("Space link configuration", "LINK")
+    LOG("Enable TM flow = " + str(self.enableTMflow), "LINK")
     LOG("Enable CLCW = " + str(self.enableCLCW), "LINK")
 
 ##############

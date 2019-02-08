@@ -60,6 +60,7 @@ SYS_CONFIGURATION = [
   ["TM_TRANSFER_FRAME_SIZE", "1115"],
   ["TM_TRANSFER_FRAME_HAS_SEC_HDR", "0"],
   ["TM_TRANSFER_FRAME_HAS_N_PKTS", "0"],
+  ["TM_FRAME_FLOW_MS", "1000"],
   ["OBT_MISSION_EPOCH_STR", UTIL.TCO.TAI_MISSION_EPOCH_STR],
   ["OBT_LEAP_SECONDS", str(UTIL.TCO.GPS_LEAP_SECONDS_2017)],
   ["ERT_MISSION_EPOCH_STR", UTIL.TCO.TAI_MISSION_EPOCH_STR],
@@ -121,6 +122,10 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       retStatus = self.stopFrameRecorderCmd(argv)
     elif (cmd == "T") or (cmd == "SETCLCW"):
       retStatus = self.setCLCWcmd(argv)
+    elif (cmd == "F") or (cmd == "ENABLETMFLOW"):
+      retStatus = self.enableTMflowCmd(argv)
+    elif (cmd == "N") or (cmd == "DISABLETMFLOW"):
+      retStatus = self.disableTMflowCmd(argv)
     elif (cmd == "V") or (cmd == "ENABLECLCW"):
       retStatus = self.enableCLCWcmd(argv)
     elif (cmd == "W") or (cmd == "DISABLECLCW"):
@@ -226,6 +231,8 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("q | quit ................terminates SIM application", "LINK")
     LOG("u | dumpConfiguration....dumps the configuration", "LINK")
     LOG("t | setCLCW <value>......set the CLCW report value", "LINK")
+    LOG("f | enableTMflow.........enables continous TM frame flow", "LINK")
+    LOG("n | disableTMflow........disables continous TM frame flow", "LINK")
     LOG("v | enableCLCW...........enables autom. sending of CLCW", "LINK")
     LOG("w | disableCLCW..........disables autom. sending of CLCW", "LINK")
     LOG("o | setLockout...........set lockout flag in CLCW", "LINK")
@@ -421,6 +428,32 @@ class ModelTask(UTIL.TASK.ProcessingTask):
 
     # set the CLCW sequenceNumber
     LINK.IF.s_groundLink.setCLCWcount(reportValue)
+    return True
+  # ---------------------------------------------------------------------------
+  def enableTMflowCmd(self, argv):
+    """Decoded enableTMflow command"""
+    self.logMethod("enableTMflowCmd", "LINK")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for enableTMflow", "LINK")
+      return False
+    # enable the continous TM frame sending
+    LINK.IF.s_configuration.enableTMflow = True
+    # notify the GUI
+    self.notifyGUItask("ENABLED_TM_FLOW")
+    return True
+  # ---------------------------------------------------------------------------
+  def disableTMflowCmd(self, argv):
+    """Decoded disableTMflow command"""
+    self.logMethod("disableTMflowCmd", "LINK")
+    # consistency check
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for disableTMflow", "LINK")
+      return False
+    # disable the continous TM frame sending
+    LINK.IF.s_configuration.enableTMflow = False
+    # notify the GUI
+    self.notifyGUItask("DISABLED_TM_FLOW")
     return True
   # ---------------------------------------------------------------------------
   def enableCLCWcmd(self, argv):
@@ -999,6 +1032,8 @@ def grndDisableAck2(*argv): UTIL.TASK.s_processingTask.grndDisableAck2Cmd(("", )
 def recordFrames(*argv): UTIL.TASK.s_processingTask.recordFramesCmd(("", ) + argv)
 def stopFrameRecorder(*argv): UTIL.TASK.s_processingTask.stopFrameRecorderCmd(("", ) + argv)
 def setCLCW(*argv): UTIL.TASK.s_processingTask.setCLCWcmd(("", ) + argv)
+def enableTMflow(*argv): UTIL.TASK.s_processingTask.enableTMflowCmd(("", ) + argv)
+def disableTMflow(*argv): UTIL.TASK.s_processingTask.disableTMflowCmd(("", ) + argv)
 def enableCLCW(*argv): UTIL.TASK.s_processingTask.enableCLCWcmd(("", ) + argv)
 def disableCLCW(*argv): UTIL.TASK.s_processingTask.disableCLCWcmd(("", ) + argv)
 def setLockout(*argv): UTIL.TASK.s_processingTask.setLockoutCmd(("", ) + argv)

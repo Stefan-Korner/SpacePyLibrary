@@ -44,6 +44,8 @@ class CCSDSgroundSpace(CCSDS.ASSEMBLER.Assembler, LINK.IF.SpaceLink, LINK.IF.Gro
     self.uplinkQueue = {}
     self.downlinkQueue = {}
     self.ertUTC = None
+    self.tmFrameFlowMs = int(UTIL.SYS.s_configuration.TM_FRAME_FLOW_MS)
+    self.checkTMflowCallback()
     self.checkCyclicCallback()
   # ---------------------------------------------------------------------------
   def getUplinkQueue(self):
@@ -104,6 +106,15 @@ class CCSDSgroundSpace(CCSDS.ASSEMBLER.Assembler, LINK.IF.SpaceLink, LINK.IF.Gro
     receptionTime = UTIL.TIME.getActualTime() + DOWNLINK_DELAY_SEC
     self.downlinkQueue[receptionTime] = (tmFrameDu, self.ertUTC)
     UTIL.TASK.s_processingTask.notifyGUItask("TM_FRAME")
+  # ---------------------------------------------------------------------------
+  def checkTMflowCallback(self):
+    """
+    timer triggered: check cyclic TM flow shall be performed
+    """
+    UTIL.TASK.s_processingTask.createTimeHandler(self.tmFrameFlowMs,
+                                                 self.checkTMflowCallback)
+    if LINK.IF.s_configuration.enableTMflow:
+      self.flushTMframeOrIdleFrame()
   # ---------------------------------------------------------------------------
   def checkCyclicCallback(self):
     """
