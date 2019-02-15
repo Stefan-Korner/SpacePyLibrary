@@ -46,6 +46,8 @@ Backlog of features that shall be implemented
 
 032 Support NCTRS data units version 0 and 1.
 
+033 Support CDS3 time format (pico seconds).
+
 --------------------------------- implemented ---------------------------------
 
 001 Remove the dependency to MIB files TPKTconnTable.dat, TPKTconfigTable.dat:
