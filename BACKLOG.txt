@@ -46,8 +46,6 @@ Backlog of features that shall be implemented
 
 032 Support NCTRS data units version 0 and 1.
 
-033 Support CDS3 time format (pico seconds).
-
 --------------------------------- implemented ---------------------------------
 
 001 Remove the dependency to MIB files TPKTconnTable.dat, TPKTconfigTable.dat:
@@ -74,3 +72,5 @@ Backlog of features that shall be implemented
 015 Implement a rudimentary control system (CS).
 
 021 Harmonize Python2 and Python3 code.
+
+033 Support CDS3 time format (pico seconds).
