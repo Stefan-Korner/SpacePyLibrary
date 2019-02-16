@@ -28,6 +28,7 @@ import UTIL.TIME
 # with agency defined epoch
 TIME_FORMAT_CDS1 = 0x48
 TIME_FORMAT_CDS2 = 0x49
+TIME_FORMAT_CDS3 = 0x4A
 TIME_FORMAT_CUC0 = 0x2C
 TIME_FORMAT_CUC1 = 0x2D
 TIME_FORMAT_CUC2 = 0x2E
@@ -43,6 +44,11 @@ CDS2_TIME_ATTRIBUTES = {
   "days": (0, 2, UNSIGNED),
   "mils": (2, 4, UNSIGNED),
   "mics": (6, 2, UNSIGNED)}
+CDS3_TIME_BYTE_SIZE = 10
+CDS3_TIME_ATTRIBUTES = {
+  "days": (0, 2, UNSIGNED),
+  "mils": (2, 4, UNSIGNED),
+  "pics": (6, 4, UNSIGNED)}
 # constants for CUC time
 CUC0_TIME_BYTE_SIZE = 4
 CUC0_TIME_ATTRIBUTES = {
@@ -70,7 +76,8 @@ CUC4_TIME_ATTRIBUTES = {
 # -----------------------------------------------------------------------------
 def isCDStimeFormat(timeFormat):
   """returns True if CDS1 or CDS2"""
-  return (timeFormat == TIME_FORMAT_CDS1 or timeFormat == TIME_FORMAT_CDS2)
+  return (timeFormat == TIME_FORMAT_CDS1 or timeFormat == TIME_FORMAT_CDS2 or
+          timeFormat == TIME_FORMAT_CDS3)
 # -----------------------------------------------------------------------------
 def isCUCtimeFormat(timeFormat):
   """returns True if CUC0 or CUC1 or CUC2 or CUC3 or CUC4 """
@@ -84,6 +91,8 @@ def timeFormat(timeFormatString):
     return TIME_FORMAT_CDS1
   if timeFormatString == "CDS2":
     return TIME_FORMAT_CDS2
+  if timeFormatString == "CDS3":
+    return TIME_FORMAT_CDS3
   if timeFormatString == "CUC0":
     return TIME_FORMAT_CUC0
   if timeFormatString == "CUC1":
@@ -102,6 +111,8 @@ def byteArraySize(timeFormat):
     return CDS1_TIME_BYTE_SIZE
   if timeFormat == TIME_FORMAT_CDS2:
     return CDS2_TIME_BYTE_SIZE
+  if timeFormat == TIME_FORMAT_CDS3:
+    return CDS3_TIME_BYTE_SIZE
   if timeFormat == TIME_FORMAT_CUC0:
     return CUC0_TIME_BYTE_SIZE
   if timeFormat == TIME_FORMAT_CUC1:
@@ -122,27 +133,38 @@ def createCDS(byteArray):
     return BinaryUnit(byteArray, CDS1_TIME_BYTE_SIZE, CDS1_TIME_ATTRIBUTES)
   elif len(byteArray) == CDS2_TIME_BYTE_SIZE:
     return BinaryUnit(byteArray, CDS2_TIME_BYTE_SIZE, CDS2_TIME_ATTRIBUTES)
+  elif len(byteArray) == CDS3_TIME_BYTE_SIZE:
+    return BinaryUnit(byteArray, CDS3_TIME_BYTE_SIZE, CDS3_TIME_ATTRIBUTES)
   return None
 # -----------------------------------------------------------------------------
 def convertToCDS(pyTime, timeFormat):
   """returns a CDS binary data unit representation of time"""
-  # split seconds and micros
-  secs = int(pyTime)
-  mics = int(round((pyTime - secs) * 1000000))
-  # convert into CDS components
-  days = secs // UTIL.TIME.SECONDS_OF_DAY
-  secs %= UTIL.TIME.SECONDS_OF_DAY
-  mils = (secs * 1000) + (mics // 1000)
+  days = int(pyTime) // UTIL.TIME.SECONDS_OF_DAY
+  secsOfDay = pyTime - (days * UTIL.TIME.SECONDS_OF_DAY)
+  milsOfDay = secsOfDay * 1000.0
+  mils = int(milsOfDay)
+  milsFine = milsOfDay - mils
   if timeFormat == TIME_FORMAT_CDS1:
+    mils = int(round(secsOfDay * 1000.0))
     timeDU = BinaryUnit("\0" * CDS1_TIME_BYTE_SIZE,
                         CDS1_TIME_BYTE_SIZE,
                         CDS1_TIME_ATTRIBUTES)
   elif timeFormat == TIME_FORMAT_CDS2:
+    mics = int(round(secsOfDay * 1000000.0))
+    mils = mics // 1000
     mics %= 1000
     timeDU = BinaryUnit("\0" * CDS2_TIME_BYTE_SIZE,
                         CDS2_TIME_BYTE_SIZE,
                         CDS2_TIME_ATTRIBUTES)
     timeDU.mics = mics
+  elif timeFormat == TIME_FORMAT_CDS3:
+    pics = int(round(secsOfDay * 1000000000000.0))
+    mils = pics // 1000000000
+    pics %= 1000000000
+    timeDU = BinaryUnit("\0" * CDS3_TIME_BYTE_SIZE,
+                        CDS3_TIME_BYTE_SIZE,
+                        CDS3_TIME_ATTRIBUTES)
+    timeDU.pics = pics
   else:
     return None
   timeDU.days = days
@@ -151,18 +173,15 @@ def convertToCDS(pyTime, timeFormat):
 # -----------------------------------------------------------------------------
 def convertFromCDS(timeDU):
   """returns python time representation from CDS binary data unit"""
-  secs = timeDU.days * UTIL.TIME.SECONDS_OF_DAY
-  mils = timeDU.mils
-  secs += (mils // 1000)
-  mics = 0
-  if len(timeDU) == CDS2_TIME_BYTE_SIZE:
-    mics = timeDU.mics
-    mics += (mils % 1000) * 1000
-  elif len(timeDU) != CDS1_TIME_BYTE_SIZE:
-    return None
-  pyTime = mics / 1000000.0
-  pyTime += secs
-  return pyTime
+  pyTime = timeDU.days * UTIL.TIME.SECONDS_OF_DAY * 1.0
+  pyTime += (timeDU.mils / 1000.0)
+  if len(timeDU) == CDS1_TIME_BYTE_SIZE:
+    return pyTime
+  elif len(timeDU) == CDS2_TIME_BYTE_SIZE:
+    return pyTime + (timeDU.mics / 1000000.0)
+  elif len(timeDU) == CDS3_TIME_BYTE_SIZE:
+    return pyTime + (timeDU.pics / 1000000000000.0)
+  return None
 # -----------------------------------------------------------------------------
 def createCUC(byteArray):
   """returns a CUC binary data unit representation of time"""
@@ -242,6 +261,8 @@ def createCCSDS(byteArray, timeFormat):
     return BinaryUnit(byteArray, CDS1_TIME_BYTE_SIZE, CDS1_TIME_ATTRIBUTES)
   if timeFormat == TIME_FORMAT_CDS2:
     return BinaryUnit(byteArray, CDS2_TIME_BYTE_SIZE, CDS2_TIME_ATTRIBUTES)
+  if timeFormat == TIME_FORMAT_CDS3:
+    return BinaryUnit(byteArray, CDS3_TIME_BYTE_SIZE, CDS3_TIME_ATTRIBUTES)
   if timeFormat == TIME_FORMAT_CUC0:
     return BinaryUnit(byteArray, CUC0_TIME_BYTE_SIZE, CUC0_TIME_ATTRIBUTES)
   if timeFormat == TIME_FORMAT_CUC1:
