@@ -58,7 +58,7 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
           LOG_INFO(GRND.IF.s_configuration.frameRecordFormat + " Frame recorded", "GRND")
           # Prepare the TM frame for recording
           ertTime = UTIL.TCO.correlateToERTmissionEpoch(ertUTC)
-          tmDu = GRND.NCTRSDU.TMdataUnit()
+          tmDu = GRND.NCTRS.createTMdataUnit()
           tmDu.setFrame(tmFrameDu.getBufferString())
           tmDu.spacecraftId = self.nctrsTMfields.spacecraftId
           tmDu.dataStreamType = self.nctrsTMfields.dataStreamType

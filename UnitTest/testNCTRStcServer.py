@@ -155,7 +155,7 @@ def initConfiguration():
     ["NCTRS_ADMIN_SERVER_PORT", "0"],
     ["NCTRS_TC_SERVER_PORT", "13007"],
     ["NCTRS_TM_SERVER_PORT", "0"],
-    ["NCTRS_ADMIN_SERVER_PORT", "0"],
+    ["NCTRS_TM_DU_VERSION", "V0"],
     ["DEF_GROUND_STATION_ID", "10"],
     ["TM_RECORD_FORMAT", "DUMMY"]])
 # -----------------------------------------------------------------------------

@@ -109,6 +109,7 @@ def initConfiguration():
     ["SYS_COLOR_LOG", "1"],
     ["HOST", "127.0.0.1"],
     ["NCTRS_TM_SERVER_PORT", "2502"],
+    ["NCTRS_TM_DU_VERSION", "V0"],
     ["SPACECRAFT_ID", "758"]])
 # -----------------------------------------------------------------------------
 def createTMsender():
