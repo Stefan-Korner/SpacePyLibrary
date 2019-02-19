@@ -24,8 +24,8 @@ import CCSDS.DU, CCSDS.TIME
 # - key: attribute name
 # - value: fieldOffset, fieldLength, fieldType
 # -----------------------------------------------------------------------------
-TM_DU_HEADER_BYTE_SIZE = 20
-TM_DU_ATTRIBUTES = {
+TM_DU_V0_HEADER_BYTE_SIZE = 20
+TM_DU_V0_ATTRIBUTES = {
   "packetSize":           ( 0, 4, UNSIGNED),
   "spacecraftId":         ( 4, 2, UNSIGNED),
   "dataStreamType":       ( 6, 1, UNSIGNED),
@@ -34,6 +34,66 @@ TM_DU_ATTRIBUTES = {
   "earthReceptionTime":   (10, CCSDS.TIME.TIME_FORMAT_CDS2, TIME),
   "sequenceFlag":         (18, 1, UNSIGNED),
   "qualityFlag":          (19, 1, UNSIGNED)}
+# -----------------------------------------------------------------------------
+# Restrictions: no support for private annotations
+TM_DU_V1_CDS1_HEADER_BYTE_SIZE = 21
+TM_DU_V1_CDS1_ATTRIBUTES = {
+  "duVersion":            ( 0, 1, UNSIGNED),
+  "packetSize":           ( 1, 4, UNSIGNED),
+  "spacecraftId":         ( 5, 2, UNSIGNED),
+  "dataStreamType":       ( 7, 1, UNSIGNED),
+  "virtualChannelId":     ( 8, 1, UNSIGNED),
+  "routeId":              ( 9, 2, UNSIGNED),
+  "sequenceFlag":         (11, 1, UNSIGNED),
+  "qualityFlag":          (12, 1, UNSIGNED),
+  "ertFormat":            (13, 1, UNSIGNED),
+  "spare":                (14, 1, UNSIGNED),
+  "earthReceptionTime":   (15, CCSDS.TIME.TIME_FORMAT_CDS1, TIME)}
+# -----------------------------------------------------------------------------
+# Restrictions: no support for private annotations
+TM_DU_V1_CDS2_HEADER_BYTE_SIZE = 23
+TM_DU_V1_CDS2_ATTRIBUTES = {
+  "duVersion":            ( 0, 1, UNSIGNED),
+  "packetSize":           ( 1, 4, UNSIGNED),
+  "spacecraftId":         ( 5, 2, UNSIGNED),
+  "dataStreamType":       ( 7, 1, UNSIGNED),
+  "virtualChannelId":     ( 8, 1, UNSIGNED),
+  "routeId":              ( 9, 2, UNSIGNED),
+  "sequenceFlag":         (11, 1, UNSIGNED),
+  "qualityFlag":          (12, 1, UNSIGNED),
+  "ertFormat":            (13, 1, UNSIGNED),
+  "spare":                (14, 1, UNSIGNED),
+  "earthReceptionTime":   (15, CCSDS.TIME.TIME_FORMAT_CDS2, TIME)}
+# -----------------------------------------------------------------------------
+# Restrictions: no support for private annotations
+TM_DU_V1_CDS3_HEADER_BYTE_SIZE = 25
+TM_DU_V1_CDS3_ATTRIBUTES = {
+  "duVersion":            ( 0, 1, UNSIGNED),
+  "packetSize":           ( 1, 4, UNSIGNED),
+  "spacecraftId":         ( 5, 2, UNSIGNED),
+  "dataStreamType":       ( 7, 1, UNSIGNED),
+  "virtualChannelId":     ( 8, 1, UNSIGNED),
+  "routeId":              ( 9, 2, UNSIGNED),
+  "sequenceFlag":         (11, 1, UNSIGNED),
+  "qualityFlag":          (12, 1, UNSIGNED),
+  "ertFormat":            (13, 1, UNSIGNED),
+  "spare":                (14, 1, UNSIGNED),
+  "earthReceptionTime":   (15, CCSDS.TIME.TIME_FORMAT_CDS3, TIME)}
+# -----------------------------------------------------------------------------
+# Restrictions: no support for private annotations
+TM_DU_V1_CDS1_HEADER_BYTE_SIZE = 21
+TM_DU_V1_CDS1_ATTRIBUTES = {
+  "duVersion":            ( 0, 1, UNSIGNED),
+  "packetSize":           ( 1, 4, UNSIGNED),
+  "spacecraftId":         ( 5, 2, UNSIGNED),
+  "dataStreamType":       ( 7, 1, UNSIGNED),
+  "virtualChannelId":     ( 8, 1, UNSIGNED),
+  "routeId":              ( 9, 2, UNSIGNED),
+  "sequenceFlag":         (11, 1, UNSIGNED),
+  "qualityFlag":          (12, 1, UNSIGNED),
+  "ertFormat":            (13, 1, UNSIGNED),
+  "spare":                (14, 1, UNSIGNED),
+  "earthReceptionTime":   (15, CCSDS.TIME.TIME_FORMAT_CDS1, TIME)}
 # -----------------------------------------------------------------------------
 TC_DU_HEADER_BYTE_SIZE = 8
 TC_DU_HEADER_ATTRIBUTES = {
@@ -115,6 +175,15 @@ MESSAGE_HEADER_ATTRIBUTES = {
 # constant values of attributes:
 # -----------------------------------------------------------------------------
 # possible values for
+# - TMdataUnitV1CDS1.ertFormat
+# - TMdataUnitV1CDS2.ertFormat
+# - TMdataUnitV1CDS3.ertFormat
+TM_V0_ERT_FORMAT = 0
+TM_V1_CDS1_ERT_FORMAT = CCSDS.TIME.TIME_FORMAT_CDS1 - 0x08
+TM_V1_CDS2_ERT_FORMAT = CCSDS.TIME.TIME_FORMAT_CDS2 - 0x08
+TM_V1_CDS3_ERT_FORMAT = CCSDS.TIME.TIME_FORMAT_CDS3 - 0x08
+# -----------------------------------------------------------------------------
+# possible values for
 # - TCpacketResponseDataUnit.acknowledgement
 # - TCcltuResponseDataUnit.acknowledgement
 TC_ACK_UV_ACCEPT_CONFIRM =   0
@@ -172,15 +241,15 @@ TC_PAR_AD_FAILURE_REASON =    "%18s"
 # classes #
 ###########
 # =============================================================================
-class TMdataUnit(CCSDS.DU.DataUnit):
-  """NCTRS telemetry data unit"""
+class TMdataUnitV0(CCSDS.DU.DataUnit):
+  """NCTRS telemetry data unit version 0"""
   # ---------------------------------------------------------------------------
   def __init__(self, binaryString=None, attributesSize2=0, attributeMap2=None):
     """default constructor: initialise data unit header"""
     CCSDS.DU.DataUnit.__init__(self,
                                binaryString,
-                               TM_DU_HEADER_BYTE_SIZE,
-                               TM_DU_ATTRIBUTES,
+                               TM_DU_V0_HEADER_BYTE_SIZE,
+                               TM_DU_V0_ATTRIBUTES,
                                attributesSize2,
                                attributeMap2)
   # ---------------------------------------------------------------------------
@@ -192,12 +261,105 @@ class TMdataUnit(CCSDS.DU.DataUnit):
   def getFrame(self):
     """returns the transfer frame"""
     # the packetSize must contain the correct size
-    headerByteSize = TM_DU_HEADER_BYTE_SIZE
+    headerByteSize = TM_DU_V0_HEADER_BYTE_SIZE
     return self.getBytes(headerByteSize, self.packetSize - headerByteSize)
   # ---------------------------------------------------------------------------
   def setFrame(self, frame):
     """set the transfer frame and the packetSize"""
-    self.setLen(TM_DU_HEADER_BYTE_SIZE)
+    self.setLen(TM_DU_V0_HEADER_BYTE_SIZE)
+    self.append(frame)
+    self.packetSize = len(self)
+
+# =============================================================================
+class TMdataUnitV1CDS1(CCSDS.DU.DataUnit):
+  """NCTRS telemetry data unit version 1 with CDS1 time format"""
+  # ---------------------------------------------------------------------------
+  def __init__(self, binaryString=None, attributesSize2=0, attributeMap2=None):
+    """default constructor: initialise data unit header"""
+    CCSDS.DU.DataUnit.__init__(self,
+                               binaryString,
+                               TM_DU_V1_CDS1_HEADER_BYTE_SIZE,
+                               TM_DU_V1_CDS1_ATTRIBUTES,
+                               attributesSize2,
+                               attributeMap2)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    CCSDS.DU.DataUnit.initAttributes(self)
+    self.packetSize = len(self)
+    self.ertFormat = TM_V1_CDS1_ERT_FORMAT
+  # ---------------------------------------------------------------------------
+  def getFrame(self):
+    """returns the transfer frame"""
+    # the packetSize must contain the correct size
+    headerByteSize = TM_DU_V1_CDS1_HEADER_BYTE_SIZE
+    return self.getBytes(headerByteSize, self.packetSize - headerByteSize)
+  # ---------------------------------------------------------------------------
+  def setFrame(self, frame):
+    """set the transfer frame and the packetSize"""
+    self.setLen(TM_DU_V1_CDS1_HEADER_BYTE_SIZE)
+    self.append(frame)
+    self.packetSize = len(self)
+
+# =============================================================================
+class TMdataUnitV1CDS2(CCSDS.DU.DataUnit):
+  """NCTRS telemetry data unit version 1 with CDS2 time format"""
+  # ---------------------------------------------------------------------------
+  def __init__(self, binaryString=None, attributesSize2=0, attributeMap2=None):
+    """default constructor: initialise data unit header"""
+    CCSDS.DU.DataUnit.__init__(self,
+                               binaryString,
+                               TM_DU_V1_CDS2_HEADER_BYTE_SIZE,
+                               TM_DU_V1_CDS2_ATTRIBUTES,
+                               attributesSize2,
+                               attributeMap2)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    CCSDS.DU.DataUnit.initAttributes(self)
+    self.packetSize = len(self)
+    self.ertFormat = TM_V1_CDS2_ERT_FORMAT
+  # ---------------------------------------------------------------------------
+  def getFrame(self):
+    """returns the transfer frame"""
+    # the packetSize must contain the correct size
+    headerByteSize = TM_DU_V1_CDS2_HEADER_BYTE_SIZE
+    return self.getBytes(headerByteSize, self.packetSize - headerByteSize)
+  # ---------------------------------------------------------------------------
+  def setFrame(self, frame):
+    """set the transfer frame and the packetSize"""
+    self.setLen(TM_DU_V1_CDS2_HEADER_BYTE_SIZE)
+    self.append(frame)
+    self.packetSize = len(self)
+
+# =============================================================================
+class TMdataUnitV1CDS3(CCSDS.DU.DataUnit):
+  """NCTRS telemetry data unit version 1 with CDS3 time format"""
+  # ---------------------------------------------------------------------------
+  def __init__(self, binaryString=None, attributesSize2=0, attributeMap2=None):
+    """default constructor: initialise data unit header"""
+    CCSDS.DU.DataUnit.__init__(self,
+                               binaryString,
+                               TM_DU_V1_CDS3_HEADER_BYTE_SIZE,
+                               TM_DU_V1_CDS3_ATTRIBUTES,
+                               attributesSize2,
+                               attributeMap2)
+  # ---------------------------------------------------------------------------
+  def initAttributes(self):
+    """hook for initializing attributes, delegates to parent class"""
+    CCSDS.DU.DataUnit.initAttributes(self)
+    self.packetSize = len(self)
+    self.ertFormat = TM_V1_CDS3_ERT_FORMAT
+  # ---------------------------------------------------------------------------
+  def getFrame(self):
+    """returns the transfer frame"""
+    # the packetSize must contain the correct size
+    headerByteSize = TM_DU_V1_CDS3_HEADER_BYTE_SIZE
+    return self.getBytes(headerByteSize, self.packetSize - headerByteSize)
+  # ---------------------------------------------------------------------------
+  def setFrame(self, frame):
+    """set the transfer frame and the packetSize"""
+    self.setLen(TM_DU_V1_CDS3_HEADER_BYTE_SIZE)
     self.append(frame)
     self.packetSize = len(self)
 

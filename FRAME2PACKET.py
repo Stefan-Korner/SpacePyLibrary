@@ -40,6 +40,7 @@ import UTIL.SYS
 # constants #
 #############
 SYS_CONFIGURATION = [
+  ["NCTRS_TM_DU_VERSION", "V0"],
   ["TM_FRAME_FORMAT", "NCTRS"],
   ["TM_TRANSFER_FRAME_SIZE", "1115"],
   ["IGNORE_IDLE_PACKETS", "1"],

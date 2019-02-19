@@ -16,12 +16,17 @@
 import socket, sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import GRND.IF, GRND.NCTRSDU
-import UTIL.TASK, UTIL.TCO, UTIL.TCP, UTIL.TIME
+import UTIL.SYS, UTIL.TASK, UTIL.TCO, UTIL.TCP, UTIL.TIME
 
 #############
 # constants #
 #############
 SOCKET_TYPE = type(socket.socket())
+
+####################
+# global variables #
+####################
+s_tmDUtype = None
 
 ###########
 # classes #
@@ -109,7 +114,7 @@ class TMsender(UTIL.TCP.SingleClientServer):
   def sendFrame(self, tmFrame):
     """Send the TM frame to the TM receiver"""
     ertTime = UTIL.TCO.correlateToERTmissionEpoch(UTIL.TIME.getActualTime())
-    tmDu = GRND.NCTRSDU.TMdataUnit()
+    tmDu = createTMdataUnit()
     tmDu.setFrame(tmFrame)
     tmDu.spacecraftId = self.nctrsTMfields.spacecraftId
     tmDu.dataStreamType = self.nctrsTMfields.dataStreamType
@@ -520,16 +525,58 @@ class AdminMessageReceiver(UTIL.TCP.Client):
 #############
 # functions #
 #############
-def readNCTRSframe(fd):
-  """reads one NCTRS frame from fd, raise execption when there is an error"""
-  # read the TM data unit header
-  try:
-    if type(fd) == SOCKET_TYPE:
-      tmDuHeader = fd.recv(GRND.NCTRSDU.TM_DU_HEADER_BYTE_SIZE)
+# -----------------------------------------------------------------------------
+def getTMdataUnitType():
+  """returns the NCTRS TM data unit type according to NCTRS_TM_DU_VERSION"""
+  global s_tmDUtype
+  if s_tmDUtype == None:
+    nctrsTMversion = UTIL.SYS.s_configuration.NCTRS_TM_DU_VERSION
+    if nctrsTMversion == "V0":
+      s_tmDUtype = GRND.NCTRSDU.TM_V0_ERT_FORMAT
+    elif nctrsTMversion == "V1_CDS1":
+      s_tmDUtype = GRND.NCTRSDU.TM_V1_CDS1_ERT_FORMAT
+    elif nctrsTMversion == "V1_CDS2":
+      s_tmDUtype = GRND.NCTRSDU.TM_V1_CDS2_ERT_FORMAT
+    elif nctrsTMversion == "V1_CDS3":
+      s_tmDUtype = GRND.NCTRSDU.TM_V1_CDS3_ERT_FORMAT
     else:
-      tmDuHeader = fd.read(GRND.NCTRSDU.TM_DU_HEADER_BYTE_SIZE)
-  except Exception, ex:
-    raise Error(str(ex))
+      LOG_ERROR("Invalid NCTRS_TM_DU_VERSION " + nctrsTMversion, "NCTRS")
+      sys.exit(-1)
+  return s_tmDUtype
+# -----------------------------------------------------------------------------
+def createTMdataUnit(binaryString=None):
+  """creates a NCTRS TM data unit according to the NCTRS_TM_DU_VERSION"""
+  tmDUtype = getTMdataUnitType()
+  if s_tmDUtype == GRND.NCTRSDU.TM_V0_ERT_FORMAT:
+    return GRND.NCTRSDU.TMdataUnitV0(binaryString)
+  elif s_tmDUtype == GRND.NCTRSDU.TM_V1_CDS1_ERT_FORMAT:
+    return GRND.NCTRSDU.TMdataUnitV1CDS1(binaryString)
+  elif s_tmDUtype == GRND.NCTRSDU.TM_V1_CDS2_ERT_FORMAT:
+    return GRND.NCTRSDU.TMdataUnitV1CDS2(binaryString)
+  elif s_tmDUtype == GRND.NCTRSDU.TM_V1_CDS3_ERT_FORMAT:
+    return GRND.NCTRSDU.TMdataUnitV1CDS3(binaryString)
+  LOG_ERROR("Invalid s_tmDUtype " + str(s_tmDUtype), "NCTRS")
+  sys.exit(-1)
+# -----------------------------------------------------------------------------
+def readNCTRStmFrameHeader(fd):
+  """creates a NCTRS TM data unit according to the NCTRS_TM_DU_VERSION"""
+  # the function raises an exception when the read fails
+  tmDUtype = getTMdataUnitType()
+  if s_tmDUtype == GRND.NCTRSDU.TM_V0_ERT_FORMAT:
+    tmDuHeaderByteSize =  GRND.NCTRSDU.TM_DU_V0_HEADER_BYTE_SIZE
+  elif s_tmDUtype == GRND.NCTRSDU.TM_V1_CDS1_ERT_FORMAT:
+    tmDuHeaderByteSize =  GRND.NCTRSDU.TM_DU_V1_CDS1_HEADER_BYTE_SIZE
+  elif s_tmDUtype == GRND.NCTRSDU.TM_V1_CDS2_ERT_FORMAT:
+    tmDuHeaderByteSize =  GRND.NCTRSDU.TM_DU_V1_CDS2_HEADER_BYTE_SIZE
+  elif s_tmDUtype == GRND.NCTRSDU.TM_V1_CDS3_ERT_FORMAT:
+    tmDuHeaderByteSize =  GRND.NCTRSDU.TM_DU_V1_CDS3_HEADER_BYTE_SIZE
+  else:
+    raise Error("Invalid s_tmDUtype " + str(s_tmDUtype))
+  # read the TM data unit header
+  if type(fd) == SOCKET_TYPE:
+    tmDuHeader = fd.recv(tmDuHeaderByteSize)
+  else:
+    tmDuHeader = fd.read(tmDuHeaderByteSize)
   # consistency check
   tmDuHeaderLen = len(tmDuHeader)
   if tmDuHeaderLen == 0:
@@ -538,12 +585,21 @@ def readNCTRSframe(fd):
     else:
       # end of file
       raise Error("")
-  if tmDuHeaderLen != GRND.NCTRSDU.TM_DU_HEADER_BYTE_SIZE:
+  if tmDuHeaderLen != tmDuHeaderByteSize:
     raise Error("Read of TM DU header failed: invalid size: " + str(tmDuHeaderLen))
-  tmDu = GRND.NCTRSDU.TMdataUnit(tmDuHeader)
+  return tmDuHeader
+# -----------------------------------------------------------------------------
+def readNCTRSframe(fd):
+  """reads one NCTRS frame from fd, raise execption when there is an error"""
+  # read the TM data unit header
+  try:
+    tmDuHeader = readNCTRStmFrameHeader(fd)
+  except Exception as ex:
+    raise Error(str(ex))
+  tmDu = createTMdataUnit(tmDuHeader)
   # consistency check
   packetSize = tmDu.packetSize
-  remainingSizeExpected = packetSize - GRND.NCTRSDU.TM_DU_HEADER_BYTE_SIZE
+  remainingSizeExpected = packetSize - len(tmDuHeader)
   if remainingSizeExpected <= 0:
     raise Error("Read of TM DU header failed: invalid packet size field: " + str(remainingSizeExpected))
   # read the remaining bytes for the TM data unit

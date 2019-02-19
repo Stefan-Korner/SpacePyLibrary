@@ -44,7 +44,7 @@ Backlog of features that shall be implemented
 
 031 Support variable TM packets.
 
-032 Support NCTRS data units version 0 and 1.
+034 Support direct console logging and use it when there is an exit.
 
 --------------------------------- implemented ---------------------------------
 
@@ -72,5 +72,7 @@ Backlog of features that shall be implemented
 015 Implement a rudimentary control system (CS).
 
 021 Harmonize Python2 and Python3 code.
+
+032 Support NCTRS data units version 0 and 1.
 
 033 Support CDS3 time format (pico seconds).
