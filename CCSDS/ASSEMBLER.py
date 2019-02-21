@@ -144,22 +144,20 @@ class Assembler(object):
     if self.pendingFrame == None:
       self.createPendingFrame()
     binPacketLen = len(binPacket)
-    # insert small IDLE packets until the TM packet can be inserted
-    while self.idlePacketMustBeInserted(binPacketLen):
-      idlePacket = CCSDS.PACKET.createIdlePacket()
-      self.pendingFrame.append(idlePacket.getBufferString())
-    # add the TM packet directly or the first fragment
+    # add as much as possible from the TM packet to the frame
     freeSpace = self.pendingFrameFreeSpace()
     if freeSpace >= binPacketLen:
+      # the complete TM packet can be added TM packet directly
       self.pendingFrame.append(binPacket)
       if freeSpace == binPacketLen:
         self.flushTMframe()
       return
+    # the TM packet must be split into fragments:
     # add the first fragment and flush the frame
     firstFragment = binPacket[:freeSpace]
     self.pendingFrame.append(firstFragment)
     self.flushTMframe()
-    # create frames with remaining fragments
+    # create frames with the remaining fragments
     remainingFragments = binPacket[freeSpace:]
     emptyFrameFreeSpace = self.emptyFrameFreeSpace()
     while len(remainingFragments) >= emptyFrameFreeSpace:
@@ -224,24 +222,6 @@ class Assembler(object):
       usedSpace += CCSDS.DU.CRC_BYTE_SIZE
     return self.frameDefaults.transferFrameSize - usedSpace
   # ---------------------------------------------------------------------------
-  def idlePacketMustBeInserted(self, packetSize):
-    """check if an idle packet must be inserted"""
-    # an idle packet must be inserted if the remaining space in the frame
-    # or a remaining space in the frame of the last packet fragment cannot
-    # hold an additional TM packet header
-    pendingFrameFreeSpace = self.pendingFrameFreeSpace()
-    if pendingFrameFreeSpace > packetSize:
-      # no fragmentation needed
-      remainingFrameFreeSpace = pendingFrameFreeSpace - packetSize
-      return remainingFrameFreeSpace < CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE
-    # fragmentation needed
-    firstFragmentSize = pendingFrameFreeSpace
-    remainingFragmentsSize = packetSize - firstFragmentSize
-    emptyFrameFreeSpace = self.emptyFrameFreeSpace()
-    lastFragmentSize = remainingFragmentsSize % emptyFrameFreeSpace
-    lastFrameFreeSpace = emptyFrameFreeSpace - lastFragmentSize
-    return lastFrameFreeSpace < CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE
-  # ---------------------------------------------------------------------------
   def flushTMframe(self):
     """finalize a telemetry frame with an idle packet"""
     if self.pendingFrame == None:
@@ -249,6 +229,9 @@ class Assembler(object):
     # append idle packet
     idlePacketSize = self.pendingFrameFreeSpace()
     if idlePacketSize > 0:
+      # ensure that the idle packet has a consistent packet header
+      # note: this might cause a spillover if the idle packet
+      idlePacketSize = max(idlePacketSize, CCSDS.PACKET.PACKET_MIN_BYTE_SIZE)
       tmIdlePacket = CCSDS.PACKET.createIdlePacket(idlePacketSize)
       self.pendingFrame.append(tmIdlePacket.getBufferString())
     # append CLCW

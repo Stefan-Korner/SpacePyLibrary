@@ -50,7 +50,8 @@ class Packetizer(CCSDS.PACKETIZER.Packetizer):
   """Subclass of CCSDS.PACKETIZER.Packetizer"""
   def __init__(self):
     """Initialise attributes only"""
-    CCSDS.PACKETIZER.Packetizer.__init__(self)
+    frameVCID = int(UTIL.SYS.s_configuration.TM_TRANSFER_FRAME_VCID)
+    CCSDS.PACKETIZER.Packetizer.__init__(self, frameVCID)
   # ---------------------------------------------------------------------------
   def notifyTMpacketCallback(self, binPacket):
     """notifies when the next TM packet is assembled"""
@@ -68,6 +69,7 @@ def initConfiguration():
   ["SPACECRAFT_ID", "758"],
   ["TM_VIRTUAL_CHANNEL_ID", "0"],
   ["TM_TRANSFER_FRAME_SIZE", "1115"],
+  ["TM_TRANSFER_FRAME_VCID", "0"],
   ["TM_TRANSFER_FRAME_HAS_SEC_HDR", "0"],
   ["TM_TRANSFER_FRAME_HAS_N_PKTS", "0"]])
 # -----------------------------------------------------------------------------
@@ -89,11 +91,11 @@ def test_idleFrame():
   s_tmBinPackets = []
   s_assembler.flushTMframeOrIdleFrame()
   if len(s_tmBinFrames) != 1:
-    print("invalid number of frames")
+    print("invalid number of frames (!=1):", len(s_tmBinFrames))
     return False
   binFrame = s_tmBinFrames[0]
   if len(binFrame) != s_assembler.frameDefaults.transferFrameSize:
-    print("expected idle frame has invalid size: " + str(len(binFrame)))
+    print("expected idle frame has invalid size:", len(binFrame))
     return False
   tmFrame = CCSDS.FRAME.TMframe(binFrame)
   firstHeaderPointer = tmFrame.firstHeaderPointer
@@ -116,21 +118,21 @@ def test_singlePacket_1():
   tmPacket = CCSDS.PACKET.TMpacket(testData.TM_PACKET_01)
   s_assembler.pushTMpacket(tmPacket.getBuffer())
   if len(s_tmBinFrames) != 1:
-    print("invalid number of frames")
+    print("invalid number of frames (!=1):", len(s_tmBinFrames))
     return False
   if len(s_tmBinPackets) != 2:
-    print("invalid number of packets")
+    print("invalid number of packets (!=2):", len(s_tmBinPackets))
     return False
   s_assembler.flushTMframe()
   if len(s_tmBinFrames) != 1:
-    print("invalid number of frames")
+    print("invalid number of frames (!=1):", len(s_tmBinFrames))
     return False
   if len(s_tmBinPackets) != 2:
-    print("invalid number of packets")
+    print("invalid number of packets (!=2):", len(s_tmBinPackets))
     return False
   binFrame = s_tmBinFrames[0]
   if len(binFrame) != s_assembler.frameDefaults.transferFrameSize:
-    print("expected frame has invalid size: " + str(len(binFrame)))
+    print("expected frame has invalid size:", len(binFrame))
     return False
   receivedTmPacket = CCSDS.PACKET.TMpacket(s_tmBinPackets[0])
   if receivedTmPacket != tmPacket:
@@ -155,25 +157,25 @@ def test_doublePacket_1():
   tm2Packet = CCSDS.PACKET.TMpacket(testData.TM_PACKET_02)
   s_assembler.pushTMpacket(tm2Packet.getBuffer())
   if len(s_tmBinFrames) != 2:
-    print("invalid number of frames")
+    print("invalid number of frames (!=2):", len(s_tmBinFrames))
     return False
   if len(s_tmBinPackets) != 4:
-    print("invalid number of packets")
+    print("invalid number of packets (!=4):", len(s_tmBinPackets))
     return False
   s_assembler.flushTMframe()
   if len(s_tmBinFrames) != 2:
-    print("invalid number of frames")
+    print("invalid number of frames (!=2):", len(s_tmBinFrames))
     return False
   if len(s_tmBinPackets) != 4:
-    print("invalid number of packets")
+    print("invalid number of packets (!=4):", len(s_tmBinPackets))
     return False
   binFrame = s_tmBinFrames[0]
   if len(binFrame) != s_assembler.frameDefaults.transferFrameSize:
-    print("expected frame 1 has invalid size: " + str(len(binFrame)))
+    print("expected frame 1 has invalid size:", len(binFrame))
     return False
   binFrame = s_tmBinFrames[1]
   if len(binFrame) != s_assembler.frameDefaults.transferFrameSize:
-    print("expected frame 2 has invalid size: " + str(len(binFrame)))
+    print("expected frame 2 has invalid size:", len(binFrame))
     return False
   receivedTmPacket = CCSDS.PACKET.TMpacket(s_tmBinPackets[0])
   if receivedTmPacket != tm1Packet:
@@ -204,21 +206,21 @@ def test_singlePacket_n():
   tmPacket = CCSDS.PACKET.TMpacket(testData.TM_PACKET_01)
   s_assembler.pushTMpacket(tmPacket.getBuffer())
   if len(s_tmBinFrames) != 0:
-    print("invalid number of frames")
+    print("invalid number of frames (>0):", len(s_tmBinFrames))
     return False
   if len(s_tmBinPackets) != 0:
-    print("invalid number of packets")
+    print("invalid number of packets (>0):", len(s_tmBinPackets))
     return False
   s_assembler.flushTMframe()
   if len(s_tmBinFrames) != 1:
-    print("invalid number of frames")
+    print("invalid number of frames (!=1):", len(s_tmBinFrames))
     return False
   if len(s_tmBinPackets) != 2:
-    print("invalid number of packets")
+    print("invalid number of packets (!=2):", len(s_tmBinPackets))
     return False
   binFrame = s_tmBinFrames[0]
   if len(binFrame) != s_assembler.frameDefaults.transferFrameSize:
-    print("expected frame has invalid size: " + str(len(binFrame)))
+    print("expected frame has invalid size:", len(binFrame))
     return False
   receivedTmPacket = CCSDS.PACKET.TMpacket(s_tmBinPackets[0])
   if receivedTmPacket != tmPacket:
@@ -243,21 +245,21 @@ def test_doublePacket_n():
   tm2Packet = CCSDS.PACKET.TMpacket(testData.TM_PACKET_02)
   s_assembler.pushTMpacket(tm2Packet.getBuffer())
   if len(s_tmBinFrames) != 0:
-    print("invalid number of frames")
+    print("invalid number of frames (>0):", len(s_tmBinFrames))
     return False
   if len(s_tmBinPackets) != 0:
-    print("invalid number of packets")
+    print("invalid number of packets (>0):", len(s_tmBinPackets))
     return False
   s_assembler.flushTMframe()
   if len(s_tmBinFrames) != 1:
-    print("invalid number of frames")
+    print("invalid number of frames (!=1):", len(s_tmBinFrames))
     return False
   if len(s_tmBinPackets) != 3:
-    print("invalid number of packets")
+    print("invalid number of packets (!=3):", len(s_tmBinPackets))
     return False
   binFrame = s_tmBinFrames[0]
   if len(binFrame) != s_assembler.frameDefaults.transferFrameSize:
-    print("expected frame has invalid size: " + str(len(binFrame)))
+    print("expected frame has invalid size:", len(binFrame))
     return False
   receivedTmPacket = CCSDS.PACKET.TMpacket(s_tmBinPackets[0])
   if receivedTmPacket != tm1Packet:
@@ -291,33 +293,33 @@ def test_spilloverPacket():
   tm5Packet = CCSDS.PACKET.TMpacket(testData.TM_PACKET_01)
   s_assembler.pushTMpacket(tm5Packet.getBuffer())
   if len(s_tmBinFrames) != 0:
-    print("invalid number of frames")
+    print("invalid number of frames (>0):", len(s_tmBinFrames))
     return False
   if len(s_tmBinPackets) != 0:
-    print("invalid number of packets")
+    print("invalid number of packets (>0):", len(s_tmBinPackets))
     return False
   tm6Packet = CCSDS.PACKET.TMpacket(testData.TM_PACKET_02)
   s_assembler.pushTMpacket(tm6Packet.getBuffer())
   if len(s_tmBinFrames) != 1:
-    print("invalid number of frames")
+    print("invalid number of frames (!=1):", len(s_tmBinFrames))
     return False
   if len(s_tmBinPackets) != 5:
-    print("invalid number of packets")
+    print("invalid number of packets (!=5):", len(s_tmBinPackets))
     return False
   s_assembler.flushTMframe()
   if len(s_tmBinFrames) != 2:
-    print("invalid number of frames")
+    print("invalid number of frames (!=2):", len(s_tmBinFrames))
     return False
   if len(s_tmBinPackets) != 7:
-    print("invalid number of packets")
+    print("invalid number of packets (!=7):", len(s_tmBinPackets))
     return False
   binFrame = s_tmBinFrames[0]
   if len(binFrame) != s_assembler.frameDefaults.transferFrameSize:
-    print("expected frame 1 has invalid size: " + str(len(binFrame)))
+    print("expected frame 1 has invalid size:", len(binFrame))
     return False
   binFrame = s_tmBinFrames[1]
   if len(binFrame) != s_assembler.frameDefaults.transferFrameSize:
-    print("expected frame 2 has invalid size: " + str(len(binFrame)))
+    print("expected frame 2 has invalid size:", len(binFrame))
     return False
   receivedTmPacket = CCSDS.PACKET.TMpacket(s_tmBinPackets[0])
   if receivedTmPacket != tm1Packet:
@@ -359,37 +361,37 @@ def test_spillover2Frames():
   tm1Packet = CCSDS.PACKET.TMpacket(testData.TM_PACKET_02)
   s_assembler.pushTMpacket(tm1Packet.getBuffer())
   if len(s_tmBinFrames) != 0:
-    print("invalid number of frames")
+    print("invalid number of frames (>0):", len(s_tmBinFrames))
     return False
   if len(s_tmBinPackets) != 0:
-    print("invalid number of packets")
+    print("invalid number of packets (>0):", len(s_tmBinPackets))
     return False
   tm2Packet = CCSDS.PACKET.TMpacket(testData.TM_PACKET_04)
   s_assembler.pushTMpacket(tm2Packet.getBuffer())
   if len(s_tmBinFrames) != 2:
-    print("invalid number of frames")
+    print("invalid number of frames (!=2):", len(s_tmBinFrames))
     return False
   if len(s_tmBinPackets) != 1:
-    print("invalid number of packets")
+    print("invalid number of packets (!=1):", len(s_tmBinPackets))
     return False
   s_assembler.flushTMframe()
   if len(s_tmBinFrames) != 3:
-    print("invalid number of frames")
+    print("invalid number of frames (!=3):", len(s_tmBinFrames))
     return False
   if len(s_tmBinPackets) != 3:
-    print("invalid number of packets")
+    print("invalid number of packets (!=3):", len(s_tmBinPackets))
     return False
   binFrame = s_tmBinFrames[0]
   if len(binFrame) != s_assembler.frameDefaults.transferFrameSize:
-    print("expected frame 1 has invalid size: " + str(len(binFrame)))
+    print("expected frame 1 has invalid size:", len(binFrame))
     return False
   binFrame = s_tmBinFrames[1]
   if len(binFrame) != s_assembler.frameDefaults.transferFrameSize:
-    print("expected frame 2 has invalid size: " + str(len(binFrame)))
+    print("expected frame 2 has invalid size:", len(binFrame))
     return False
   binFrame = s_tmBinFrames[2]
   if len(binFrame) != s_assembler.frameDefaults.transferFrameSize:
-    print("expected frame 3 has invalid size: " + str(len(binFrame)))
+    print("expected frame 3 has invalid size:", len(binFrame))
     return False
   receivedTmPacket = CCSDS.PACKET.TMpacket(s_tmBinPackets[0])
   if receivedTmPacket != tm1Packet:
