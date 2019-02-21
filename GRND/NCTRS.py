@@ -594,7 +594,7 @@ def readNCTRSframe(fd):
   # read the TM data unit header
   try:
     tmDuHeader = readNCTRStmFrameHeader(fd)
-  except Exception as ex:
+  except Exception, ex:
     raise Error(str(ex))
   tmDu = createTMdataUnit(tmDuHeader)
   # consistency check

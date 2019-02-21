@@ -25,15 +25,14 @@ import UTIL.DU
 class Packetizer():
   """Converter from TM frames to TM packets"""
   # ---------------------------------------------------------------------------
-  def __init__(self):
+  def __init__(self, expectedVCID):
     """default constructor"""
     self.pendingPacketFragment = None
-    self.expectedPacketSize = 0
+    self.expectedVCID = expectedVCID
   # ---------------------------------------------------------------------------
   def reset(self):
     """resets pending packet fragment"""
     self.pendingPacketFragment = None
-    self.expectedPacketSize = 0
   # ---------------------------------------------------------------------------
   def isPacketPending(self):
     """checks if there is a pending packet (waiting for next fragment)"""
@@ -45,27 +44,32 @@ class Packetizer():
     try:
       frameDU = CCSDS.FRAME.TMframe(binFrame)
       leadingFragment, packets, trailingFragment = frameDU.getPackets()
-    except:
-      LOG_ERROR("error in TM packet extraction from TM frame")
+    except Exception, ex:
+      LOG_ERROR("error in TM packet extraction from TM frame: " + str(ex))
       self.reset()
+      return
+    # consistency check
+    if frameDU.virtualChannelId != self.expectedVCID:
+      LOG_WARNING("frame has unexpected virtual channel ID: " + str(frameDU.virtualChannelId))
       return
     # --- leading fragment ---
     if leadingFragment:
       # there must be a pending packet fragment from the previous frame
       if self.pendingPacketFragment:
-        newPacketSize = len(self.pendingPacketFragment) + len(leadingFragment)
-        if newPacketSize < self.expectedPacketSize:
-          self.pendingPacketFragment += leadingFragment
+        packet = self.pendingPacketFragment + leadingFragment
+        newPacketSize = len(packet)
+        expectedPacketSize = CCSDS.PACKET.getPacketSize(packet)
+        if newPacketSize < expectedPacketSize:
           # consistency check
           if len(packets) > 0 or trailingFragment:
             LOG_ERROR("TM packet fragment not fully assembled")
             self.reset()
           else:
             # other fragment(s) should follow in next frame
+            self.pendingPacketFragment = packet
             return
-        elif newPacketSize == self.expectedPacketSize:
+        elif newPacketSize == expectedPacketSize:
           # spillover packet complete assembled
-          packet = self.pendingPacketFragment + leadingFragment
           self.notifyTMpacketCallback(packet)
           self.reset()
         else:
@@ -81,14 +85,7 @@ class Packetizer():
         self.notifyTMpacketCallback(packet)
     # --- trailing fragment ---
     if trailingFragment:
-      expectedPacketSize = CCSDS.PACKET.getPacketSize(trailingFragment)
-      # consistency check
-      if len(trailingFragment) >= expectedPacketSize:
-        LOG_ERROR("invalid TM packet fragment size at TM frame end")
-        self.reset()
-      else:
-        self.expectedPacketSize = expectedPacketSize
-        self.pendingPacketFragment = trailingFragment
+      self.pendingPacketFragment = trailingFragment
   # ---------------------------------------------------------------------------
   def notifyTMpacketCallback(self, binPacket):
     """notifies when the next TM packet is assembled"""

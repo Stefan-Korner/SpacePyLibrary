@@ -151,9 +151,16 @@ class TMframe(CCSDS.DU.DataUnit):
     nextPacketBytePos = 0
     while nextPacketBytePos < packetsFieldSize:
       # check for the next packet if there is at least size for a CCSDS header
-      packetSize = CCSDS.PACKET.getPacketSize(packetsField, nextPacketBytePos)
       remainingPacketSize = packetsFieldSize - nextPacketBytePos
+      if remainingPacketSize < CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE:
+        # an incomplete CCSDS header is a trailing fragment
+        trailingFragmentEndPos = nextPacketBytePos + remainingPacketSize
+        trailingFragment = packetsField[nextPacketBytePos:trailingFragmentEndPos]
+        break
+      # check if the next packet complete
+      packetSize = CCSDS.PACKET.getPacketSize(packetsField, nextPacketBytePos)
       if packetSize > remainingPacketSize:
+        # an incomplete packet is a trailing fragment
         trailingFragmentEndPos = nextPacketBytePos + remainingPacketSize
         trailingFragment = packetsField[nextPacketBytePos:trailingFragmentEndPos]
         break

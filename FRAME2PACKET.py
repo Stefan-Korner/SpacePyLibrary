@@ -33,16 +33,17 @@ from __future__ import print_function
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.PACKET, CCSDS.PACKETIZER
-import GRND.CRYOSATDU, GRND.NCTRSDU
+import GRND.CRYOSATDU, GRND.NCTRS, GRND.NCTRSDU
 import UTIL.SYS
 
 #############
 # constants #
 #############
 SYS_CONFIGURATION = [
-  ["NCTRS_TM_DU_VERSION", "V0"],
+  ["NCTRS_TM_DU_VERSION", "V1_CDS3"],
   ["TM_FRAME_FORMAT", "NCTRS"],
   ["TM_TRANSFER_FRAME_SIZE", "1115"],
+  ["TM_TRANSFER_FRAME_VCID", "0"],
   ["IGNORE_IDLE_PACKETS", "1"],
   ["INSERT_LINE", "sleep(1000)"],
   ["SYS_COLOR_LOG", "1"]]
@@ -67,7 +68,8 @@ class PacketizerImpl(CCSDS.PACKETIZER.Packetizer):
   # ---------------------------------------------------------------------------
   def __init__(self, frameDumpFileName, packetFileName):
     """delegates to Packetizer"""
-    CCSDS.PACKETIZER.Packetizer.__init__(self)
+    frameVCID = int(UTIL.SYS.s_configuration.TM_TRANSFER_FRAME_VCID)
+    CCSDS.PACKETIZER.Packetizer.__init__(self, frameVCID)
     self.frameDumpFileName = frameDumpFileName
     self.frameDumpFormat = UTIL.SYS.s_configuration.TM_FRAME_FORMAT
     self.frameSize = int(UTIL.SYS.s_configuration.TM_TRANSFER_FRAME_SIZE)
@@ -106,18 +108,13 @@ class PacketizerImpl(CCSDS.PACKETIZER.Packetizer):
     """Extracts CCSDS TM packets from NCTRS TM transfer frames"""
     frameNumber = 1
     while True:
-      nctrsHeader = frameDumpFile.read(GRND.NCTRSDU.TM_DU_HEADER_BYTE_SIZE)
-      if len(nctrsHeader) == 0:
-        # end of file reached
-        return
-      elif len(nctrsHeader) != GRND.NCTRSDU.TM_DU_HEADER_BYTE_SIZE:
-        LOG_ERROR("frameDumpFile has incomplete NCTRS frame " + str(frameNumber))
-        sys.exit(-1)
-      # nctrsHeader completely read --> read CCSDS frame
-      ccsdsFrame = frameDumpFile.read(self.frameSize)
-      if len(ccsdsFrame) != self.frameSize:
-        LOG_ERROR("frameDumpFile has incomplete CCSDS frame " + str(frameNumber))
-        sys.exit(-1)
+      try:
+        nctrsFrame = GRND.NCTRS.readNCTRSframe(frameDumpFile)
+      except Exception, ex:
+        LOG_WARNING("end of NCTRS frame file reached " + str(frameNumber))
+        LOG_INFO(str(ex))
+        break
+      ccsdsFrame = nctrsFrame.getFrame()
       self.generatePacketsFromCCSDSframe(ccsdsFrame, frameNumber)
       # prepare read of next frame
       frameNumber += 1

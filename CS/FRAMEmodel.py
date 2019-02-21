@@ -36,7 +36,8 @@ class FrameModel(CCSDS.PACKETIZER.Packetizer, CCSDS.TCENCODER.TCencoder):
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise attributes only"""
-    CCSDS.PACKETIZER.Packetizer.__init__(self)
+    frameVCID = int(UTIL.SYS.s_configuration.TM_TRANSFER_FRAME_VCID)
+    CCSDS.PACKETIZER.Packetizer.__init__(self, frameVCID)
     CCSDS.TCENCODER.TCencoder.__init__(self)
     self.ignoreIdlePackets = (UTIL.SYS.s_configuration.IGNORE_IDLE_PACKETS == "1")
   # ---------------------------------------------------------------------------
