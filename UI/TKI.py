@@ -736,9 +736,8 @@ def createGUI():
   s_gui = NotebookWindow()
 # -----------------------------------------------------------------------------
 def createTab():
-  """creates a window for a frame"""
+  """creates a tab for the notebook window"""
   global s_gui
-  # create a tab for the notebook window
   tab = ttk.Frame()
   s_gui.notebook.add(tab)
   return tab
