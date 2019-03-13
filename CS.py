@@ -54,7 +54,7 @@ SYS_CONFIGURATION = [
   ["SYS_COLOR_LOG", "1"],
   ["SYS_APP_MNEMO", "CS"],
   ["SYS_APP_NAME", "Control System"],
-  ["SYS_APP_VERSION", "2.1"],
+  ["SYS_APP_VERSION", "2.2"],
   ["TM_TRANSFER_FRAME_VCID", "0"],
   ["IGNORE_IDLE_PACKETS", "1"]]
 
@@ -558,20 +558,20 @@ if guiMode:
   UI.TKI.createGUI()
   guiTask = UI.TKI.GUItask()
   modelTask = ModelTask(isParent=False)
-  win0 = UI.TKI.createWindow()
-  win1 = UI.TKI.createWindow()
-  win2 = UI.TKI.createWindow()
-  win3 = UI.TKI.createWindow()
-  win4 = UI.TKI.createWindow()
-  win5 = UI.TKI.createWindow()
-  win6 = UI.TKI.createWindow()
-  gui0view = MCUI.CFGgui.GUIview(win0)
-  gui1view = MCUI.TMgui.GUIview(win1)
-  gui2view = MCUI.TCgui.GUIview(win2)
-  gui3view = CS.CNCgui.GUIview(win3)
-  gui4view = CS.EDENgui.GUIview(win4)
-  gui5view = CS.FRAMEgui.GUIview(win5)
-  gui6view = CS.NCTRSgui.GUIview(win6)
+  tab0 = UI.TKI.createTab()
+  tab1 = UI.TKI.createTab()
+  tab2 = UI.TKI.createTab()
+  tab3 = UI.TKI.createTab()
+  tab4 = UI.TKI.createTab()
+  tab5 = UI.TKI.createTab()
+  tab6 = UI.TKI.createTab()
+  gui0view = MCUI.CFGgui.GUIview(tab0)
+  gui1view = MCUI.TMgui.GUIview(tab1)
+  gui2view = MCUI.TCgui.GUIview(tab2)
+  gui3view = CS.CNCgui.GUIview(tab3)
+  gui4view = CS.EDENgui.GUIview(tab4)
+  gui5view = CS.FRAMEgui.GUIview(tab5)
+  gui6view = CS.NCTRSgui.GUIview(tab6)
   UI.TKI.finaliseGUIcreation()
 else:
   modelTask = ModelTask(isParent=True)

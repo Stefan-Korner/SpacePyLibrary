@@ -29,12 +29,12 @@ COLOR_CONNECTED = "#00FF00"
 # classes #
 ###########
 # =============================================================================
-class GUIview(UI.TKI.GUIwinView):
+class GUIview(UI.TKI.GUItabView):
   """Implementation of the Control System CNC GUI layer"""
   # ---------------------------------------------------------------------------
   def __init__(self, master):
     """Initialise all GUI elements"""
-    UI.TKI.GUIwinView.__init__(self, master, "CNC", "CNC Interface")
+    UI.TKI.GUItabView.__init__(self, master, "CNC", "CNC Interface")
     # menu buttons
     self.menuButtons = UI.TKI.MenuButtons(self,
       [["CONN", self.connectPortCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
@@ -81,7 +81,7 @@ class GUIview(UI.TKI.GUIwinView):
   def fillCommandMenuItems(self):
     """
     fill the command menu bar,
-    implementation of UI.TKI.GUIwinView.fillCommandMenuItems
+    implementation of UI.TKI.GUItabView.fillCommandMenuItems
     """
     self.addCommandMenuItem(label="ConnectPort", command=self.connectPortCallback)
     self.addCommandMenuItem(label="DisconnectPort", command=self.disconnectPortCallback, enabled=False)

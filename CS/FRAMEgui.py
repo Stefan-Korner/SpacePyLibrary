@@ -28,12 +28,12 @@ COLOR_BUTTON_BG = "#808080"
 # classes #
 ###########
 # =============================================================================
-class GUIview(UI.TKI.GUIwinView):
+class GUIview(UI.TKI.GUItabView):
   """Implementation of the Control System FRAME GUI layer"""
   # ---------------------------------------------------------------------------
   def __init__(self, master):
     """Initialise all GUI elements"""
-    UI.TKI.GUIwinView.__init__(self, master, "FRAME", "FRAME Layer")
+    UI.TKI.GUItabView.__init__(self, master, "FRAME", "FRAME Layer")
     # menu buttons
     self.menuButtons = UI.TKI.MenuButtons(self,
       [["RPLY", self.replayFramesCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG]])
@@ -62,7 +62,7 @@ class GUIview(UI.TKI.GUIwinView):
   def fillCommandMenuItems(self):
     """
     fill the command menu bar,
-    implementation of UI.TKI.GUIwinView.fillCommandMenuItems
+    implementation of UI.TKI.GUItabView.fillCommandMenuItems
     """
     self.addCommandMenuItem(label="ReplayFrames", command=self.replayFramesCallback)
   # ---------------------------------------------------------------------------

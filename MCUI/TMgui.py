@@ -27,12 +27,12 @@ COLOR_BUTTON_BG = "#808080"
 # classes #
 ###########
 # =============================================================================
-class GUIview(UI.TKI.GUIwinView):
+class GUIview(UI.TKI.GUItabView):
   """Implementation of the M&C Monitoring GUI layer"""
   # ---------------------------------------------------------------------------
   def __init__(self, master):
     """Initialise all GUI elements"""
-    UI.TKI.GUIwinView.__init__(self, master, "TM", "M&C TM")
+    UI.TKI.GUItabView.__init__(self, master, "TM", "M&C TM")
     # menu buttons
     self.menuButtons = UI.TKI.MenuButtons(self,
       [["REC+", self.recordPacketsCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
@@ -60,7 +60,7 @@ class GUIview(UI.TKI.GUIwinView):
   def fillCommandMenuItems(self):
     """
     fill the command menu bar,
-    implementation of UI.TKI.GUIwinView.fillCommandMenuItems
+    implementation of UI.TKI.GUItabView.fillCommandMenuItems
     """
     self.addCommandMenuItem(label="RecordPackets", command=self.recordPacketsCallback)
     self.addCommandMenuItem(label="StopPacketRecorder", command=self.stopPacketRecorderCallback, enabled=False)

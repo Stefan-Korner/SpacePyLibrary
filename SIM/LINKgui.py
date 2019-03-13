@@ -33,12 +33,12 @@ QUEUE_ROW_FORMAT = "%21s |%3d"
 # classes #
 ###########
 # =============================================================================
-class GUIview(UI.TKI.GUIwinView):
+class GUIview(UI.TKI.GUItabView):
   """Implementation of the SIM Link GUI layer"""
   # ---------------------------------------------------------------------------
   def __init__(self, master):
     """Initialise all GUI elements"""
-    UI.TKI.GUIwinView.__init__(self, master, "LINK", "Space Link")
+    UI.TKI.GUItabView.__init__(self, master, "LINK", "Space Link")
     # menu buttons
     self.menuButtons = UI.TKI.MenuButtons(self,
       [["CLCW", self.setCLCWcallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG]])
@@ -106,7 +106,7 @@ class GUIview(UI.TKI.GUIwinView):
   def fillCommandMenuItems(self):
     """
     fill the command menu bar,
-    implementation of UI.TKI.GUIwinView.fillCommandMenuItems
+    implementation of UI.TKI.GUItabView.fillCommandMenuItems
     """
     self.addCommandMenuItem(label="SetCLCW", command=self.setCLCWcallback)
     self.addCommandMenuItem(label="EnableTMflow", command=self.EnableTMflowCallback)

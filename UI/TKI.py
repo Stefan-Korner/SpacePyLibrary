@@ -21,14 +21,9 @@
 #                window and for each view a separate notebook tab.            *
 #                Note: The usage of Tkk is completely encapsulated here.      *
 #******************************************************************************
-import Tkinter, tkFileDialog, tkMessageBox, tkSimpleDialog, os, sys
+import Tkinter, tkFileDialog, tkMessageBox, tkSimpleDialog, ttk, os, sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import UTIL.SYS, UTIL.TASK
-try:
-  import ttk
-  GUITYPE = "ttk"
-except:
-  GUITYPE = "Tkinter"
 
 ####################
 # global variables #
@@ -149,43 +144,16 @@ class GUIview(Tkinter.Frame, AppGrid, UTIL.TASK.View):
     return UTIL.SYS.s_configuration.SYS_APP_VERSION
 
 # =============================================================================
-class GUIwinView(GUIview):
-  """GUI window contents"""
+class GUItabView(GUIview):
+  """GUI tab contents"""
   # ---------------------------------------------------------------------------
   def __init__(self, master, viewMnemo, viewName):
-    """register the window view"""
+    """register the tab view"""
     GUIview.__init__(self, master)
     self.viewMnemo = viewMnemo
     self.viewName = viewName
-    # with old Tkinter there are separate windows with dedicated menues
-    if GUITYPE == "Tkinter":
-      self.master.protocol("WM_DELETE_WINDOW", self.quitCallback)
-      self.master.title(self.getAppMnemo() + " " + self.viewName + " " + self.getAppName() + " " + self.getVersion())
-      # menu bar
-      self.menubar = Tkinter.Menu(self)
-      # file menu
-      self.filemenu = Tkinter.Menu(self.menubar, tearoff=0)
-      self.filemenu.add_command(label="Save " + viewMnemo + " Log", command=self.saveLogCallback)
-      self.filemenu.add_command(label="Quit", command=self.quitCallback)
-      self.menubar.add_cascade(label="File", menu=self.filemenu)
-      # edit menu
-      self.editmenu = Tkinter.Menu(self.menubar, tearoff=0)
-      self.editmenu.add_command(label="Clear " + viewMnemo + " Log", command=self.clearLogCallback)
-      self.menubar.add_cascade(label="Edit", menu=self.editmenu)
-      # command menu
-      self.commandmenu = Tkinter.Menu(self.menubar, tearoff=0)
-      self.menubar.add_cascade(label="Command", menu=self.commandmenu)
-      self.fillCommandMenuItems()
-      # help menu
-      self.helpmenu = Tkinter.Menu(self.menubar, tearoff=0)
-      self.helpmenu.add_command(label="Help", command=self.helpCallback)
-      self.helpmenu.add_command(label="About", command=self.aboutCallback)
-      self.helpmenu.add_command(label="DumpConfiguration", command=self.dumpConfigurationCallback)
-      self.menubar.add_cascade(label="Help", menu=self.helpmenu)
-      self.master.config(menu=self.menubar)
-    else:
-      # prepare a command menu which is attached later on to the notebook win.
-      self.commandmenu = None
+    # prepare a command menu which is attached later on to the notebook win.
+    self.commandmenu = None
   # ---------------------------------------------------------------------------
   def fillCommandMenuItems(self):
     """fill the command menu bar, shall be implemented in derived class"""
@@ -252,7 +220,6 @@ class GUIwinView(GUIview):
 class NotebookWindow(Tkinter.Tk):
   """
   Application window with a notebook for embedded views.
-  An object of this class is only created if there is a new Tkinter (ttk)
   """
   # ---------------------------------------------------------------------------
   def __init__(self):
@@ -273,9 +240,8 @@ class NotebookWindow(Tkinter.Tk):
     self.menubar.add_cascade(label="Edit", menu=self.editmenu)
     self.config(menu=self.menubar)
     # create the notebook
-    if GUITYPE == "ttk":
-      self.notebook = ttk.Notebook(self)
-      self.notebook.grid(column=0, row=0, sticky=(Tkinter.N, Tkinter.W, Tkinter.E, Tkinter.S))
+    self.notebook = ttk.Notebook(self)
+    self.notebook.grid(column=0, row=0, sticky=(Tkinter.N, Tkinter.W, Tkinter.E, Tkinter.S))
   # ---------------------------------------------------------------------------
   def finaliseCreation(self):
     """finalise the creation of the notebook window"""
@@ -305,12 +271,11 @@ class NotebookWindow(Tkinter.Tk):
     helpmenu.add_command(label="DumpConfiguration", command=self.dumpConfigurationCallback)
     self.menubar.add_cascade(label="Help", menu=helpmenu)
   # ---------------------------------------------------------------------------
-  def createTab(self, shortTitle):
+  def createTab(self):
     """creates a tab for the notebook"""
-    if GUITYPE == "ttk":
-      tab = ttk.Frame()
-      self.notebook.add(tab, text=shortTitle)
-      return tab
+    tab = ttk.Frame()
+    self.notebook.add(tab)
+    return tab
   # ---------------------------------------------------------------------------
   def quitCallback(self):
     """Called when the Quit menu entry is selected"""
@@ -768,29 +733,16 @@ class Checkbuttons(SubFrame):
 def createGUI():
   """create the GUI layer"""
   global s_gui
-  if GUITYPE == "Tkinter":
-    s_gui = Tkinter.Tk()
-  else:
-    s_gui = NotebookWindow()
+  s_gui = NotebookWindow()
 # -----------------------------------------------------------------------------
-def createWindow():
+def createTab():
   """creates a window for a frame"""
-  global s_gui, s_windows
-  if GUITYPE == "Tkinter":
-    if len(s_windows) == 0:
-      # use the main window
-      window = s_gui
-    else:
-      # create a child window
-      window = Tkinter.Toplevel()
-  else:
-    # create a tab for the notebook window
-    title = "win" + str(len(s_windows))
-    window = s_gui.createTab(title)
-  s_windows.append(window)
-  return window
+  global s_gui
+  # create a tab for the notebook window
+  tab = ttk.Frame()
+  s_gui.notebook.add(tab)
+  return tab
 # -----------------------------------------------------------------------------
 def finaliseGUIcreation():
   """finalise the creation of the GUI layer"""
-  if GUITYPE == "ttk":
-    s_gui.finaliseCreation()
+  s_gui.finaliseCreation()

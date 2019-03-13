@@ -34,12 +34,12 @@ def initConfiguration():
 # classes #
 ###########
 # =============================================================================
-class GUIview(UI.TKI.GUIwinView):
+class GUIview(UI.TKI.GUItabView):
   """Implementation of the SCOE EGSE GUI layer"""
   # ---------------------------------------------------------------------------
   def __init__(self, master):
     """Initialise all GUI elements"""
-    UI.TKI.GUIwinView.__init__(self, master, "GUI", "Test GUI")
+    UI.TKI.GUItabView.__init__(self, master, "GUI", "Test GUI")
     # log messages (default logger)
     self.messageLogger = UI.TKI.MessageLogger(self)
     self.appGrid(self.messageLogger, row=0, columnspan=2)
@@ -58,7 +58,7 @@ class GUIview(UI.TKI.GUIwinView):
   def fillCommandMenuItems(self):
     """
     fill the command menu bar,
-    implementation of UI.TKI.GUIwinView.fillCommandMenuItems
+    implementation of UI.TKI.GUItabView.fillCommandMenuItems
     """
     pass
   # ---------------------------------------------------------------------------
@@ -79,8 +79,8 @@ if __name__ == "__main__":
   UI.TKI.createGUI()
   guiTask = UI.TKI.GUItask()
   modelTask = UTIL.TASK.ProcessingTask(isParent=False)
-  win0 = UI.TKI.createWindow()
-  gui0view = GUIview(win0)
+  tab0 = UI.TKI.createTab()
+  gui0view = GUIview(tab0)
   UI.TKI.finaliseGUIcreation()
   # register the console handler
   modelTask.registerConsoleHandler(consoleHandler)

@@ -156,12 +156,12 @@ class TCpacketBrowser(tkSimpleDialog.Dialog, UI.TKI.AppGrid):
       self.result = [packetName, route]
 
 # =============================================================================
-class GUIview(UI.TKI.GUIwinView):
+class GUIview(UI.TKI.GUItabView):
   """Implementation of the M&C Control layer"""
   # ---------------------------------------------------------------------------
   def __init__(self, master):
     """Initialise all GUI elements"""
-    UI.TKI.GUIwinView.__init__(self, master, "TC", "M&C TC")
+    UI.TKI.GUItabView.__init__(self, master, "TC", "M&C TC")
     # menu buttons
     self.menuButtons = UI.TKI.MenuButtons(self,
       [["PKT", self.setPacketDataCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, Tkinter.DISABLED],
@@ -197,7 +197,7 @@ class GUIview(UI.TKI.GUIwinView):
   def fillCommandMenuItems(self):
     """
     fill the command menu bar,
-    implementation of UI.TKI.GUIwinView.fillCommandMenuItems
+    implementation of UI.TKI.GUItabView.fillCommandMenuItems
     """
     self.addCommandMenuItem(label="SetPacketData", command=self.setPacketDataCallback, enabled=False)
     self.addCommandMenuItem(label="SendPacket", command=self.sendPacketCallback, enabled=False)

@@ -20,3 +20,4 @@ Python Version | Comment
   1.0  |       | Last version before porting to Python 3 has been started
   2.0  |  3.0  | Initial version after Python 3 porting
   2.1  |  3.1  | Last version with old tkinter support in UI.TKI
+  2.2  |  3.2  | Remove old tkinter support in UI.TKI

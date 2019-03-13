@@ -35,12 +35,12 @@ QUEUE_ROW_FORMAT = "%21s | %4d |  %3d |   %3d |  %5d"
 # classes #
 ###########
 # =============================================================================
-class GUIview(UI.TKI.GUIwinView):
+class GUIview(UI.TKI.GUItabView):
   """Implementation of the SIM Onboard Queue GUI layer"""
   # ---------------------------------------------------------------------------
   def __init__(self, master):
     """Initialise all GUI elements"""
-    UI.TKI.GUIwinView.__init__(self, master, "OBQ", "Onboard Queue")
+    UI.TKI.GUItabView.__init__(self, master, "OBQ", "Onboard Queue")
     # checkbuttons
     self.checkButtons = UI.TKI.Checkbuttons(self,
       [["ACK1", self.ack1Callback, True, COLOR_ON_OK],
@@ -95,7 +95,7 @@ class GUIview(UI.TKI.GUIwinView):
   def fillCommandMenuItems(self):
     """
     fill the command menu bar,
-    implementation of UI.TKI.GUIwinView.fillCommandMenuItems
+    implementation of UI.TKI.GUItabView.fillCommandMenuItems
     """
     self.addCommandMenuItem(label="OBQenableAck1", command=self.obqEnableAck1Callback, enabled=False)
     self.addCommandMenuItem(label="OBQenableNak1", command=self.obqEnableNak1Callback)
