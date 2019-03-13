@@ -31,12 +31,12 @@ COLOR_ON_NOK = "#FF0000"
 # classes #
 ###########
 # =============================================================================
-class GUIview(UI.TKI.GUIwinView):
+class GUIview(UI.TKI.GUItabView):
   """Implementation of the SCOE EGSE GUI layer"""
   # ---------------------------------------------------------------------------
   def __init__(self, master):
     """Initialise all GUI elements"""
-    UI.TKI.GUIwinView.__init__(self, master, "EGSE", "EGSE interface to CCS")
+    UI.TKI.GUItabView.__init__(self, master, "EGSE", "EGSE interface to CCS")
     # checkbuttons
     self.checkButtons = UI.TKI.Checkbuttons(self,
       [["ACK1", self.ack1Callback, True, COLOR_ON_OK],
@@ -84,7 +84,7 @@ class GUIview(UI.TKI.GUIwinView):
   def fillCommandMenuItems(self):
     """
     fill the command menu bar,
-    implementation of UI.TKI.GUIwinView.fillCommandMenuItems
+    implementation of UI.TKI.GUItabView.fillCommandMenuItems
     """
     self.addCommandMenuItem(label="EGSEenableAck1", command=self.egseEnableAck1Callback, enabled=False)
     self.addCommandMenuItem(label="EGSEenableNak1", command=self.egseEnableNak1Callback)

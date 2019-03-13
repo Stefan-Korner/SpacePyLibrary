@@ -33,12 +33,12 @@ COLOR_ON_NOK = "#FF0000"
 # classes #
 ###########
 # =============================================================================
-class GUIview(UI.TKI.GUIwinView):
+class GUIview(UI.TKI.GUItabView):
   """Implementation of the SIM Ground GUI layer"""
   # ---------------------------------------------------------------------------
   def __init__(self, master):
     """Initialise all GUI elements"""
-    UI.TKI.GUIwinView.__init__(self, master, "GRND", "Ground Segment")
+    UI.TKI.GUItabView.__init__(self, master, "GRND", "Ground Segment")
     # menu buttons
     self.menuButtons = UI.TKI.MenuButtons(self,
       [["AD-I", self.initialiseADcallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
@@ -100,7 +100,7 @@ class GUIview(UI.TKI.GUIwinView):
   def fillCommandMenuItems(self):
     """
     fill the command menu bar,
-    implementation of UI.TKI.GUIwinView.fillCommandMenuItems
+    implementation of UI.TKI.GUItabView.fillCommandMenuItems
     """
     self.addCommandMenuItem(label="InitialiseAD", command=self.initialiseADcallback)
     self.addCommandMenuItem(label="GRNDenableAck1", command=self.grndEnableAck1Callback, enabled=False)

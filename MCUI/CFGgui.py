@@ -26,12 +26,12 @@ COLOR_BUTTON_BG = "#808080"
 # classes #
 ###########
 # =============================================================================
-class GUIview(UI.TKI.GUIwinView):
+class GUIview(UI.TKI.GUItabView):
   """Implementation of the M&C Configuration GUI layer"""
   # ---------------------------------------------------------------------------
   def __init__(self, master):
     """Initialise all GUI elements"""
-    UI.TKI.GUIwinView.__init__(self, master, "CFG", "M&C Config")
+    UI.TKI.GUItabView.__init__(self, master, "CFG", "M&C Config")
     # menu buttons
     self.menuButtons = UI.TKI.MenuButtons(self,
       [["LIST", self.listPacketsCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
@@ -59,7 +59,7 @@ class GUIview(UI.TKI.GUIwinView):
   def fillCommandMenuItems(self):
     """
     fill the command menu bar,
-    implementation of UI.TKI.GUIwinView.fillCommandMenuItems
+    implementation of UI.TKI.GUItabView.fillCommandMenuItems
     """
     self.addCommandMenuItem(label="ListPackets", command=self.listPacketsCallback)
     self.addCommandMenuItem(label="Generate", command=self.generateCallback)

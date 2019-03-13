@@ -68,7 +68,7 @@ SYS_CONFIGURATION = [
   ["SYS_COLOR_LOG", "1"],
   ["SYS_APP_MNEMO", "SIM"],
   ["SYS_APP_NAME", "Simulator"],
-  ["SYS_APP_VERSION", "3.1"]]
+  ["SYS_APP_VERSION", "3.2"]]
 
 ###########
 # classes #
@@ -1130,14 +1130,14 @@ if guiMode:
   UI.TKI.createGUI()
   guiTask = UI.TKI.GUItask()
   modelTask = ModelTask(isParent=False)
-  win0 = UI.TKI.createWindow()
-  win1 = UI.TKI.createWindow()
-  win2 = UI.TKI.createWindow()
-  win3 = UI.TKI.createWindow()
-  gui0view = SIM.GRNDgui.GUIview(win0)
-  gui1view = SIM.LINKgui.GUIview(win1)
-  gui2view = SPACEUI.SPACEgui.GUIview(win2)
-  gui3view = SPACEUI.OBQgui.GUIview(win3)
+  tab0 = UI.TKI.createTab()
+  tab1 = UI.TKI.createTab()
+  tab2 = UI.TKI.createTab()
+  tab3 = UI.TKI.createTab()
+  gui0view = SIM.GRNDgui.GUIview(tab0)
+  gui1view = SIM.LINKgui.GUIview(tab1)
+  gui2view = SPACEUI.SPACEgui.GUIview(tab2)
+  gui3view = SPACEUI.OBQgui.GUIview(tab3)
   UI.TKI.finaliseGUIcreation()
 else:
   modelTask = ModelTask(isParent=True)

@@ -31,12 +31,12 @@ COLOR_MESSAGE = "#00FFFF"
 # classes #
 ###########
 # =============================================================================
-class GUIview(UI.TKI.GUIwinView):
+class GUIview(UI.TKI.GUItabView):
   """Implementation of the MIL Bus GUI layer"""
   # ---------------------------------------------------------------------------
   def __init__(self, master):
     """Initialise all GUI elements"""
-    UI.TKI.GUIwinView.__init__(self, master, "MIL", "MIL Bus")
+    UI.TKI.GUItabView.__init__(self, master, "MIL", "MIL Bus")
     # Bus Controller status
     self.bcField = UI.TKI.ValueField(self, row=0, column=0, label="BC:", fieldColumnspan=7)
     self.bcField.set("UNINIT")
@@ -95,7 +95,7 @@ class GUIview(UI.TKI.GUIwinView):
   def fillCommandMenuItems(self):
     """
     fill the command menu bar,
-    implementation of UI.TKI.GUIwinView.fillCommandMenuItems
+    implementation of UI.TKI.GUItabView.fillCommandMenuItems
     """
     pass
   # ---------------------------------------------------------------------------

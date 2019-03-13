@@ -58,7 +58,7 @@ SYS_CONFIGURATION = [
   ["SYS_COLOR_LOG", "1"],
   ["SYS_APP_MNEMO", "SCOE"],
   ["SYS_APP_NAME", "Special Checkout Equipment"],
-  ["SYS_APP_VERSION", "3.1"]]
+  ["SYS_APP_VERSION", "3.2"]]
 
 ###########
 # classes #
@@ -738,12 +738,12 @@ if guiMode:
   UI.TKI.createGUI()
   guiTask = UI.TKI.GUItask()
   modelTask = ModelTask(isParent=False)
-  win0 = UI.TKI.createWindow()
-  win1 = UI.TKI.createWindow()
-  win2 = UI.TKI.createWindow()
-  gui0view = SCOE.EGSEgui.GUIview(win0)
-  gui1view = SPACEUI.SPACEgui.GUIview(win1)
-  gui2view = SPACEUI.MILgui.GUIview(win2)
+  tab0 = UI.TKI.createTab()
+  tab1 = UI.TKI.createTab()
+  tab2 = UI.TKI.createTab()
+  gui0view = SCOE.EGSEgui.GUIview(tab0)
+  gui1view = SPACEUI.SPACEgui.GUIview(tab1)
+  gui2view = SPACEUI.MILgui.GUIview(tab2)
   UI.TKI.finaliseGUIcreation()
 else:
   modelTask = ModelTask(isParent=True)
