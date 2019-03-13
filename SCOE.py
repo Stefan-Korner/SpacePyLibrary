@@ -58,7 +58,7 @@ SYS_CONFIGURATION = [
   ["SYS_COLOR_LOG", "1"],
   ["SYS_APP_MNEMO", "SCOE"],
   ["SYS_APP_NAME", "Special Checkout Equipment"],
-  ["SYS_APP_VERSION", "3.0"]]
+  ["SYS_APP_VERSION", "3.1"]]
 
 ###########
 # classes #
