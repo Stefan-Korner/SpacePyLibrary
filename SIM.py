@@ -69,7 +69,7 @@ SYS_CONFIGURATION = [
   ["SYS_COLOR_LOG", "1"],
   ["SYS_APP_MNEMO", "SIM"],
   ["SYS_APP_NAME", "Simulator"],
-  ["SYS_APP_VERSION", "2.0"]]
+  ["SYS_APP_VERSION", "2.1"]]
 
 ###########
 # classes #

@@ -54,7 +54,7 @@ SYS_CONFIGURATION = [
   ["SYS_COLOR_LOG", "1"],
   ["SYS_APP_MNEMO", "CS"],
   ["SYS_APP_NAME", "Control System"],
-  ["SYS_APP_VERSION", "2.0"],
+  ["SYS_APP_VERSION", "2.1"],
   ["TM_TRANSFER_FRAME_VCID", "0"],
   ["IGNORE_IDLE_PACKETS", "1"]]
 
