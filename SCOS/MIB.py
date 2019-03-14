@@ -235,3 +235,14 @@ def readTable(tableName, uniqueKeys = True):
     except Exception, ex:
       raise Exception(tableName + ": line " + str(lineNr) + ": " + str(ex))
   return tableMap
+
+# -----------------------------------------------------------------------------
+def readAllTables():
+  """Reads all MIB tables"""
+  pidMap = SCOS.MIB.readTable("pid.dat")
+  picMap = SCOS.MIB.readTable("pic.dat")
+  tpcfMap = SCOS.MIB.readTable("tpcf.dat")
+  pcfMap = SCOS.MIB.readTable("pcf.dat")
+  plfMap = SCOS.MIB.readTable("plf.dat", uniqueKeys=False)
+  ccfMap = SCOS.MIB.readTable("ccf.dat")
+  return (pidMap, picMap, tpcfMap, pcfMap, plfMap, ccfMap)

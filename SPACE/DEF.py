@@ -272,13 +272,8 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     implementation of SPACE.IF.Definitions.createDefinitions
     """
     self.definitionData = DefinitionData()
-    # read the mib tables
-    pidMap = SCOS.MIB.readTable("pid.dat")
-    picMap = SCOS.MIB.readTable("pic.dat")
-    tpcfMap = SCOS.MIB.readTable("tpcf.dat")
-    pcfMap = SCOS.MIB.readTable("pcf.dat")
-    plfMap = SCOS.MIB.readTable("plf.dat", uniqueKeys=False)
-    ccfMap = SCOS.MIB.readTable("ccf.dat")
+    # read the mib tables and create the TM/TC definitions
+    pidMap, picMap, tpcfMap, pcfMap, plfMap, ccfMap = SCOS.MIB.readAllTables()
     self.createTMdefinitions(pidMap, picMap, tpcfMap, pcfMap, plfMap)
     self.createTCdefinitions(ccfMap)
     d = time.localtime()
