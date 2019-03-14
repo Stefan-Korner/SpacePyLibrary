@@ -251,7 +251,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     tcPktDef.pktSPDFdataSize = 6
     return tcPktDef
   # ---------------------------------------------------------------------------
-  def createTCdefinitions(self, ccfMap):
+  def createTCdefinitions(self, ccfMap, cpcMap, cdfMap):
     """helper method: create TC packet and parameter definitions from MIB tables"""
     tcPktDefs = []
     tcPktDefsNameMap = {}
@@ -273,9 +273,9 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     """
     self.definitionData = DefinitionData()
     # read the mib tables and create the TM/TC definitions
-    pidMap, picMap, tpcfMap, pcfMap, plfMap, ccfMap = SCOS.MIB.readAllTables()
+    pidMap, picMap, tpcfMap, pcfMap, plfMap, ccfMap, cpcMap, cdfMap = SCOS.MIB.readAllTables()
     self.createTMdefinitions(pidMap, picMap, tpcfMap, pcfMap, plfMap)
-    self.createTCdefinitions(ccfMap)
+    self.createTCdefinitions(ccfMap, cpcMap, cdfMap)
     d = time.localtime()
     self.definitionData.creationTime = "%04d.%02d.%02d %02d:%02d:%02d" % d[:6]
     # save the definitions

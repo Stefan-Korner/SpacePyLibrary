@@ -163,6 +163,42 @@ class CCFrecord:
     """record key"""
     return self.ccfCName
 
+# =============================================================================
+class CPCrecord:
+  """MIB record from pcp.dat"""
+  # ---------------------------------------------------------------------------
+  def __init__(self, fields):
+    """initialise selected attributes from the record"""
+    self.cpcPName = fields[0]
+    self.cpcDescr = fields[1]
+    self.cpcPtc = int(fields[2])
+    self.cpcPfc = int(fields[3])
+  # ---------------------------------------------------------------------------
+  def key(self):
+    """record key"""
+    return self.cpcPName
+
+# =============================================================================
+class CDFrecord:
+  """MIB record from cdf.dat"""
+  # ---------------------------------------------------------------------------
+  def __init__(self, fields):
+    """initialise selected attributes from the record"""
+    self.cdfCName = fields[0]
+    self.cdfDescr = fields[2]
+    self.cdfBit = int(fields[4])
+    # this field could be empty
+    cdfGrpSize = fields[5]
+    if cdfGrpSize == "":
+      self.cdfGrpSize = 0
+    else:
+      self.cdfGrpSize = int(cdfGrpSize)
+    self.cdfPName = fields[6]
+  # ---------------------------------------------------------------------------
+  def key(self):
+    """record key"""
+    return self.cdfCName
+
 #############
 # functions #
 #############
@@ -181,6 +217,10 @@ def getMinFieldNr(tableName):
     return 6
   if tableName == "ccf.dat":
     return 6
+  if tableName == "cpc.dat":
+    return 4
+  if tableName == "cdf.dat":
+    return 7
   raise Exception("invalid table name: " + tableName)
 
 # -----------------------------------------------------------------------------
@@ -198,6 +238,10 @@ def createRecord(tableName, fields):
     return PLFrecord(fields)
   if tableName == "ccf.dat":
     return CCFrecord(fields)
+  if tableName == "cpc.dat":
+    return CPCrecord(fields)
+  if tableName == "cdf.dat":
+    return CDFrecord(fields)
   raise Exception("invalid table name: " + tableName)
 
 # -----------------------------------------------------------------------------
@@ -245,4 +289,6 @@ def readAllTables():
   pcfMap = SCOS.MIB.readTable("pcf.dat")
   plfMap = SCOS.MIB.readTable("plf.dat", uniqueKeys=False)
   ccfMap = SCOS.MIB.readTable("ccf.dat")
-  return (pidMap, picMap, tpcfMap, pcfMap, plfMap, ccfMap)
+  cpcMap = SCOS.MIB.readTable("cpc.dat")
+  cdfMap = SCOS.MIB.readTable("cdf.dat", uniqueKeys=False)
+  return (pidMap, picMap, tpcfMap, pcfMap, plfMap, ccfMap, cpcMap, cdfMap)
