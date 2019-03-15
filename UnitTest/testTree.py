@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import sys
+import SPACE.IF
 
 #############
 # MIB level #
@@ -22,127 +23,6 @@ class MIBvarRecord(object):
     self.paramName = paramName
     self.groupSize = groupSize
 
-####################
-# Definition level #
-####################
-class ParamDef(object):
-  def __init__(self, paramName, paramType, defaultValue):
-    self.paramName = paramName
-    self.paramType = paramType
-    self.defaultValue = defaultValue
-  def __str__(self, indent="ParamDef"):
-    return ("\n" + indent + "." + self.paramName + " = " + str(self.paramType) + ", " + str(self.defaultValue))
-
-class SlotDef(object):
-  def __init__(self, slotName, childDef):
-    self.slotName = slotName
-    self.childDef = childDef
-  def __str__(self, indent="SlotDef"):
-    return self.childDef.__str__(indent + "." + self.slotName)
-
-class StructDef(object):
-  def __init__(self, structName, sortedSlotDefs):
-    self.structName = structName
-    self.slotDefs = tuple(sortedSlotDefs)
-    self.slotMap = {}
-    slotPos = 0
-    for slotDef in self.slotDefs:
-      self.slotMap[slotDef.slotName] = slotPos
-      slotPos += 1
-  def __str__(self, indent="StructDef"):
-    if self.structName != "":
-      indent = indent + "." + self.structName
-    retStr = ""
-    for slotDef in self.slotDefs:
-      retStr += slotDef.__str__(indent)
-    return retStr
-  def getSlotPos(self, slotName):
-    return self.slotMap[slotName]
-
-class ListDef(object):
-  def __init__(self, lenParamDef, entryDef):
-    self.lenParamDef = lenParamDef
-    self.entryDef = entryDef
-  def __str__(self, indent="ListDef"):
-    retStr = self.lenParamDef.__str__(indent + ".len")
-    retStr += self.entryDef.__str__(indent + "[*]")
-    return retStr
-
-##################
-# Instance level #
-##################
-class Param(object):
-  def __init__(self, paramDef):
-    self.paramDef = paramDef
-    self.value = paramDef.defaultValue
-  def __str__(self, indent="Param"):
-    return ("\n" + indent + " = " + str(self.value))
-  def getParamName(self):
-    return self.paramDef.paramName
-  def getParamType(self):
-    return self.paramDef.paramType
-
-class Slot(object):
-  def __init__(self, slotDef=""):
-    self.slotDef = slotDef
-    # create the slot child depending on the slot child type in the definition
-    childDef = slotDef.childDef
-    childType = type(childDef)
-    if childType == ParamDef:
-      self.child = Param(paramDef=childDef)
-    elif childType == ListDef:
-      self.child = List(listDef=childDef)
-    else:
-      print("error: child type " + childType + " not supported")
-      sys.exit(-1)
-  def __str__(self, indent="Slot"):
-    return self.child.__str__(indent + "." + self.slotDef.slotName)
-  def getSlotName(self):
-    return self.slotDef.slotName
-
-class Struct(object):
-  def __init__(self, structDef):
-    self.structDef = structDef
-    self.slots = tuple(Slot(slotDef) for slotDef in structDef.slotDefs)
-  def __str__(self, indent="Struct"):
-    retStr = ""
-    for slot in self.slots:
-      retStr += slot.__str__(indent)
-    return retStr
-  def __getattr__(self, slotName):
-    slotPos = self.structDef.getSlotPos(slotName)
-    return self.slots[slotPos].child
-    
-class List(object):
-  def __init__(self, listDef):
-    self.listDef = listDef
-    length = listDef.lenParamDef.defaultValue
-    entryDef = listDef.entryDef
-    self.entries = [Struct(entryDef) for _ in range(0, length)]
-  def __str__(self, indent="List"):
-    retStr =  "\n" + indent + ".len = " + str(len(self.entries))
-    i = 0
-    for entry in self.entries:
-      retStr += entry.__str__(indent + "[" + str(i) + "]")
-      i += 1
-    return retStr
-  def __len__(self):
-    return len(self.entries)
-  def setLen(self, length):
-    oldLen = len(self.entries)
-    if length < oldLen:
-      # list must be shrinked
-      self.entries = self.entries[:length - oldLen]
-    elif length > oldLen:
-      # list must be expanded
-      entryDef = self.listDef.entryDef
-      while len(self.entries) < length:
-        self.entries.append(Struct(entryDef))
-  def __getitem__(self, key):
-    return self.entries[key]
-  def getLenParamName(self):
-    return self.listDef.lenParamDef.paramName
-
 ######################
 # Definition Manager #
 ######################
@@ -164,9 +44,9 @@ class DefManager:
     except:
       print("error: param name " + paramName + " not found in s_mibParamRecordMap")
       sys.exit(-1)
-    return ParamDef(paramRecord.paramName,
-                    paramRecord.paramType,
-                    paramRecord.defaultValue)
+    return SPACE.IF.VPparamDef(paramRecord.paramName,
+                               paramRecord.paramType,
+                               paramRecord.defaultValue)
   def createSlotDef(self, sortedVarRecords, varRecordsPos):
     nextVarRecord = sortedVarRecords[varRecordsPos]
     slotName = nextVarRecord.slotName
@@ -178,13 +58,13 @@ class DefManager:
       paramName = nextVarRecord.paramName
       childDef = self.createParamDef(paramName)
       varRecordsPos += 1
-    return (SlotDef(slotName, childDef), varRecordsPos)
+    return (SPACE.IF.VPslotDef(slotName, childDef), varRecordsPos)
   def createStructDef(self, structName, sortedVarRecords, varRecordsPos, varRecordsEnd):
     sortedSlotDefs = []
     while varRecordsPos < varRecordsEnd:
       nextSlotDef, varRecordsPos = self.createSlotDef(sortedVarRecords, varRecordsPos)
       sortedSlotDefs.append(nextSlotDef)
-    return (StructDef(structName, sortedSlotDefs), varRecordsPos)
+    return (SPACE.IF.VPstructDef(structName, sortedSlotDefs), varRecordsPos)
   def createListDef(self, sortedVarRecords, varRecordsPos):
     nextVarRecord = sortedVarRecords[varRecordsPos]
     lenParamName = nextVarRecord.paramName
@@ -192,7 +72,7 @@ class DefManager:
     varRecordsPos += 1
     varRecordsEnd = varRecordsPos + nextVarRecord.groupSize
     entryDef, varRecordsPos = self.createStructDef("", sortedVarRecords, varRecordsPos, varRecordsEnd)
-    return (ListDef(lenParamDef, entryDef), varRecordsPos)
+    return (SPACE.IF.VPlistDef(lenParamDef, entryDef), varRecordsPos)
   def createToplevelStructDef(self, structName):
     try:
       varRecords = self.mibVarRecordMap[structName]
@@ -266,7 +146,7 @@ mibVarRecords = [
 defManager = DefManager(mibParamRecords, mibVarRecords)
 structDef = defManager.createToplevelStructDef("XXXX1234")
 print("structDef:", structDef)
-struct = Struct(structDef)
+struct = SPACE.IF.VPstruct(structDef)
 print("struct-->", struct)
 print("struct.s_1.value = " + str(struct.s_1.value))
 struct.s_1.value = 111222
@@ -315,9 +195,9 @@ class TreeManager:
     slotName = slot.getSlotName()
     child = slot.child
     childType = type(child)
-    if childType == Param:
+    if childType == SPACE.IF.VPparam:
       self.fillParamInTree(parentNodeID, slotName, param=child)
-    elif childType == List:
+    elif childType == SPACE.IF.VPlist:
       self.fillListInTree(parentNodeID, slotName, lst=child)
     else:
       print("error: child type " + childType + " not supported")
@@ -339,11 +219,11 @@ class TreeManager:
   def itemEvent(self, event):
     nodeID = self.tree.selection()[0]
     nodeObject = self.treeMap[nodeID]
-    if type(nodeObject) == Param:
+    if type(nodeObject) == SPACE.IF.VPparam:
       self.paramClicked(nodeObject, nodeID)
-    elif type(nodeObject) == Struct:
+    elif type(nodeObject) == SPACE.IF.VPstruct:
       self.structClicked(nodeObject, nodeID)
-    elif type(nodeObject) == List:
+    elif type(nodeObject) == SPACE.IF.VPlist:
       self.listClicked(nodeObject, nodeID)
     return "break"
   def paramClicked(self, param, nodeID):
@@ -376,9 +256,9 @@ class TreeManager:
     name = nodeValues[0]
     value = nodeValues[1]
     answer = simpledialog.askinteger("List",
-                                    nodeKey + ": " + name,
-                                    initialvalue=value,
-                                    minvalue=0)
+                                     nodeKey + ": " + name,
+                                     initialvalue=value,
+                                     minvalue=0)
     if answer == None:
       return
     # new list length entered --> update list object and tree
