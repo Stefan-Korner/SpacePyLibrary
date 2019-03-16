@@ -31,6 +31,9 @@ RPLY_OBT = 3     # replay file onboard time entry
 RPLY_ERT = 4     # replay file earth reception time entry
 MIL_BUS_PF = 0   # MIL Platform Bus
 MIL_BUS_PL = 1   # MIL Payload Bus
+# parameter types
+VP_PARAM_NUMBER = "PARAM_NUMBER"
+VP_PARAM_STRING = "PARAM_STRING"
 
 ###########
 # classes #
