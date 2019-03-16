@@ -12,7 +12,7 @@
 #******************************************************************************
 # Variable Packet GUI                                                         *
 #******************************************************************************
-import Tkinter, ttk, tkSimpleDialog
+import ttk, tkSimpleDialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import SPACE.IF
 
