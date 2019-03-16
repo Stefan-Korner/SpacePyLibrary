@@ -1,14 +1,11 @@
 #!/usr/bin/env python
 import sys
 import SPACE.IF
+import SPACEUI.VPgui
 
 #############
 # MIB level #
 #############
-# parameter type
-PARAM_NUMBER = "PARAM_NUMBER"
-PARAM_STRING = "PARAM_STRING"
-
 class MIBparamRecord(object):
   def __init__(self, paramName, paramType, defaultValue):
     self.paramName = paramName
@@ -124,15 +121,15 @@ class DefManager:
 #                                                                             *
 #******************************************************************************
 mibParamRecords = [
-  MIBparamRecord("Par1", PARAM_NUMBER, 123),
-  MIBparamRecord("Par2", PARAM_STRING, "This is a string"),
-  MIBparamRecord("Par3", PARAM_NUMBER, 4193),
-  MIBparamRecord("Par4", PARAM_STRING, "This is a variable string"),
-  MIBparamRecord("Par5", PARAM_NUMBER, 3),
-  MIBparamRecord("Par6", PARAM_NUMBER, 15362),
-  MIBparamRecord("Par7", PARAM_STRING, "This is also a variable string"),
-  MIBparamRecord("Par8", PARAM_NUMBER, 182736489393276),
-  MIBparamRecord("Par9", PARAM_STRING, "This is the last variable string in the struct")]
+  MIBparamRecord("Par1", SPACE.IF.VP_PARAM_NUMBER, 123),
+  MIBparamRecord("Par2", SPACE.IF.VP_PARAM_STRING, "This is a string"),
+  MIBparamRecord("Par3", SPACE.IF.VP_PARAM_NUMBER, 4193),
+  MIBparamRecord("Par4", SPACE.IF.VP_PARAM_STRING, "This is a variable string"),
+  MIBparamRecord("Par5", SPACE.IF.VP_PARAM_NUMBER, 3),
+  MIBparamRecord("Par6", SPACE.IF.VP_PARAM_NUMBER, 15362),
+  MIBparamRecord("Par7", SPACE.IF.VP_PARAM_STRING, "This is also a variable string"),
+  MIBparamRecord("Par8", SPACE.IF.VP_PARAM_NUMBER, 182736489393276),
+  MIBparamRecord("Par9", SPACE.IF.VP_PARAM_STRING, "This is the last variable string in the struct")]
 mibVarRecords = [
   MIBvarRecord("XXXX1234", 1, "s_1", "Par1", 0),
   MIBvarRecord("XXXX1234", 2, "s_2", "Par2", 0),
@@ -165,132 +162,9 @@ print("struct-->", struct)
 #******************************************************************************
 # GUI with tree widget                                                        *
 #******************************************************************************
-import Tkinter, ttk, tkSimpleDialog
-
-################
-# Tree Manager #
-################
-class TreeManager:
-  def __init__(self, root):
-    self.tree = ttk.Treeview(root)
-    self.tree.bind("<Double-1>", self.itemEvent)
-    self.tree["columns"]=("name","value")
-    self.tree.column("name", width=100 )
-    self.tree.column("value", width=200)
-    self.tree.heading("name", text="Name")
-    self.tree.heading("value", text="Value")
-    self.treeMap = {}
-    self.toplevelStruct = None
-  def fillTree(self, treeName, struct):
-    self.toplevelStruct = struct
-    self.fillStructInTree("", treeName, struct)
-    self.tree.pack()
-  def fillParamInTree(self, parentNodeID, slotName, param):
-    paramName = param.getParamName()
-    paramValue = param.value
-    nodeID = self.tree.insert(parentNodeID, "end", text=slotName, values=(paramName, str(paramValue)))
-    self.treeMap[nodeID] = param
-  def fillSlotInTree(self, parentNodeID, slot):
-    slotName = slot.getSlotName()
-    child = slot.child
-    childType = type(child)
-    if childType == SPACE.IF.VPparam:
-      self.fillParamInTree(parentNodeID, slotName, param=child)
-    elif childType == SPACE.IF.VPlist:
-      self.fillListInTree(parentNodeID, slotName, lst=child)
-    else:
-      print("error: child type " + childType + " not supported")
-      sys.exit(-1)
-  def fillStructInTree(self, parentNodeID, structName, struct):
-    nodeID = self.tree.insert(parentNodeID , "end", text=structName, values=("", ""))
-    self.treeMap[nodeID] = struct
-    for slot in struct.slots:
-      self.fillSlotInTree(nodeID, slot)
-  def fillListInTree(self, parentNodeID, slotName, lst):
-    lenParamName = lst.getLenParamName()
-    nodeID = self.tree.insert(parentNodeID, "end", text=slotName + " len", values=(lenParamName, str(len(lst))))
-    self.treeMap[nodeID] = lst
-    i = 0
-    for entry in lst.entries:
-      stuctName = "[" + str(i) + "]"
-      self.fillStructInTree(nodeID, stuctName, struct=entry)
-      i += 1
-  def itemEvent(self, event):
-    nodeID = self.tree.selection()[0]
-    nodeObject = self.treeMap[nodeID]
-    if type(nodeObject) == SPACE.IF.VPparam:
-      self.paramClicked(nodeObject, nodeID)
-    elif type(nodeObject) == SPACE.IF.VPstruct:
-      self.structClicked(nodeObject, nodeID)
-    elif type(nodeObject) == SPACE.IF.VPlist:
-      self.listClicked(nodeObject, nodeID)
-    return "break"
-  def paramClicked(self, param, nodeID):
-    nodeKey = self.tree.item(nodeID, "text")
-    nodeValues = self.tree.item(nodeID, "value")
-    name = nodeValues[0]
-    value = nodeValues[1]
-    paramType = param.getParamType()
-    if paramType == PARAM_NUMBER:
-      answer = simpledialog.askinteger("Param",
-                                       nodeKey + ": " + name,
-                                       initialvalue=value)
-    elif paramType == PARAM_STRING:
-      answer = simpledialog.askstring("Param",
-                                      nodeKey + ": " + name,
-                                      initialvalue=value)
-    else:
-      answer = None
-    if answer == None:
-      return
-    # new parameter value entered --> update param object and tree
-    newValue = answer
-    param.value = newValue
-    self.tree.set(nodeID, 1, newValue)
-  def structClicked(self, struct, nodeID):
-    pass
-  def listClicked(self, lst, nodeID):
-    nodeKey = self.tree.item(nodeID, "text")
-    nodeValues = self.tree.item(nodeID, "value")
-    name = nodeValues[0]
-    value = nodeValues[1]
-    answer = tkSimpleDialog.askinteger("List",
-                                       nodeKey + ": " + name,
-                                       initialvalue=value,
-                                       minvalue=0)
-    if answer == None:
-      return
-    # new list length entered --> update list object and tree
-    oldLen = len(lst)
-    newLen = answer
-    if oldLen < newLen:
-      # enlarge the list object and list display
-      lst.setLen(newLen)
-      i = oldLen
-      while i < newLen:
-        entry = lst[i]
-        stuctName = "[" + str(i) + "]"
-        self.fillStructInTree(nodeID, stuctName, struct=entry)
-        i += 1
-    elif oldLen > newLen:
-      # shrink the list object and list display
-      lst.setLen(newLen)
-      # iterate over a list copy, because tree is changed during interation
-      i = 0
-      children = list(self.tree.get_children(nodeID))
-      for child in children:
-        if i >= newLen:
-          self.tree.delete(child)
-        i += 1
-    else:
-      # do nothing
-      return
-    # update the len value in the display
-    self.tree.set(nodeID, 1, str(len(lst)))
-  def dumpData(self):
-    print("TreeManager.data =", self.toplevelStruct)
+import Tkinter
 
 root = Tkinter.Tk()
-treeManager = TreeManager(root)
-treeManager.fillTree("Packet_01", struct)
+treeBrowser = SPACEUI.VPgui.TreeBrowser(root)
+treeBrowser.fillTree("Packet_01", struct)
 root.mainloop()
