@@ -20,17 +20,17 @@ import SPACE.IF
 # classes #
 ###########
 # =============================================================================
-class TreeBrowser(object):
-  """Variable packet tree browser"""
+class TreeView(ttk.Treeview):
+  """Variable packet tree view"""
   # ---------------------------------------------------------------------------
   def __init__(self, root):
-    self.tree = ttk.Treeview(root)
-    self.tree.bind("<Double-1>", self.itemEvent)
-    self.tree["columns"]=("name","value")
-    self.tree.column("name", width=100 )
-    self.tree.column("value", width=200)
-    self.tree.heading("name", text="Name")
-    self.tree.heading("value", text="Value")
+    ttk.Treeview.__init__(self, root)
+    self.bind("<Double-1>", self.itemEvent)
+    self["columns"]=("name","value")
+    self.column("name", width=100 )
+    self.column("value", width=200)
+    self.heading("name", text="Name")
+    self.heading("value", text="Value")
     self.treeMap = {}
     self.toplevelStruct = None
   # ---------------------------------------------------------------------------
@@ -38,13 +38,13 @@ class TreeBrowser(object):
     """fills a toplevel VPstruct into the tree"""
     self.toplevelStruct = struct
     self.fillStructInTree("", treeName, struct)
-    self.tree.pack()
+    self.pack()
   # ---------------------------------------------------------------------------
   def fillParamInTree(self, parentNodeID, slotName, param):
     """fills a VPparam into the tree"""
     paramName = param.getParamName()
     paramValue = param.value
-    nodeID = self.tree.insert(parentNodeID, "end", text=slotName, values=(paramName, str(paramValue)))
+    nodeID = self.insert(parentNodeID, "end", text=slotName, values=(paramName, str(paramValue)))
     self.treeMap[nodeID] = param
   # ---------------------------------------------------------------------------
   def fillSlotInTree(self, parentNodeID, slot):
@@ -61,7 +61,7 @@ class TreeBrowser(object):
   # ---------------------------------------------------------------------------
   def fillStructInTree(self, parentNodeID, structName, struct):
     """fills a VPstruct into the tree"""
-    nodeID = self.tree.insert(parentNodeID , "end", text=structName, values=("", ""))
+    nodeID = self.insert(parentNodeID , "end", text=structName, values=("", ""))
     self.treeMap[nodeID] = struct
     for slot in struct.slots:
       self.fillSlotInTree(nodeID, slot)
@@ -69,7 +69,7 @@ class TreeBrowser(object):
   def fillListInTree(self, parentNodeID, slotName, lst):
     """fills a VPlist into the tree"""
     lenParamName = lst.getLenParamName()
-    nodeID = self.tree.insert(parentNodeID, "end", text=slotName + " len", values=(lenParamName, str(len(lst))))
+    nodeID = self.insert(parentNodeID, "end", text=slotName + " len", values=(lenParamName, str(len(lst))))
     self.treeMap[nodeID] = lst
     i = 0
     for entry in lst.entries:
@@ -79,7 +79,7 @@ class TreeBrowser(object):
   # ---------------------------------------------------------------------------
   def itemEvent(self, event):
     """callback when an item in the tree is clicked"""
-    nodeID = self.tree.selection()[0]
+    nodeID = self.selection()[0]
     nodeObject = self.treeMap[nodeID]
     if type(nodeObject) == SPACE.IF.VPparam:
       self.paramClicked(nodeObject, nodeID)
@@ -91,18 +91,20 @@ class TreeBrowser(object):
   # ---------------------------------------------------------------------------
   def paramClicked(self, param, nodeID):
     """callback when a VPparam node is clicked"""
-    nodeKey = self.tree.item(nodeID, "text")
-    nodeValues = self.tree.item(nodeID, "value")
+    nodeKey = self.item(nodeID, "text")
+    nodeValues = self.item(nodeID, "value")
     name = nodeValues[0]
     value = nodeValues[1]
     paramType = param.getParamType()
     if paramType == SPACE.IF.VP_PARAM_NUMBER:
       answer = tkSimpleDialog.askinteger("Param",
                                          nodeKey + ": " + name,
+                                         parent=self,
                                          initialvalue=value)
     elif paramType == SPACE.IF.VP_PARAM_STRING:
       answer = tkSimpleDialog.askstring("Param",
                                         nodeKey + ": " + name,
+                                        parent=self,
                                         initialvalue=value)
     else:
       answer = None
@@ -111,7 +113,7 @@ class TreeBrowser(object):
     # new parameter value entered --> update param object and tree
     newValue = answer
     param.value = newValue
-    self.tree.set(nodeID, 1, newValue)
+    self.set(nodeID, 1, newValue)
   # ---------------------------------------------------------------------------
   def structClicked(self, struct, nodeID):
     """callback when a VPstruct node is clicked"""
@@ -119,12 +121,13 @@ class TreeBrowser(object):
   # ---------------------------------------------------------------------------
   def listClicked(self, lst, nodeID):
     """callback when a VPlist node is clicked"""
-    nodeKey = self.tree.item(nodeID, "text")
-    nodeValues = self.tree.item(nodeID, "value")
+    nodeKey = self.item(nodeID, "text")
+    nodeValues = self.item(nodeID, "value")
     name = nodeValues[0]
     value = nodeValues[1]
     answer = tkSimpleDialog.askinteger("List",
                                        nodeKey + ": " + name,
+                                       parent=self,
                                        initialvalue=value,
                                        minvalue=0)
     if answer == None:
@@ -146,17 +149,32 @@ class TreeBrowser(object):
       lst.setLen(newLen)
       # iterate over a list copy, because tree is changed during interation
       i = 0
-      children = list(self.tree.get_children(nodeID))
+      children = list(self.get_children(nodeID))
       for child in children:
         if i >= newLen:
-          self.tree.delete(child)
+          self.delete(child)
         i += 1
     else:
       # do nothing
       return
     # update the len value in the display
-    self.tree.set(nodeID, 1, str(len(lst)))
+    self.set(nodeID, 1, str(len(lst)))
   # ---------------------------------------------------------------------------
   def dumpData(self):
     """helper method"""
-    LOG("TreeBrowser.data = " + str(self.toplevelStruct), "SPACE")
+    LOG("TreeView.data = " + str(self.toplevelStruct), "SPACE")
+
+# =============================================================================
+class TreeBrowser(tkSimpleDialog.Dialog):
+  """Variable packet tree browser"""
+  # ---------------------------------------------------------------------------
+  def __init__(self, master, treeName, struct):
+    self.treeView = None
+    self.treeName = treeName
+    self.struct = struct
+    tkSimpleDialog.Dialog.__init__(self, master, title="Variable Packet Tree Browser")
+  # ---------------------------------------------------------------------------
+  def body(self, master):
+    """Intialise the dialog"""
+    self.treeView = TreeView(self)
+    self.treeView.fillTree(self.treeName, self.struct)
