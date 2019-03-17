@@ -165,6 +165,5 @@ print("struct-->", struct)
 import tkinter
 
 root = tkinter.Tk()
-treeBrowser = SPACEUI.VPgui.TreeBrowser(root)
-treeBrowser.fillTree("Packet_01", struct)
-root.mainloop()
+root.withdraw()
+dialog = SPACEUI.VPgui.TreeBrowser(root, "Packet_01", struct)
