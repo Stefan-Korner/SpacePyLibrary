@@ -14,7 +14,7 @@
 #******************************************************************************
 import ttk, tkSimpleDialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import SPACE.IF
+import CCSDS.VP
 import UTIL.DU
 
 ###########
@@ -36,7 +36,7 @@ class TreeView(ttk.Treeview):
     self.toplevelStruct = None
   # ---------------------------------------------------------------------------
   def fillTree(self, treeName, struct):
-    """fills a toplevel VPstruct into the tree"""
+    """fills a toplevel Struct into the tree"""
     # delete the old contents
     self.treeMap = {}
     self.delete(*self.get_children())
@@ -45,33 +45,33 @@ class TreeView(ttk.Treeview):
     self.fillStructInTree("", treeName, struct)
   # ---------------------------------------------------------------------------
   def fillParamInTree(self, parentNodeID, slotName, param):
-    """fills a VPparam into the tree"""
+    """fills a Param into the tree"""
     paramName = param.getParamName()
     paramValue = param.value
     nodeID = self.insert(parentNodeID, "end", text=slotName, values=(paramName, str(paramValue)))
     self.treeMap[nodeID] = param
   # ---------------------------------------------------------------------------
   def fillSlotInTree(self, parentNodeID, slot):
-    """fills a VPslot into the tree"""
+    """fills a Slot into the tree"""
     slotName = slot.getSlotName()
     child = slot.child
     childType = type(child)
-    if childType == SPACE.IF.VPparam:
+    if childType == CCSDS.VP.Param:
       self.fillParamInTree(parentNodeID, slotName, param=child)
-    elif childType == SPACE.IF.VPlist:
+    elif childType == CCSDS.VP.List:
       self.fillListInTree(parentNodeID, slotName, lst=child)
     else:
       raise Error("child type " + childType + " not supported")
   # ---------------------------------------------------------------------------
   def fillStructInTree(self, parentNodeID, structName, struct):
-    """fills a VPstruct into the tree"""
+    """fills a Struct into the tree"""
     nodeID = self.insert(parentNodeID , "end", text=structName, values=("", ""))
     self.treeMap[nodeID] = struct
     for slot in struct.slots:
       self.fillSlotInTree(nodeID, slot)
   # ---------------------------------------------------------------------------
   def fillListInTree(self, parentNodeID, slotName, lst):
-    """fills a VPlist into the tree"""
+    """fills a List into the tree"""
     lenParamName = lst.getLenParamName()
     nodeID = self.insert(parentNodeID, "end", text=slotName + " len", values=(lenParamName, str(len(lst))))
     self.treeMap[nodeID] = lst
@@ -80,21 +80,21 @@ class TreeView(ttk.Treeview):
       stuctName = "[" + str(i) + "]"
       self.fillStructInTree(nodeID, stuctName, struct=entry)
       i += 1
-  # ---------------------------------------------------------------------------
+  # ---------------------------------------------------------V------------------
   def itemEvent(self, event):
     """callback when an item in the tree is clicked"""
     nodeID = self.selection()[0]
     nodeObject = self.treeMap[nodeID]
-    if type(nodeObject) == SPACE.IF.VPparam:
+    if type(nodeObject) == CCSDS.VP.Param:
       self.paramClicked(nodeObject, nodeID)
-    elif type(nodeObject) == SPACE.IF.VPstruct:
+    elif type(nodeObject) == CCSDS.VP.Struct:
       self.structClicked(nodeObject, nodeID)
-    elif type(nodeObject) == SPACE.IF.VPlist:
+    elif type(nodeObject) == CCSDS.VP.List:
       self.listClicked(nodeObject, nodeID)
     return "break"
   # ---------------------------------------------------------------------------
   def paramClicked(self, param, nodeID):
-    """callback when a VPparam node is clicked"""
+    """callback when a Param node is clicked"""
     nodeKey = self.item(nodeID, "text")
     nodeValues = self.item(nodeID, "value")
     name = nodeValues[0]
@@ -122,11 +122,11 @@ class TreeView(ttk.Treeview):
     self.set(nodeID, 1, newValue)
   # ---------------------------------------------------------------------------
   def structClicked(self, struct, nodeID):
-    """callback when a VPstruct node is clicked"""
+    """callback when a Struct node is clicked"""
     pass
   # ---------------------------------------------------------------------------
   def listClicked(self, lst, nodeID):
-    """callback when a VPlist node is clicked"""
+    """callback when a List node is clicked"""
     nodeKey = self.item(nodeID, "text")
     nodeValues = self.item(nodeID, "value")
     name = nodeValues[0]

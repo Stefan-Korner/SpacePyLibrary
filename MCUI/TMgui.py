@@ -84,14 +84,14 @@ class GUIview(UI.TKI.GUItabView):
       self.packetRecStopped()
   # ---------------------------------------------------------------------------
   def packetRecStarted(self):
-    """Called when the recordPackets function is succsssfully processed"""
+    """Called when the recordPackets function is successfully processed"""
     self.disableCommandMenuItem("RecordPackets")
     self.enableCommandMenuItem("StopPacketRecorder")
     self.menuButtons.setState("REC+", Tkinter.DISABLED)
     self.menuButtons.setState("REC-", Tkinter.NORMAL)
   # ---------------------------------------------------------------------------
   def packetRecStopped(self):
-    """Called when the stopPacketRecorder function is succsssfully processed"""
+    """Called when the stopPacketRecorder function is successfully processed"""
     self.enableCommandMenuItem("RecordPackets")
     self.disableCommandMenuItem("StopPacketRecorder")
     self.menuButtons.setState("REC+", Tkinter.NORMAL)

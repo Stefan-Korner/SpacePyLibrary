@@ -227,37 +227,37 @@ class GUIview(UI.TKI.GUItabView):
       entryPos += 1
   # ---------------------------------------------------------------------------
   def enabledTMflowNotify(self):
-    """Called when the enabledTMflow function is succsssfully processed"""
+    """Called when the enabledTMflow function is successfully processed"""
     self.disableCommandMenuItem("EnableTMflow")
     self.enableCommandMenuItem("DisableTMflow")
     self.checkButtons.setButtonPressed("TM_FLOW", True)
   # ---------------------------------------------------------------------------
   def disabledTMflowNotify(self):
-    """Called when the disabledTMflow function is succsssfully processed"""
+    """Called when the disabledTMflow function is successfully processed"""
     self.enableCommandMenuItem("EnableTMflow")
     self.disableCommandMenuItem("DisableTMflow")
     self.checkButtons.setButtonPressed("TM_FLOW", False)
   # ---------------------------------------------------------------------------
   def enabledCLCWnotify(self):
-    """Called when the enabledCLCW function is succsssfully processed"""
+    """Called when the enabledCLCW function is successfully processed"""
     self.disableCommandMenuItem("EnableCLCW")
     self.enableCommandMenuItem("DisableCLCW")
     self.checkButtons.setButtonPressed("CLCW", True)
   # ---------------------------------------------------------------------------
   def disabledCLCWnotify(self):
-    """Called when the disabledCLCW function is succsssfully processed"""
+    """Called when the disabledCLCW function is successfully processed"""
     self.enableCommandMenuItem("EnableCLCW")
     self.disableCommandMenuItem("DisableCLCW")
     self.checkButtons.setButtonPressed("CLCW", False)
   # ---------------------------------------------------------------------------
   def lockoutSetNotify(self):
-    """Called when the setLockout function is succsssfully processed"""
+    """Called when the setLockout function is successfully processed"""
     self.disableCommandMenuItem("SetLockout")
     self.enableCommandMenuItem("ResetLockout")
     self.checkButtons.setButtonPressed("LOCK", True)
   # ---------------------------------------------------------------------------
   def lockoutResetNotify(self):
-    """Called when the resetLockout function is succsssfully processed"""
+    """Called when the resetLockout function is successfully processed"""
     self.enableCommandMenuItem("SetLockout")
     self.disableCommandMenuItem("ResetLockout")
     self.checkButtons.setButtonPressed("LOCK", False)

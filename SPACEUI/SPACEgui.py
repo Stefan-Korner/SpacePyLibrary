@@ -480,7 +480,7 @@ class GUIview(UI.TKI.GUItabView):
       self.frameRecStopped()
   # ---------------------------------------------------------------------------
   def tmConnectedNotify(self):
-    """Called when the TM connect function is succsssfully processed"""
+    """Called when the TM connect function is successfully processed"""
     self.enableCommandMenuItem("SetPacketData")
     self.enableCommandMenuItem("EnableCyclic")
     self.enableCommandMenuItem("SendAck")
@@ -491,7 +491,7 @@ class GUIview(UI.TKI.GUItabView):
     self.updateTMstatusField()
   # ---------------------------------------------------------------------------
   def packetDataSetNotify(self):
-    """Called when the setPacketData function is succsssfully processed"""
+    """Called when the setPacketData function is successfully processed"""
     self.enableCommandMenuItem("SendPacket")
     self.menuButtons.setState("SND", Tkinter.NORMAL)
     self.updateTMstatusField()
@@ -558,32 +558,32 @@ class GUIview(UI.TKI.GUItabView):
     self.replayTMpacketsField.set(txt)
   # ---------------------------------------------------------------------------
   def enabledCyclicNotify(self):
-    """Called when the enableCyclic function is succsssfully processed"""
+    """Called when the enableCyclic function is successfully processed"""
     self.disableCommandMenuItem("EnableCyclic")
     self.enableCommandMenuItem("DisableCyclic")
     self.checkButtons.setButtonPressed("TM", True)
   def disabledCyclicNotify(self):
-    """Called when the disableCyclic function is succsssfully processed"""
+    """Called when the disableCyclic function is successfully processed"""
     self.enableCommandMenuItem("EnableCyclic")
     self.disableCommandMenuItem("DisableCyclic")
     self.checkButtons.setButtonPressed("TM", False)
   # ---------------------------------------------------------------------------
   def obcEnabledAck1Notify(self):
-    """Called when the obcEnabledAck1 function is succsssfully processed"""
+    """Called when the obcEnabledAck1 function is successfully processed"""
     self.disableCommandMenuItem("OBCenableAck1")
     self.enableCommandMenuItem("OBCenableNak1")
     self.enableCommandMenuItem("OBCdisableAck1")
     self.checkButtons.setButtonPressed("ACK1", True)
     self.checkButtons.setButtonPressed("NAK1", False)
   def obcEnabledNak1Notify(self):
-    """Called when the obcEnabledNak1 function is succsssfully processed"""
+    """Called when the obcEnabledNak1 function is successfully processed"""
     self.enableCommandMenuItem("OBCenableAck1")
     self.disableCommandMenuItem("OBCenableNak1")
     self.enableCommandMenuItem("OBCdisableAck1")
     self.checkButtons.setButtonPressed("ACK1", False)
     self.checkButtons.setButtonPressed("NAK1", True)
   def obcDisabledAck1Notify(self):
-    """Called when the obcDisabledAck1 function is succsssfully processed"""
+    """Called when the obcDisabledAck1 function is successfully processed"""
     self.enableCommandMenuItem("OBCenableAck1")
     self.enableCommandMenuItem("OBCenableNak1")
     self.disableCommandMenuItem("OBCdisableAck1")
@@ -591,21 +591,21 @@ class GUIview(UI.TKI.GUItabView):
     self.checkButtons.setButtonPressed("NAK1", False)
   # ---------------------------------------------------------------------------
   def obcEnabledAck2Notify(self):
-    """Called when the obcEnabledAck2 function is succsssfully processed"""
+    """Called when the obcEnabledAck2 function is successfully processed"""
     self.disableCommandMenuItem("OBCenableAck2")
     self.enableCommandMenuItem("OBCenableNak1")
     self.enableCommandMenuItem("OBCdisableAck2")
     self.checkButtons.setButtonPressed("ACK2", True)
     self.checkButtons.setButtonPressed("NAK2", False)
   def obcEnabledNak2Notify(self):
-    """Called when the obcEnabledNak2 function is succsssfully processed"""
+    """Called when the obcEnabledNak2 function is successfully processed"""
     self.enableCommandMenuItem("OBCenableAck2")
     self.disableCommandMenuItem("OBCenableNak2")
     self.enableCommandMenuItem("OBCdisableAck2")
     self.checkButtons.setButtonPressed("ACK2", False)
     self.checkButtons.setButtonPressed("NAK2", True)
   def obcDisabledAck2Notify(self):
-    """Called when the obcDisabledAck2 function is succsssfully processed"""
+    """Called when the obcDisabledAck2 function is successfully processed"""
     self.enableCommandMenuItem("OBCenableAck2")
     self.enableCommandMenuItem("OBCenableNak2")
     self.disableCommandMenuItem("OBCdisableAck2")
@@ -613,21 +613,21 @@ class GUIview(UI.TKI.GUItabView):
     self.checkButtons.setButtonPressed("NAK2", False)
   # ---------------------------------------------------------------------------
   def obcEnabledAck3Notify(self):
-    """Called when the obcEnabledAck3 function is succsssfully processed"""
+    """Called when the obcEnabledAck3 function is successfully processed"""
     self.disableCommandMenuItem("OBCenableAck3")
     self.enableCommandMenuItem("OBCenableNak3")
     self.enableCommandMenuItem("OBCdisableAck3")
     self.checkButtons.setButtonPressed("ACK3", True)
     self.checkButtons.setButtonPressed("NAK3", False)
   def obcEnabledNak3Notify(self):
-    """Called when the obcEnabledNak3 function is succsssfully processed"""
+    """Called when the obcEnabledNak3 function is successfully processed"""
     self.enableCommandMenuItem("OBCenableAck3")
     self.disableCommandMenuItem("OBCenableNak3")
     self.enableCommandMenuItem("OBCdisableAck3")
     self.checkButtons.setButtonPressed("ACK3", False)
     self.checkButtons.setButtonPressed("NAK3", True)
   def obcDisabledAck3Notify(self):
-    """Called when the obcDisabledAck3 function is succsssfully processed"""
+    """Called when the obcDisabledAck3 function is successfully processed"""
     self.enableCommandMenuItem("OBCenableAck3")
     self.enableCommandMenuItem("OBCenableNak3")
     self.disableCommandMenuItem("OBCdisableAck3")
@@ -635,21 +635,21 @@ class GUIview(UI.TKI.GUItabView):
     self.checkButtons.setButtonPressed("NAK3", False)
   # ---------------------------------------------------------------------------
   def obcEnabledAck4Notify(self):
-    """Called when the obcEnabledAck4 function is succsssfully processed"""
+    """Called when the obcEnabledAck4 function is successfully processed"""
     self.disableCommandMenuItem("OBCenableAck4")
     self.enableCommandMenuItem("OBCenableNak4")
     self.enableCommandMenuItem("OBCdisableAck4")
     self.checkButtons.setButtonPressed("ACK4", True)
     self.checkButtons.setButtonPressed("NAK4", False)
   def obcEnabledNak4Notify(self):
-    """Called when the obcEnabledNak4 function is succsssfully processed"""
+    """Called when the obcEnabledNak4 function is successfully processed"""
     self.enableCommandMenuItem("OBCenableAck4")
     self.disableCommandMenuItem("OBCenableNak4")
     self.enableCommandMenuItem("OBCdisableAck4")
     self.checkButtons.setButtonPressed("ACK4", False)
     self.checkButtons.setButtonPressed("NAK4", True)
   def obcDisabledAck4Notify(self):
-    """Called when the obcDisabledAck4 function is succsssfully processed"""
+    """Called when the obcDisabledAck4 function is successfully processed"""
     self.enableCommandMenuItem("OBCenableAck4")
     self.enableCommandMenuItem("OBCenableNak4")
     self.disableCommandMenuItem("OBCdisableAck4")
@@ -657,7 +657,7 @@ class GUIview(UI.TKI.GUItabView):
     self.checkButtons.setButtonPressed("NAK4", False)
   # ---------------------------------------------------------------------------
   def frameRecStarted(self):
-    """Called when the recordFrames function is succsssfully processed"""
+    """Called when the recordFrames function is successfully processed"""
     self.enableCommandMenuItem("SetPacketData")
     self.enableCommandMenuItem("EnableCyclic")
     self.enableCommandMenuItem("SendAck")
@@ -667,7 +667,7 @@ class GUIview(UI.TKI.GUItabView):
     self.menuButtons.setState("RPLY", Tkinter.NORMAL)
   # ---------------------------------------------------------------------------
   def frameRecStopped(self):
-    """Called when the stopFrameRecorder function is succsssfully processed"""
+    """Called when the stopFrameRecorder function is successfully processed"""
     if SPACE.IF.s_configuration.connected:
       self.enableCommandMenuItem("SetPacketData")
       self.enableCommandMenuItem("EnableCyclic")
