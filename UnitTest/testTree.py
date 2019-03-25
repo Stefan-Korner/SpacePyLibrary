@@ -2,6 +2,7 @@
 import sys
 import SPACE.IF
 import SPACEUI.VPgui
+import UTIL.DU
 
 #############
 # MIB level #
@@ -41,8 +42,10 @@ class DefManager:
     except:
       print("error: param name " + paramName + " not found in s_mibParamRecordMap")
       sys.exit(-1)
+    bitWidth = 0
     return SPACE.IF.VPparamDef(paramRecord.paramName,
                                paramRecord.paramType,
+                               bitWidth,
                                paramRecord.defaultValue)
   def createSlotDef(self, sortedVarRecords, varRecordsPos):
     nextVarRecord = sortedVarRecords[varRecordsPos]
@@ -121,15 +124,15 @@ class DefManager:
 #                                                                             *
 #******************************************************************************
 mibParamRecords = [
-  MIBparamRecord("Par1", SPACE.IF.VP_PARAM_NUMBER, 123),
-  MIBparamRecord("Par2", SPACE.IF.VP_PARAM_STRING, "This is a string"),
-  MIBparamRecord("Par3", SPACE.IF.VP_PARAM_NUMBER, 4193),
-  MIBparamRecord("Par4", SPACE.IF.VP_PARAM_STRING, "This is a variable string"),
-  MIBparamRecord("Par5", SPACE.IF.VP_PARAM_NUMBER, 3),
-  MIBparamRecord("Par6", SPACE.IF.VP_PARAM_NUMBER, 15362),
-  MIBparamRecord("Par7", SPACE.IF.VP_PARAM_STRING, "This is also a variable string"),
-  MIBparamRecord("Par8", SPACE.IF.VP_PARAM_NUMBER, 182736489393276),
-  MIBparamRecord("Par9", SPACE.IF.VP_PARAM_STRING, "This is the last variable string in the struct")]
+  MIBparamRecord("Par1", UTIL.DU.UNSIGNED, 123),
+  MIBparamRecord("Par2", UTIL.DU.STRING, "This is a string"),
+  MIBparamRecord("Par3", UTIL.DU.UNSIGNED, 4193),
+  MIBparamRecord("Par4", UTIL.DU.STRING, "This is a variable string"),
+  MIBparamRecord("Par5", UTIL.DU.UNSIGNED, 3),
+  MIBparamRecord("Par6", UTIL.DU.UNSIGNED, 15362),
+  MIBparamRecord("Par7", UTIL.DU.STRING, "This is also a variable string"),
+  MIBparamRecord("Par8", UTIL.DU.UNSIGNED, 182736489393276),
+  MIBparamRecord("Par9", UTIL.DU.STRING, "This is the last variable string in the struct")]
 mibVarRecords = [
   MIBvarRecord("XXXX1234", 1, "s_1", "Par1", 0),
   MIBvarRecord("XXXX1234", 2, "s_2", "Par2", 0),

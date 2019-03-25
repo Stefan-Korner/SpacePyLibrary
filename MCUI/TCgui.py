@@ -17,6 +17,7 @@ from tkinter import simpledialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import MC.IF
 import SPACE.IF
+import SPACEUI.VPgui
 import UI.TKI
 
 #############
@@ -51,11 +52,11 @@ class TCpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
     self.pktTypeField = UI.TKI.ValueField(self, row=5, label="Packet Type:")
     # Subtype
     self.pktSubtypeField = UI.TKI.ValueField(self, row=6, label="Packet Subtype:")
-    # --- parameter listbox ---
+    # --- parameter tree ---
     label = tkinter.Label(self, text="Parameters")
     self.appGrid(label, row=0, column=2, rowweight=0)
-    self.parametersListbox = UI.TKI.ScrolledListbox(self, selectmode=tkinter.SINGLE)
-    self.appGrid(self.parametersListbox, row=1, column=2, rowspan=6, rowweight=0, columnweight=1)
+    self.parametersTreeview = SPACEUI.VPgui.TreeView(self)
+    self.appGrid(self.parametersTreeview, row=1, column=2, rowspan=6, rowweight=0, columnweight=1)
     # --- filler ---
     filler = tkinter.Label(self)
     self.appGrid(filler, row=7, columnspan=3, rowweight=0)
@@ -65,6 +66,8 @@ class TCpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
     # --- filler ---
     filler = tkinter.Label(self)
     self.appGrid(filler, row=9, columnspan=3, rowweight=0)
+    # TC Struct for variable packet parameters
+    self.tcStruct = None
   # ---------------------------------------------------------------------------
   def update(self, tcPktDef):
     """Update the packet fields"""
@@ -75,6 +78,7 @@ class TCpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
     pktAPID = ""
     pktType = ""
     pktSType = ""
+    self.tcStruct = None
     if tcPktDef != None:
       pktName = tcPktDef.pktName
       pktDescr = tcPktDef.pktDescr
@@ -82,6 +86,8 @@ class TCpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
       pktAPID = tcPktDef.pktAPID
       pktType = tcPktDef.pktType
       pktSType = tcPktDef.pktSType
+      tcStructDef = tcPktDef.tcStructDef
+      self.tcStruct = SPACE.IF.VPstruct(tcStructDef)
     # write the data into the GUI
     self.pktNameField.set(pktName)
     self.pktDescrField.set(pktDescr)
@@ -89,6 +95,7 @@ class TCpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
     self.pktAPIDfield.set(pktAPID)
     self.pktTypeField.set(pktType)
     self.pktSubtypeField.set(pktSType)
+    self.parametersTreeview.fillTree(pktName, self.tcStruct)
 
 # =============================================================================
 class TCpacketBrowser(simpledialog.Dialog, UI.TKI.AppGrid):

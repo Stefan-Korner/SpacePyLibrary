@@ -31,9 +31,6 @@ RPLY_OBT = 3     # replay file onboard time entry
 RPLY_ERT = 4     # replay file earth reception time entry
 MIL_BUS_PF = 0   # MIL Platform Bus
 MIL_BUS_PL = 1   # MIL Payload Bus
-# parameter types
-VP_PARAM_NUMBER = "PARAM_NUMBER"
-VP_PARAM_STRING = "PARAM_STRING"
 
 ###########
 # classes #
@@ -437,9 +434,10 @@ class TCpktDef(object):
     self.pktSPsize = None
     self.pktSPDFsize = None
     self.pktSPDFdataSize = None
+    self.tcStructDef = None
   # ---------------------------------------------------------------------------
   def __cmp__(self, other):
-    """supports sorting by SPID"""
+    """supports sorting by pktName"""
     if other == None:
       return 1
     if self.pktName > other.pktName:
@@ -469,6 +467,7 @@ class TCpktDef(object):
     retVal += " pktSPsize = " + str(self.pktSPsize) + "\n"
     retVal += " pktSPDFsize = " + str(self.pktSPDFsize) + "\n"
     retVal += " pktSPDFdataSize = " + str(self.pktSPDFsize) + "\n"
+    retVal += " tcStructDef = " + str(self.tcStructDef) + "\n"
     return retVal
 
 # =============================================================================
@@ -494,14 +493,15 @@ class TCpacketInjectData(object):
 class VPparamDef(object):
   """Contains the most important definition data of a variable packet parameter"""
   # ---------------------------------------------------------------------------
-  def __init__(self, paramName, paramType, defaultValue):
+  def __init__(self, paramName, paramType, bitWidth, defaultValue):
     self.paramName = paramName
     self.paramType = paramType
+    self.bitWidth = bitWidth
     self.defaultValue = defaultValue
   # ---------------------------------------------------------------------------
   def __str__(self, indent="VPparamDef"):
     """string representation"""
-    return ("\n" + indent + "." + self.paramName + " = " + str(self.paramType) + ", " + str(self.defaultValue))
+    return ("\n" + indent + "." + self.paramName + " = " + str(self.paramType) + ", " + str(self.bitWidth) + ", " + str(self.defaultValue))
 
 # =============================================================================
 class VPslotDef(object):

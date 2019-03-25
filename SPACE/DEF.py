@@ -234,7 +234,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     self.definitionData.tmPktSpidNameMap = tmPktSpidNameMap
     self.definitionData.tmParamDefs = tmParamDefs
   # ---------------------------------------------------------------------------
-  def createTCpktDef(self, ccfRecord):
+  def createTCpktDef(self, ccfRecord, cdfMap, cpcMap):
     """creates a TM packet definition"""
     tcPktDef = SPACE.IF.TCpktDef();
     tcPktDef.pktName = ccfRecord.ccfCName
@@ -249,7 +249,81 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     tcPktDef.pktSPsize = 16
     tcPktDef.pktSPDFsize = 10
     tcPktDef.pktSPDFdataSize = 6
+    tcPktDef.tcStructDef = self.createTcToplevelStructDef(tcPktDef.pktName, cdfMap, cpcMap)
     return tcPktDef
+  # ---------------------------------------------------------------------------
+  def createTcParamDef(self, paramName, defaultValue, cpcMap):
+    try:
+      cpcRecord = cpcMap[paramName]
+      paramName = cpcRecord.cpcPName
+      paramPtc = cpcRecord.cpcPtc
+      paramPfc = cpcRecord.cpcPfc
+      try:
+        paramType = getValueType(paramPtc, paramPfc)
+        bitWidth = getBitWidth(paramPtc, paramPfc)
+        if defaultValue == "":
+          defaultValue = cpcRecord.cpcDefVal
+      except Exception as ex:
+        # inconsistency
+        LOG_WARNING("param " + paramName + ": " + str(ex) + " ---> dummy type", "SPACE")
+        paramType = UTIL.DU.UNSIGNED
+        bitWidth = 0
+        defaultValue = 0
+    except:
+      LOG_WARNING("TC param name " + paramName + " not found in cpc.dat ---> dummy param", "SPACE")
+      paramName = "dummy"
+      paramType = UTIL.DU.UNSIGNED
+      bitWidth = 0
+      defaultValue = 0
+    return SPACE.IF.VPparamDef(paramName,
+                               paramType,
+                               bitWidth,
+                               defaultValue)
+  # ---------------------------------------------------------------------------
+  def createTcSlotDef(self, sortedCdfRecords, cdfRecordsPos, cpcMap):
+    nextCdfRecord = sortedCdfRecords[cdfRecordsPos]
+    slotName = nextCdfRecord.cdfPName
+    if nextCdfRecord.cdfGrpSize > 0:
+      # group repeater definition
+      childDef, cdfRecordsPos = self.createTcListDef(sortedCdfRecords, cdfRecordsPos, cpcMap)
+    else:
+      # parameter definition
+      paramName = nextCdfRecord.cdfPName
+      defaultValue = nextCdfRecord.cdfValue
+      childDef = self.createTcParamDef(paramName, defaultValue, cpcMap)
+      cdfRecordsPos += 1
+    return (SPACE.IF.VPslotDef(slotName, childDef), cdfRecordsPos)
+  # ---------------------------------------------------------------------------
+  def createTcStructDef(self, structName, sortedCdfRecords, cdfRecordsPos, cdfRecordsEnd, cpcMap):
+    sortedSlotDefs = []
+    while cdfRecordsPos < cdfRecordsEnd:
+      nextSlotDef, cdfRecordsPos = self.createTcSlotDef(sortedCdfRecords, cdfRecordsPos, cpcMap)
+      sortedSlotDefs.append(nextSlotDef)
+    return (SPACE.IF.VPstructDef(structName, sortedSlotDefs), cdfRecordsPos)
+  # ---------------------------------------------------------------------------
+  def createTcListDef(self, sortedCdfRecords, cdfRecordsPos, cpcMap):
+    nextCdfRecord = sortedCdfRecords[cdfRecordsPos]
+    lenParamName = nextCdfRecord.cdfPName
+    lenDefaultValue = nextCdfRecord.cdfValue
+    lenParamDef = self.createTcParamDef(lenParamName, lenDefaultValue, cpcMap)
+    cdfRecordsPos += 1
+    cdfRecordsEnd = cdfRecordsPos + nextCdfRecord.cdfGrpSize
+    entryDef, cdfRecordsPos = self.createTcStructDef("", sortedCdfRecords, cdfRecordsPos, cdfRecordsEnd, cpcMap)
+    return (SPACE.IF.VPlistDef(lenParamDef, entryDef), cdfRecordsPos)
+  # ---------------------------------------------------------------------------
+  def createTcToplevelStructDef(self, structName, cdfMap, cpcMap):
+    # try to find a variable packet definition
+    try:
+      cdfRecords = cdfMap[structName]
+    except:
+      LOG_WARNING("no variable packet definition " + structName +" in cdf.dat ---> dummy entry", "SPACE")
+      cdfRecords = []
+    # sort the related variable record definitions
+    sortedCdfRecords = sorted(cdfRecords, key=lambda cdfRecord: cdfRecord.cdfBit)
+    cdfRecordsPos = 0
+    cdfRecordsEnd = len(sortedCdfRecords)
+    structDef, cdfRecordsPos = self.createTcStructDef(structName, sortedCdfRecords, cdfRecordsPos, cdfRecordsEnd, cpcMap)
+    return structDef
   # ---------------------------------------------------------------------------
   def createTCdefinitions(self, ccfMap, cpcMap, cdfMap):
     """helper method: create TC packet and parameter definitions from MIB tables"""
@@ -257,7 +331,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     tcPktDefsNameMap = {}
     # step 1) create packet definitions
     for cName, ccfRecord in ccfMap.items():
-      tcPktDef = self.createTCpktDef(ccfRecord)
+      tcPktDef = self.createTCpktDef(ccfRecord, cdfMap, cpcMap)
       pktName = tcPktDef.pktName
       tcPktDefs.append(tcPktDef)
       tcPktDefsNameMap[pktName] = tcPktDef
@@ -516,16 +590,18 @@ def getBitWidth(paramPtc, paramPfc):
   elif paramPtc == 7:
     # octet string
     if paramPfc == 0:
-      # variable octet string, not supported by SCOS-2000 TM
-      pass
+      # variable octet string, not supported by SCOS-2000 fixed TM
+      # zero indicates variable length
+      return 0
     else:
       # fixed length octet strings
       return paramPfc * 8
   elif paramPtc == 8:
     # ASCII string
     if paramPfc == 0:
-      # variable ASCII string, not supported by SCOS-2000 TM
-      pass
+      # variable ASCII string, not supported by SCOS-2000 fixed TM
+      # zero indicates variable length
+      return 0
     else:
       # fixed length ASCII strings
       return paramPfc * 8
@@ -591,7 +667,7 @@ def getIsBytePos(plfRecord):
   # super-commutated parameter
   return ((plfRecord.plfLgocc % 8) == 0)
 # -----------------------------------------------------------------------------
-def getValueType(paramPtc, paramPfc, isBytePos):
+def getValueType(paramPtc, paramPfc, isBytePos=True):
   """Returns the type and the bit width of a parameter value as tupple"""
   if paramPfc < 0:
     # not allowed --> exception will be raised
@@ -660,16 +736,16 @@ def getValueType(paramPtc, paramPfc, isBytePos):
   elif paramPtc == 7:
     # octet string
     if paramPfc == 0:
-      # variable octet string, not supported by SCOS-2000 TM, not implemented
-      pass
+      # variable octet string, not supported by SCOS-2000 fixed TM
+      return UTIL.DU.BYTES
     else:
       # fixed length octet strings
       return UTIL.DU.BYTES
   elif paramPtc == 8:
     # ASCII string
     if paramPfc == 0:
-      # variable ASCII string, not supported by SCOS-2000 TM, not implemented
-      pass
+      # variable ASCII string, not supported by SCOS-2000 fixed TM
+      return UTIL.DU.STRING
     else:
       # fixed length ASCII strings
       return UTIL.DU.STRING
