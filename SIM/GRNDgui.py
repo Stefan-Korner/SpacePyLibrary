@@ -233,21 +233,21 @@ class GUIview(UI.TKI.GUItabView):
     self.adminStatusField.setBackground(COLOR_INITIALISED)
   # ---------------------------------------------------------------------------
   def grndEnabledAck1Notify(self):
-    """Called when the grndEnabledAck1 function is succsssfully processed"""
+    """Called when the grndEnabledAck1 function is successfully processed"""
     self.disableCommandMenuItem("GRNDenableAck1")
     self.enableCommandMenuItem("GRNDenableNak1")
     self.enableCommandMenuItem("GRNDdisableAck1")
     self.checkButtons.setButtonPressed("ACK1", True)
     self.checkButtons.setButtonPressed("NAK1", False)
   def grndEnabledNak1Notify(self):
-    """Called when the grndEnabledNak1 function is succsssfully processed"""
+    """Called when the grndEnabledNak1 function is successfully processed"""
     self.enableCommandMenuItem("GRNDenableAck1")
     self.disableCommandMenuItem("GRNDenableNak1")
     self.enableCommandMenuItem("GRNDdisableAck1")
     self.checkButtons.setButtonPressed("ACK1", False)
     self.checkButtons.setButtonPressed("NAK1", True)
   def grndDisabledAck1Notify(self):
-    """Called when the grndDisabledAck1 function is succsssfully processed"""
+    """Called when the grndDisabledAck1 function is successfully processed"""
     self.enableCommandMenuItem("GRNDenableAck1")
     self.enableCommandMenuItem("GRNDenableNak1")
     self.disableCommandMenuItem("GRNDdisableAck1")
@@ -255,21 +255,21 @@ class GUIview(UI.TKI.GUItabView):
     self.checkButtons.setButtonPressed("NAK1", False)
   # ---------------------------------------------------------------------------
   def grndEnabledAck2Notify(self):
-    """Called when the grndEnabledAck2 function is succsssfully processed"""
+    """Called when the grndEnabledAck2 function is successfully processed"""
     self.disableCommandMenuItem("GRNDenableAck2")
     self.enableCommandMenuItem("GRNDenableNak1")
     self.enableCommandMenuItem("GRNDdisableAck2")
     self.checkButtons.setButtonPressed("ACK2", True)
     self.checkButtons.setButtonPressed("NAK2", False)
   def grndEnabledNak2Notify(self):
-    """Called when the grndEnabledNak2 function is succsssfully processed"""
+    """Called when the grndEnabledNak2 function is successfully processed"""
     self.enableCommandMenuItem("GRNDenableAck2")
     self.disableCommandMenuItem("GRNDenableNak2")
     self.enableCommandMenuItem("GRNDdisableAck2")
     self.checkButtons.setButtonPressed("ACK2", False)
     self.checkButtons.setButtonPressed("NAK2", True)
   def grndDisabledAck2Notify(self):
-    """Called when the grndDisabledAck2 function is succsssfully processed"""
+    """Called when the grndDisabledAck2 function is successfully processed"""
     self.enableCommandMenuItem("GRNDenableAck2")
     self.enableCommandMenuItem("GRNDenableNak2")
     self.disableCommandMenuItem("GRNDdisableAck2")
@@ -277,14 +277,14 @@ class GUIview(UI.TKI.GUItabView):
     self.checkButtons.setButtonPressed("NAK2", False)
   # ---------------------------------------------------------------------------
   def frameRecStarted(self):
-    """Called when the recordFrames function is succsssfully processed"""
+    """Called when the recordFrames function is successfully processed"""
     self.disableCommandMenuItem("RecordFrames")
     self.enableCommandMenuItem("StopFrameRecorder")
     self.menuButtons.setState("REC+", tkinter.DISABLED)
     self.menuButtons.setState("REC-", tkinter.NORMAL)
   # ---------------------------------------------------------------------------
   def frameRecStopped(self):
-    """Called when the stopFrameRecorder function is succsssfully processed"""
+    """Called when the stopFrameRecorder function is successfully processed"""
     self.enableCommandMenuItem("RecordFrames")
     self.disableCommandMenuItem("StopFrameRecorder")
     self.menuButtons.setState("REC+", tkinter.NORMAL)

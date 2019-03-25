@@ -247,21 +247,21 @@ class GUIview(UI.TKI.GUItabView):
       entryPos += 1
   # ---------------------------------------------------------------------------
   def obqEnabledAck1Notify(self):
-    """Called when the obqEnabledAck1 function is succsssfully processed"""
+    """Called when the obqEnabledAck1 function is successfully processed"""
     self.disableCommandMenuItem("OBQenableAck1")
     self.enableCommandMenuItem("OBQenableNak1")
     self.enableCommandMenuItem("OBQdisableAck1")
     self.checkButtons.setButtonPressed("ACK1", True)
     self.checkButtons.setButtonPressed("NAK1", False)
   def obqEnabledNak1Notify(self):
-    """Called when the obqEnabledNak1 function is succsssfully processed"""
+    """Called when the obqEnabledNak1 function is successfully processed"""
     self.enableCommandMenuItem("OBQenableAck1")
     self.disableCommandMenuItem("OBQenableNak1")
     self.enableCommandMenuItem("OBQdisableAck1")
     self.checkButtons.setButtonPressed("ACK1", False)
     self.checkButtons.setButtonPressed("NAK1", True)
   def obqDisabledAck1Notify(self):
-    """Called when the obqDisabledAck1 function is succsssfully processed"""
+    """Called when the obqDisabledAck1 function is successfully processed"""
     self.enableCommandMenuItem("OBQenableAck1")
     self.enableCommandMenuItem("OBQenableNak1")
     self.disableCommandMenuItem("OBQdisableAck1")
@@ -269,21 +269,21 @@ class GUIview(UI.TKI.GUItabView):
     self.checkButtons.setButtonPressed("NAK1", False)
   # ---------------------------------------------------------------------------
   def obqEnabledAck2Notify(self):
-    """Called when the obqEnabledAck2 function is succsssfully processed"""
+    """Called when the obqEnabledAck2 function is successfully processed"""
     self.disableCommandMenuItem("OBQenableAck2")
     self.enableCommandMenuItem("OBQenableNak1")
     self.enableCommandMenuItem("OBQdisableAck2")
     self.checkButtons.setButtonPressed("ACK2", True)
     self.checkButtons.setButtonPressed("NAK2", False)
   def obqEnabledNak2Notify(self):
-    """Called when the obqEnabledNak2 function is succsssfully processed"""
+    """Called when the obqEnabledNak2 function is successfully processed"""
     self.enableCommandMenuItem("OBQenableAck2")
     self.disableCommandMenuItem("OBQenableNak2")
     self.enableCommandMenuItem("OBQdisableAck2")
     self.checkButtons.setButtonPressed("ACK2", False)
     self.checkButtons.setButtonPressed("NAK2", True)
   def obqDisabledAck2Notify(self):
-    """Called when the obqDisabledAck2 function is succsssfully processed"""
+    """Called when the obqDisabledAck2 function is successfully processed"""
     self.enableCommandMenuItem("OBQenableAck2")
     self.enableCommandMenuItem("OBQenableNak2")
     self.disableCommandMenuItem("OBQdisableAck2")
@@ -291,21 +291,21 @@ class GUIview(UI.TKI.GUItabView):
     self.checkButtons.setButtonPressed("NAK2", False)
   # ---------------------------------------------------------------------------
   def obqEnabledAck3Notify(self):
-    """Called when the obqEnabledAck3 function is succsssfully processed"""
+    """Called when the obqEnabledAck3 function is successfully processed"""
     self.disableCommandMenuItem("OBQenableAck3")
     self.enableCommandMenuItem("OBQenableNak3")
     self.enableCommandMenuItem("OBQdisableAck3")
     self.checkButtons.setButtonPressed("ACK3", True)
     self.checkButtons.setButtonPressed("NAK3", False)
   def obqEnabledNak3Notify(self):
-    """Called when the obqEnabledNak3 function is succsssfully processed"""
+    """Called when the obqEnabledNak3 function is successfully processed"""
     self.enableCommandMenuItem("OBQenableAck3")
     self.disableCommandMenuItem("OBQenableNak3")
     self.enableCommandMenuItem("OBQdisableAck3")
     self.checkButtons.setButtonPressed("ACK3", False)
     self.checkButtons.setButtonPressed("NAK3", True)
   def obqDisabledAck3Notify(self):
-    """Called when the obqDisabledAck3 function is succsssfully processed"""
+    """Called when the obqDisabledAck3 function is successfully processed"""
     self.enableCommandMenuItem("OBQenableAck3")
     self.enableCommandMenuItem("OBQenableNak3")
     self.disableCommandMenuItem("OBQdisableAck3")
@@ -313,21 +313,21 @@ class GUIview(UI.TKI.GUItabView):
     self.checkButtons.setButtonPressed("NAK3", False)
   # ---------------------------------------------------------------------------
   def obqEnabledAck4Notify(self):
-    """Called when the obqEnabledAck4 function is succsssfully processed"""
+    """Called when the obqEnabledAck4 function is successfully processed"""
     self.disableCommandMenuItem("OBQenableAck4")
     self.enableCommandMenuItem("OBQenableNak4")
     self.enableCommandMenuItem("OBQdisableAck4")
     self.checkButtons.setButtonPressed("ACK4", True)
     self.checkButtons.setButtonPressed("NAK4", False)
   def obqEnabledNak4Notify(self):
-    """Called when the obqEnabledNak4 function is succsssfully processed"""
+    """Called when the obqEnabledNak4 function is successfully processed"""
     self.enableCommandMenuItem("OBQenableAck4")
     self.disableCommandMenuItem("OBQenableNak4")
     self.enableCommandMenuItem("OBQdisableAck4")
     self.checkButtons.setButtonPressed("ACK4", False)
     self.checkButtons.setButtonPressed("NAK4", True)
   def obqDisabledAck4Notify(self):
-    """Called when the obqDisabledAck4 function is succsssfully processed"""
+    """Called when the obqDisabledAck4 function is successfully processed"""
     self.enableCommandMenuItem("OBQenableAck4")
     self.enableCommandMenuItem("OBQenableNak4")
     self.disableCommandMenuItem("OBQdisableAck4")

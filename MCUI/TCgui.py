@@ -15,6 +15,7 @@
 import tkinter
 from tkinter import simpledialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import CCSDS.VP
 import MC.IF
 import SPACE.IF
 import SPACEUI.VPgui
@@ -87,7 +88,7 @@ class TCpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
       pktType = tcPktDef.pktType
       pktSType = tcPktDef.pktSType
       tcStructDef = tcPktDef.tcStructDef
-      self.tcStruct = SPACE.IF.VPstruct(tcStructDef)
+      self.tcStruct = CCSDS.VP.Struct(tcStructDef)
     # write the data into the GUI
     self.pktNameField.set(pktName)
     self.pktDescrField.set(pktDescr)
@@ -232,13 +233,13 @@ class GUIview(UI.TKI.GUItabView):
       self.packetDataSetNotify()
   # ---------------------------------------------------------------------------
   def tcConnectedNotify(self):
-    """Called when the TC connect function is succsssfully processed"""
+    """Called when the TC connect function is successfully processed"""
     self.enableCommandMenuItem("SetPacketData")
     self.menuButtons.setState("PKT", tkinter.NORMAL)
     self.updateTCstatusField()
   # ---------------------------------------------------------------------------
   def packetDataSetNotify(self):
-    """Called when the setPacketData function is succsssfully processed"""
+    """Called when the setPacketData function is successfully processed"""
     self.enableCommandMenuItem("SendPacket")
     self.menuButtons.setState("SND", tkinter.NORMAL)
     self.updateTCstatusField()

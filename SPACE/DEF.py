@@ -14,7 +14,7 @@
 #******************************************************************************
 import os, pickle, time
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CCSDS.DU, CCSDS.PACKET
+import CCSDS.DU, CCSDS.PACKET, CCSDS.VP
 import PUS.PACKET
 import SCOS.ENV, SCOS.MIB
 import SPACE.IF
@@ -275,10 +275,10 @@ class DefinitionsImpl(SPACE.IF.Definitions):
       paramType = UTIL.DU.UNSIGNED
       bitWidth = 0
       defaultValue = 0
-    return SPACE.IF.VPparamDef(paramName,
-                               paramType,
-                               bitWidth,
-                               defaultValue)
+    return CCSDS.VP.ParamDef(paramName,
+                             paramType,
+                             bitWidth,
+                             defaultValue)
   # ---------------------------------------------------------------------------
   def createTcSlotDef(self, sortedCdfRecords, cdfRecordsPos, cpcMap):
     nextCdfRecord = sortedCdfRecords[cdfRecordsPos]
@@ -292,14 +292,14 @@ class DefinitionsImpl(SPACE.IF.Definitions):
       defaultValue = nextCdfRecord.cdfValue
       childDef = self.createTcParamDef(paramName, defaultValue, cpcMap)
       cdfRecordsPos += 1
-    return (SPACE.IF.VPslotDef(slotName, childDef), cdfRecordsPos)
+    return (CCSDS.VP.SlotDef(slotName, childDef), cdfRecordsPos)
   # ---------------------------------------------------------------------------
   def createTcStructDef(self, structName, sortedCdfRecords, cdfRecordsPos, cdfRecordsEnd, cpcMap):
     sortedSlotDefs = []
     while cdfRecordsPos < cdfRecordsEnd:
       nextSlotDef, cdfRecordsPos = self.createTcSlotDef(sortedCdfRecords, cdfRecordsPos, cpcMap)
       sortedSlotDefs.append(nextSlotDef)
-    return (SPACE.IF.VPstructDef(structName, sortedSlotDefs), cdfRecordsPos)
+    return (CCSDS.VP.StructDef(structName, sortedSlotDefs), cdfRecordsPos)
   # ---------------------------------------------------------------------------
   def createTcListDef(self, sortedCdfRecords, cdfRecordsPos, cpcMap):
     nextCdfRecord = sortedCdfRecords[cdfRecordsPos]
@@ -309,7 +309,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     cdfRecordsPos += 1
     cdfRecordsEnd = cdfRecordsPos + nextCdfRecord.cdfGrpSize
     entryDef, cdfRecordsPos = self.createTcStructDef("", sortedCdfRecords, cdfRecordsPos, cdfRecordsEnd, cpcMap)
-    return (SPACE.IF.VPlistDef(lenParamDef, entryDef), cdfRecordsPos)
+    return (CCSDS.VP.ListDef(lenParamDef, entryDef), cdfRecordsPos)
   # ---------------------------------------------------------------------------
   def createTcToplevelStructDef(self, structName, cdfMap, cpcMap):
     # try to find a variable packet definition

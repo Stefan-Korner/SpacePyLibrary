@@ -181,21 +181,21 @@ class GUIview(UI.TKI.GUItabView):
     self.ccsStatusField2.setBackground(COLOR_INITIALISED)
   # ---------------------------------------------------------------------------
   def egseEnabledAck1Notify(self):
-    """Called when the egseEnabledAck1 function is succsssfully processed"""
+    """Called when the egseEnabledAck1 function is successfully processed"""
     self.disableCommandMenuItem("EGSEenableAck1")
     self.enableCommandMenuItem("EGSEenableNak1")
     self.enableCommandMenuItem("EGSEdisableAck1")
     self.checkButtons.setButtonPressed("ACK1", True)
     self.checkButtons.setButtonPressed("NAK1", False)
   def egseEnabledNak1Notify(self):
-    """Called when the egseEnabledNak1 function is succsssfully processed"""
+    """Called when the egseEnabledNak1 function is successfully processed"""
     self.enableCommandMenuItem("EGSEenableAck1")
     self.disableCommandMenuItem("EGSEenableNak1")
     self.enableCommandMenuItem("EGSEdisableAck1")
     self.checkButtons.setButtonPressed("ACK1", False)
     self.checkButtons.setButtonPressed("NAK1", True)
   def egseDisabledAck1Notify(self):
-    """Called when the egseDisabledAck1 function is succsssfully processed"""
+    """Called when the egseDisabledAck1 function is successfully processed"""
     self.enableCommandMenuItem("EGSEenableAck1")
     self.enableCommandMenuItem("EGSEenableNak1")
     self.disableCommandMenuItem("EGSEdisableAck1")
@@ -203,21 +203,21 @@ class GUIview(UI.TKI.GUItabView):
     self.checkButtons.setButtonPressed("NAK1", False)
   # ---------------------------------------------------------------------------
   def egseEnabledAck2Notify(self):
-    """Called when the egseEnabledAck2 function is succsssfully processed"""
+    """Called when the egseEnabledAck2 function is successfully processed"""
     self.disableCommandMenuItem("EGSEenableAck2")
     self.enableCommandMenuItem("EGSEenableNak1")
     self.enableCommandMenuItem("EGSEdisableAck2")
     self.checkButtons.setButtonPressed("ACK2", True)
     self.checkButtons.setButtonPressed("NAK2", False)
   def egseEnabledNak2Notify(self):
-    """Called when the egseEnabledNak2 function is succsssfully processed"""
+    """Called when the egseEnabledNak2 function is successfully processed"""
     self.enableCommandMenuItem("EGSEenableAck2")
     self.disableCommandMenuItem("EGSEenableNak2")
     self.enableCommandMenuItem("EGSEdisableAck2")
     self.checkButtons.setButtonPressed("ACK2", False)
     self.checkButtons.setButtonPressed("NAK2", True)
   def egseDisabledAck2Notify(self):
-    """Called when the egseDisabledAck2 function is succsssfully processed"""
+    """Called when the egseDisabledAck2 function is successfully processed"""
     self.enableCommandMenuItem("EGSEenableAck2")
     self.enableCommandMenuItem("EGSEenableNak2")
     self.disableCommandMenuItem("EGSEdisableAck2")
