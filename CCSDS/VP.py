@@ -1,5 +1,5 @@
 #******************************************************************************
-# (C) 2018, Stefan Korner, Austria                                            *
+# (C) 2019, Stefan Korner, Austria                                            *
 #                                                                             *
 # The Space Python Library is free software; you can redistribute it and/or   *
 # modify it under under the terms of the MIT License as published by the      *
@@ -10,6 +10,5 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT License    *
 # for more details.                                                           *
 #******************************************************************************
-# CCSDS Stack                                                                 *
+# CCSDS Stack - Variable packet support                                       *
 #******************************************************************************
-__all__ = ["ASSEMBLER", "CLTU", "DU", "FRAME", "PACKET", "PACKETIZER", "SEGMENT", "SEGMENThelpers", "TCENCODER", "TIME", "VP"]
