@@ -15,6 +15,7 @@
 import ttk, tkSimpleDialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import SPACE.IF
+import UTIL.DU
 
 ###########
 # classes #
@@ -36,9 +37,12 @@ class TreeView(ttk.Treeview):
   # ---------------------------------------------------------------------------
   def fillTree(self, treeName, struct):
     """fills a toplevel VPstruct into the tree"""
+    # delete the old contents
+    self.treeMap = {}
+    self.delete(*self.get_children())
+    # fill the new contents
     self.toplevelStruct = struct
     self.fillStructInTree("", treeName, struct)
-    self.pack()
   # ---------------------------------------------------------------------------
   def fillParamInTree(self, parentNodeID, slotName, param):
     """fills a VPparam into the tree"""
@@ -96,12 +100,14 @@ class TreeView(ttk.Treeview):
     name = nodeValues[0]
     value = nodeValues[1]
     paramType = param.getParamType()
-    if paramType == SPACE.IF.VP_PARAM_NUMBER:
+    if paramType == UTIL.DU.BITS or paramType == UTIL.DU.SBITS or \
+       paramType == UTIL.DU.UNSIGNED or paramType == UTIL.DU.SIGNED:
       answer = tkSimpleDialog.askinteger("Param",
                                          nodeKey + ": " + name,
                                          parent=self,
                                          initialvalue=value)
-    elif paramType == SPACE.IF.VP_PARAM_STRING:
+    elif paramType == UTIL.DU.BYTES or paramType == UTIL.DU.FLOAT or \
+         paramType == UTIL.DU.TIME or paramType == UTIL.DU.STRING:
       answer = tkSimpleDialog.askstring("Param",
                                         nodeKey + ": " + name,
                                         parent=self,
@@ -178,3 +184,4 @@ class TreeBrowser(tkSimpleDialog.Dialog):
     """Intialise the dialog"""
     self.treeView = TreeView(self)
     self.treeView.fillTree(self.treeName, self.struct)
+    self.treeView.pack()

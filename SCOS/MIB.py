@@ -173,6 +173,7 @@ class CPCrecord:
     self.cpcDescr = fields[1]
     self.cpcPtc = int(fields[2])
     self.cpcPfc = int(fields[3])
+    self.cpcDefVal = fields[12]
   # ---------------------------------------------------------------------------
   def key(self):
     """record key"""
@@ -194,6 +195,7 @@ class CDFrecord:
     else:
       self.cdfGrpSize = int(cdfGrpSize)
     self.cdfPName = fields[6]
+    self.cdfValue = fields[8]
   # ---------------------------------------------------------------------------
   def key(self):
     """record key"""
@@ -218,9 +220,9 @@ def getMinFieldNr(tableName):
   if tableName == "ccf.dat":
     return 6
   if tableName == "cpc.dat":
-    return 4
+    return 13
   if tableName == "cdf.dat":
-    return 7
+    return 9
   raise Exception("invalid table name: " + tableName)
 
 # -----------------------------------------------------------------------------
