@@ -102,13 +102,13 @@ class TreeView(ttk.Treeview):
     paramType = param.getParamType()
     if paramType == UTIL.DU.BITS or paramType == UTIL.DU.SBITS or \
        paramType == UTIL.DU.UNSIGNED or paramType == UTIL.DU.SIGNED:
-      answer = tkSimpleDialog.askinteger("Param",
+      answer = tkSimpleDialog.askinteger("Integer Parameter",
                                          nodeKey + ": " + name,
                                          parent=self,
                                          initialvalue=value)
     elif paramType == UTIL.DU.BYTES or paramType == UTIL.DU.FLOAT or \
          paramType == UTIL.DU.TIME or paramType == UTIL.DU.STRING:
-      answer = tkSimpleDialog.askstring("Param",
+      answer = tkSimpleDialog.askstring("String Parameter",
                                         nodeKey + ": " + name,
                                         parent=self,
                                         initialvalue=value)
@@ -131,7 +131,7 @@ class TreeView(ttk.Treeview):
     nodeValues = self.item(nodeID, "value")
     name = nodeValues[0]
     value = nodeValues[1]
-    answer = tkSimpleDialog.askinteger("List",
+    answer = tkSimpleDialog.askinteger("List Entries",
                                        nodeKey + ": " + name,
                                        parent=self,
                                        initialvalue=value,
