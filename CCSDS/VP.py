@@ -168,12 +168,12 @@ class Slot(object):
     # create the slot child depending on the slot child type in the definition
     childDef = slotDef.childDef
     childType = type(childDef)
-    if childType == ParamDef:
+    if childType == SimpleParamDef or childType == TimeParamDef:
       self.child = Param(paramDef=childDef)
     elif childType == ListDef:
       self.child = List(listDef=childDef)
     else:
-      print("error: child type " + childType + " not supported")
+      print("error: child type " + str(childType) + " not supported")
       sys.exit(-1)
   # ---------------------------------------------------------------------------
   def __str__(self, indent="Slot"):
