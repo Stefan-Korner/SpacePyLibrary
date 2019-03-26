@@ -14,7 +14,7 @@
 #******************************************************************************
 from tkinter import ttk, simpledialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CCSDS.VP
+import PUS.VP
 import UTIL.DU
 
 ###########
@@ -56,9 +56,9 @@ class TreeView(ttk.Treeview):
     slotName = slot.getSlotName()
     child = slot.child
     childType = type(child)
-    if childType == CCSDS.VP.Param:
+    if childType == PUS.VP.Param:
       self.fillParamInTree(parentNodeID, slotName, param=child)
-    elif childType == CCSDS.VP.List:
+    elif childType == PUS.VP.List:
       self.fillListInTree(parentNodeID, slotName, lst=child)
     else:
       raise Error("child type " + childType + " not supported")
@@ -85,11 +85,11 @@ class TreeView(ttk.Treeview):
     """callback when an item in the tree is clicked"""
     nodeID = self.selection()[0]
     nodeObject = self.treeMap[nodeID]
-    if type(nodeObject) == CCSDS.VP.Param:
+    if type(nodeObject) == PUS.VP.Param:
       self.paramClicked(nodeObject, nodeID)
-    elif type(nodeObject) == CCSDS.VP.Struct:
+    elif type(nodeObject) == PUS.VP.Struct:
       self.structClicked(nodeObject, nodeID)
-    elif type(nodeObject) == CCSDS.VP.List:
+    elif type(nodeObject) == PUS.VP.List:
       self.listClicked(nodeObject, nodeID)
     return "break"
   # ---------------------------------------------------------------------------

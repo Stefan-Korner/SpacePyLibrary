@@ -10,7 +10,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT License    *
 # for more details.                                                           *
 #******************************************************************************
-# CCSDS Stack - Variable packet support                                       *
+# PUS Services - Variable packet support                                      *
 #******************************************************************************
 import UTIL.DU, UTIL.TIME
 
