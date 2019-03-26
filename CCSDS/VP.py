@@ -12,7 +12,7 @@
 #******************************************************************************
 # CCSDS Stack - Variable packet support                                       *
 #******************************************************************************
-import UTIL.DU
+import UTIL.DU, UTIL.TIME
 
 ####################
 # definition level #
@@ -22,15 +22,34 @@ import UTIL.DU
 class ParamDef(object):
   """Contains the most important definition data of a variable packet parameter"""
   # ---------------------------------------------------------------------------
-  def __init__(self, paramName, paramType, bitWidth, defaultValue):
+  def __init__(self, paramName, defaultValue):
     self.paramName = paramName
-    self.paramType = paramType
-    self.bitWidth = bitWidth
     self.defaultValue = defaultValue
   # ---------------------------------------------------------------------------
   def __str__(self, indent="ParamDef"):
     """string representation"""
-    return ("\n" + indent + "." + self.paramName + " = " + UTIL.DU.fieldTypeStr(self.getParamType()) + ", " + str(self.getBitWidth()) + ", " + str(self.defaultValue))
+    return ("\n" + indent + "." + self.paramName + " = " + str(self.defaultValue))
+  # ---------------------------------------------------------------------------
+  def getParamType(self):
+    """accessor"""
+    pass
+  # ---------------------------------------------------------------------------
+  def getBitWidth(self):
+    """accessor"""
+    pass
+
+# =============================================================================
+class SimpleParamDef(object):
+  """Contains the most important definition data of a variable packet parameter"""
+  # ---------------------------------------------------------------------------
+  def __init__(self, paramName, paramType, bitWidth, defaultValue):
+    ParamDef(self, paramName, defaultValue)
+    self.paramType = paramType
+    self.bitWidth = bitWidth
+  # ---------------------------------------------------------------------------
+  def __str__(self, indent="SimpleParamDef"):
+    """string representation"""
+    return ("\n" + indent + "." + self.paramName + " = " + UTIL.DU.fieldTypeStr(self.paramType) + ", " + str(self.bitWidth) + ", " + str(self.defaultValue))
   # ---------------------------------------------------------------------------
   def getParamType(self):
     """accessor"""
@@ -39,6 +58,26 @@ class ParamDef(object):
   def getBitWidth(self):
     """accessor"""
     return self.bitWidth
+
+# =============================================================================
+class TimeParamDef(object):
+  """Contains the most important definition data of a variable packet parameter"""
+  # ---------------------------------------------------------------------------
+  def __init__(self, paramName, timeFormat, defaultValue):
+    ParamDef(self, paramName, defaultValue)
+    self.timeFormat = timeFormat
+  # ---------------------------------------------------------------------------
+  def __str__(self, indent="TimeParamDef"):
+    """string representation"""
+    return ("\n" + indent + "." + self.paramName + " = " + CCSDS.TIME.timeFormatString(self.timeFormat) + ", " + str(self.defaultValue))
+  # ---------------------------------------------------------------------------
+  def getParamType(self):
+    """accessor"""
+    return UTIL.DU.TIME
+  # ---------------------------------------------------------------------------
+  def getBitWidth(self):
+    """accessor"""
+    return CCSDS.TIME.byteArraySize(self.timeFormat) << 3 
 
 # =============================================================================
 class SlotDef(object):
