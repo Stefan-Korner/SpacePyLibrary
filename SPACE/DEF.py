@@ -45,6 +45,8 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     self.definitionFileName = SCOS.ENV.s_environment.getRuntimeRoot() + \
         "/testbin/testdata.sim"
     self.definitionData = None
+    self.tmParamLengthBytes = int(UTIL.SYS.s_configuration.TM_PARAM_LENGTH_BYTES)
+    self.tcParamLengthBytes = int(UTIL.SYS.s_configuration.TC_PARAM_LENGTH_BYTES)
   # ---------------------------------------------------------------------------
   def getDefinitionFileName(self):
     """get the testdata.sim file name incl. path"""
@@ -267,13 +269,13 @@ class DefinitionsImpl(SPACE.IF.Definitions):
         # inconsistency
         LOG_WARNING("param " + paramName + ": " + str(ex) + " ---> dummy type", "SPACE")
         paramType = UTIL.DU.UNSIGNED
-        bitWidth = 0
+        bitWidth = 8
         defaultValue = 0
     except:
       LOG_WARNING("TC param name " + paramName + " not found in cpc.dat ---> dummy param", "SPACE")
       paramName = "dummy"
       paramType = UTIL.DU.UNSIGNED
-      bitWidth = 0
+      bitWidth = 8
       defaultValue = 0
     # special handling of time parameters
     if paramType == UTIL.DU.TIME:
@@ -287,8 +289,16 @@ class DefinitionsImpl(SPACE.IF.Definitions):
         # inconsistency
         LOG_WARNING("param " + paramName + ": " + str(ex) + " ---> dummy type", "SPACE")
         paramType = UTIL.DU.UNSIGNED
-        bitWidth = 0
+        bitWidth = 8
         defaultValue = 0
+    # special handling of variable size parameters
+    if bitWidth == 0:
+      # TODO: consider also information in the MIB
+      lengthBytes = self.tcParamLengthBytes
+      return PUS.VP.VariableParamDef(paramName,
+                                     paramType,
+                                     lengthBytes,
+                                     defaultValue)
     # default handling of normal parameters
     return PUS.VP.SimpleParamDef(paramName,
                                  paramType,

@@ -60,6 +60,27 @@ class SimpleParamDef(ParamDef):
     return self.bitWidth
 
 # =============================================================================
+class VariableParamDef(ParamDef):
+  """Contains the most important definition data of a variable size packet parameter"""
+  # ---------------------------------------------------------------------------
+  def __init__(self, paramName, paramType, lengthBytes, defaultValue):
+    ParamDef.__init__(self, paramName, defaultValue)
+    self.paramType = paramType
+    self.lengthBytes = lengthBytes
+  # ---------------------------------------------------------------------------
+  def __str__(self, indent="VariableParamDef"):
+    """string representation"""
+    return ("\n" + indent + "." + self.paramName + " = " + UTIL.DU.fieldTypeStr(self.paramType) + ", " + str(self.lengthBytes) + ", " + str(self.defaultValue))
+  # ---------------------------------------------------------------------------
+  def getParamType(self):
+    """accessor"""
+    return self.paramType
+  # ---------------------------------------------------------------------------
+  def getBitWidth(self):
+    """accessor"""
+    return 0
+
+# =============================================================================
 class TimeParamDef(ParamDef):
   """Contains the most important definition data of a variable packet parameter"""
   # ---------------------------------------------------------------------------
@@ -157,6 +178,12 @@ class Param(object):
   # ---------------------------------------------------------------------------
   def getBitWidth(self):
     """accessor"""
+    # special processing of variable size parameters
+    defType = type(self.paramDef)
+    if defType == VariableParamDef:
+      byteWidth = self.paramDef.lengthBytes + len(self.value)
+      return byteWidth << 3
+    # default processing
     return self.paramDef.getBitWidth()
 
 # =============================================================================
@@ -168,7 +195,8 @@ class Slot(object):
     # create the slot child depending on the slot child type in the definition
     childDef = slotDef.childDef
     childType = type(childDef)
-    if childType == SimpleParamDef or childType == TimeParamDef:
+    if childType == SimpleParamDef or childType == VariableParamDef or \
+       childType == TimeParamDef:
       self.child = Param(paramDef=childDef)
     elif childType == ListDef:
       self.child = List(listDef=childDef)
