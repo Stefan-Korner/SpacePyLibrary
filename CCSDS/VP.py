@@ -39,11 +39,11 @@ class ParamDef(object):
     pass
 
 # =============================================================================
-class SimpleParamDef(object):
+class SimpleParamDef(ParamDef):
   """Contains the most important definition data of a variable packet parameter"""
   # ---------------------------------------------------------------------------
   def __init__(self, paramName, paramType, bitWidth, defaultValue):
-    ParamDef(self, paramName, defaultValue)
+    ParamDef.__init__(self, paramName, defaultValue)
     self.paramType = paramType
     self.bitWidth = bitWidth
   # ---------------------------------------------------------------------------
@@ -60,11 +60,11 @@ class SimpleParamDef(object):
     return self.bitWidth
 
 # =============================================================================
-class TimeParamDef(object):
+class TimeParamDef(ParamDef):
   """Contains the most important definition data of a variable packet parameter"""
   # ---------------------------------------------------------------------------
   def __init__(self, paramName, timeFormat, defaultValue):
-    ParamDef(self, paramName, defaultValue)
+    ParamDef.__init__(self, paramName, defaultValue)
     self.timeFormat = timeFormat
   # ---------------------------------------------------------------------------
   def __str__(self, indent="TimeParamDef"):
