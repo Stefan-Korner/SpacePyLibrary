@@ -12,6 +12,7 @@
 #******************************************************************************
 # CCSDS Stack - Variable packet support                                       *
 #******************************************************************************
+import UTIL.DU
 
 ####################
 # definition level #
@@ -29,7 +30,15 @@ class ParamDef(object):
   # ---------------------------------------------------------------------------
   def __str__(self, indent="ParamDef"):
     """string representation"""
-    return ("\n" + indent + "." + self.paramName + " = " + str(self.paramType) + ", " + str(self.bitWidth) + ", " + str(self.defaultValue))
+    return ("\n" + indent + "." + self.paramName + " = " + UTIL.DU.fieldTypeStr(self.getParamType()) + ", " + str(self.getBitWidth()) + ", " + str(self.defaultValue))
+  # ---------------------------------------------------------------------------
+  def getParamType(self):
+    """accessor"""
+    return self.paramType
+  # ---------------------------------------------------------------------------
+  def getBitWidth(self):
+    """accessor"""
+    return self.bitWidth
 
 # =============================================================================
 class SlotDef(object):
@@ -105,7 +114,11 @@ class Param(object):
   # ---------------------------------------------------------------------------
   def getParamType(self):
     """accessor"""
-    return self.paramDef.paramType
+    return self.paramDef.getParamType()
+  # ---------------------------------------------------------------------------
+  def getBitWidth(self):
+    """accessor"""
+    return self.paramDef.getBitWidth()
 
 # =============================================================================
 class Slot(object):
