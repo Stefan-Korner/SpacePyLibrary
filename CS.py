@@ -54,7 +54,9 @@ SYS_CONFIGURATION = [
   ["SYS_APP_MNEMO", "CS"],
   ["SYS_APP_NAME", "Control System"],
   ["SYS_APP_VERSION", "3.2"],
+  ["TC_PARAM_LENGTH_BYTES", "2"],
   ["TM_TRANSFER_FRAME_VCID", "0"],
+  ["TM_PARAM_LENGTH_BYTES", "2"],
   ["IGNORE_IDLE_PACKETS", "1"]]
 
 ###########
