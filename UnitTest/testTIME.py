@@ -179,6 +179,83 @@ def test_ERTandCDS3(missionEpochString, missionEpochDelta):
 # -----------------------------------------------------------------------------
 def test_TIMEoperations():
   """function to test the TIME operations"""
+  # test CCSDS.TIME.isCDStimeFormat()
+  if CCSDS.TIME.isCDStimeFormat(CCSDS.TIME.TIME_FORMAT_CDS1) != True:
+    return False
+  if CCSDS.TIME.isCDStimeFormat(CCSDS.TIME.TIME_FORMAT_CDS2) != True:
+    return False
+  if CCSDS.TIME.isCDStimeFormat(CCSDS.TIME.TIME_FORMAT_CDS3) != True:
+    return False
+  if CCSDS.TIME.isCDStimeFormat(CCSDS.TIME.TIME_FORMAT_CUC0) != False:
+    return False
+  if CCSDS.TIME.isCDStimeFormat(CCSDS.TIME.TIME_FORMAT_CUC1) != False:
+    return False
+  if CCSDS.TIME.isCDStimeFormat(CCSDS.TIME.TIME_FORMAT_CUC2) != False:
+    return False
+  if CCSDS.TIME.isCDStimeFormat(CCSDS.TIME.TIME_FORMAT_CUC3) != False:
+    return False
+  if CCSDS.TIME.isCDStimeFormat(CCSDS.TIME.TIME_FORMAT_CUC4) != False:
+    return False
+  if CCSDS.TIME.isCDStimeFormat(99) != False:
+    return False
+  # test CCSDS.TIME.isCUCtimeFormat()
+  if CCSDS.TIME.isCUCtimeFormat(CCSDS.TIME.TIME_FORMAT_CDS1) != False:
+    return False
+  if CCSDS.TIME.isCUCtimeFormat(CCSDS.TIME.TIME_FORMAT_CDS2) != False:
+    return False
+  if CCSDS.TIME.isCUCtimeFormat(CCSDS.TIME.TIME_FORMAT_CDS3) != False:
+    return False
+  if CCSDS.TIME.isCUCtimeFormat(CCSDS.TIME.TIME_FORMAT_CUC0) != True:
+    return False
+  if CCSDS.TIME.isCUCtimeFormat(CCSDS.TIME.TIME_FORMAT_CUC1) != True:
+    return False
+  if CCSDS.TIME.isCUCtimeFormat(CCSDS.TIME.TIME_FORMAT_CUC2) != True:
+    return False
+  if CCSDS.TIME.isCUCtimeFormat(CCSDS.TIME.TIME_FORMAT_CUC3) != True:
+    return False
+  if CCSDS.TIME.isCUCtimeFormat(CCSDS.TIME.TIME_FORMAT_CUC4) != True:
+    return False
+  if CCSDS.TIME.isCUCtimeFormat(99) != False:
+    return False
+  # test CCSDS.TIME.timeFormat()
+  if CCSDS.TIME.timeFormat("CDS1") != CCSDS.TIME.TIME_FORMAT_CDS1:
+    return False
+  if CCSDS.TIME.timeFormat("CDS2") != CCSDS.TIME.TIME_FORMAT_CDS2:
+    return False
+  if CCSDS.TIME.timeFormat("CDS3") != CCSDS.TIME.TIME_FORMAT_CDS3:
+    return False
+  if CCSDS.TIME.timeFormat("CUC0") != CCSDS.TIME.TIME_FORMAT_CUC0:
+    return False
+  if CCSDS.TIME.timeFormat("CUC1") != CCSDS.TIME.TIME_FORMAT_CUC1:
+    return False
+  if CCSDS.TIME.timeFormat("CUC2") != CCSDS.TIME.TIME_FORMAT_CUC2:
+    return False
+  if CCSDS.TIME.timeFormat("CUC3") != CCSDS.TIME.TIME_FORMAT_CUC3:
+    return False
+  if CCSDS.TIME.timeFormat("CUC4") != CCSDS.TIME.TIME_FORMAT_CUC4:
+    return False
+  if CCSDS.TIME.timeFormat("???") != None:
+    return False
+  # test CCSDS.TIME.timeFormatStr()
+  if CCSDS.TIME.timeFormatStr(CCSDS.TIME.TIME_FORMAT_CDS1) != "CDS1":
+    return False
+  if CCSDS.TIME.timeFormatStr(CCSDS.TIME.TIME_FORMAT_CDS2) != "CDS2":
+    return False
+  if CCSDS.TIME.timeFormatStr(CCSDS.TIME.TIME_FORMAT_CDS3) != "CDS3":
+    return False
+  if CCSDS.TIME.timeFormatStr(CCSDS.TIME.TIME_FORMAT_CUC0) != "CUC0":
+    return False
+  if CCSDS.TIME.timeFormatStr(CCSDS.TIME.TIME_FORMAT_CUC1) != "CUC1":
+    return False
+  if CCSDS.TIME.timeFormatStr(CCSDS.TIME.TIME_FORMAT_CUC2) != "CUC2":
+    return False
+  if CCSDS.TIME.timeFormatStr(CCSDS.TIME.TIME_FORMAT_CUC3) != "CUC3":
+    return False
+  if CCSDS.TIME.timeFormatStr(CCSDS.TIME.TIME_FORMAT_CUC4) != "CUC4":
+    return False
+  if CCSDS.TIME.timeFormatStr(99) != "???":
+    return False
+  # other tests
   actualTime1 = UTIL.TIME.getActualTime()
   actualTime1Str = "%.6f" % actualTime1
   actualTimeStr = UTIL.TIME.getASDtimeStr(actualTime1)

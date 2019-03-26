@@ -604,6 +604,27 @@ class BinaryUnit(object):
 #############
 # functions #
 #############
+# -----------------------------------------------------------------------------
+def fieldTypeStr(fieldType):
+  """returns the stringified field type"""
+  if fieldType == BITS:
+    return "BITS"
+  if fieldType == SBITS:
+    return "SBITS"
+  if fieldType == BYTES:
+    return "BYTES"
+  if fieldType == UNSIGNED:
+    return "UNSIGNED"
+  if fieldType == SIGNED:
+    return "SIGNED"
+  if fieldType == FLOAT:
+    return "FLOAT"
+  if fieldType == TIME:
+    return "TIME"
+  if fieldType == STRING:
+    return "STRING"
+  return "???"
+# -----------------------------------------------------------------------------
 def array2str(binaryString, maxLen=65536):
   """converts a binaryString into a readable data dump"""
   if type(binaryString) != ARRAY_TYPE:
@@ -640,7 +661,7 @@ def array2str(binaryString, maxLen=65536):
   filler = "   " * fillerSize
   retStr += filler + retStr2
   return retStr
-
+# -----------------------------------------------------------------------------
 def str2array(hexString, withoutSpaces=False):
   """converts a hex string into a binaryString"""
   # e.g. "00 01 FF FE 64 12" converts to array('B', [0, 1, 255, 254, 100, 18])
@@ -650,7 +671,7 @@ def str2array(hexString, withoutSpaces=False):
   else:
     hexTuples = hexString.split()
   return array.array('B', map((lambda x: int(x, 16)), hexTuples))
-
+# -----------------------------------------------------------------------------
 def unsigned2signed(value, byteSize):
   """convers an unsigned integer into a signed integer"""
   if byteSize == 1:
@@ -664,7 +685,7 @@ def unsigned2signed(value, byteSize):
       return (value - 0x100000000)
   # positive (or invalid byte size)
   return value
-
+# -----------------------------------------------------------------------------
 def signed2unsigned(value, byteSize):
   """convers a signed integer into an unsigned integer"""
   if byteSize == 1:
