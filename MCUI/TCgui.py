@@ -14,8 +14,8 @@
 #******************************************************************************
 import Tkinter, tkSimpleDialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CCSDS.VP
 import MC.IF
+import PUS.VP
 import SPACE.IF
 import SPACEUI.VPgui
 import UI.TKI
@@ -87,7 +87,7 @@ class TCpacketDetails(Tkinter.Frame, UI.TKI.AppGrid):
       pktType = tcPktDef.pktType
       pktSType = tcPktDef.pktSType
       tcStructDef = tcPktDef.tcStructDef
-      self.tcStruct = CCSDS.VP.Struct(tcStructDef)
+      self.tcStruct = PUS.VP.Struct(tcStructDef)
     # write the data into the GUI
     self.pktNameField.set(pktName)
     self.pktDescrField.set(pktDescr)

@@ -14,8 +14,8 @@
 #******************************************************************************
 import os, cPickle, time
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CCSDS.DU, CCSDS.PACKET, CCSDS.TIME, CCSDS.VP
-import PUS.PACKET
+import CCSDS.DU, CCSDS.PACKET, CCSDS.TIME
+import PUS.PACKET, PUS.VP
 import SCOS.ENV, SCOS.MIB
 import SPACE.IF
 import UTIL.DU, UTIL.SYS
@@ -280,9 +280,9 @@ class DefinitionsImpl(SPACE.IF.Definitions):
       # TODO: differentiate between absolute and relative time
       try:
         timeFormat = getTimeFormat(paramPfc)
-        return CCSDS.VP.TimeParamDef(paramName,
-                                     timeFormat,
-                                     defaultValue)
+        return PUS.VP.TimeParamDef(paramName,
+                                   timeFormat,
+                                   defaultValue)
       except Exception, ex:
         # inconsistency
         LOG_WARNING("param " + paramName + ": " + str(ex) + " ---> dummy type", "SPACE")
@@ -290,10 +290,10 @@ class DefinitionsImpl(SPACE.IF.Definitions):
         bitWidth = 0
         defaultValue = 0
     # default handling of normal parameters
-    return CCSDS.VP.SimpleParamDef(paramName,
-                                   paramType,
-                                   bitWidth,
-                                   defaultValue)
+    return PUS.VP.SimpleParamDef(paramName,
+                                 paramType,
+                                 bitWidth,
+                                 defaultValue)
   # ---------------------------------------------------------------------------
   def createTcSlotDef(self, sortedCdfRecords, cdfRecordsPos, cpcMap):
     nextCdfRecord = sortedCdfRecords[cdfRecordsPos]
@@ -307,14 +307,14 @@ class DefinitionsImpl(SPACE.IF.Definitions):
       defaultValue = nextCdfRecord.cdfValue
       childDef = self.createTcParamDef(paramName, defaultValue, cpcMap)
       cdfRecordsPos += 1
-    return (CCSDS.VP.SlotDef(slotName, childDef), cdfRecordsPos)
+    return (PUS.VP.SlotDef(slotName, childDef), cdfRecordsPos)
   # ---------------------------------------------------------------------------
   def createTcStructDef(self, structName, sortedCdfRecords, cdfRecordsPos, cdfRecordsEnd, cpcMap):
     sortedSlotDefs = []
     while cdfRecordsPos < cdfRecordsEnd:
       nextSlotDef, cdfRecordsPos = self.createTcSlotDef(sortedCdfRecords, cdfRecordsPos, cpcMap)
       sortedSlotDefs.append(nextSlotDef)
-    return (CCSDS.VP.StructDef(structName, sortedSlotDefs), cdfRecordsPos)
+    return (PUS.VP.StructDef(structName, sortedSlotDefs), cdfRecordsPos)
   # ---------------------------------------------------------------------------
   def createTcListDef(self, sortedCdfRecords, cdfRecordsPos, cpcMap):
     nextCdfRecord = sortedCdfRecords[cdfRecordsPos]
@@ -324,7 +324,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     cdfRecordsPos += 1
     cdfRecordsEnd = cdfRecordsPos + nextCdfRecord.cdfGrpSize
     entryDef, cdfRecordsPos = self.createTcStructDef("", sortedCdfRecords, cdfRecordsPos, cdfRecordsEnd, cpcMap)
-    return (CCSDS.VP.ListDef(lenParamDef, entryDef), cdfRecordsPos)
+    return (PUS.VP.ListDef(lenParamDef, entryDef), cdfRecordsPos)
   # ---------------------------------------------------------------------------
   def createTcToplevelStructDef(self, structName, cdfMap, cpcMap):
     # try to find a variable packet definition

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import sys
-import CCSDS.VP
+import PUS.VP
 import SPACEUI.VPgui
 import UTIL.DU
 
@@ -43,10 +43,10 @@ class DefManager:
       print("error: param name " + paramName + " not found in s_mibParamRecordMap")
       sys.exit(-1)
     bitWidth = 0
-    return CCSDS.VP.SimpleParamDef(paramRecord.paramName,
-                                   paramRecord.paramType,
-                                   bitWidth,
-                                   paramRecord.defaultValue)
+    return PUS.VP.SimpleParamDef(paramRecord.paramName,
+                                 paramRecord.paramType,
+                                 bitWidth,
+                                 paramRecord.defaultValue)
   def createSlotDef(self, sortedVarRecords, varRecordsPos):
     nextVarRecord = sortedVarRecords[varRecordsPos]
     slotName = nextVarRecord.slotName
@@ -58,13 +58,13 @@ class DefManager:
       paramName = nextVarRecord.paramName
       childDef = self.createParamDef(paramName)
       varRecordsPos += 1
-    return (CCSDS.VP.SlotDef(slotName, childDef), varRecordsPos)
+    return (PUS.VP.SlotDef(slotName, childDef), varRecordsPos)
   def createStructDef(self, structName, sortedVarRecords, varRecordsPos, varRecordsEnd):
     sortedSlotDefs = []
     while varRecordsPos < varRecordsEnd:
       nextSlotDef, varRecordsPos = self.createSlotDef(sortedVarRecords, varRecordsPos)
       sortedSlotDefs.append(nextSlotDef)
-    return (CCSDS.VP.StructDef(structName, sortedSlotDefs), varRecordsPos)
+    return (PUS.VP.StructDef(structName, sortedSlotDefs), varRecordsPos)
   def createListDef(self, sortedVarRecords, varRecordsPos):
     nextVarRecord = sortedVarRecords[varRecordsPos]
     lenParamName = nextVarRecord.paramName
@@ -72,7 +72,7 @@ class DefManager:
     varRecordsPos += 1
     varRecordsEnd = varRecordsPos + nextVarRecord.groupSize
     entryDef, varRecordsPos = self.createStructDef("", sortedVarRecords, varRecordsPos, varRecordsEnd)
-    return (CCSDS.VP.ListDef(lenParamDef, entryDef), varRecordsPos)
+    return (PUS.VP.ListDef(lenParamDef, entryDef), varRecordsPos)
   def createToplevelStructDef(self, structName):
     try:
       varRecords = self.mibVarRecordMap[structName]
@@ -146,7 +146,7 @@ mibVarRecords = [
 defManager = DefManager(mibParamRecords, mibVarRecords)
 structDef = defManager.createToplevelStructDef("XXXX1234")
 print("structDef:", structDef)
-struct = CCSDS.VP.Struct(structDef)
+struct = PUS.VP.Struct(structDef)
 print("struct-->", struct)
 print("struct.s_1.value = " + str(struct.s_1.value))
 struct.s_1.value = 111222
