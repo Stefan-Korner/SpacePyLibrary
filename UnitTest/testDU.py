@@ -90,6 +90,26 @@ def test_DUtimeOperations():
 # -----------------------------------------------------------------------------
 def test_DUoperations():
   """function to test the data unit operations"""
+  # test UTIL.DU.fieldTypeStr()
+  if UTIL.DU.fieldTypeStr(UTIL.DU.BITS) != "BITS":
+    return False
+  if UTIL.DU.fieldTypeStr(UTIL.DU.SBITS) != "SBITS":
+    return False
+  if UTIL.DU.fieldTypeStr(UTIL.DU.BYTES) != "BYTES":
+    return False
+  if UTIL.DU.fieldTypeStr(UTIL.DU.UNSIGNED) != "UNSIGNED":
+    return False
+  if UTIL.DU.fieldTypeStr(UTIL.DU.SIGNED) != "SIGNED":
+    return False
+  if UTIL.DU.fieldTypeStr(UTIL.DU.FLOAT) != "FLOAT":
+    return False
+  if UTIL.DU.fieldTypeStr(UTIL.DU.TIME) != "TIME":
+    return False
+  if UTIL.DU.fieldTypeStr(UTIL.DU.STRING) != "STRING":
+    return False
+  if UTIL.DU.fieldTypeStr(99) != "???":
+    return False
+  # other tests
   b = UTIL.DU.BinaryUnit()
   print("b =", b)
   print("len(b) =", len(b))

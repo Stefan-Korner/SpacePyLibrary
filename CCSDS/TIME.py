@@ -105,6 +105,26 @@ def timeFormat(timeFormatString):
     return TIME_FORMAT_CUC4
   return None
 # -----------------------------------------------------------------------------
+def timeFormatStr(timeFormat):
+  """returns the stringified time format"""
+  if timeFormat == TIME_FORMAT_CDS1:
+    return "CDS1"
+  if timeFormat == TIME_FORMAT_CDS2:
+    return "CDS2"
+  if timeFormat == TIME_FORMAT_CDS3:
+    return "CDS3"
+  if timeFormat == TIME_FORMAT_CUC0:
+    return "CUC0"
+  if timeFormat == TIME_FORMAT_CUC1:
+    return "CUC1"
+  if timeFormat == TIME_FORMAT_CUC2:
+    return "CUC2"
+  if timeFormat == TIME_FORMAT_CUC3:
+    return "CUC3"
+  if timeFormat == TIME_FORMAT_CUC4:
+    return "CUC4"
+  return "???"
+# -----------------------------------------------------------------------------
 def byteArraySize(timeFormat):
   """returns the size of a byte array that can hold the raw representation"""
   if timeFormat == TIME_FORMAT_CDS1:
