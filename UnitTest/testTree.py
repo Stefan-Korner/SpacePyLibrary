@@ -43,10 +43,10 @@ class DefManager:
       print("error: param name " + paramName + " not found in s_mibParamRecordMap")
       sys.exit(-1)
     bitWidth = 0
-    return CCSDS.VP.ParamDef(paramRecord.paramName,
-                             paramRecord.paramType,
-                             bitWidth,
-                             paramRecord.defaultValue)
+    return CCSDS.VP.SimpleParamDef(paramRecord.paramName,
+                                   paramRecord.paramType,
+                                   bitWidth,
+                                   paramRecord.defaultValue)
   def createSlotDef(self, sortedVarRecords, varRecordsPos):
     nextVarRecord = sortedVarRecords[varRecordsPos]
     slotName = nextVarRecord.slotName

@@ -14,7 +14,7 @@
 #******************************************************************************
 import os, pickle, time
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CCSDS.DU, CCSDS.PACKET, CCSDS.VP
+import CCSDS.DU, CCSDS.PACKET, CCSDS.TIME, CCSDS.VP
 import PUS.PACKET
 import SCOS.ENV, SCOS.MIB
 import SPACE.IF
@@ -275,10 +275,25 @@ class DefinitionsImpl(SPACE.IF.Definitions):
       paramType = UTIL.DU.UNSIGNED
       bitWidth = 0
       defaultValue = 0
-    return CCSDS.VP.ParamDef(paramName,
-                             paramType,
-                             bitWidth,
-                             defaultValue)
+    # special handling of time parameters
+    if paramType == UTIL.DU.TIME:
+      # TODO: differentiate between absolute and relative time
+      try:
+        timeFormat = getTimeFormat(paramPfc)
+        return CCSDS.VP.TimeParamDef(paramName,
+                                     timeFormat,
+                                     defaultValue)
+      except Exception as ex:
+        # inconsistency
+        LOG_WARNING("param " + paramName + ": " + str(ex) + " ---> dummy type", "SPACE")
+        paramType = UTIL.DU.UNSIGNED
+        bitWidth = 0
+        defaultValue = 0
+    # default handling of normal parameters
+    return CCSDS.VP.SimpleParamDef(paramName,
+                                   paramType,
+                                   bitWidth,
+                                   defaultValue)
   # ---------------------------------------------------------------------------
   def createTcSlotDef(self, sortedCdfRecords, cdfRecordsPos, cpcMap):
     nextCdfRecord = sortedCdfRecords[cdfRecordsPos]
@@ -623,10 +638,10 @@ def getBitWidth(paramPtc, paramPfc):
       # CUC format, 1st & 2nd octet coarse time, 3rd - n-th octet for fine time
       return (paramPfc - 5) * 8
     elif paramPfc <= 14:
-      # CUC format, 1st - 3rd octet coarse time, 4rd - n-th octet for fine time
+      # CUC format, 1st - 3rd octet coarse time, 4th - n-th octet for fine time
       return (paramPfc - 8) * 8
     elif paramPfc <= 18:
-      # CUC format, 1st - 4th octet coarse time, 5rd - n-th octet for fine time
+      # CUC format, 1st - 4th octet coarse time, 5th - n-th octet for fine time
       return (paramPfc - 11) * 8
   elif paramPtc == 10:
     # relative time
@@ -640,10 +655,10 @@ def getBitWidth(paramPtc, paramPfc):
       # CUC format, 1st & 2nd octet coarse time, 3rd - n-th octet for fine time
       return (paramPfc - 5) * 8
     elif paramPfc <= 14:
-      # CUC format, 1st - 3rd octet coarse time, 4rd - n-th octet for fine time
+      # CUC format, 1st - 3rd octet coarse time, 4th - n-th octet for fine time
       return (paramPfc - 8) * 8
     elif paramPfc <= 18:
-      # CUC format, 1st - 4th octet coarse time, 5rd - n-th octet for fine time
+      # CUC format, 1st - 4th octet coarse time, 5th - n-th octet for fine time
       return (paramPfc - 11) * 8
   elif paramPtc == 11:
     # deduced parameter, N/A
@@ -668,7 +683,8 @@ def getIsBytePos(plfRecord):
   return ((plfRecord.plfLgocc % 8) == 0)
 # -----------------------------------------------------------------------------
 def getValueType(paramPtc, paramPfc, isBytePos=True):
-  """Returns the type and the bit width of a parameter value as tupple"""
+  """Returns the type of a parameter"""
+  # TODO: differentiate between absolute and relative time
   if paramPfc < 0:
     # not allowed --> exception will be raised
     pass
@@ -776,3 +792,26 @@ def getValueType(paramPtc, paramPfc, isBytePos=True):
     pass
   # illegal ptc/pfc combination
   raise Exception("ptc/pfc combination " + str(paramPtc) + "/" + str(paramPfc) + " not supported")
+# -----------------------------------------------------------------------------
+def getTimeFormat(paramPfc):
+  """Returns the format of a time parameter"""
+  if paramPfc == 1:
+    # CDS format, without microseconds
+    return CCSDS.TIME.TIME_FORMAT_CDS1
+  elif paramPfc == 2:
+    # CDS format, with microseconds
+    return CCSDS.TIME.TIME_FORMAT_CDS2
+  elif paramPfc == 15:
+    # CUC format, 1st - 4th octet coarse time
+    return TIME_FORMAT_CUC0
+  elif paramPfc == 16:
+    # CUC format, 1st - 4th octet coarse time, 5th octet for fine time
+    return TIME_FORMAT_CUC1
+  elif paramPfc == 17:
+    # CUC format, 1st - 4th octet coarse time, 5th - 6th octet for fine time
+    return TIME_FORMAT_CUC2
+  elif paramPfc == 18:
+    # CUC format, 1st - 4th octet coarse time, 5th - 7th octet for fine time
+    return TIME_FORMAT_CUC3
+  # illegal pfc value
+  raise Exception("pfc value " + str(paramPfc) + " for time parameters not supported")
