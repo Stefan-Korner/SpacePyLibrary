@@ -12,6 +12,7 @@
 #******************************************************************************
 # PUS Services - Variable packet support                                      *
 #******************************************************************************
+from UTIL.SYS import Error
 import UTIL.DU, UTIL.TIME
 
 ####################
@@ -201,8 +202,7 @@ class Slot(object):
     elif childType == ListDef:
       self.child = List(listDef=childDef)
     else:
-      print("error: child type " + str(childType) + " not supported")
-      sys.exit(-1)
+      raise Error("error: child type " + str(childType) + " not supported")
   # ---------------------------------------------------------------------------
   def __str__(self, indent="Slot"):
     """string representation"""
@@ -274,3 +274,38 @@ class List(object):
   def getLenParamName(self):
     """accessor"""
     return self.listDef.lenParamDef.paramName
+
+#############
+# functions #
+#############
+# -----------------------------------------------------------------------------
+def getParamBitWidth(param):
+  """calculates the bitWidth of a parameter"""
+  return param.getBitWidth()
+# -----------------------------------------------------------------------------
+def getSlotBitWidth(slot):
+  """calculates the bitWidth of a slot"""
+  slotDef = slot.slotDef
+  # calculate the bitWidth depending on the slot child type in the definition
+  child = slot.child
+  childType = type(child)
+  if childType == Param:
+    return getParamBitWidth(param=child)
+  elif childType == List:
+    return getListBitWidth(lst=child)
+  else:
+    raise Error("error: child type " + childType + " not supported")
+# -----------------------------------------------------------------------------
+def getStructBitWidth(struct):
+  """calculates the bitWidth of a struct"""
+  bitWidth = 0
+  for slot in self.slots:
+    bitWidth += getSlotBitWidth(slot)
+  return bitWidth
+# -----------------------------------------------------------------------------
+def getListBitWidth(lst):
+  """calculates the bitWidth of a list"""
+  bitWidth = lst.listDef.lenParamDef.bitWidth
+  for entry in self.entries:
+    bitWidth += getStructBitWidth(entry)
+  return bitWidth
