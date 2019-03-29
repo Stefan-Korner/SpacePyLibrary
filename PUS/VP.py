@@ -299,13 +299,13 @@ def getSlotBitWidth(slot):
 def getStructBitWidth(struct):
   """calculates the bitWidth of a struct"""
   bitWidth = 0
-  for slot in self.slots:
+  for slot in struct.slots:
     bitWidth += getSlotBitWidth(slot)
   return bitWidth
 # -----------------------------------------------------------------------------
 def getListBitWidth(lst):
   """calculates the bitWidth of a list"""
   bitWidth = lst.listDef.lenParamDef.bitWidth
-  for entry in self.entries:
+  for entry in lst.entries:
     bitWidth += getStructBitWidth(entry)
   return bitWidth
