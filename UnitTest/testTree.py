@@ -8,9 +8,10 @@ import UTIL.DU
 # MIB level #
 #############
 class MIBparamRecord(object):
-  def __init__(self, paramName, paramType, defaultValue):
+  def __init__(self, paramName, paramType, bitWidth, defaultValue):
     self.paramName = paramName
     self.paramType = paramType
+    self.bitWidth = bitWidth
     self.defaultValue = defaultValue
 
 class MIBvarRecord(object):
@@ -42,10 +43,17 @@ class DefManager:
     except:
       print("error: param name " + paramName + " not found in s_mibParamRecordMap")
       sys.exit(-1)
-    bitWidth = 0
+    # special handling of variable size parameters
+    if paramRecord.paramType == UTIL.DU.STRING and paramRecord.bitWidth == 0:
+      lengthBytes = 2
+      return PUS.VP.VariableParamDef(paramRecord.paramName,
+                                     paramRecord.paramType,
+                                     lengthBytes,
+                                     paramRecord.defaultValue)
+    # default handling of other parameters
     return PUS.VP.SimpleParamDef(paramRecord.paramName,
                                  paramRecord.paramType,
-                                 bitWidth,
+                                 paramRecord.bitWidth,
                                  paramRecord.defaultValue)
   def createSlotDef(self, sortedVarRecords, varRecordsPos):
     nextVarRecord = sortedVarRecords[varRecordsPos]
@@ -103,36 +111,36 @@ class DefManager:
 #                                                                             *
 # This is an example variable packet instantiation                            *
 #                                                                             *
-# Struct                                                                      *
-#  +-- s_1: Par1 = 123                                                        *
-#  +-- s_2: Par2 = "This is a string"                                         *
-#  +-- s_3: Par3 = 4193                                                       *
-#  +-- s_4: Par4 = "This is a variable string"                                *
+# Struct                                                             BitWidth *
+#  +-- s_1: Par1 = 123                                                     16 *
+#  +-- s_2: Par2 = "This is a string"                                     144 *
+#  +-- s_3: Par3 = 4193                                                   176 *
+#  +-- s_4: Par4 = "This is a variable string"                            392 *
 #  +-- s_5: List                                                              *
-#  |         +-- len: Par5 = 3                                                *
+#  |         +-- len: Par5 = 3                                            400 *
 #  |         +-- [0]: Struct                                                  *
-#  |         |         +-- s_6: Par6 = 15362                                  *
-#  |         |         +-- s_7: Par7 = "This is also a variable string"       *
+#  |         |         +-- s_6: Par6 = 15362                              432 *
+#  |         |         +-- s_7: Par7 = "This is also a variable string"   688 *
 #  |         +-- [1]: Struct                                                  *
-#  |         |         +-- s_6: Par6 = 15362                                  *
-#  |         |         +-- s_7: Par7 = "This is also a variable string"       *
+#  |         |         +-- s_6: Par6 = 15362                              944 *
+#  |         |         +-- s_7: Par7 = "This is also a variable string"   976 *
 #  |         +-- [2]: Struct                                                  *
-#  |                   +-- s_6: Par6 = 15362                                  *
-#  |                   +-- s_7: Par7 = "This is also a variable string"       *
-#  +-- s_8: Par8 = 182736489393276                                            *
-#  +-- s_9: Par9 = "This is the last variable string in the struct"           *
+#  |                   +-- s_6: Par6 = 15362                             1008 *
+#  |                   +-- s_7: Par7 = "This is also a variable string"  1264 *
+#  +-- s_8: Par8 = 182736489393276                                       1328 *
+#  +-- s_9: Par9 = "This is the last variable string in the struct"      1712 *
 #                                                                             *
-#******************************************************************************
+#-----------------------------------------------------------------------------*
 mibParamRecords = [
-  MIBparamRecord("Par1", UTIL.DU.UNSIGNED, 123),
-  MIBparamRecord("Par2", UTIL.DU.STRING, "This is a string"),
-  MIBparamRecord("Par3", UTIL.DU.UNSIGNED, 4193),
-  MIBparamRecord("Par4", UTIL.DU.STRING, "This is a variable string"),
-  MIBparamRecord("Par5", UTIL.DU.UNSIGNED, 3),
-  MIBparamRecord("Par6", UTIL.DU.UNSIGNED, 15362),
-  MIBparamRecord("Par7", UTIL.DU.STRING, "This is also a variable string"),
-  MIBparamRecord("Par8", UTIL.DU.UNSIGNED, 182736489393276),
-  MIBparamRecord("Par9", UTIL.DU.STRING, "This is the last variable string in the struct")]
+  MIBparamRecord("Par1", UTIL.DU.UNSIGNED, 16, 123),
+  MIBparamRecord("Par2", UTIL.DU.STRING, 128, "This is a string"),
+  MIBparamRecord("Par3", UTIL.DU.UNSIGNED, 32, 4193),
+  MIBparamRecord("Par4", UTIL.DU.STRING, 0, "This is a variable string"),
+  MIBparamRecord("Par5", UTIL.DU.UNSIGNED, 8, 3),
+  MIBparamRecord("Par6", UTIL.DU.UNSIGNED, 32, 15362),
+  MIBparamRecord("Par7", UTIL.DU.STRING, 0, "This is also a variable string"),
+  MIBparamRecord("Par8", UTIL.DU.UNSIGNED, 64, 182736489393276),
+  MIBparamRecord("Par9", UTIL.DU.STRING, 0, "This is the last variable string in the struct")]
 mibVarRecords = [
   MIBvarRecord("XXXX1234", 1, "s_1", "Par1", 0),
   MIBvarRecord("XXXX1234", 2, "s_2", "Par2", 0),
@@ -149,18 +157,100 @@ print("structDef:", structDef)
 struct = PUS.VP.Struct(structDef)
 print("struct-->", struct)
 print("struct.s_1.value = " + str(struct.s_1.value))
+if PUS.VP.getParamBitWidth(struct.s_1) != 16:
+  sys.exit(-1)
+if PUS.VP.getParamBitWidth(struct.s_2) != 128:
+  sys.exit(-1)
+if PUS.VP.getParamBitWidth(struct.s_3) != 32:
+  sys.exit(-1)
+if PUS.VP.getParamBitWidth(struct.s_4) != 216:
+  sys.exit(-1)
+if PUS.VP.getParamBitWidth(struct.s_5[0].s_6) != 32:
+  sys.exit(-1)
+if PUS.VP.getParamBitWidth(struct.s_5[0].s_7) != 256:
+  sys.exit(-1)
+if PUS.VP.getStructBitWidth(struct.s_5[0]) != 288:
+  sys.exit(-1)
+if PUS.VP.getParamBitWidth(struct.s_5[1].s_6) != 32:
+  sys.exit(-1)
+if PUS.VP.getParamBitWidth(struct.s_5[1].s_7) != 256:
+  sys.exit(-1)
+if PUS.VP.getStructBitWidth(struct.s_5[1]) != 288:
+  sys.exit(-1)
+if PUS.VP.getParamBitWidth(struct.s_5[2].s_6) != 32:
+  sys.exit(-1)
+if PUS.VP.getParamBitWidth(struct.s_5[2].s_7) != 256:
+  sys.exit(-1)
+if PUS.VP.getStructBitWidth(struct.s_5[2]) != 288:
+  sys.exit(-1)
+if PUS.VP.getListBitWidth(struct.s_5) != 872:
+  sys.exit(-1)
+if PUS.VP.getParamBitWidth(struct.s_8) != 64:
+  sys.exit(-1)
+if PUS.VP.getParamBitWidth(struct.s_9) != 384:
+  sys.exit(-1)
+if PUS.VP.getStructBitWidth(struct) != 1712:
+  sys.exit(-1)
 struct.s_1.value = 111222
 print("struct-->", struct)
 print("struct.s_1.value = " + str(struct.s_1.value))
 print("struct.s_5[0]:", struct.s_5[0])
-struct.s_5[0].s_6.value = "new value for s_6"
-struct.s_5[0].s_7.value = 101010
+struct.s_5[0].s_6.value = 101010
+struct.s_5[0].s_7.value = "new value for s_7"
 print("struct-->", struct)
 print("len(struct.s_5) = " + str(len(struct.s_5)))
 struct.s_5.setLen(4)
 print("struct-->", struct)
 struct.s_5.setLen(2)
+#-----------------------------------------------------------------------------*
+# This should be the variable packet instantiation now:                       *
+#                                                                             *
+# Struct                                                             BitWidth *
+#  +-- s_1: Par1 = 111222                                                  16 *
+#  +-- s_2: Par2 = "This is a string"                                     144 *
+#  +-- s_3: Par3 = 4193                                                   176 *
+#  +-- s_4: Par4 = "This is a variable string"                            392 *
+#  +-- s_5: List                                                              *
+#  |         +-- len: Par5 = 2                                            400 *
+#  |         +-- [0]: Struct                                                  *
+#  |         |         +-- s_6: Par6 = 101010                             432 *
+#  |         |         +-- s_7: Par7 = "new value for s_7"                584 *
+#  |         +-- [1]: Struct                                                  *
+#  |                   +-- s_6: Par6 = 15362                              616 *
+#  |                   +-- s_7: Par7 = "This is also a variable string"   872 *
+#  +-- s_8: Par8 = 182736489393276                                        936 *
+#  +-- s_9: Par9 = "This is the last variable string in the struct"      1320 *
+#                                                                             *
+#******************************************************************************
 print("struct-->", struct)
+if PUS.VP.getParamBitWidth(struct.s_1) != 16:
+  sys.exit(-1)
+if PUS.VP.getParamBitWidth(struct.s_2) != 128:
+  sys.exit(-1)
+if PUS.VP.getParamBitWidth(struct.s_3) != 32:
+  sys.exit(-1)
+if PUS.VP.getParamBitWidth(struct.s_4) != 216:
+  sys.exit(-1)
+if PUS.VP.getParamBitWidth(struct.s_5[0].s_6) != 32:
+  sys.exit(-1)
+if PUS.VP.getParamBitWidth(struct.s_5[0].s_7) != 152:
+  sys.exit(-1)
+if PUS.VP.getStructBitWidth(struct.s_5[0]) != 184:
+  sys.exit(-1)
+if PUS.VP.getParamBitWidth(struct.s_5[1].s_6) != 32:
+  sys.exit(-1)
+if PUS.VP.getParamBitWidth(struct.s_5[1].s_7) != 256:
+  sys.exit(-1)
+if PUS.VP.getStructBitWidth(struct.s_5[1]) != 288:
+  sys.exit(-1)
+if PUS.VP.getListBitWidth(struct.s_5) != 480:
+  sys.exit(-1)
+if PUS.VP.getParamBitWidth(struct.s_8) != 64:
+  sys.exit(-1)
+if PUS.VP.getParamBitWidth(struct.s_9) != 384:
+  sys.exit(-1)
+if PUS.VP.getStructBitWidth(struct) != 1320:
+  sys.exit(-1)
 
 #******************************************************************************
 # GUI with tree widget                                                        *
