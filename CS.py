@@ -77,7 +77,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     event = UTIL.TASK.ViewEvent(status)
     event.enable(UTIL.TASK.s_parentTask)
   # ---------------------------------------------------------------------------
-  def notifyCommand(self, argv):
+  def notifyCommand(self, argv, extraData):
     """Entry point for processing"""
     if len(argv) == 0:
       # echo command ---> allways OK
@@ -101,9 +101,9 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     elif (cmd == "SR") or (cmd == "STOPPACKETRECORDER"):
       retStatus = self.stopPacketRecorderCmd(argv)
     elif (cmd == "P") or (cmd == "SETPACKETDATA"):
-      retStatus = self.setPacketDataCmd(argv)
+      retStatus = self.setPacketDataCmd(argv, extraData)
     elif (cmd == "S") or (cmd == "SENDPACKET"):
-      retStatus = self.sendPacketCmd(argv)
+      retStatus = self.sendPacketCmd(argv, extraData)
     elif (cmd == "C1") or (cmd == "CONNECTCNC"):
       retStatus = self.connectCNCcmd(argv)
     elif (cmd == "D1") or (cmd == "DISCONNECTCNC"):
@@ -291,7 +291,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     MC.IF.s_tmRecorder.stopRecording();
     return True
   # ---------------------------------------------------------------------------
-  def setPacketDataCmd(self, argv):
+  def setPacketDataCmd(self, argv, extraData):
     """Decoded setPacketData command"""
     self.logMethod("setPacketDataCmd", "TC")
 
@@ -303,8 +303,9 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     # extract the arguments
     pktMnemonic = argv[1]
     route = argv[2]
+    tcStruct = extraData
     # check the packet data
-    tcPacketData = SPACE.IF.s_definitions.getTCpacketInjectData(pktMnemonic, route)
+    tcPacketData = SPACE.IF.s_definitions.getTCpacketInjectData(pktMnemonic, route, tcStruct)
     if tcPacketData == None:
       LOG_WARNING("invalid data passed for setPacketData", "TC")
       return False
@@ -316,7 +317,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     self.notifyGUItask("PACKETDATA_SET")
     return True
   # ---------------------------------------------------------------------------
-  def sendPacketCmd(self, argv):
+  def sendPacketCmd(self, argv, extraData):
     """Decoded sendPacket command"""
     self.logMethod("sendPacketCmd", "TC")
 
@@ -334,8 +335,9 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     else:
       pktMnemonic = argv[1]
       route = argv[2]
+      tcStruct = extraData
       # check the packet data
-      tcPacketData = SPACE.IF.s_definitions.getTCpacketInjectData(pktMnemonic, route)
+      tcPacketData = SPACE.IF.s_definitions.getTCpacketInjectData(pktMnemonic, route, tcStruct)
       if tcPacketData == None:
         LOG_WARNING("invalid data passed for sendPacket", "TC")
         return False

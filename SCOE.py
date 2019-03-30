@@ -80,7 +80,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     event = UTIL.TASK.ViewEvent(status)
     event.enable(UTIL.TASK.s_parentTask)
   # ---------------------------------------------------------------------------
-  def notifyCommand(self, argv):
+  def notifyCommand(self, argv, extraData):
     """Entry point for processing"""
     if len(argv) == 0:
       # echo command ---> allways OK

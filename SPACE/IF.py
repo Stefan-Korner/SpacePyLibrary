@@ -459,13 +459,11 @@ class TCpacketInjectData(object):
   def __init__(self,
                pktMnemonic,
                route,
-               dataField,
-               segmentationFlags):
+               tcStruct):
     """Initialisation with default data"""
     self.pktName = pktMnemonic
     self.route = route
-    self.dataField = dataField
-    self.segmentationFlags = segmentationFlags
+    self.tcStruct = tcStruct
 
 ##############
 # interfaces #
@@ -539,8 +537,7 @@ class Definitions(object):
   def getTCpacketInjectData(self,
                             pktMnemonic,
                             route,
-                            dataField=None,
-                            segmentationFlags=CCSDS.PACKET.UNSEGMENTED):
+                            tcStruct):
     """returns the data that are used for packet injection"""
     pass
 

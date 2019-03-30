@@ -78,7 +78,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     """Initialise the Task as processing model"""
     UTIL.TASK.ProcessingTask.__init__(self, isParent=False)
   # ---------------------------------------------------------------------------
-  def notifyCommand(self, argv):
+  def notifyCommand(self, argv, extraData):
     """Entry point for processing"""
     if len(argv) > 0:
       # decode the command
@@ -89,7 +89,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
         self.customCmd(argv)
       else:
         # delegate to the parent implementation (help & quit command)
-        return UTIL.TASK.ProcessingTask.notifyCommand(self, argv)
+        return UTIL.TASK.ProcessingTask.notifyCommand(self, argv, extraData)
     return 0
   # ---------------------------------------------------------------------------
   def helpCmd(self, argv):

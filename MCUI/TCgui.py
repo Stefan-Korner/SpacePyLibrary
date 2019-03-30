@@ -161,7 +161,8 @@ class TCpacketBrowser(tkSimpleDialog.Dialog, UI.TKI.AppGrid):
     packetName = self.details.pktNameField.get()
     if packetName != "":
       route = self.details.routeField.get()
-      self.result = [packetName, route]
+      tcStruct = self.details.tcStruct
+      self.result = [packetName, route, tcStruct]
 
 # =============================================================================
 class GUIview(UI.TKI.GUItabView):
@@ -217,8 +218,8 @@ class GUIview(UI.TKI.GUItabView):
       title="Set Packet Data Dialog",
       prompt="Please select a packet.")
     if dialog.result != None:
-      packetName, route = dialog.result
-      self.notifyModelTask(["SETPACKETDATA", packetName, route])
+      packetName, route, tcStruct = dialog.result
+      self.notifyModelTask(["SETPACKETDATA", packetName, route], tcStruct)
   # ---------------------------------------------------------------------------
   def sendPacketCallback(self):
     """Called when the SendPacket menu entry is selected"""

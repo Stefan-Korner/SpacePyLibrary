@@ -37,7 +37,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     """Initialise attributes only"""
     UTIL.TASK.ProcessingTask.__init__(self, isParent=True)
   # ---------------------------------------------------------------------------
-  def notifyCommand(self, argv):
+  def notifyCommand(self, argv, extraData):
     """Callback for processing the input arguments"""
     if len(argv) > 0:
       # decode the command
