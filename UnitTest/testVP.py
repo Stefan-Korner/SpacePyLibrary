@@ -53,7 +53,7 @@
 # The variable packet is changed afterwards to the following structure:       *
 #                                                                             *
 # Struct                                                             BitWidth *
-#  +-- s_1: Par1 = 111222                                                  16 *
+#  +-- s_1: Par1 = 65535                                                  16 *
 #  +-- s_2: Par2 = "This is a string"                                     144 *
 #  +-- s_3: Par3 = 4193                                                   176 *
 #  +-- s_4: Par4 = "This is a variable string"                            392 *
@@ -229,7 +229,7 @@ def testStruct1(struct):
   return True
 # -----------------------------------------------------------------------------
 def changeStruct1(struct):
-  struct.s_1.value = 111222
+  struct.s_1.value = 65535
   struct.s_5[0].s_6.value = 101010
   struct.s_5[0].s_7.value = "new value for s_7"
   struct.s_5.setLen(4)
@@ -265,15 +265,38 @@ def testStruct2(struct):
   if struct.getBitWidth() != 1320:
     return False
   return True
+# -----------------------------------------------------------------------------
+def encodeDecode(struct, structDef):
+  bitWidth = struct.getBitWidth()
+  byteWidth = bitWidth >> 3
+  du = UTIL.DU.BinaryUnit()
+  du.setLen(byteWidth)
+  struct.encode(du, 0)
+  dStruct = PUS.VP.Struct(structDef)
+  dStruct.decode(du, 0)
+  return dStruct
 
 structDef = createStruct1Definition()
 print("structDef:", structDef)
 struct = PUS.VP.Struct(structDef)
 print("struct-->", struct)
 if not testStruct1(struct):
+  print("struct1 has invalid structure")
+  sys.exit(-1)
+dStruct = encodeDecode(struct, structDef)
+print("dStruct-->", dStruct)
+if not testStruct1(dStruct):
+  print("encoded & decoded struct1 has invalid structure")
   sys.exit(-1)
 changeStruct1(struct)
+print("struct-->", struct)
 if not testStruct2(struct):
+  print("struct2 has invalid structure")
+  sys.exit(-1)
+dStruct = encodeDecode(struct, structDef)
+print("dStruct-->", dStruct)
+if not testStruct2(dStruct):
+  print("encoded & decoded struct2 has invalid structure")
   sys.exit(-1)
 
 #******************************************************************************
