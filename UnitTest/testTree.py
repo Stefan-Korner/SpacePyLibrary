@@ -1,4 +1,73 @@
 #!/usr/bin/env python
+#******************************************************************************
+# (C) 2019, Stefan Korner, Austria                                            *
+#                                                                             *
+# The Space Python Library is free software; you can redistribute it and/or   *
+# modify it under under the terms of the MIT License as published by the      *
+# Massachusetts Institute of Technology.                                      *
+#                                                                             *
+# The Space Python Library is distributed in the hope that it will be useful, *
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT License    *
+# for more details.                                                           *
+#******************************************************************************
+# PUS Services - Variable packet support - Unit Tests                         *
+#                                                                             *
+# For this is an example variable packet layout definition is used:           *
+#                                                                             *
+# StructDef - ID="XXXX1234"                                                   *
+#  +-- s_1: Par1: uint(3,12) - 16 bits                                        *
+#  +-- s_2: Par2: string(8,16) - 16 bytes                                     *
+#  +-- s_3: Par3: uint(3,14) - 32 bit                                         *
+#  +-- s_4: Par4: string(8,0) - variable bytes                                *
+#  +-- s_5: ListDef                                                           *
+#  |         +-- len: Par5: uint(3,4) - 8 bits (group repeater)               *
+#  |         +-- [*]: StructDef                                               *
+#  |                   +-- s_6: Par6: uint(3,14) - 32 bit                     *
+#  |                   +-- s_7: Par7: string(8,0) - variable bytes            *
+#  +-- s_8: Par8: uint(3,16) - 64 bits                                        *
+#  +-- s_9: Par9: string(8,0) - variable bytes                                *
+#                                                                             *
+# Based on the packet definition the following variable packet instantiation  *
+# is performed:                                                               *
+#                                                                             *
+# Struct                                                             BitWidth *
+#  +-- s_1: Par1 = 123                                                     16 *
+#  +-- s_2: Par2 = "This is a string"                                     144 *
+#  +-- s_3: Par3 = 4193                                                   176 *
+#  +-- s_4: Par4 = "This is a variable string"                            392 *
+#  +-- s_5: List                                                              *
+#  |         +-- len: Par5 = 3                                            400 *
+#  |         +-- [0]: Struct                                                  *
+#  |         |         +-- s_6: Par6 = 15362                              432 *
+#  |         |         +-- s_7: Par7 = "This is also a variable string"   688 *
+#  |         +-- [1]: Struct                                                  *
+#  |         |         +-- s_6: Par6 = 15362                              944 *
+#  |         |         +-- s_7: Par7 = "This is also a variable string"   976 *
+#  |         +-- [2]: Struct                                                  *
+#  |                   +-- s_6: Par6 = 15362                             1008 *
+#  |                   +-- s_7: Par7 = "This is also a variable string"  1264 *
+#  +-- s_8: Par8 = 182736489393276                                       1328 *
+#  +-- s_9: Par9 = "This is the last variable string in the struct"      1712 *
+#                                                                             *
+# The variable packet is changed afterwards to the following structure:       *
+#                                                                             *
+# Struct                                                             BitWidth *
+#  +-- s_1: Par1 = 111222                                                  16 *
+#  +-- s_2: Par2 = "This is a string"                                     144 *
+#  +-- s_3: Par3 = 4193                                                   176 *
+#  +-- s_4: Par4 = "This is a variable string"                            392 *
+#  +-- s_5: List                                                              *
+#  |         +-- len: Par5 = 2                                            400 *
+#  |         +-- [0]: Struct                                                  *
+#  |         |         +-- s_6: Par6 = 101010                             432 *
+#  |         |         +-- s_7: Par7 = "new value for s_7"                584 *
+#  |         +-- [1]: Struct                                                  *
+#  |                   +-- s_6: Par6 = 15362                              616 *
+#  |                   +-- s_7: Par7 = "This is also a variable string"   872 *
+#  +-- s_8: Par8 = 182736489393276                                        936 *
+#  +-- s_9: Par9 = "This is the last variable string in the struct"      1320 *
+#******************************************************************************
 import sys
 import PUS.VP
 import SPACEUI.VPgui
@@ -93,44 +162,6 @@ class DefManager:
     structDef, varRecordsPos = self.createStructDef(structName, sortedVarRecords, varRecordsPos, varRecordsEnd)
     return structDef
 
-#******************************************************************************
-# This is an example variable packet layout definition                        *
-#                                                                             *
-# StructDef - ID="XXXX1234"                                                   *
-#  +-- s_1: Par1: uint(3,12) - 16 bits                                        *
-#  +-- s_2: Par2: string(8,16) - 16 bytes                                     *
-#  +-- s_3: Par3: uint(3,14) - 32 bit                                         *
-#  +-- s_4: Par4: string(8,0) - variable bytes                                *
-#  +-- s_5: ListDef                                                           *
-#  |         +-- len: Par5: uint(3,4) - 8 bits (group repeater)               *
-#  |         +-- [*]: StructDef                                               *
-#  |                   +-- s_6: Par6: uint(3,14) - 32 bit                     *
-#  |                   +-- s_7: Par7: string(8,0) - variable bytes            *
-#  +-- s_8: Par8: uint(3,16) - 64 bits                                        *
-#  +-- s_9: Par9: string(8,0) - variable bytes                                *
-#                                                                             *
-# This is an example variable packet instantiation                            *
-#                                                                             *
-# Struct                                                             BitWidth *
-#  +-- s_1: Par1 = 123                                                     16 *
-#  +-- s_2: Par2 = "This is a string"                                     144 *
-#  +-- s_3: Par3 = 4193                                                   176 *
-#  +-- s_4: Par4 = "This is a variable string"                            392 *
-#  +-- s_5: List                                                              *
-#  |         +-- len: Par5 = 3                                            400 *
-#  |         +-- [0]: Struct                                                  *
-#  |         |         +-- s_6: Par6 = 15362                              432 *
-#  |         |         +-- s_7: Par7 = "This is also a variable string"   688 *
-#  |         +-- [1]: Struct                                                  *
-#  |         |         +-- s_6: Par6 = 15362                              944 *
-#  |         |         +-- s_7: Par7 = "This is also a variable string"   976 *
-#  |         +-- [2]: Struct                                                  *
-#  |                   +-- s_6: Par6 = 15362                             1008 *
-#  |                   +-- s_7: Par7 = "This is also a variable string"  1264 *
-#  +-- s_8: Par8 = 182736489393276                                       1328 *
-#  +-- s_9: Par9 = "This is the last variable string in the struct"      1712 *
-#                                                                             *
-#-----------------------------------------------------------------------------*
 mibParamRecords = [
   MIBparamRecord("Par1", UTIL.DU.UNSIGNED, 16, 123),
   MIBparamRecord("Par2", UTIL.DU.STRING, 128, "This is a string"),
@@ -202,26 +233,6 @@ print("len(struct.s_5) = " + str(len(struct.s_5)))
 struct.s_5.setLen(4)
 print("struct-->", struct)
 struct.s_5.setLen(2)
-#-----------------------------------------------------------------------------*
-# This should be the variable packet instantiation now:                       *
-#                                                                             *
-# Struct                                                             BitWidth *
-#  +-- s_1: Par1 = 111222                                                  16 *
-#  +-- s_2: Par2 = "This is a string"                                     144 *
-#  +-- s_3: Par3 = 4193                                                   176 *
-#  +-- s_4: Par4 = "This is a variable string"                            392 *
-#  +-- s_5: List                                                              *
-#  |         +-- len: Par5 = 2                                            400 *
-#  |         +-- [0]: Struct                                                  *
-#  |         |         +-- s_6: Par6 = 101010                             432 *
-#  |         |         +-- s_7: Par7 = "new value for s_7"                584 *
-#  |         +-- [1]: Struct                                                  *
-#  |                   +-- s_6: Par6 = 15362                              616 *
-#  |                   +-- s_7: Par7 = "This is also a variable string"   872 *
-#  +-- s_8: Par8 = 182736489393276                                        936 *
-#  +-- s_9: Par9 = "This is the last variable string in the struct"      1320 *
-#                                                                             *
-#******************************************************************************
 print("struct-->", struct)
 if struct.s_1.getBitWidth() != 16:
   sys.exit(-1)
