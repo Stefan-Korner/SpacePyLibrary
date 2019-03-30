@@ -153,12 +153,34 @@ class ListDef(object):
     retStr += self.entryDef.__str__(indent + "[*]")
     return retStr
 
-##################
-# instance level #
-##################
+################
+# entity level #
+################
 
 # =============================================================================
-class Param(object):
+class Entity(object):
+  """Superclass of all entities"""
+  # ---------------------------------------------------------------------------
+  def getBitWidth(self):
+    """accessor, shall be implemented in derived classes"""
+    pass
+  # ---------------------------------------------------------------------------
+  def encode(self, du, bitPos):
+    """
+    encodes the contens into a data unit, returns the new position
+    shall be implemented in derived classes
+    """
+    pass
+  # ---------------------------------------------------------------------------
+  def decode(self, du, bitPos):
+    """
+    decodes the contens from a data unit, returns the new position
+    shall be implemented in derived classes
+    """
+    pass
+
+# =============================================================================
+class Param(Entity):
   """Variable packet parameter"""
   # ---------------------------------------------------------------------------
   def __init__(self, paramDef):
@@ -178,7 +200,7 @@ class Param(object):
     return self.paramDef.getParamType()
   # ---------------------------------------------------------------------------
   def getBitWidth(self):
-    """accessor"""
+    """accessor, overloaded from Entity"""
     # special processing of variable size parameters
     defType = type(self.paramDef)
     if defType == VariableParamDef:
@@ -186,9 +208,114 @@ class Param(object):
       return byteWidth << 3
     # default processing
     return self.paramDef.getBitWidth()
+  # ---------------------------------------------------------------------------
+  def encode(self, du, bitPos):
+    """
+    encodes the contens into a data unit, returns the new position
+    overloaded from Entity
+    """
+    paramType = self.getParamType()
+    bitWidth = self.getBitWidth()
+    value = self.value
+    nextBitPos = bitPos + bitWidth
+    # process bit oriented parameter types
+    if paramType == UTIL.DU.BITS:
+      du.setBits(bitPos, bitWidth, value)
+      return nextBitPos
+    if paramType == UTIL.DU.SBITS:
+      du.setSBits(bitPos, bitWidth, value)
+      return nextBitPos
+    # process byte oriented parameter types
+    if (bitPos % 8) != 0:
+      raise Error("parameter " + self.getParamName() + " position is not byte aligned")
+    if (bitWidth % 8) != 0:
+      raise Error("parameter " + self.getParamName() + " size is not byte aligned")
+    bytePos = bitPos >> 3
+    byteWidth = bitWidth >> 3
+    defType = type(self.paramDef)
+    if defType == VariableParamDef:
+      # for variable length parameters: encode the length bytes first
+      lengthBytes = self.paramDef.lengthBytes
+      byteLength = len(value)
+      du.setUnsigned(bytePos, lengthBytes, byteLength)
+      bytePos += lengthBytes
+      byteWidth = byteLength      
+    if paramType == UTIL.DU.BYTES:
+      du.setBytes(bytePos, byteWidth, value)
+      return nextBitPos
+    if paramType == UTIL.DU.UNSIGNED:
+      du.setUnsigned(bytePos, byteWidth, value)
+      return nextBitPos
+    if paramType == UTIL.DU.SIGNED:
+      du.setSigned(bytePos, byteWidth, value)
+      return nextBitPos
+    if paramType == UTIL.DU.FLOAT:
+      du.setFloat(bytePos, byteWidth, value)
+      return nextBitPos
+    if paramType == UTIL.DU.TIME:
+      timeFormat = self.paramDef.timeFormat
+      du.setTime(bytePos, timeFormat, value)
+      return nextBitPos
+    if paramType == UTIL.DU.STRING:
+      du.setString(bytePos, byteWidth, value)
+      return nextBitPos
+    raise Error("unexpected paramType for parameter " + self.getParamName())
+  # ---------------------------------------------------------------------------
+  def decode(self, du, bitPos):
+    """
+    decodes the contens from a data unit, returns the new position
+    overloaded from Entity
+    """
+    paramType = self.getParamType()
+    bitWidth = self.getBitWidth()
+    value = self.value
+    nextBitPos = bitPos + bitWidth
+    # process bit oriented parameter types
+    if paramType == UTIL.DU.BITS:
+      self.value = du.getBits(bitPos, bitWidth)
+      return nextBitPos
+    if paramType == UTIL.DU.SBITS:
+      self.value = du.getSBits(bitPos, bitWidth)
+      return nextBitPos
+    # process byte oriented parameter types
+    if (bitPos % 8) != 0:
+      raise Error("parameter " + self.getParamName() + " position is not byte aligned")
+    if (bitWidth % 8) != 0:
+      raise Error("parameter " + self.getParamName() + " size is not byte aligned")
+    bytePos = bitPos >> 3
+    byteWidth = bitWidth >> 3
+    defType = type(self.paramDef)
+    if defType == VariableParamDef:
+      # for variable length parameters: encode the length bytes first
+      lengthBytes = self.paramDef.lengthBytes
+      byteLength = du.getUnsigned(bytePos, lengthBytes)
+      bytePos += lengthBytes
+      byteWidth = byteLength
+      nextBytePos = bytePos + byteWidth
+      nextBitPos = nextBytePos << 3
+    if paramType == UTIL.DU.BYTES:
+      self.value = du.getBytes(bytePos, byteWidth)
+      return nextBitPos
+    if paramType == UTIL.DU.UNSIGNED:
+      self.value = du.getUnsigned(bytePos, byteWidth)
+      return nextBitPos
+    if paramType == UTIL.DU.SIGNED:
+      self.value = du.getSigned(bytePos, byteWidth)
+      return nextBitPos
+    if paramType == UTIL.DU.FLOAT:
+      self.value = du.getFloat(bytePos, byteWidth)
+      return nextBitPos
+    if paramType == UTIL.DU.TIME:
+      timeFormat = self.paramDef.timeFormat
+      self.value = du.getTime(bytePos, timeFormat)
+      return nextBitPos
+    if paramType == UTIL.DU.STRING:
+      self.value = du.getString(bytePos, byteWidth)
+      return nextBitPos
+    raise Error("unexpected paramType for parameter " + self.getParamName())
 
 # =============================================================================
-class Slot(object):
+class Slot(Entity):
   """Slot in a struct"""
   # ---------------------------------------------------------------------------
   def __init__(self, slotDef=""):
@@ -202,7 +329,7 @@ class Slot(object):
     elif childType == ListDef:
       self.child = List(listDef=childDef)
     else:
-      raise Error("error: child type " + str(childType) + " not supported")
+      raise Error("child type " + str(childType) + " not supported")
   # ---------------------------------------------------------------------------
   def __str__(self, indent="Slot"):
     """string representation"""
@@ -211,9 +338,27 @@ class Slot(object):
   def getSlotName(self):
     """accessor"""
     return self.slotDef.slotName
+  # ---------------------------------------------------------------------------
+  def getBitWidth(self):
+    """accessor, overloaded from Entity"""
+    return self.child.getBitWidth()
+  # ---------------------------------------------------------------------------
+  def encode(self, du, bitPos):
+    """
+    encodes the contens into a data unit, returns the new position
+    overloaded from Entity
+    """
+    return self.child.encode(du, bitPos)
+  # ---------------------------------------------------------------------------
+  def decode(self, du, bitPos):
+    """
+    decodes the contens from a data unit, returns the new position
+    overloaded from Entity
+    """
+    return self.child.decode(du, bitPos)
 
 # =============================================================================
-class Struct(object):
+class Struct(Entity):
   """Struct in a variable packet"""
   # ---------------------------------------------------------------------------
   def __init__(self, structDef):
@@ -231,9 +376,34 @@ class Struct(object):
     """struct attribute simulation"""
     slotPos = self.structDef.getSlotPos(slotName)
     return self.slots[slotPos].child
+  # ---------------------------------------------------------------------------
+  def getBitWidth(self):
+    """accessor, overloaded from Entity"""
+    bitWidth = 0
+    for slot in self.slots:
+      bitWidth += slot.getBitWidth()
+    return bitWidth
+  # ---------------------------------------------------------------------------
+  def encode(self, du, bitPos):
+    """
+    encodes the contens into a data unit, returns the new position
+    overloaded from Entity
+    """
+    for slot in self.slots:
+      bitPos = slot.encode(du, bitPos)
+    return bitPos
+  # ---------------------------------------------------------------------------
+  def decode(self, du, bitPos):
+    """
+    decodes the contens from a data unit, returns the new position
+    overloaded from Entity
+    """
+    for slot in self.slots:
+      bitPos = slot.decode(du, bitPos)
+    return bitPos
     
 # =============================================================================
-class List(object):
+class List(Entity):
   """Definition of a list in a variable packet"""
   # ---------------------------------------------------------------------------
   def __init__(self, listDef):
@@ -274,38 +444,54 @@ class List(object):
   def getLenParamName(self):
     """accessor"""
     return self.listDef.lenParamDef.paramName
-
-#############
-# functions #
-#############
-# -----------------------------------------------------------------------------
-def getParamBitWidth(param):
-  """calculates the bitWidth of a parameter"""
-  return param.getBitWidth()
-# -----------------------------------------------------------------------------
-def getSlotBitWidth(slot):
-  """calculates the bitWidth of a slot"""
-  slotDef = slot.slotDef
-  # calculate the bitWidth depending on the slot child type in the definition
-  child = slot.child
-  childType = type(child)
-  if childType == Param:
-    return getParamBitWidth(param=child)
-  elif childType == List:
-    return getListBitWidth(lst=child)
-  else:
-    raise Error("error: child type " + childType + " not supported")
-# -----------------------------------------------------------------------------
-def getStructBitWidth(struct):
-  """calculates the bitWidth of a struct"""
-  bitWidth = 0
-  for slot in struct.slots:
-    bitWidth += getSlotBitWidth(slot)
-  return bitWidth
-# -----------------------------------------------------------------------------
-def getListBitWidth(lst):
-  """calculates the bitWidth of a list"""
-  bitWidth = lst.listDef.lenParamDef.bitWidth
-  for entry in lst.entries:
-    bitWidth += getStructBitWidth(entry)
-  return bitWidth
+  # ---------------------------------------------------------------------------
+  def getBitWidth(self):
+    """accessor, overloaded from Entity"""
+    bitWidth = self.listDef.lenParamDef.bitWidth
+    for entry in self.entries:
+      bitWidth += entry.getBitWidth()
+    return bitWidth
+  # ---------------------------------------------------------------------------
+  def encode(self, du, bitPos):
+    """
+    encodes the contens into a data unit, returns the new position
+    overloaded from Entity
+    """
+    # encode the length
+    lengthValueBitPos = bitPos
+    if (lengthValueBitPos % 8) != 0:
+      raise Error("parameter " + self.getLenParamName() + " position is not byte aligned")
+    lengthValueBitWidth = self.listDef.lenParamDef.bitWidth
+    if (lengthValueBitWidth % 8) != 0:
+      raise Error("parameter " + self.getLenParamName() + " size is not byte aligned")
+    lengthValueBytePos = lengthValueBitPos >> 3
+    lengthValueByteWidth = lengthValueBitWidth >> 3
+    lengthValue = len(self.entries)
+    du.setUnsigned(lengthValueBytePos, lengthValueByteWidth, lengthValue)
+    bitPos += lengthValueBitWidth
+    # encode the list entries
+    for entry in self.entries:
+      bitPos = entry.encode(du, bitPos)
+    return bitPos
+  # ---------------------------------------------------------------------------
+  def decode(self, du, bitPos):
+    """
+    decodes the contens from a data unit, returns the new position
+    overloaded from Entity
+    """
+    # decode the length
+    lengthValueBitPos = bitPos
+    if (lengthValueBitPos % 8) != 0:
+      raise Error("parameter " + self.getLenParamName() + " position is not byte aligned")
+    lengthValueBitWidth = self.listDef.lenParamDef.bitWidth
+    if (lengthValueBitWidth % 8) != 0:
+      raise Error("parameter " + self.getLenParamName() + " size is not byte aligned")
+    lengthValueBytePos = lengthValueBitPos >> 3
+    lengthValueByteWidth = lengthValueBitWidth >> 3
+    lengthValue = du.getUnsigned(lengthValueBytePos, lengthValueByteWidth)
+    bitPos += lengthValueBitWidth
+    # decode the list entries
+    self.setLen(lengthValue)
+    for entry in self.entries:
+      bitPos = entry.decode(du, bitPos)
+    return bitPos
