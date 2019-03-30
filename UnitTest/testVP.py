@@ -69,6 +69,7 @@
 #  +-- s_9: Par9 = "This is the last variable string in the struct"      1320 *
 #******************************************************************************
 import sys
+import Tkinter
 import PUS.VP
 import SPACEUI.VPgui
 import UTIL.DU
@@ -162,112 +163,122 @@ class DefManager:
     structDef, varRecordsPos = self.createStructDef(structName, sortedVarRecords, varRecordsPos, varRecordsEnd)
     return structDef
 
-mibParamRecords = [
-  MIBparamRecord("Par1", UTIL.DU.UNSIGNED, 16, 123),
-  MIBparamRecord("Par2", UTIL.DU.STRING, 128, "This is a string"),
-  MIBparamRecord("Par3", UTIL.DU.UNSIGNED, 32, 4193),
-  MIBparamRecord("Par4", UTIL.DU.STRING, 0, "This is a variable string"),
-  MIBparamRecord("Par5", UTIL.DU.UNSIGNED, 8, 3),
-  MIBparamRecord("Par6", UTIL.DU.UNSIGNED, 32, 15362),
-  MIBparamRecord("Par7", UTIL.DU.STRING, 0, "This is also a variable string"),
-  MIBparamRecord("Par8", UTIL.DU.UNSIGNED, 64, 182736489393276),
-  MIBparamRecord("Par9", UTIL.DU.STRING, 0, "This is the last variable string in the struct")]
-mibVarRecords = [
-  MIBvarRecord("XXXX1234", 1, "s_1", "Par1", 0),
-  MIBvarRecord("XXXX1234", 2, "s_2", "Par2", 0),
-  MIBvarRecord("XXXX1234", 3, "s_3", "Par3", 0),
-  MIBvarRecord("XXXX1234", 4, "s_4", "Par4", 0),
-  MIBvarRecord("XXXX1234", 5, "s_5", "Par5", 2),
-  MIBvarRecord("XXXX1234", 6, "s_6", "Par6", 0),
-  MIBvarRecord("XXXX1234", 7, "s_7", "Par7", 0),
-  MIBvarRecord("XXXX1234", 8, "s_8", "Par8", 0),
-  MIBvarRecord("XXXX1234", 9, "s_9", "Par9", 0)]
-defManager = DefManager(mibParamRecords, mibVarRecords)
-structDef = defManager.createToplevelStructDef("XXXX1234")
+#############
+# functions #
+#############
+# -----------------------------------------------------------------------------
+def createStruct1Definition():
+  mibParamRecords = [
+    MIBparamRecord("Par1", UTIL.DU.UNSIGNED, 16, 123),
+    MIBparamRecord("Par2", UTIL.DU.STRING, 128, "This is a string"),
+    MIBparamRecord("Par3", UTIL.DU.UNSIGNED, 32, 4193),
+    MIBparamRecord("Par4", UTIL.DU.STRING, 0, "This is a variable string"),
+    MIBparamRecord("Par5", UTIL.DU.UNSIGNED, 8, 3),
+    MIBparamRecord("Par6", UTIL.DU.UNSIGNED, 32, 15362),
+    MIBparamRecord("Par7", UTIL.DU.STRING, 0, "This is also a variable string"),
+    MIBparamRecord("Par8", UTIL.DU.UNSIGNED, 64, 182736489393276),
+    MIBparamRecord("Par9", UTIL.DU.STRING, 0, "This is the last variable string in the struct")]
+  mibVarRecords = [
+    MIBvarRecord("XXXX1234", 1, "s_1", "Par1", 0),
+    MIBvarRecord("XXXX1234", 2, "s_2", "Par2", 0),
+    MIBvarRecord("XXXX1234", 3, "s_3", "Par3", 0),
+    MIBvarRecord("XXXX1234", 4, "s_4", "Par4", 0),
+    MIBvarRecord("XXXX1234", 5, "s_5", "Par5", 2),
+    MIBvarRecord("XXXX1234", 6, "s_6", "Par6", 0),
+    MIBvarRecord("XXXX1234", 7, "s_7", "Par7", 0),
+    MIBvarRecord("XXXX1234", 8, "s_8", "Par8", 0),
+    MIBvarRecord("XXXX1234", 9, "s_9", "Par9", 0)]
+  defManager = DefManager(mibParamRecords, mibVarRecords)
+  return defManager.createToplevelStructDef("XXXX1234")
+# -----------------------------------------------------------------------------
+def testStruct1(struct):
+  if struct.s_1.getBitWidth() != 16:
+    return False
+  if struct.s_2.getBitWidth() != 128:
+    return False
+  if struct.s_3.getBitWidth() != 32:
+    return False
+  if struct.s_4.getBitWidth() != 216:
+    return False
+  if struct.s_5[0].s_6.getBitWidth() != 32:
+    return False
+  if struct.s_5[0].s_7.getBitWidth() != 256:
+    return False
+  if struct.s_5[0].getBitWidth() != 288:
+    return False
+  if struct.s_5[1].s_6.getBitWidth() != 32:
+    return False
+  if struct.s_5[1].s_7.getBitWidth() != 256:
+    return False
+  if struct.s_5[1].getBitWidth() != 288:
+    return False
+  if struct.s_5[2].s_6.getBitWidth() != 32:
+    return False
+  if struct.s_5[2].s_7.getBitWidth() != 256:
+    return False
+  if struct.s_5[2].getBitWidth() != 288:
+    return False
+  if struct.s_5.getBitWidth() != 872:
+    return False
+  if struct.s_8.getBitWidth() != 64:
+    return False
+  if struct.s_9.getBitWidth() != 384:
+    return False
+  if struct.getBitWidth() != 1712:
+    return False
+  return True
+# -----------------------------------------------------------------------------
+def changeStruct1(struct):
+  struct.s_1.value = 111222
+  struct.s_5[0].s_6.value = 101010
+  struct.s_5[0].s_7.value = "new value for s_7"
+  struct.s_5.setLen(4)
+  struct.s_5.setLen(2)
+# -----------------------------------------------------------------------------
+def testStruct2(struct):
+  if struct.s_1.getBitWidth() != 16:
+    return False
+  if struct.s_2.getBitWidth() != 128:
+    return False
+  if struct.s_3.getBitWidth() != 32:
+    return False
+  if struct.s_4.getBitWidth() != 216:
+    return False
+  if struct.s_5[0].s_6.getBitWidth() != 32:
+    return False
+  if struct.s_5[0].s_7.getBitWidth() != 152:
+    return False
+  if struct.s_5[0].getBitWidth() != 184:
+    return False
+  if struct.s_5[1].s_6.getBitWidth() != 32:
+    return False
+  if struct.s_5[1].s_7.getBitWidth() != 256:
+    return False
+  if struct.s_5[1].getBitWidth() != 288:
+    return False
+  if struct.s_5.getBitWidth() != 480:
+    return False
+  if struct.s_8.getBitWidth() != 64:
+    return False
+  if struct.s_9.getBitWidth() != 384:
+    return False
+  if struct.getBitWidth() != 1320:
+    return False
+  return True
+
+structDef = createStruct1Definition()
 print("structDef:", structDef)
 struct = PUS.VP.Struct(structDef)
 print("struct-->", struct)
-print("struct.s_1.value = " + str(struct.s_1.value))
-if struct.s_1.getBitWidth() != 16:
+if not testStruct1(struct):
   sys.exit(-1)
-if struct.s_2.getBitWidth() != 128:
-  sys.exit(-1)
-if struct.s_3.getBitWidth() != 32:
-  sys.exit(-1)
-if struct.s_4.getBitWidth() != 216:
-  sys.exit(-1)
-if struct.s_5[0].s_6.getBitWidth() != 32:
-  sys.exit(-1)
-if struct.s_5[0].s_7.getBitWidth() != 256:
-  sys.exit(-1)
-if struct.s_5[0].getBitWidth() != 288:
-  sys.exit(-1)
-if struct.s_5[1].s_6.getBitWidth() != 32:
-  sys.exit(-1)
-if struct.s_5[1].s_7.getBitWidth() != 256:
-  sys.exit(-1)
-if struct.s_5[1].getBitWidth() != 288:
-  sys.exit(-1)
-if struct.s_5[2].s_6.getBitWidth() != 32:
-  sys.exit(-1)
-if struct.s_5[2].s_7.getBitWidth() != 256:
-  sys.exit(-1)
-if struct.s_5[2].getBitWidth() != 288:
-  sys.exit(-1)
-if struct.s_5.getBitWidth() != 872:
-  sys.exit(-1)
-if struct.s_8.getBitWidth() != 64:
-  sys.exit(-1)
-if struct.s_9.getBitWidth() != 384:
-  sys.exit(-1)
-if struct.getBitWidth() != 1712:
-  sys.exit(-1)
-struct.s_1.value = 111222
-print("struct-->", struct)
-print("struct.s_1.value = " + str(struct.s_1.value))
-print("struct.s_5[0]:", struct.s_5[0])
-struct.s_5[0].s_6.value = 101010
-struct.s_5[0].s_7.value = "new value for s_7"
-print("struct-->", struct)
-print("len(struct.s_5) = " + str(len(struct.s_5)))
-struct.s_5.setLen(4)
-print("struct-->", struct)
-struct.s_5.setLen(2)
-print("struct-->", struct)
-if struct.s_1.getBitWidth() != 16:
-  sys.exit(-1)
-if struct.s_2.getBitWidth() != 128:
-  sys.exit(-1)
-if struct.s_3.getBitWidth() != 32:
-  sys.exit(-1)
-if struct.s_4.getBitWidth() != 216:
-  sys.exit(-1)
-if struct.s_5[0].s_6.getBitWidth() != 32:
-  sys.exit(-1)
-if struct.s_5[0].s_7.getBitWidth() != 152:
-  sys.exit(-1)
-if struct.s_5[0].getBitWidth() != 184:
-  sys.exit(-1)
-if struct.s_5[1].s_6.getBitWidth() != 32:
-  sys.exit(-1)
-if struct.s_5[1].s_7.getBitWidth() != 256:
-  sys.exit(-1)
-if struct.s_5[1].getBitWidth() != 288:
-  sys.exit(-1)
-if struct.s_5.getBitWidth() != 480:
-  sys.exit(-1)
-if struct.s_8.getBitWidth() != 64:
-  sys.exit(-1)
-if struct.s_9.getBitWidth() != 384:
-  sys.exit(-1)
-if struct.getBitWidth() != 1320:
+changeStruct1(struct)
+if not testStruct2(struct):
   sys.exit(-1)
 
 #******************************************************************************
 # GUI with tree widget                                                        *
 #******************************************************************************
-import Tkinter
-
 root = Tkinter.Tk()
 root.withdraw()
 dialog = SPACEUI.VPgui.TreeBrowser(root, "Packet_01", struct)
