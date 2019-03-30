@@ -15,7 +15,7 @@
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.DU, CCSDS.PACKET, CCSDS.TIME
 import MC.IF
-import PUS.PACKET, PUS.SERVICES
+import PUS.PACKET, PUS.SERVICES, PUS.VP
 import SPACE.IF
 import UTIL.SYS, UTIL.TCO, UTIL.TIME
 
@@ -44,8 +44,7 @@ class TCpacketGeneratorImpl(MC.IF.TCpacketGenerator):
   # ---------------------------------------------------------------------------
   def getTCpacket(self,
                   pktName,
-                  dataField=None,
-                  segmentationFlags=CCSDS.PACKET.UNSEGMENTED,
+                  tcStruct,
                   reuse=True):
     """
     creates a CCSDS TC packet with optional parameter values:
@@ -78,18 +77,30 @@ class TCpacketGeneratorImpl(MC.IF.TCpacketGenerator):
                                         applicationProcessId)
       self.packetCache[pktName] = packet
     # apply the segmentationFlags
-    packet.segmentationFlags = segmentationFlags
-    # apply the datafield
-    if dataField:
-      dataFieldOffset, dataFieldData = dataField
-      minExpectedPacketSize = dataFieldOffset + len(dataFieldData)
-      if tcPktDef.pktCheck:
-        minExpectedPacketSize += 2
-      # re-size the packet if needed
-      if len(packet) < minExpectedPacketSize:
-        packet.setLen(minExpectedPacketSize)
-        packet.setPacketLength()
-      packet.setBytes(dataFieldOffset, len(dataFieldData), dataFieldData)
+    packet.segmentationFlags = CCSDS.PACKET.UNSEGMENTED
+    ### apply the encoded tcStruct ###
+    if not tcStruct:
+      # create an empty tcStruct with the correct structure
+      tcStructDef = tcPktDef.tcStructDef
+      if tcStructDef == None:
+        raise Error("invalid packet structure for packet creation: " + pktName)
+      tcStruct = PUS.VP.Struct(tcStructDef)
+    #-- find the correct position for the data
+    structBytePos = CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE
+    if tcPktDef.pktHasDFhdr:
+      # PUS packet
+      structBytePos += tcPktDef.pktDFHsize
+    structBitPos = structBytePos << 3
+    structEndBitPos = structBitPos + tcStruct.getBitWidth()
+    structEndBytePos = (structEndBitPos + 7) >> 3
+    #-- re-size the packet to exactly fit
+    tcPacketSize = structEndBytePos
+    if tcPktDef.pktCheck:
+      tcPacketSize += CCSDS.DU.CRC_BYTE_SIZE
+    packet.setLen(tcPacketSize)
+    packet.setPacketLength()
+    #-- encode the struct
+    tcStruct.encode(packet, structBitPos)
     # re-calculate the sequence counter (maintained per APID)
     if applicationProcessId in self.sequenceCounters:
       sequenceCounter = (self.sequenceCounters[applicationProcessId] + 1) % 16384

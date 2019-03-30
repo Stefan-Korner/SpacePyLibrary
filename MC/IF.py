@@ -89,8 +89,7 @@ class TCpacketGenerator(object):
   # ---------------------------------------------------------------------------
   def getTCpacket(self,
                   pktName,
-                  dataField=None,
-                  segmentationFlags=CCSDS.PACKET.UNSEGMENTED,
+                  tcStruct,
                   reuse=True):
     """creates a CCSDS TC packet with optional parameter values"""
     pass

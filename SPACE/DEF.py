@@ -245,6 +245,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     tcPktDef.pktAPID = ccfRecord.ccfAPID
     tcPktDef.pktType = ccfRecord.ccfType
     tcPktDef.pktSType = ccfRecord.ccfSType
+    # TODO: use the correct values from the MIB or from the configuration
     tcPktDef.pktDFHsize = 4
     tcPktDef.pktHasDFhdr = True
     tcPktDef.pktCheck = True
@@ -532,8 +533,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
   def getTCpacketInjectData(self,
                             pktMnemonic,
                             route,
-                            dataField=None,
-                            segmentationFlags=CCSDS.PACKET.UNSEGMENTED):
+                            tcStruct):
     """
     returns the data that are used for packet injection:
     implementation of SPACE.IF.Definitions.getTCpacketInjectData
@@ -542,8 +542,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
       return None
     return SPACE.IF.TCpacketInjectData(pktMnemonic,
                                        route,
-                                       dataField,
-                                       segmentationFlags)
+                                       tcStruct)
 
 #############
 # functions #

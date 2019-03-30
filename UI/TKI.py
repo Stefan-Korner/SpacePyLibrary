@@ -126,10 +126,10 @@ class GUIview(tkinter.Frame, AppGrid, UTIL.TASK.View):
     """provides the model task"""
     return UTIL.TASK.s_processingTask
   # ---------------------------------------------------------------------------
-  def notifyModelTask(self, argv):
+  def notifyModelTask(self, argv, extraData=None):
     """updated the model task"""
     # pass the command event to the event queue of the processing task
-    event = UTIL.TASK.CommandEvent(argv)
+    event = UTIL.TASK.CommandEvent(argv, extraData)
     event.enable(self.modelTask())
   # ---------------------------------------------------------------------------
   def getAppMnemo(self):
@@ -309,10 +309,10 @@ class NotebookWindow(tkinter.Tk):
     """provides the model task"""
     return UTIL.TASK.s_processingTask
   # ---------------------------------------------------------------------------
-  def notifyModelTask(self, argv):
+  def notifyModelTask(self, argv, extraData=None):
     """updated the model task"""
     # pass the command event to the event queue of the processing task
-    event = UTIL.TASK.CommandEvent(argv)
+    event = UTIL.TASK.CommandEvent(argv, extraData)
     event.enable(self.modelTask())
   # ---------------------------------------------------------------------------
   def getAppMnemo(self):

@@ -306,8 +306,8 @@ class Task(threading.Thread):
     for view in self.views.keys():
       view.notifyStatus(status)
   # ---------------------------------------------------------------------------
-  def notifyCommand(self, argv):
-    """notifies with a command (string list)"""
+  def notifyCommand(self, argv, extraData):
+    """notifies with a command (string list) and extra data"""
     pass
 
 # =============================================================================
@@ -334,7 +334,7 @@ class ProcessingTask(Task):
     """Logs a method name"""
     LOG_INFO(self.getAppMnemo() + "." + methodName, subsystem)
   # ---------------------------------------------------------------------------
-  def notifyCommand(self, argv):
+  def notifyCommand(self, argv, extraData):
     """Callback for processing the input arguments"""
     if len(argv) > 0:
       # decode the command
@@ -396,7 +396,7 @@ class ConsoleHandler(object):
     # split the buffer into tokens
     argv = buffer.split()
     # delegate the processing to the processing task
-    return UTIL.TASK.s_processingTask.notifyCommand(argv)
+    return UTIL.TASK.s_processingTask.notifyCommand(argv, None)
 
 # =============================================================================
 class RequestHandler(ConsoleHandler):
@@ -682,14 +682,15 @@ class ViewEvent(TaskEvent):
 class CommandEvent(TaskEvent):
   """command event that forces an execution in the task"""
   # ---------------------------------------------------------------------------
-  def __init__(self, argv):
+  def __init__(self, argv, extraData):
     """initialize the status"""
     self.argv = argv
+    self.extraData = extraData
     TaskEvent.__init__(self)
   # ---------------------------------------------------------------------------
   def execute(self):
     """executes the event, overloaded from TaskEvent.execute"""
-    self.task.notifyCommand(self.argv)
+    self.task.notifyCommand(self.argv, self.extraData)
 
 # =============================================================================
 class View(object):

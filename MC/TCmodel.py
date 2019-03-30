@@ -35,7 +35,8 @@ class TCmodel(MC.IF.TCmodel):
     implementation of MC.IF.TCmodel.generateTCpacket
     """
     # create the TC packet
-    tcPacketDu = MC.IF.s_tcPacketGenerator.getTCpacket(tcPacketData.pktName)
+    tcPacketDu = MC.IF.s_tcPacketGenerator.getTCpacket(tcPacketData.pktName, 
+                                                       tcPacketData.tcStruct)
     if tcPacketDu == None:
       LOG_ERROR("packet creation failed: pktName = " + str(tcPacketData.pktName), "TC")
       return False
