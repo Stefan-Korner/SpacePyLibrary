@@ -157,39 +157,39 @@ print("structDef:", structDef)
 struct = PUS.VP.Struct(structDef)
 print("struct-->", struct)
 print("struct.s_1.value = " + str(struct.s_1.value))
-if PUS.VP.getParamBitWidth(struct.s_1) != 16:
+if struct.s_1.getBitWidth() != 16:
   sys.exit(-1)
-if PUS.VP.getParamBitWidth(struct.s_2) != 128:
+if struct.s_2.getBitWidth() != 128:
   sys.exit(-1)
-if PUS.VP.getParamBitWidth(struct.s_3) != 32:
+if struct.s_3.getBitWidth() != 32:
   sys.exit(-1)
-if PUS.VP.getParamBitWidth(struct.s_4) != 216:
+if struct.s_4.getBitWidth() != 216:
   sys.exit(-1)
-if PUS.VP.getParamBitWidth(struct.s_5[0].s_6) != 32:
+if struct.s_5[0].s_6.getBitWidth() != 32:
   sys.exit(-1)
-if PUS.VP.getParamBitWidth(struct.s_5[0].s_7) != 256:
+if struct.s_5[0].s_7.getBitWidth() != 256:
   sys.exit(-1)
-if PUS.VP.getStructBitWidth(struct.s_5[0]) != 288:
+if struct.s_5[0].getBitWidth() != 288:
   sys.exit(-1)
-if PUS.VP.getParamBitWidth(struct.s_5[1].s_6) != 32:
+if struct.s_5[1].s_6.getBitWidth() != 32:
   sys.exit(-1)
-if PUS.VP.getParamBitWidth(struct.s_5[1].s_7) != 256:
+if struct.s_5[1].s_7.getBitWidth() != 256:
   sys.exit(-1)
-if PUS.VP.getStructBitWidth(struct.s_5[1]) != 288:
+if struct.s_5[1].getBitWidth() != 288:
   sys.exit(-1)
-if PUS.VP.getParamBitWidth(struct.s_5[2].s_6) != 32:
+if struct.s_5[2].s_6.getBitWidth() != 32:
   sys.exit(-1)
-if PUS.VP.getParamBitWidth(struct.s_5[2].s_7) != 256:
+if struct.s_5[2].s_7.getBitWidth() != 256:
   sys.exit(-1)
-if PUS.VP.getStructBitWidth(struct.s_5[2]) != 288:
+if struct.s_5[2].getBitWidth() != 288:
   sys.exit(-1)
-if PUS.VP.getListBitWidth(struct.s_5) != 872:
+if struct.s_5.getBitWidth() != 872:
   sys.exit(-1)
-if PUS.VP.getParamBitWidth(struct.s_8) != 64:
+if struct.s_8.getBitWidth() != 64:
   sys.exit(-1)
-if PUS.VP.getParamBitWidth(struct.s_9) != 384:
+if struct.s_9.getBitWidth() != 384:
   sys.exit(-1)
-if PUS.VP.getStructBitWidth(struct) != 1712:
+if struct.getBitWidth() != 1712:
   sys.exit(-1)
 struct.s_1.value = 111222
 print("struct-->", struct)
@@ -223,33 +223,33 @@ struct.s_5.setLen(2)
 #                                                                             *
 #******************************************************************************
 print("struct-->", struct)
-if PUS.VP.getParamBitWidth(struct.s_1) != 16:
+if struct.s_1.getBitWidth() != 16:
   sys.exit(-1)
-if PUS.VP.getParamBitWidth(struct.s_2) != 128:
+if struct.s_2.getBitWidth() != 128:
   sys.exit(-1)
-if PUS.VP.getParamBitWidth(struct.s_3) != 32:
+if struct.s_3.getBitWidth() != 32:
   sys.exit(-1)
-if PUS.VP.getParamBitWidth(struct.s_4) != 216:
+if struct.s_4.getBitWidth() != 216:
   sys.exit(-1)
-if PUS.VP.getParamBitWidth(struct.s_5[0].s_6) != 32:
+if struct.s_5[0].s_6.getBitWidth() != 32:
   sys.exit(-1)
-if PUS.VP.getParamBitWidth(struct.s_5[0].s_7) != 152:
+if struct.s_5[0].s_7.getBitWidth() != 152:
   sys.exit(-1)
-if PUS.VP.getStructBitWidth(struct.s_5[0]) != 184:
+if struct.s_5[0].getBitWidth() != 184:
   sys.exit(-1)
-if PUS.VP.getParamBitWidth(struct.s_5[1].s_6) != 32:
+if struct.s_5[1].s_6.getBitWidth() != 32:
   sys.exit(-1)
-if PUS.VP.getParamBitWidth(struct.s_5[1].s_7) != 256:
+if struct.s_5[1].s_7.getBitWidth() != 256:
   sys.exit(-1)
-if PUS.VP.getStructBitWidth(struct.s_5[1]) != 288:
+if struct.s_5[1].getBitWidth() != 288:
   sys.exit(-1)
-if PUS.VP.getListBitWidth(struct.s_5) != 480:
+if struct.s_5.getBitWidth() != 480:
   sys.exit(-1)
-if PUS.VP.getParamBitWidth(struct.s_8) != 64:
+if struct.s_8.getBitWidth() != 64:
   sys.exit(-1)
-if PUS.VP.getParamBitWidth(struct.s_9) != 384:
+if struct.s_9.getBitWidth() != 384:
   sys.exit(-1)
-if PUS.VP.getStructBitWidth(struct) != 1320:
+if struct.getBitWidth() != 1320:
   sys.exit(-1)
 
 #******************************************************************************
