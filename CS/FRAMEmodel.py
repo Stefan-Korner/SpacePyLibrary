@@ -74,12 +74,12 @@ class FrameModel(CCSDS.PACKETIZER.Packetizer, CCSDS.TCENCODER.TCencoder):
       apid = CCSDS.PACKET.getApplicationProcessId(binPacket)
       if apid == CCSDS.PACKET.IDLE_PKT_APID:
         return
-    if CCSDS.PACKET.getDataFieldHeaderFlag(binPacket):
-      # we expect a PUS packet when there is a data field header
+    if PUS.PACKET.isPUSpacket(binPacket):
+      # PUS packet
       tmPacketDu = PUS.PACKET.TMpacket(binPacket)
       LOG_INFO("PUS TM packet extracted", "FRAME")
     else:
-      # default CCSDS packet
+      # CCSDS packet
       tmPacketDu = CCSDS.PACKET.TMpacket(binPacket)
       LOG_INFO("CCSDS TM packet extracted", "FRAME")
     MC.IF.s_tmModel.pushTMpacket(tmPacketDu, None)

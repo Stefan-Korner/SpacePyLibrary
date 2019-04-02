@@ -122,4 +122,13 @@ def setTMttTimeProperties(tmTTtimeFormatStr, tmTTtimeByteOffset):
   global s_tmTTtimeFormat, s_tmTTtimeByteOffset
   s_tmTTtimeFormat = CCSDS.TIME.timeFormat(tmTTtimeFormatStr)
   s_tmTTtimeByteOffset = tmTTtimeByteOffset
-
+# -----------------------------------------------------------------------------
+def isPUSpacket(binaryString, startPos=0):
+  """checks if a packet is a PUS packet"""
+  return CCSDS.PACKET.getVersionNumber(binaryString) == VERSION_NUMBER and \
+         CCSDS.PACKET.getDataFieldHeaderFlag(binaryString) == 1
+# -----------------------------------------------------------------------------
+def isPUSpacketDU(packetDU):
+  """checks if a packet data-unit is a PUS packet"""
+  packetType = type(packetDU)
+  return packetType == TMpacket or packetType == TCpacket

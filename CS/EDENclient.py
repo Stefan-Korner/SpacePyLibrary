@@ -17,6 +17,7 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.PACKET
 import EGSE.EDEN, EGSE.IF
 import MC.IF
+import PUS.PACKET
 import UTIL.TASK
 
 ###########
@@ -55,12 +56,26 @@ class Client(EGSE.EDEN.Client):
   # ---------------------------------------------------------------------------
   def notifyTmSpace(self, tmPacket):
     """(TM,SPACE) received: overloaded from EGSE.EDEN.Client"""
-    tmPacketDu = CCSDS.PACKET.TMpacket(tmPacket)
+    if PUS.PACKET.isPUSpacket(tmPacket):
+      # PUS packet
+      tmPacketDu = PUS.PACKET.TMpacket(tmPacket)
+      LOG_INFO("PUS TM/SPACE packet extracted", "EDEN")
+    else:
+      # CCSDS packet
+      tmPacketDu = CCSDS.PACKET.TMpacket(tmPacket)
+      LOG_INFO("CCSDS TM/SPACE packet extracted", "EDEN")
     MC.IF.s_tmModel.pushTMpacket(tmPacketDu, None)
   # ---------------------------------------------------------------------------
   def notifyTmScoe(self, tmPacket):
     """(TM,SCOE) received: overloaded from EGSE.EDEN.Client"""
-    tmPacketDu = CCSDS.PACKET.TMpacket(tmPacket)
+    if PUS.PACKET.isPUSpacket(tmPacket):
+      # PUS packet
+      tmPacketDu = PUS.PACKET.TMpacket(tmPacket)
+      LOG_INFO("PUS TM/SCOE packet extracted", "EDEN")
+    else:
+      # CCSDS packet
+      tmPacketDu = CCSDS.PACKET.TMpacket(tmPacket)
+      LOG_INFO("CCSDS TM/SCOE packet extracted", "EDEN")
     MC.IF.s_tmModel.pushTMpacket(tmPacketDu, None)
 
 # =============================================================================

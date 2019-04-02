@@ -14,7 +14,7 @@
 #******************************************************************************
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import MC.IF
-import PUS.PACKET, PUS.SERVICES
+import PUS.PACKET, PUS.PKTID, PUS.SERVICES
 import UTIL.DU
 
 ###########
@@ -26,7 +26,7 @@ class TMmodel(MC.IF.TMmodel):
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise attributes only"""
-    pass
+    self.packetIdentificator = PUS.PKTID.PacketIdentificator()
   # ---------------------------------------------------------------------------
   def pushTMpacket(self, tmPacketDu, ertUTC):
     """
@@ -34,10 +34,14 @@ class TMmodel(MC.IF.TMmodel):
     implementation of MC.IF.TMmodel.pushTMpacket
     """
     LOG_INFO("pushTMpacket", "TM")
+    # try to identify the TM packet ID
+    tmPacketKey = self.packetIdentificator.getPacketKey(tmPacketDu)
+    LOG("KEY =     " + str(tmPacketKey), "TM")
+    # packet processing
     LOG("APID =    " + str(tmPacketDu.applicationProcessId), "TM")
     LOG("SSC =     " + str(tmPacketDu.sequenceControlCount), "TM")
-    if tmPacketDu.dataFieldHeaderFlag == 1:
-      # CCSDS packet is a PUS packet
+    if PUS.PACKET.isPUSpacketDU(tmPacketDu):
+      # PUS packet
       object.__setattr__(tmPacketDu, "attributeMap2", PUS.PACKET.TM_PACKET_DATAFIELD_HEADER_ATTRIBUTES)
       LOG("TYPE =    " + str(tmPacketDu.serviceType), "TM")
       LOG("SUBTYPE = " + str(tmPacketDu.serviceSubType), "TM")
@@ -50,6 +54,7 @@ class TMmodel(MC.IF.TMmodel):
         # packet is a PUS TC Acknowledgement command
         MC.IF.s_tcModel.notifyTCack(tmPacketDu.serviceSubType)
     else:
+      # CCSDS packet
       LOG("non-PUS packet", "TM")
       LOG("tmPacketDu = " + str(tmPacketDu), "TM")
     # forward the TM packet also to the TM recorder
