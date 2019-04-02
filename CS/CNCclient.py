@@ -17,6 +17,7 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.PACKET
 import EGSE.CNC, EGSE.IF
 import MC.IF
+import PUS.PACKET
 import UTIL.TASK
 
 ###########
@@ -77,8 +78,14 @@ class TMclient(EGSE.CNC.TMclient):
   # ---------------------------------------------------------------------------
   def notifyTMpacket(self, tmPacket):
     """TM packet received: overloaded from EGSE.CNC.TMclient"""
-    LOG_INFO("notifyTMpacket", "CNC")
-    tmPacketDu = CCSDS.PACKET.TMpacket(tmPacket)
+    if PUS.PACKET.isPUSpacket(tmPacket):
+      # PUS packet
+      tmPacketDu = PUS.PACKET.TMpacket(tmPacket)
+      LOG_INFO("PUS TM packet extracted", "CNC")
+    else:
+      # CCSDS packet
+      tmPacketDu = CCSDS.PACKET.TMpacket(tmPacket)
+      LOG_INFO("CCSDS TM packet extracted", "CNC")
     MC.IF.s_tmModel.pushTMpacket(tmPacketDu, None)
 
 ####################

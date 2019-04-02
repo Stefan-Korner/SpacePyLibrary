@@ -51,6 +51,12 @@ PRIMARY_HEADER_ATTRIBUTES = {
 # functions #
 #############
 # -----------------------------------------------------------------------------
+def getVersionNumber(binaryString, startPos=0):
+  """returns the version number field"""
+  if (len(binaryString) - startPos) < PRIMARY_HEADER_BYTE_SIZE:
+    raise Error("packet header is too small")
+  return ((binaryString[startPos + 0] & 0xE0) >> 5)
+# -----------------------------------------------------------------------------
 def getDataFieldHeaderFlag(binaryString, startPos=0):
   """returns the data field header flag field"""
   if (len(binaryString) - startPos) < PRIMARY_HEADER_BYTE_SIZE:
