@@ -36,8 +36,11 @@ class TMmodel(MC.IF.TMmodel):
     """
     LOG_INFO("pushTMpacket", "TM")
     # try to identify the TM packet ID
-    tmPacketKey = SPACE.IF.s_definitions.getTMpacketKey(tmPacketDu)
-    LOG("KEY =     " + str(tmPacketKey), "TM")
+    try:
+      tmPacketKey = SPACE.IF.s_definitions.getTMpacketKey(tmPacketDu)
+      LOG("KEY =     " + str(tmPacketKey), "TM")
+    except Exception, ex:
+      LOG_WARNING("packet cannot be identified: " + str(ex), "TM")
     # packet processing
     LOG("APID =    " + str(tmPacketDu.applicationProcessId), "TM")
     LOG("SSC =     " + str(tmPacketDu.sequenceControlCount), "TM")

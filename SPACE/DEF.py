@@ -33,9 +33,11 @@ class DefinitionData(object):
     self.tmPktDefs = None
     self.tmPktDefsSpidMap = None
     self.tmPktSpidNameMap = None
+    self.tmPktIdentificator = None
     self.tmParamDefs = None
     self.tcPktDefs = None
     self.tcPktDefsNameMap = None
+    self.tcPktIdentificator = None
 
 # =============================================================================
 class DefinitionsImpl(SPACE.IF.Definitions):
@@ -47,8 +49,6 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     self.definitionData = None
     self.tmParamLengthBytes = int(UTIL.SYS.s_configuration.TM_PARAM_LENGTH_BYTES)
     self.tcParamLengthBytes = int(UTIL.SYS.s_configuration.TC_PARAM_LENGTH_BYTES)
-    self.tmPacketIdentificator = PUS.PKTID.PacketIdentificator()
-    self.tcPacketIdentificator = PUS.PKTID.PacketIdentificator()
   # ---------------------------------------------------------------------------
   def getDefinitionFileName(self):
     """get the testdata.sim file name incl. path"""
@@ -185,7 +185,8 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     tmPktDefsSpidMap = {}
     tmPktSpidNameMap = {}
     tmParamDefs = []
-    # step 1) create packet definitions
+    tmPktIdentificator = PUS.PKTID.PacketIdentificator()
+    # step 1) create packet definitions and packet ID records
     # pidMap is the driving map for the join
     for spid, pidRecord in pidMap.iteritems():
       picKey = pidRecord.picKey()
@@ -212,6 +213,24 @@ class DefinitionsImpl(SPACE.IF.Definitions):
       tmPktDefsSpidMap[spid] = tmPktDef
       tmPktSpidNameMap[pktName] = spid
       LOG("TM packet " + pktName + "(" + str(spid) + "), " + statusMessage, "SPACE")
+      # create the packet ID record for the packet identification
+      apid = pidRecord.pidAPID
+      serviceType = pidRecord.pidType
+      serviceSubType = pidRecord.pidSType
+      pi1 = pidRecord.pidPI1
+      if pi1 <= 0:
+        pi1 = None
+      pi2 = pidRecord.pidPI2
+      if pi2 <= 0:
+        pi2 = None
+      packetID = spid
+      tmPktIdentificator.addPacketIDrecord(
+        apid,
+        serviceType,
+        serviceSubType,
+        pi1,
+        pi2,
+        packetID)
     tmPktDefs.sort()
     # step 2) create parameter definitions
     # pcfMap is the driving map for the join
@@ -232,10 +251,39 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     # tmPktDefs is the driving list for the post processing
     for tmPktDef in tmPktDefs:
       tmPktDef.updateSPsize()
-    # step 4) update the global container attributes
+    # step 4) update the packet key field records for the packet identification
+    # picMap is the driving map
+    for picKey, picRecord in picMap.iteritems():
+      apid = picRecord.picAPID
+      if apid == -1:
+        apid = None
+      serviceType = picRecord.picType
+      serviceSubType = picRecord.picSType
+      pi1bitPos = picRecord.picPI1off
+      if pi1bitPos == -1:
+        pi1bitPos = None
+        pi1bitSize = None
+      else:
+        pi1bitSize = picRecord.picPI1wid
+      pi2bitPos = picRecord.picPI2off
+      if pi2bitPos == -1:
+        pi2bitPos = None
+        pi2bitSize = None
+      else:
+        pi2bitSize = picRecord.picPI2wid
+      tmPktIdentificator.addKeyFieldRecord(
+        apid,
+        serviceType,
+        serviceSubType,
+        pi1bitPos,
+        pi1bitSize,
+        pi2bitPos,
+        pi2bitSize)
+    # step 5) update the global container attributes
     self.definitionData.tmPktDefs = tmPktDefs
     self.definitionData.tmPktDefsSpidMap = tmPktDefsSpidMap
     self.definitionData.tmPktSpidNameMap = tmPktSpidNameMap
+    self.definitionData.tmPktIdentificator = tmPktIdentificator
     self.definitionData.tmParamDefs = tmParamDefs
   # ---------------------------------------------------------------------------
   def createTCpktDef(self, ccfRecord, cdfMap, cpcMap):
@@ -357,7 +405,8 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     """helper method: create TC packet and parameter definitions from MIB tables"""
     tcPktDefs = []
     tcPktDefsNameMap = {}
-    # step 1) create packet definitions
+    tcPktIdentificator = PUS.PKTID.PacketIdentificator()
+    # step 1) create packet definitions and packet ID records
     for cName, ccfRecord in ccfMap.items():
       tcPktDef = self.createTCpktDef(ccfRecord, cdfMap, cpcMap)
       pktName = tcPktDef.pktName
@@ -365,8 +414,10 @@ class DefinitionsImpl(SPACE.IF.Definitions):
       tcPktDefsNameMap[pktName] = tcPktDef
       LOG("TC packet " + pktName + "(" + str(tcPktDef.pktAPID) + "," + str(tcPktDef.pktType) + "," + str(tcPktDef.pktSType) + ")", "SPACE")
     tcPktDefs.sort()
+    # step 2) TODO: update the packet key field records for the packet identification
     self.definitionData.tcPktDefs = tcPktDefs
     self.definitionData.tcPktDefsNameMap = tcPktDefsNameMap
+    self.definitionData.tcPktIdentificator = tcPktIdentificator
   # ---------------------------------------------------------------------------
   def createDefinitions(self):
     """
@@ -506,7 +557,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     retrieves the SPID from the TM packet data unit:
     implementation of SPACE.IF.Definitions.getTMpacketKey
     """
-    self.tmPacketIdentificator.getPacketKey(tmPacketDu)
+    return self.definitionData.tmPktIdentificator.getPacketKey(tmPacketDu)
   # ---------------------------------------------------------------------------
   def getTCpktDefs(self):
     """
@@ -558,7 +609,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     retrieves the TC packet name from the TC packet data unit:
     implementation of SPACE.IF.Definitions.getTCpacketKey
     """
-    self.tcPacketIdentificator.getPacketKey(tcPacketDu)
+    return self.definitionData.tcPktIdentificator.getPacketKey(tcPacketDu)
 
 #############
 # functions #

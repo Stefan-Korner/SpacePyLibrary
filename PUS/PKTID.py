@@ -60,7 +60,6 @@ class PacketIdentificator(object):
     """adds a record for packet identification"""
     # note: this table is also relevant for non-pus packets - in this case the
     #       serviceType and serviceSubType fields must be None
-    CCSDS.PACKET.TMpacket.initAttributes(self)
     key = (apid, serviceType, serviceSubType, pi1, pi2)
     value = packetID
     self.packetIDs[key] = value
