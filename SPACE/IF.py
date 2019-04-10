@@ -522,6 +522,10 @@ class Definitions(object):
     """returns the data that are used for packet injection"""
     pass
   # ---------------------------------------------------------------------------
+  def getTMpacketKey(self, tmPacketDu):
+    """retrieves the SPID from the TM packet data unit"""
+    pass
+  # ---------------------------------------------------------------------------
   def getTCpktDefs(self):
     """returns the TC packet definitions"""
     pass
@@ -539,6 +543,10 @@ class Definitions(object):
                             route,
                             tcStruct):
     """returns the data that are used for packet injection"""
+    pass
+  # ---------------------------------------------------------------------------
+  def getTCpacketKey(self, tcPacketDu):
+    """retrieves the TC packet name from the TC packet data unit"""
     pass
 
 # =============================================================================

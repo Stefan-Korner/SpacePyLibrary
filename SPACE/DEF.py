@@ -15,7 +15,7 @@
 import os, cPickle, time
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.DU, CCSDS.PACKET, CCSDS.TIME
-import PUS.PACKET, PUS.VP
+import PUS.PACKET, PUS.PKTID, PUS.VP
 import SCOS.ENV, SCOS.MIB
 import SPACE.IF
 import UTIL.DU, UTIL.SYS
@@ -47,6 +47,8 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     self.definitionData = None
     self.tmParamLengthBytes = int(UTIL.SYS.s_configuration.TM_PARAM_LENGTH_BYTES)
     self.tcParamLengthBytes = int(UTIL.SYS.s_configuration.TC_PARAM_LENGTH_BYTES)
+    self.tmPacketIdentificator = PUS.PKTID.PacketIdentificator()
+    self.tcPacketIdentificator = PUS.PKTID.PacketIdentificator()
   # ---------------------------------------------------------------------------
   def getDefinitionFileName(self):
     """get the testdata.sim file name incl. path"""
@@ -499,6 +501,13 @@ class DefinitionsImpl(SPACE.IF.Definitions):
                                        dataField,
                                        segmentationFlags)
   # ---------------------------------------------------------------------------
+  def getTMpacketKey(self, tmPacketDu):
+    """
+    retrieves the SPID from the TM packet data unit:
+    implementation of SPACE.IF.Definitions.getTMpacketKey
+    """
+    self.tmPacketIdentificator.getPacketKey(tmPacketDu)
+  # ---------------------------------------------------------------------------
   def getTCpktDefs(self):
     """
     returns the TC packet definitions:
@@ -543,6 +552,13 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     return SPACE.IF.TCpacketInjectData(pktMnemonic,
                                        route,
                                        tcStruct)
+  # ---------------------------------------------------------------------------
+  def getTCpacketKey(self, tcPacketDu):
+    """
+    retrieves the TC packet name from the TC packet data unit:
+    implementation of SPACE.IF.Definitions.getTCpacketKey
+    """
+    self.tcPacketIdentificator.getPacketKey(tcPacketDu)
 
 #############
 # functions #

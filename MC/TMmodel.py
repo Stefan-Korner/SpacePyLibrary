@@ -14,7 +14,8 @@
 #******************************************************************************
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import MC.IF
-import PUS.PACKET, PUS.PKTID, PUS.SERVICES
+import PUS.PACKET, PUS.SERVICES
+import SPACE.IF
 import UTIL.DU
 
 ###########
@@ -26,7 +27,7 @@ class TMmodel(MC.IF.TMmodel):
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise attributes only"""
-    self.packetIdentificator = PUS.PKTID.PacketIdentificator()
+    pass
   # ---------------------------------------------------------------------------
   def pushTMpacket(self, tmPacketDu, ertUTC):
     """
@@ -35,7 +36,7 @@ class TMmodel(MC.IF.TMmodel):
     """
     LOG_INFO("pushTMpacket", "TM")
     # try to identify the TM packet ID
-    tmPacketKey = self.packetIdentificator.getPacketKey(tmPacketDu)
+    tmPacketKey = SPACE.IF.s_definitions.getTMpacketKey(tmPacketDu)
     LOG("KEY =     " + str(tmPacketKey), "TM")
     # packet processing
     LOG("APID =    " + str(tmPacketDu.applicationProcessId), "TM")
