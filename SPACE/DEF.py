@@ -361,7 +361,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
   # ---------------------------------------------------------------------------
   def createTcSlotDef(self, sortedCdfRecords, cdfRecordsPos, cpcMap):
     nextCdfRecord = sortedCdfRecords[cdfRecordsPos]
-    slotName = nextCdfRecord.cdfPName
+    slotName = nextCdfRecord.cdfDescr
     isReadOnly = (nextCdfRecord.cdfElType != "E")
     # TODO: consider also fixed areas that don't have a related CPC record,
     #       this is defined via cdfElType == "A"
