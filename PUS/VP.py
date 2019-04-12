@@ -425,7 +425,7 @@ class List(Entity):
   # ---------------------------------------------------------------------------
   def __init__(self, listDef):
     self.listDef = listDef
-    length = listDef.lenParamDef.defaultValue
+    length = int(listDef.lenParamDef.defaultValue)
     entryDef = listDef.entryDef
     self.entries = [Struct(entryDef) for _ in range(0, length)]
   # ---------------------------------------------------------------------------

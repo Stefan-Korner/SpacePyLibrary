@@ -1,5 +1,7 @@
 PUSCMD01	Telecommand 1	simple telecommand with 10 parameters		N	STDXPUSS	8	1	1234	10	N	Y	N	C	1	N	0		1234	9	1
 PUSCMD02	Telecommand 2	simple telecommand with 10 parameters		N	STDXPUSS	8	1	1235	10	N	Y	N	C	1	N	0		1235	9	1
+PUSCMD03	Telecommand 3	telecommand with group repeater		N	STDXPUSS	3	20	1235	3	N	Y	N	C	1	N	0		1235	9	1
+PUSCMD04	Telecommand 4	telecommand with group repeater		N	STDXPUSS	3	20	1235	3	N	Y	N	C	1	N	0		1235	9	1
 TXTCMD01	ABORT	textual CnC command	S	N	CNCCCSDS	0	0	1236	1	N	Y	N	C	1	N	0		1236	0	1	
 TXTCMD02	ACK_SAFETY	textual CnC command	S	N	CNCCCSDS	0	0	1236	1	N	Y	N	C	1	N	0		1236	0	1	
 TXTCMD03	APPLY	textual CnC command	S	N	CNCCCSDS	0	0	1236	1	N	Y	N	C	1	N	0		1236	0	1	

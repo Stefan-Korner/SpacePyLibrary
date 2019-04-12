@@ -8,6 +8,9 @@ PAR7	Bit Parameter 7	2	1	U	D		N				R	0	N
 PAR8	Bit Parameter 8	2	1	U	D		N				R	0	N	
 PAR9	Unsigned Integer Parameter	3	14	U	D		N				R	0	N	
 PAR10	String Parameter	8	8	U	D		N				R	........	N	
+PAR11	SID	3	12	U	D		N				R	0	N	
+PAR12	N	3	12	U	D		N				R	0	N	
+PAR13	Parameter#	3	14	U	D		N				R	0	N	
 Command	Command name	8	0	A			N				R		N		
 Blank	Command and parameters delimiter	3	4	A	D		N				R	32	N		
 Params	Parameters	8	0	A			N				R		N		
