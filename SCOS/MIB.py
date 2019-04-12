@@ -186,6 +186,7 @@ class CDFrecord:
   def __init__(self, fields):
     """initialise selected attributes from the record"""
     self.cdfCName = fields[0]
+    self.cdfElType = fields[1]
     self.cdfDescr = fields[2]
     self.cdfBit = int(fields[4])
     # this field could be empty
