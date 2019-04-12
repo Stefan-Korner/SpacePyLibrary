@@ -78,11 +78,12 @@ import UTIL.DU
 # MIB level #
 #############
 class MIBparamRecord(object):
-  def __init__(self, paramName, paramType, bitWidth, defaultValue):
+  def __init__(self, paramName, paramType, bitWidth, defaultValue, isReadOnly):
     self.paramName = paramName
     self.paramType = paramType
     self.bitWidth = bitWidth
     self.defaultValue = defaultValue
+    self.isReadOnly = isReadOnly
 
 class MIBvarRecord(object):
   def __init__(self, structName, pos, slotName, paramName, groupSize):
@@ -119,12 +120,14 @@ class DefManager:
       return PUS.VP.VariableParamDef(paramRecord.paramName,
                                      paramRecord.paramType,
                                      lengthBytes,
-                                     paramRecord.defaultValue)
+                                     paramRecord.defaultValue,
+                                     paramRecord.isReadOnly)
     # default handling of other parameters
     return PUS.VP.SimpleParamDef(paramRecord.paramName,
                                  paramRecord.paramType,
                                  paramRecord.bitWidth,
-                                 paramRecord.defaultValue)
+                                 paramRecord.defaultValue,
+                                 paramRecord.isReadOnly)
   def createSlotDef(self, sortedVarRecords, varRecordsPos):
     nextVarRecord = sortedVarRecords[varRecordsPos]
     slotName = nextVarRecord.slotName
@@ -169,15 +172,15 @@ class DefManager:
 # -----------------------------------------------------------------------------
 def createStruct1Definition():
   mibParamRecords = [
-    MIBparamRecord("Par1", UTIL.DU.UNSIGNED, 16, 123),
-    MIBparamRecord("Par2", UTIL.DU.STRING, 128, "This is a string"),
-    MIBparamRecord("Par3", UTIL.DU.UNSIGNED, 32, 4193),
-    MIBparamRecord("Par4", UTIL.DU.STRING, 0, "This is a variable string"),
-    MIBparamRecord("Par5", UTIL.DU.UNSIGNED, 8, 3),
-    MIBparamRecord("Par6", UTIL.DU.UNSIGNED, 32, 15362),
-    MIBparamRecord("Par7", UTIL.DU.STRING, 0, "This is also a variable string"),
-    MIBparamRecord("Par8", UTIL.DU.UNSIGNED, 64, 182736489393276),
-    MIBparamRecord("Par9", UTIL.DU.STRING, 0, "This is the last variable string in the struct")]
+    MIBparamRecord("Par1", UTIL.DU.UNSIGNED, 16, 123, False),
+    MIBparamRecord("Par2", UTIL.DU.STRING, 128, "This is a string", True),
+    MIBparamRecord("Par3", UTIL.DU.UNSIGNED, 32, 4193, True),
+    MIBparamRecord("Par4", UTIL.DU.STRING, 0, "This is a variable string", True),
+    MIBparamRecord("Par5", UTIL.DU.UNSIGNED, 8, 3, False),
+    MIBparamRecord("Par6", UTIL.DU.UNSIGNED, 32, 15362, False),
+    MIBparamRecord("Par7", UTIL.DU.STRING, 0, "This is also a variable string", False),
+    MIBparamRecord("Par8", UTIL.DU.UNSIGNED, 64, 182736489393276, True),
+    MIBparamRecord("Par9", UTIL.DU.STRING, 0, "This is the last variable string in the struct", True)]
   mibVarRecords = [
     MIBvarRecord("XXXX1234", 1, "s_1", "Par1", 0),
     MIBvarRecord("XXXX1234", 2, "s_2", "Par2", 0),

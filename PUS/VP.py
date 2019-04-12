@@ -23,13 +23,17 @@ import UTIL.DU, UTIL.TIME
 class ParamDef(object):
   """Contains the most important definition data of a variable packet parameter"""
   # ---------------------------------------------------------------------------
-  def __init__(self, paramName, defaultValue):
+  def __init__(self, paramName, defaultValue, isReadOnly):
     self.paramName = paramName
     self.defaultValue = defaultValue
+    self.isReadOnly = isReadOnly
   # ---------------------------------------------------------------------------
   def __str__(self, indent="ParamDef"):
     """string representation"""
-    return ("\n" + indent + "." + self.paramName + " = " + str(self.defaultValue))
+    if self.isReadOnly:
+      return ("\n" + indent + "." + self.paramName + " = " + str(self.defaultValue) + " RO")
+    else:
+      return ("\n" + indent + "." + self.paramName + " = " + str(self.defaultValue) + " RW")
   # ---------------------------------------------------------------------------
   def getParamType(self):
     """accessor"""
@@ -43,14 +47,17 @@ class ParamDef(object):
 class SimpleParamDef(ParamDef):
   """Contains the most important definition data of a variable packet parameter"""
   # ---------------------------------------------------------------------------
-  def __init__(self, paramName, paramType, bitWidth, defaultValue):
-    ParamDef.__init__(self, paramName, defaultValue)
+  def __init__(self, paramName, paramType, bitWidth, defaultValue, isReadOnly):
+    ParamDef.__init__(self, paramName, defaultValue, isReadOnly)
     self.paramType = paramType
     self.bitWidth = bitWidth
   # ---------------------------------------------------------------------------
   def __str__(self, indent="SimpleParamDef"):
     """string representation"""
-    return ("\n" + indent + "." + self.paramName + " = " + UTIL.DU.fieldTypeStr(self.paramType) + ", " + str(self.bitWidth) + ", " + str(self.defaultValue))
+    if self.isReadOnly:
+      return ("\n" + indent + "." + self.paramName + " = " + UTIL.DU.fieldTypeStr(self.paramType) + ", " + str(self.bitWidth) + ", " + str(self.defaultValue) + " RO")
+    else:
+      return ("\n" + indent + "." + self.paramName + " = " + UTIL.DU.fieldTypeStr(self.paramType) + ", " + str(self.bitWidth) + ", " + str(self.defaultValue) + " RW")
   # ---------------------------------------------------------------------------
   def getParamType(self):
     """accessor"""
@@ -64,14 +71,17 @@ class SimpleParamDef(ParamDef):
 class VariableParamDef(ParamDef):
   """Contains the most important definition data of a variable size packet parameter"""
   # ---------------------------------------------------------------------------
-  def __init__(self, paramName, paramType, lengthBytes, defaultValue):
-    ParamDef.__init__(self, paramName, defaultValue)
+  def __init__(self, paramName, paramType, lengthBytes, defaultValue, isReadOnly):
+    ParamDef.__init__(self, paramName, defaultValue, isReadOnly)
     self.paramType = paramType
     self.lengthBytes = lengthBytes
   # ---------------------------------------------------------------------------
   def __str__(self, indent="VariableParamDef"):
     """string representation"""
-    return ("\n" + indent + "." + self.paramName + " = " + UTIL.DU.fieldTypeStr(self.paramType) + ", " + str(self.lengthBytes) + ", " + str(self.defaultValue))
+    if self.isReadOnly:
+      return ("\n" + indent + "." + self.paramName + " = " + UTIL.DU.fieldTypeStr(self.paramType) + ", " + str(self.lengthBytes) + ", " + str(self.defaultValue) + " RO")
+    else:
+      return ("\n" + indent + "." + self.paramName + " = " + UTIL.DU.fieldTypeStr(self.paramType) + ", " + str(self.lengthBytes) + ", " + str(self.defaultValue) + " RW")
   # ---------------------------------------------------------------------------
   def getParamType(self):
     """accessor"""
@@ -85,13 +95,16 @@ class VariableParamDef(ParamDef):
 class TimeParamDef(ParamDef):
   """Contains the most important definition data of a variable packet parameter"""
   # ---------------------------------------------------------------------------
-  def __init__(self, paramName, timeFormat, defaultValue):
-    ParamDef.__init__(self, paramName, defaultValue)
+  def __init__(self, paramName, timeFormat, defaultValue, isReadOnly):
+    ParamDef.__init__(self, paramName, defaultValue, isReadOnly)
     self.timeFormat = timeFormat
   # ---------------------------------------------------------------------------
   def __str__(self, indent="TimeParamDef"):
     """string representation"""
-    return ("\n" + indent + "." + self.paramName + " = " + CCSDS.TIME.timeFormatString(self.timeFormat) + ", " + str(self.defaultValue))
+    if self.isReadOnly:
+      return ("\n" + indent + "." + self.paramName + " = " + CCSDS.TIME.timeFormatString(self.timeFormat) + ", " + str(self.defaultValue) + " RO")
+    else:
+      return ("\n" + indent + "." + self.paramName + " = " + CCSDS.TIME.timeFormatString(self.timeFormat) + ", " + str(self.defaultValue) + " RW")
   # ---------------------------------------------------------------------------
   def getParamType(self):
     """accessor"""
@@ -208,6 +221,10 @@ class Param(Entity):
       return byteWidth << 3
     # default processing
     return self.paramDef.getBitWidth()
+  # ---------------------------------------------------------------------------
+  def isReadOnly(self):
+    """accessor"""
+    return self.paramDef.isReadOnly
   # ---------------------------------------------------------------------------
   def encode(self, du, bitPos):
     """
@@ -451,6 +468,10 @@ class List(Entity):
     for entry in self.entries:
       bitWidth += entry.getBitWidth()
     return bitWidth
+  # ---------------------------------------------------------------------------
+  def isReadOnly(self):
+    """accessor"""
+    return self.listDef.lenParamDef.isReadOnly
   # ---------------------------------------------------------------------------
   def encode(self, du, bitPos):
     """

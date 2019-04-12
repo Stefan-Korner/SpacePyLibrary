@@ -17,6 +17,11 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import PUS.VP
 import UTIL.DU
 
+#############
+# constants #
+#############
+COLOR_ITEM_DISABLE = "#808080"
+
 ###########
 # classes #
 ###########
@@ -32,6 +37,7 @@ class TreeView(ttk.Treeview):
     self.column("value", width=200)
     self.heading("name", text="Name")
     self.heading("value", text="Value")
+    self.tag_configure("readOnly", foreground=COLOR_ITEM_DISABLE)
     self.treeMap = {}
     self.toplevelStruct = None
   # ---------------------------------------------------------------------------
@@ -48,7 +54,13 @@ class TreeView(ttk.Treeview):
     """fills a Param into the tree"""
     paramName = param.getParamName()
     paramValue = param.value
-    nodeID = self.insert(parentNodeID, "end", text=slotName, values=(paramName, str(paramValue)))
+    tags = ("readOnly",) if param.isReadOnly() else ()
+    nodeID = self.insert(
+      parentNodeID,
+      "end", 
+      text=slotName,
+      values=(paramName, str(paramValue)),
+      tags=tags)
     self.treeMap[nodeID] = param
   # ---------------------------------------------------------------------------
   def fillSlotInTree(self, parentNodeID, slot):
@@ -65,7 +77,11 @@ class TreeView(ttk.Treeview):
   # ---------------------------------------------------------------------------
   def fillStructInTree(self, parentNodeID, structName, struct):
     """fills a Struct into the tree"""
-    nodeID = self.insert(parentNodeID , "end", text=structName, values=("", ""))
+    nodeID = self.insert(
+      parentNodeID,
+      "end",
+      text=structName, values=("", ""),
+      tags=('readOnly',))
     self.treeMap[nodeID] = struct
     for slot in struct.slots:
       self.fillSlotInTree(nodeID, slot)
@@ -73,14 +89,20 @@ class TreeView(ttk.Treeview):
   def fillListInTree(self, parentNodeID, slotName, lst):
     """fills a List into the tree"""
     lenParamName = lst.getLenParamName()
-    nodeID = self.insert(parentNodeID, "end", text=slotName + " len", values=(lenParamName, str(len(lst))))
+    tags = ("readOnly",) if lst.isReadOnly() else ()
+    nodeID = self.insert(
+      parentNodeID,
+      "end",
+      text=slotName + " len",
+      values=(lenParamName, str(len(lst))),
+      tags=tags)
     self.treeMap[nodeID] = lst
     i = 0
     for entry in lst.entries:
       stuctName = "[" + str(i) + "]"
       self.fillStructInTree(nodeID, stuctName, struct=entry)
       i += 1
-  # ---------------------------------------------------------V------------------
+  # ---------------------------------------------------------------------------
   def itemEvent(self, event):
     """callback when an item in the tree is clicked"""
     nodeID = self.selection()[0]
@@ -95,6 +117,8 @@ class TreeView(ttk.Treeview):
   # ---------------------------------------------------------------------------
   def paramClicked(self, param, nodeID):
     """callback when a Param node is clicked"""
+    if param.isReadOnly():
+      return
     nodeKey = self.item(nodeID, "text")
     nodeValues = self.item(nodeID, "value")
     name = nodeValues[0]
@@ -127,6 +151,8 @@ class TreeView(ttk.Treeview):
   # ---------------------------------------------------------------------------
   def listClicked(self, lst, nodeID):
     """callback when a List node is clicked"""
+    if lst.isReadOnly():
+      return
     nodeKey = self.item(nodeID, "text")
     nodeValues = self.item(nodeID, "value")
     name = nodeValues[0]

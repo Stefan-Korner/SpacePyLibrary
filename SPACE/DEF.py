@@ -305,7 +305,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     tcPktDef.tcStructDef = self.createTcToplevelStructDef(tcPktDef.pktName, cdfMap, cpcMap)
     return tcPktDef
   # ---------------------------------------------------------------------------
-  def createTcParamDef(self, paramName, defaultValue, cpcMap):
+  def createTcParamDef(self, paramName, defaultValue, cpcMap, isReadOnly):
     try:
       cpcRecord = cpcMap[paramName]
       paramName = cpcRecord.cpcPName
@@ -335,7 +335,8 @@ class DefinitionsImpl(SPACE.IF.Definitions):
         timeFormat = getTimeFormat(paramPfc)
         return PUS.VP.TimeParamDef(paramName,
                                    timeFormat,
-                                   defaultValue)
+                                   defaultValue,
+                                   isReadOnly)
       except Exception, ex:
         # inconsistency
         LOG_WARNING("param " + paramName + ": " + str(ex) + " ---> dummy type", "SPACE")
@@ -349,24 +350,29 @@ class DefinitionsImpl(SPACE.IF.Definitions):
       return PUS.VP.VariableParamDef(paramName,
                                      paramType,
                                      lengthBytes,
-                                     defaultValue)
+                                     defaultValue,
+                                     isReadOnly)
     # default handling of normal parameters
     return PUS.VP.SimpleParamDef(paramName,
                                  paramType,
                                  bitWidth,
-                                 defaultValue)
+                                 defaultValue,
+                                 isReadOnly)
   # ---------------------------------------------------------------------------
   def createTcSlotDef(self, sortedCdfRecords, cdfRecordsPos, cpcMap):
     nextCdfRecord = sortedCdfRecords[cdfRecordsPos]
     slotName = nextCdfRecord.cdfPName
+    isReadOnly = (nextCdfRecord.cdfElType != "E")
+    # TODO: consider also fixed areas that don't have a related CPC record,
+    #       this is defined via cdfElType == "A"
     if nextCdfRecord.cdfGrpSize > 0:
       # group repeater definition
-      childDef, cdfRecordsPos = self.createTcListDef(sortedCdfRecords, cdfRecordsPos, cpcMap)
+      childDef, cdfRecordsPos = self.createTcListDef(sortedCdfRecords, cdfRecordsPos, cpcMap, isReadOnly)
     else:
       # parameter definition
       paramName = nextCdfRecord.cdfPName
       defaultValue = nextCdfRecord.cdfValue
-      childDef = self.createTcParamDef(paramName, defaultValue, cpcMap)
+      childDef = self.createTcParamDef(paramName, defaultValue, cpcMap, isReadOnly)
       cdfRecordsPos += 1
     return (PUS.VP.SlotDef(slotName, childDef), cdfRecordsPos)
   # ---------------------------------------------------------------------------
@@ -377,11 +383,11 @@ class DefinitionsImpl(SPACE.IF.Definitions):
       sortedSlotDefs.append(nextSlotDef)
     return (PUS.VP.StructDef(structName, sortedSlotDefs), cdfRecordsPos)
   # ---------------------------------------------------------------------------
-  def createTcListDef(self, sortedCdfRecords, cdfRecordsPos, cpcMap):
+  def createTcListDef(self, sortedCdfRecords, cdfRecordsPos, cpcMap, isReadOnly):
     nextCdfRecord = sortedCdfRecords[cdfRecordsPos]
     lenParamName = nextCdfRecord.cdfPName
     lenDefaultValue = nextCdfRecord.cdfValue
-    lenParamDef = self.createTcParamDef(lenParamName, lenDefaultValue, cpcMap)
+    lenParamDef = self.createTcParamDef(lenParamName, lenDefaultValue, cpcMap, isReadOnly)
     cdfRecordsPos += 1
     cdfRecordsEnd = cdfRecordsPos + nextCdfRecord.cdfGrpSize
     entryDef, cdfRecordsPos = self.createTcStructDef("", sortedCdfRecords, cdfRecordsPos, cdfRecordsEnd, cpcMap)
