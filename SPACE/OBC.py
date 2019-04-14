@@ -16,7 +16,7 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.PACKET
 import EGSE.IF
 import LINK.IF
-import PUS.PACKET, PUS.SERVICES
+import PUS.PACKET, PUS.SERVICES, PUS.VP
 import SPACE.IF
 import UTIL.SYS, UTIL.TASK, UTIL.TIME
 
@@ -68,8 +68,22 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     """
     LOG_INFO("processTCpacket", "SPACE")
     ok = True
-    if tcPacketDu.dataFieldHeaderFlag == 1:
+    tcPacket = tcPacketDu.getBuffer()
+    if PUS.PACKET.isPUSpacket(tcPacket):
       # CCSDS packet is a PUS packet
+      tcPacketDu = PUS.PACKET.TCpacket(tcPacket)
+      try:
+        # try to decode the packet
+        tcPacketKey = SPACE.IF.s_definitions.getTCpacketKey(tcPacketDu)
+        LOG("KEY =     " + str(tcPacketKey), "SPACE")
+        tcPktDef = SPACE.IF.s_definitions.getTCpktDefByName(tcPacketKey)
+        tcStructDef = tcPktDef.tcStructDef
+        structBitPos = (CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE + tcPktDef.pktDFHsize) << 3
+        tcStruct = PUS.VP.Struct(tcStructDef)
+        tcStruct.decode(tcPacketDu, structBitPos)
+        LOG("tcStruct =" + str(tcStruct), "SPACE")
+      except Exception, ex:
+        LOG_WARNING("packet cannot be decoded: " + str(ex), "SPACE")
       # special handling if the packet is a PUS OBQ management command
       if tcPacketDu.serviceType == PUS.SERVICES.TC_OBQ_TYPE:
         if SPACE.IF.s_onboardQueue == None:

@@ -164,7 +164,7 @@ class CCSDSgroundSpace(CCSDS.ASSEMBLER.Assembler, LINK.IF.SpaceLink, LINK.IF.Gro
       # set the sequenceNumber for the next CLCWs that are sent to ground
       # (e.g. with TC acknowledgements)
       sequenceNumber = (sequenceNumber + 1) % 256
-      LINK.IF.s_tmFrameGenerator.setCLCWcount(sequenceNumber)
+      self.setCLCWcount(sequenceNumber)
     # used to update the GUI
     UTIL.TASK.s_processingTask.notifyGUItask("TC_FRAME")
     # extract the segment from the frame
