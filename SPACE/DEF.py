@@ -412,15 +412,79 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     tcPktDefs = []
     tcPktDefsNameMap = {}
     tcPktIdentificator = PUS.PKTID.PacketIdentificator()
-    # step 1) create packet definitions and packet ID records
+    # step 1) create packet definitions and records for the packet identification
     for cName, ccfRecord in ccfMap.items():
       tcPktDef = self.createTCpktDef(ccfRecord, cdfMap, cpcMap)
       pktName = tcPktDef.pktName
       tcPktDefs.append(tcPktDef)
       tcPktDefsNameMap[pktName] = tcPktDef
-      LOG("TC packet " + pktName + "(" + str(tcPktDef.pktAPID) + "," + str(tcPktDef.pktType) + "," + str(tcPktDef.pktSType) + ")", "SPACE")
+      # create the records for the packet identification:
+      # the packet must be a PUS packet
+      serviceType = tcPktDef.pktType
+      serviceSubType = tcPktDef.pktSType
+      if serviceType <= 0 or serviceSubType <= 0:
+        LOG("TC packet " + pktName + "(" + str(tcPktDef.pktAPID) + "," + str(tcPktDef.pktType) + "," + str(tcPktDef.pktSType) + ")", "SPACE")
+        continue
+      apid = tcPktDef.pktAPID
+      packetID = tcPktDef.pktName
+      pi1 = None
+      pi1bitPos = None
+      pi1bitSize = None
+      pi2 = None
+      pi2bitPos = None
+      pi2bitSize = None
+      # PI1 or PI2 can only be used if the packet has a structure definition
+      if tcPktDef.tcStructDef != None:
+        # try to identify the PI1:
+        # this must be the first parameter and it must be constant
+        toplevelSlots = tcPktDef.tcStructDef.slotDefs
+        if len(toplevelSlots) >= 1:
+          slot1Def = toplevelSlots[0]
+          childDef = slot1Def.childDef
+          childType = type(childDef)
+          if childType == PUS.VP.SimpleParamDef and childDef.isReadOnly:
+            paramType = childDef.getParamType()
+            if paramType == UTIL.DU.BITS or paramType == UTIL.DU.UNSIGNED:
+              pi1 = int(childDef.defaultValue)
+              pi1bytePos = CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE + tcPktDef.pktDFHsize
+              pi1bitPos = pi1bytePos << 3
+              pi1bitSize = childDef.bitWidth
+        # try to identify the PI2:
+        # this must be the second parameter and it must be constant
+        if pi1 != None and len(toplevelSlots) >= 2:
+          slot2Def = toplevelSlots[1]
+          childDef = slot2Def.childDef
+          childType = type(childDef)
+          if childType == PUS.VP.SimpleParamDef and childDef.isReadOnly:
+            paramType = childDef.getParamType()
+            if paramType == UTIL.DU.BITS or paramType == UTIL.DU.UNSIGNED:
+              pi2 = int(childDef.defaultValue)
+              pi2bytePos = (pi2bitPos + pi2bitSize + 7) >> 3
+              pi2bitPos = pi2bytePos << 3
+              pi2bitSize = childDef.bitWidth
+      # add records for the packet identification
+      LOG("TC packet " + pktName + "(" + str(apid) + "," + str(serviceType) + "," + str(serviceSubType) + "," + str(pi1) + "," + str(pi2) + ")", "SPACE")
+      try:
+        tcPktIdentificator.addPacketIDrecord(
+          apid,
+          serviceType,
+          serviceSubType,
+          pi1,
+          pi2,
+          packetID)
+        tcPktIdentificator.addKeyFieldRecord(
+          apid,
+          serviceType,
+          serviceSubType,
+          pi1bitPos,
+          pi1bitSize,
+          pi2bitPos,
+          pi2bitSize)
+      except Exception as ex:
+        LOG_WARNING("Packet " + pktName + " cannot be explicitly used for packet identification", "SPACE")
+        LOG_WARNING(str(ex), "SPACE")
     tcPktDefs.sort()
-    # step 2) TODO: update the packet key field records for the packet identification
+    # step 2) update the global container attributes
     self.definitionData.tcPktDefs = tcPktDefs
     self.definitionData.tcPktDefsNameMap = tcPktDefsNameMap
     self.definitionData.tcPktIdentificator = tcPktIdentificator

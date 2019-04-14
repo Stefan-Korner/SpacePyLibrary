@@ -22,6 +22,7 @@
 #       Separate instances for TM and TC packet identification are needed.    *
 #       The keys are implemented as tupples.                                  *
 #******************************************************************************
+from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.PACKET
 import PUS.PACKET
 
@@ -51,8 +52,13 @@ class PacketIdentificator(object):
     #       then the related enytry for the packet identification must contain
     #       as well None in the pi1 and/or pi2 field
     key = (apid, serviceType, serviceSubType)
-    value = (pi1bitPos, pi1bitSize, pi2bitPos, pi2bitSize)
-    self.keyFieldIDs[key] = value
+    value = (pi1bitPos, pi1bitSize, pi2bitPos, pi2bitSize) 
+    if key in self.keyFieldIDs:
+      previousValue = self.keyFieldIDs[key]
+      if previousValue != value:
+        raise Error("key " + str(key) + " is already defined in key field ID map")
+    else:
+      self.keyFieldIDs[key] = value
   # ---------------------------------------------------------------------------
   def addPacketIDrecord(self,
                         apid, serviceType, serviceSubType, pi1, pi2,
@@ -61,6 +67,8 @@ class PacketIdentificator(object):
     # note: this table is also relevant for non-pus packets - in this case the
     #       serviceType and serviceSubType fields must be None
     key = (apid, serviceType, serviceSubType, pi1, pi2)
+    if key in self.keyFieldIDs:
+      raise Error("key " + str(key) + " is already defined in packet ID map")
     value = packetID
     self.packetIDs[key] = value
   # ---------------------------------------------------------------------------

@@ -16,8 +16,6 @@ Backlog of features that shall be implemented
 
 016 Implement TM parameter processing in CS TM model.
 
-017 Implement TC parameter encoding in CS TC model.
-
 018 Implement TC verification in CS TC model.
 
 019 Implement configuration info in CS CFG GUI.
@@ -70,6 +68,8 @@ Backlog of features that shall be implemented
 011 Change the license to MIT.
 
 015 Implement a rudimentary control system (CS).
+
+017 Implement TC parameter encoding in CS TC model.
 
 021 Harmonize Python2 and Python3 code.
 
