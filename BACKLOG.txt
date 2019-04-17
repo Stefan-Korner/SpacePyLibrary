@@ -44,9 +44,6 @@ Backlog of features that shall be implemented
 
 034 Support direct console logging and use it when there is an exit.
 
-035 Import Python modules that differ in name between Python2 and Python3
-    in the Python2 branch with the name of the Python3 module.
-
 --------------------------------- implemented ---------------------------------
 
 001 Remove the dependency to MIB files TPKTconnTable.dat, TPKTconfigTable.dat:
@@ -79,3 +76,6 @@ Backlog of features that shall be implemented
 032 Support NCTRS data units version 0 and 1.
 
 033 Support CDS3 time format (pico seconds).
+
+035 Import Python modules that differ in name between Python2 and Python3
+    in the Python2 branch with the name of the Python3 module.
