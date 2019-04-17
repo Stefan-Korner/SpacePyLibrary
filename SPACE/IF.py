@@ -413,6 +413,12 @@ class TCpktDef(object):
     self.pktDFHsize = None
     self.pktHasDFhdr = None
     self.pktCheck = None
+    self.pktPI1off = None
+    self.pktPI1wid = None
+    self.pktPI1val = None
+    self.pktPI2off = None
+    self.pktPI2wid = None
+    self.pktPI2val = None
     self.pktSPsize = None
     self.pktSPDFsize = None
     self.pktSPDFdataSize = None
@@ -446,6 +452,12 @@ class TCpktDef(object):
     retVal += " pktDFHsize = " + str(self.pktDFHsize) + "\n"
     retVal += " pktHasDFhdr = " + str(self.pktHasDFhdr) + "\n"
     retVal += " pktCheck = " + str(self.pktCheck) + "\n"
+    retVal += " pktPI1off = " + str(self.pktPI1off) + "\n"
+    retVal += " pktPI1wid = " + str(self.pktPI1wid) + "\n"
+    retVal += " pktPI1val = " + str(self.pktPI1val) + "\n"
+    retVal += " pktPI2off = " + str(self.pktPI2off) + "\n"
+    retVal += " pktPI2wid = " + str(self.pktPI2wid) + "\n"
+    retVal += " pktPI2val = " + str(self.pktPI2val) + "\n"
     retVal += " pktSPsize = " + str(self.pktSPsize) + "\n"
     retVal += " pktSPDFsize = " + str(self.pktSPDFsize) + "\n"
     retVal += " pktSPDFdataSize = " + str(self.pktSPDFsize) + "\n"
