@@ -449,6 +449,9 @@ class DefinitionsImpl(SPACE.IF.Definitions):
               pi1bytePos = CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE + tcPktDef.pktDFHsize
               pi1bitPos = pi1bytePos << 3
               pi1bitSize = childDef.bitWidth
+              tcPktDef.pktPI1off = pi1bitPos
+              tcPktDef.pktPI1wid = pi1bitSize
+              tcPktDef.pktPI1val = pi1
         # try to identify the PI2:
         # this must be the second parameter and it must be constant
         if pi1 != None and len(toplevelSlots) >= 2:
@@ -462,6 +465,9 @@ class DefinitionsImpl(SPACE.IF.Definitions):
               pi2bytePos = (pi2bitPos + pi2bitSize + 7) >> 3
               pi2bitPos = pi2bytePos << 3
               pi2bitSize = childDef.bitWidth
+              tcPktDef.pktPI2off = pi2bitPos
+              tcPktDef.pktPI2wid = pi2bitSize
+              tcPktDef.pktPI2val = pi2
       # add records for the packet identification
       LOG("TC packet " + pktName + "(" + str(apid) + "," + str(serviceType) + "," + str(serviceSubType) + "," + str(pi1) + "," + str(pi2) + ")", "SPACE")
       try:

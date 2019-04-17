@@ -53,20 +53,24 @@ class TCpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
     self.pktTypeField = UI.TKI.ValueField(self, row=5, label="Packet Type:")
     # Subtype
     self.pktSubtypeField = UI.TKI.ValueField(self, row=6, label="Packet Subtype:")
+    # PI1
+    self.pktPI1field = UI.TKI.ValueField(self, row=7, label="Packet PI1:")
+    # PI2
+    self.pktPI2field = UI.TKI.ValueField(self, row=8, label="Packet PI2:")
     # --- parameter tree ---
     label = tkinter.Label(self, text="Parameters")
     self.appGrid(label, row=0, column=2, rowweight=0)
     self.parametersTreeview = SPACEUI.VPgui.TreeView(self)
-    self.appGrid(self.parametersTreeview, row=1, column=2, rowspan=6, rowweight=0, columnweight=1)
-    # --- filler ---
-    filler = tkinter.Label(self)
-    self.appGrid(filler, row=7, columnspan=3, rowweight=0)
-    # --- route ---
-    self.routeField = UI.TKI.InputField(self, row=8, label="route:")
-    self.appGrid(self.routeField.field, row=8, column=1, columnspan=2, rowweight=0)
+    self.appGrid(self.parametersTreeview, row=1, column=2, rowspan=8, rowweight=0, columnweight=1)
     # --- filler ---
     filler = tkinter.Label(self)
     self.appGrid(filler, row=9, columnspan=3, rowweight=0)
+    # --- route ---
+    self.routeField = UI.TKI.InputField(self, row=10, label="route:")
+    self.appGrid(self.routeField.field, row=10, column=1, columnspan=2, rowweight=0)
+    # --- filler ---
+    filler = tkinter.Label(self)
+    self.appGrid(filler, row=11, columnspan=3, rowweight=0)
     # TC Struct for variable packet parameters
     self.tcStruct = None
   # ---------------------------------------------------------------------------
@@ -79,6 +83,8 @@ class TCpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
     pktAPID = ""
     pktType = ""
     pktSType = ""
+    pktPI1val = ""
+    pktPI2val = ""
     self.tcStruct = None
     if tcPktDef != None:
       pktName = tcPktDef.pktName
@@ -87,6 +93,10 @@ class TCpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
       pktAPID = tcPktDef.pktAPID
       pktType = tcPktDef.pktType
       pktSType = tcPktDef.pktSType
+      if tcPktDef.pktPI1val != None:
+        pktPI1val = tcPktDef.pktPI1val
+      if tcPktDef.pktPI2val != None:
+        pktPI2val = tcPktDef.pktPI2val
       tcStructDef = tcPktDef.tcStructDef
       self.tcStruct = PUS.VP.Struct(tcStructDef)
     # write the data into the GUI
@@ -96,6 +106,8 @@ class TCpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
     self.pktAPIDfield.set(pktAPID)
     self.pktTypeField.set(pktType)
     self.pktSubtypeField.set(pktSType)
+    self.pktPI1field.set(pktPI1val)
+    self.pktPI2field.set(pktPI2val)
     self.parametersTreeview.fillTree(pktName, self.tcStruct)
 
 # =============================================================================
