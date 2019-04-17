@@ -12,7 +12,8 @@
 #******************************************************************************
 # Variable Packet GUI                                                         *
 #******************************************************************************
-import ttk, tkSimpleDialog
+import ttk
+import tkSimpleDialog as simpledialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import PUS.VP
 import UTIL.DU
@@ -126,16 +127,16 @@ class TreeView(ttk.Treeview):
     paramType = param.getParamType()
     if paramType == UTIL.DU.BITS or paramType == UTIL.DU.SBITS or \
        paramType == UTIL.DU.UNSIGNED or paramType == UTIL.DU.SIGNED:
-      answer = tkSimpleDialog.askinteger("Integer Parameter",
-                                         nodeKey + ": " + name,
-                                         parent=self,
-                                         initialvalue=value)
+      answer = simpledialog.askinteger("Integer Parameter",
+                                       nodeKey + ": " + name,
+                                       parent=self,
+                                       initialvalue=value)
     elif paramType == UTIL.DU.BYTES or paramType == UTIL.DU.FLOAT or \
          paramType == UTIL.DU.TIME or paramType == UTIL.DU.STRING:
-      answer = tkSimpleDialog.askstring("String Parameter",
-                                        nodeKey + ": " + name,
-                                        parent=self,
-                                        initialvalue=value)
+      answer = simpledialog.askstring("String Parameter",
+                                      nodeKey + ": " + name,
+                                      parent=self,
+                                      initialvalue=value)
     else:
       answer = None
     if answer == None:
@@ -157,11 +158,11 @@ class TreeView(ttk.Treeview):
     nodeValues = self.item(nodeID, "value")
     name = nodeValues[0]
     value = nodeValues[1]
-    answer = tkSimpleDialog.askinteger("List Entries",
-                                       nodeKey + ": " + name,
-                                       parent=self,
-                                       initialvalue=value,
-                                       minvalue=0)
+    answer = simpledialog.askinteger("List Entries",
+                                     nodeKey + ": " + name,
+                                     parent=self,
+                                     initialvalue=value,
+                                     minvalue=0)
     if answer == None:
       return
     # new list length entered --> update list object and tree
@@ -197,14 +198,14 @@ class TreeView(ttk.Treeview):
     LOG("TreeView.data = " + str(self.toplevelStruct), "SPACE")
 
 # =============================================================================
-class TreeBrowser(tkSimpleDialog.Dialog):
+class TreeBrowser(simpledialog.Dialog):
   """Variable packet tree browser"""
   # ---------------------------------------------------------------------------
   def __init__(self, master, treeName, struct):
     self.treeView = None
     self.treeName = treeName
     self.struct = struct
-    tkSimpleDialog.Dialog.__init__(self, master, title="Variable Packet Tree Browser")
+    simpledialog.Dialog.__init__(self, master, title="Variable Packet Tree Browser")
   # ---------------------------------------------------------------------------
   def body(self, master):
     """Intialise the dialog"""

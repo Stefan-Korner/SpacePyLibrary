@@ -12,7 +12,8 @@
 #******************************************************************************
 # Ground Segment Simulation GUI                                               *
 #******************************************************************************
-import Tkinter, tkFileDialog
+import Tkinter as tkinter
+import tkFileDialog as filedialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import GRND.IF
 import SCOS.ENV
@@ -42,12 +43,12 @@ class GUIview(UI.TKI.GUItabView):
     self.menuButtons = UI.TKI.MenuButtons(self,
       [["AD-I", self.initialiseADcallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
        ["REC+", self.recordFramesCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
-       ["REC-", self.stopFrameRecorderCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, Tkinter.DISABLED]])
+       ["REC-", self.stopFrameRecorderCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, tkinter.DISABLED]])
     self.appGrid(self.menuButtons,
                  row=0,
                  columnspan=2,
                  rowweight=0,
-                 sticky=Tkinter.EW)
+                 sticky=tkinter.EW)
     # checkbuttons
     self.checkButtons = UI.TKI.Checkbuttons(self,
       [["ACK1", self.ack1Callback, True, COLOR_ON_OK],
@@ -59,7 +60,7 @@ class GUIview(UI.TKI.GUItabView):
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,
-                 sticky=Tkinter.W)
+                 sticky=tkinter.W)
     # tm status
     self.tmStatusField = UI.TKI.ValueField(self, row=2, label="NCTRS TM status:")
     self.tmStatusField.set("INIT")
@@ -85,14 +86,14 @@ class GUIview(UI.TKI.GUItabView):
     self.messageLogger = UI.TKI.MessageLogger(self)
     self.appGrid(self.messageLogger, row=8, columnspan=2)
     # message line
-    self.messageline = Tkinter.Message(self, relief=Tkinter.GROOVE)
+    self.messageline = tkinter.Message(self, relief=tkinter.GROOVE)
     self.appGrid(self.messageline,
                  row=9,
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,
-                 sticky=Tkinter.EW)
-    self.grid(row=0, column=0, sticky=Tkinter.EW+Tkinter.NS)
+                 sticky=tkinter.EW)
+    self.grid(row=0, column=0, sticky=tkinter.EW+tkinter.NS)
     self.master.rowconfigure(0, weight=1)
     self.master.columnconfigure(0, weight=1)
   # ---------------------------------------------------------------------------
@@ -161,8 +162,8 @@ class GUIview(UI.TKI.GUItabView):
   # ---------------------------------------------------------------------------
   def recordFramesCallback(self):
     """Called when the RecordFrames menu entry is selected"""
-    fileName = tkFileDialog.asksaveasfilename(title="Create TM Frame Record File",
-                                              initialdir=SCOS.ENV.s_environment.tmFilesDir())
+    fileName = filedialog.asksaveasfilename(title="Create TM Frame Record File",
+                                            initialdir=SCOS.ENV.s_environment.tmFilesDir())
     if fileName != "" and fileName != ():
       self.notifyModelTask(["RECORDFRAMES", fileName])
   # ---------------------------------------------------------------------------
@@ -279,12 +280,12 @@ class GUIview(UI.TKI.GUItabView):
     """Called when the recordFrames function is successfully processed"""
     self.disableCommandMenuItem("RecordFrames")
     self.enableCommandMenuItem("StopFrameRecorder")
-    self.menuButtons.setState("REC+", Tkinter.DISABLED)
-    self.menuButtons.setState("REC-", Tkinter.NORMAL)
+    self.menuButtons.setState("REC+", tkinter.DISABLED)
+    self.menuButtons.setState("REC-", tkinter.NORMAL)
   # ---------------------------------------------------------------------------
   def frameRecStopped(self):
     """Called when the stopFrameRecorder function is successfully processed"""
     self.enableCommandMenuItem("RecordFrames")
     self.disableCommandMenuItem("StopFrameRecorder")
-    self.menuButtons.setState("REC+", Tkinter.NORMAL)
-    self.menuButtons.setState("REC-", Tkinter.DISABLED)
+    self.menuButtons.setState("REC+", tkinter.NORMAL)
+    self.menuButtons.setState("REC-", tkinter.DISABLED)

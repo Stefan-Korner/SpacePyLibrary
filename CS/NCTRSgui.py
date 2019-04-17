@@ -12,7 +12,7 @@
 #******************************************************************************
 # NCTRS client GUI                                                            *
 #******************************************************************************
-import Tkinter
+import Tkinter as tkinter
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import GRND.IF
 import UI.TKI
@@ -38,16 +38,16 @@ class GUIview(UI.TKI.GUItabView):
     # menu buttons
     self.menuButtons = UI.TKI.MenuButtons(self,
       [["CONN1", self.connectPort1Callback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
-       ["DCONN1", self.disconnectPort1Callback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, Tkinter.DISABLED],
+       ["DCONN1", self.disconnectPort1Callback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, tkinter.DISABLED],
        ["CONN2", self.connectPort2Callback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
-       ["DCONN2", self.disconnectPort2Callback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, Tkinter.DISABLED],
+       ["DCONN2", self.disconnectPort2Callback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, tkinter.DISABLED],
        ["CONN3", self.connectPort3Callback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
-       ["DCONN3", self.disconnectPort3Callback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, Tkinter.DISABLED]])
+       ["DCONN3", self.disconnectPort3Callback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, tkinter.DISABLED]])
     self.appGrid(self.menuButtons,
                  row=0,
                  columnspan=2,
                  rowweight=0,
-                 sticky=Tkinter.EW)
+                 sticky=tkinter.EW)
     # NCTRS interface host
     self.nctrsHostField = UI.TKI.ValueField(self, row=1, label="NCTRS host:")
     self.nctrsHostField.set(GRND.IF.s_clientConfiguration.nctrsHost)
@@ -76,14 +76,14 @@ class GUIview(UI.TKI.GUItabView):
     self.messageLogger = UI.TKI.MessageLogger(self, "NCTRS")
     self.appGrid(self.messageLogger, row=8, columnspan=2)
     # message line
-    self.messageline = Tkinter.Message(self, relief=Tkinter.GROOVE)
+    self.messageline = tkinter.Message(self, relief=tkinter.GROOVE)
     self.appGrid(self.messageline,
                  row=9,
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,
-                 sticky=Tkinter.EW)
-    self.grid(row=0, column=0, sticky=Tkinter.EW+Tkinter.NS)
+                 sticky=tkinter.EW)
+    self.grid(row=0, column=0, sticky=tkinter.EW+tkinter.NS)
     self.master.rowconfigure(0, weight=1)
     self.master.columnconfigure(0, weight=1)
   # ---------------------------------------------------------------------------
@@ -142,8 +142,8 @@ class GUIview(UI.TKI.GUItabView):
     """Called when the NCTRS port 1 connect function is successfully processed"""
     self.nctrsStatusField1.set("CONNECTED")
     self.nctrsStatusField1.setBackground(COLOR_CONNECTED)
-    self.menuButtons.setState("CONN1", Tkinter.DISABLED)
-    self.menuButtons.setState("DCONN1", Tkinter.NORMAL)
+    self.menuButtons.setState("CONN1", tkinter.DISABLED)
+    self.menuButtons.setState("DCONN1", tkinter.NORMAL)
     self.disableCommandMenuItem("ConnectPort1")
     self.enableCommandMenuItem("DisconnectPort1")
   # ---------------------------------------------------------------------------
@@ -151,8 +151,8 @@ class GUIview(UI.TKI.GUItabView):
     """Called when the NCTRS port 1 disconnect function is successfully processed"""
     self.nctrsStatusField1.set("DISCONNECTED")
     self.nctrsStatusField1.setBackground(COLOR_INITIALISED)
-    self.menuButtons.setState("CONN1", Tkinter.NORMAL)
-    self.menuButtons.setState("DCONN1", Tkinter.DISABLED)
+    self.menuButtons.setState("CONN1", tkinter.NORMAL)
+    self.menuButtons.setState("DCONN1", tkinter.DISABLED)
     self.enableCommandMenuItem("ConnectPort1")
     self.disableCommandMenuItem("DisconnectPort1")
   # ---------------------------------------------------------------------------
@@ -160,8 +160,8 @@ class GUIview(UI.TKI.GUItabView):
     """Called when the NCTRS port 2 connect function is successfully processed"""
     self.nctrsStatusField2.set("CONNECTED")
     self.nctrsStatusField2.setBackground(COLOR_CONNECTED)
-    self.menuButtons.setState("CONN2", Tkinter.DISABLED)
-    self.menuButtons.setState("DCONN2", Tkinter.NORMAL)
+    self.menuButtons.setState("CONN2", tkinter.DISABLED)
+    self.menuButtons.setState("DCONN2", tkinter.NORMAL)
     self.disableCommandMenuItem("ConnectPort2")
     self.enableCommandMenuItem("DisconnectPort2")
   # ---------------------------------------------------------------------------
@@ -169,8 +169,8 @@ class GUIview(UI.TKI.GUItabView):
     """Called when the NCTRS port 2 disconnect function is successfully processed"""
     self.nctrsStatusField2.set("DISCONNECTED")
     self.nctrsStatusField2.setBackground(COLOR_INITIALISED)
-    self.menuButtons.setState("CONN2", Tkinter.NORMAL)
-    self.menuButtons.setState("DCONN2", Tkinter.DISABLED)
+    self.menuButtons.setState("CONN2", tkinter.NORMAL)
+    self.menuButtons.setState("DCONN2", tkinter.DISABLED)
     self.enableCommandMenuItem("ConnectPort2")
     self.disableCommandMenuItem("DisconnectPort2")
   # ---------------------------------------------------------------------------
@@ -178,8 +178,8 @@ class GUIview(UI.TKI.GUItabView):
     """Called when the NCTRS port 3 connect function is successfully processed"""
     self.nctrsStatusField3.set("CONNECTED")
     self.nctrsStatusField3.setBackground(COLOR_CONNECTED)
-    self.menuButtons.setState("CONN3", Tkinter.DISABLED)
-    self.menuButtons.setState("DCONN3", Tkinter.NORMAL)
+    self.menuButtons.setState("CONN3", tkinter.DISABLED)
+    self.menuButtons.setState("DCONN3", tkinter.NORMAL)
     self.disableCommandMenuItem("ConnectPort3")
     self.enableCommandMenuItem("DisconnectPort3")
   # ---------------------------------------------------------------------------
@@ -187,7 +187,7 @@ class GUIview(UI.TKI.GUItabView):
     """Called when the NCTRS port 3 disconnect function is successfully processed"""
     self.nctrsStatusField3.set("DISCONNECTED")
     self.nctrsStatusField3.setBackground(COLOR_INITIALISED)
-    self.menuButtons.setState("CONN3", Tkinter.NORMAL)
-    self.menuButtons.setState("DCONN3", Tkinter.DISABLED)
+    self.menuButtons.setState("CONN3", tkinter.NORMAL)
+    self.menuButtons.setState("DCONN3", tkinter.DISABLED)
     self.enableCommandMenuItem("ConnectPort3")
     self.disableCommandMenuItem("DisconnectPort3")

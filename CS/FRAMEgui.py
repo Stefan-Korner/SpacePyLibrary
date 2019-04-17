@@ -12,7 +12,8 @@
 #******************************************************************************
 # FRAME layer GUI                                                             *
 #******************************************************************************
-import Tkinter, tkFileDialog
+import Tkinter as tkinter
+import tkFileDialog as filedialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CS.FRAMErply
 import SCOS.ENV
@@ -41,21 +42,21 @@ class GUIview(UI.TKI.GUItabView):
                  row=0,
                  columnspan=2,
                  rowweight=0,
-                 sticky=Tkinter.EW)
+                 sticky=tkinter.EW)
     # replay TM frames
     self.replayTMframesField = UI.TKI.ValueField(self, row=1, label="Replay TM frames:")
     # log messages (default logger)
     self.messageLogger = UI.TKI.MessageLogger(self, "FRAME")
     self.appGrid(self.messageLogger, row=2, columnspan=2)
     # message line
-    self.messageline = Tkinter.Message(self, relief=Tkinter.GROOVE)
+    self.messageline = tkinter.Message(self, relief=tkinter.GROOVE)
     self.appGrid(self.messageline,
                  row=3,
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,
-                 sticky=Tkinter.EW)
-    self.grid(row=0, column=0, sticky=Tkinter.EW+Tkinter.NS)
+                 sticky=tkinter.EW)
+    self.grid(row=0, column=0, sticky=tkinter.EW+tkinter.NS)
     self.master.rowconfigure(0, weight=1)
     self.master.columnconfigure(0, weight=1)
   # ---------------------------------------------------------------------------
@@ -68,8 +69,8 @@ class GUIview(UI.TKI.GUItabView):
   # ---------------------------------------------------------------------------
   def replayFramesCallback(self):
     """Called when the ReplayFrames menu entry is selected"""
-    fileName = tkFileDialog.askopenfilename(title="Open TM Frame Replay File",
-                                            initialdir=SCOS.ENV.s_environment.tmFilesDir())
+    fileName = filedialog.askopenfilename(title="Open TM Frame Replay File",
+                                          initialdir=SCOS.ENV.s_environment.tmFilesDir())
     if fileName != "" and fileName != ():
       self.notifyModelTask(["REPLAYFRAMES", fileName])
   # ---------------------------------------------------------------------------
@@ -84,12 +85,12 @@ class GUIview(UI.TKI.GUItabView):
     """Called when the replay state has changed"""
     if CS.FRAMErply.s_frameReplayer.running:
       self.disableCommandMenuItem("ReplayFrames")
-      self.menuButtons.setState("RPLY", Tkinter.DISABLED)
+      self.menuButtons.setState("RPLY", tkinter.DISABLED)
       self.replayTMframesField.set("Running")
       self.lastFrameNr = 0
     else:
       self.enableCommandMenuItem("ReplayFrames")
-      self.menuButtons.setState("RPLY", Tkinter.NORMAL)
+      self.menuButtons.setState("RPLY", tkinter.NORMAL)
       self.replayTMframesField.set("Stopped: Nr. frames = " + str(CS.FRAMErply.s_frameReplayer.frameNr))
   # ---------------------------------------------------------------------------
   def updateReplayNrNotify(self):

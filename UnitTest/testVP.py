@@ -69,7 +69,7 @@
 #  +-- s_9: Par9 = "This is the last variable string in the struct"      1320 *
 #******************************************************************************
 import sys
-import Tkinter
+import Tkinter as tkinter
 import PUS.VP
 import SPACEUI.VPgui
 import UTIL.DU
@@ -305,6 +305,6 @@ if not testStruct2(dStruct):
 #******************************************************************************
 # GUI with tree widget                                                        *
 #******************************************************************************
-root = Tkinter.Tk()
+root = tkinter.Tk()
 root.withdraw()
 dialog = SPACEUI.VPgui.TreeBrowser(root, "Packet_01", struct)

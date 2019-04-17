@@ -11,10 +11,10 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT License    *
 # for more details.                                                           *
 #******************************************************************************
-# TASK + TKI framework - Unit Test: empty Model Task with TKinter GUI         *
+# TASK + TKI framework - Unit Test: empty Model Task with tkinter GUI         *
 #******************************************************************************
 from __future__ import print_function
-import Tkinter
+import Tkinter as tkinter
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import UI.TKI
 import UTIL.TASK
@@ -44,14 +44,14 @@ class GUIview(UI.TKI.GUItabView):
     self.messageLogger = UI.TKI.MessageLogger(self)
     self.appGrid(self.messageLogger, row=0, columnspan=2)
     # message line
-    self.messageline = Tkinter.Message(self, relief=Tkinter.GROOVE)
+    self.messageline = tkinter.Message(self, relief=tkinter.GROOVE)
     self.appGrid(self.messageline,
                  row=1,
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,
-                 sticky=Tkinter.EW)
-    self.grid(row=0, column=0, sticky=Tkinter.EW+Tkinter.NS)
+                 sticky=tkinter.EW)
+    self.grid(row=0, column=0, sticky=tkinter.EW+tkinter.NS)
     self.master.rowconfigure(0, weight=1)
     self.master.columnconfigure(0, weight=1)
   # ---------------------------------------------------------------------------

@@ -12,7 +12,8 @@
 #******************************************************************************
 # Monitoring and Control (M&C) - Control (TC) GUI                             *
 #******************************************************************************
-import Tkinter, tkSimpleDialog
+import Tkinter as tkinter
+import tkSimpleDialog as simpledialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import MC.IF
 import PUS.VP
@@ -32,13 +33,13 @@ COLOR_CONNECTED = "#00FF00"
 # classes #
 ###########
 # =============================================================================
-class TCpacketDetails(Tkinter.Frame, UI.TKI.AppGrid):
-  """Displays the packet details, implemented as Tkinter.Frame"""
+class TCpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
+  """Displays the packet details, implemented as tkinter.Frame"""
   # ---------------------------------------------------------------------------
   def __init__(self, master):
-    Tkinter.Frame.__init__(self, master, relief=Tkinter.GROOVE, borderwidth=1)
+    tkinter.Frame.__init__(self, master, relief=tkinter.GROOVE, borderwidth=1)
     # --- filler ---
-    filler = Tkinter.Label(self)
+    filler = tkinter.Label(self)
     self.appGrid(filler, row=0, columnspan=2, rowweight=0)
     # packet name
     self.pktNameField = UI.TKI.ValueField(self, row=1, label="Packet name:")
@@ -57,18 +58,18 @@ class TCpacketDetails(Tkinter.Frame, UI.TKI.AppGrid):
     # PI2
     self.pktPI2field = UI.TKI.ValueField(self, row=8, label="Packet PI2:")
     # --- parameter tree ---
-    label = Tkinter.Label(self, text="Parameters")
+    label = tkinter.Label(self, text="Parameters")
     self.appGrid(label, row=0, column=2, rowweight=0)
     self.parametersTreeview = SPACEUI.VPgui.TreeView(self)
     self.appGrid(self.parametersTreeview, row=1, column=2, rowspan=8, rowweight=0, columnweight=1)
     # --- filler ---
-    filler = Tkinter.Label(self)
+    filler = tkinter.Label(self)
     self.appGrid(filler, row=9, columnspan=3, rowweight=0)
     # --- route ---
     self.routeField = UI.TKI.InputField(self, row=10, label="route:")
     self.appGrid(self.routeField.field, row=10, column=1, columnspan=2, rowweight=0)
     # --- filler ---
-    filler = Tkinter.Label(self)
+    filler = tkinter.Label(self)
     self.appGrid(filler, row=11, columnspan=3, rowweight=0)
     # TC Struct for variable packet parameters
     self.tcStruct = None
@@ -110,7 +111,7 @@ class TCpacketDetails(Tkinter.Frame, UI.TKI.AppGrid):
     self.parametersTreeview.fillTree(pktName, self.tcStruct)
 
 # =============================================================================
-class TCpacketBrowser(tkSimpleDialog.Dialog, UI.TKI.AppGrid):
+class TCpacketBrowser(simpledialog.Dialog, UI.TKI.AppGrid):
   """Browser for TC packets"""
   # ---------------------------------------------------------------------------
   def __init__(self, master, title, prompt=""):
@@ -119,7 +120,7 @@ class TCpacketBrowser(tkSimpleDialog.Dialog, UI.TKI.AppGrid):
     self.prompt = prompt
     self.listboxCurrent = None
     self.afterID = None
-    tkSimpleDialog.Dialog.__init__(self, master, title=title)
+    simpledialog.Dialog.__init__(self, master, title=title)
     if self.afterID != None:
       self.after_cancel(self.afterID)
   # ---------------------------------------------------------------------------
@@ -127,14 +128,14 @@ class TCpacketBrowser(tkSimpleDialog.Dialog, UI.TKI.AppGrid):
     """Intialise the dialog"""
     row=0
     if self.prompt != "":
-      label = Tkinter.Label(master, text=self.prompt)
+      label = tkinter.Label(master, text=self.prompt)
       label.grid(row=row, column=0, columnspan=4)
       row += 1
-      label = Tkinter.Label(master)
+      label = tkinter.Label(master)
       label.grid(row=row, column=0, columnspan=4)
       row += 1
     # scrolled list box
-    self.slistbox = UI.TKI.ScrolledListbox(master, selectmode=Tkinter.SINGLE)
+    self.slistbox = UI.TKI.ScrolledListbox(master, selectmode=tkinter.SINGLE)
     self.appGrid(self.slistbox, row=row, column=0, columnweight=1)
     lrow = 0
     for tcPktDef in SPACE.IF.s_definitions.getTCpktDefs():
@@ -185,13 +186,13 @@ class GUIview(UI.TKI.GUItabView):
     UI.TKI.GUItabView.__init__(self, master, "TC", "M&C TC")
     # menu buttons
     self.menuButtons = UI.TKI.MenuButtons(self,
-      [["PKT", self.setPacketDataCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, Tkinter.DISABLED],
-       ["SND", self.sendPacketCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, Tkinter.DISABLED]])
+      [["PKT", self.setPacketDataCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, tkinter.DISABLED],
+       ["SND", self.sendPacketCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, tkinter.DISABLED]])
     self.appGrid(self.menuButtons,
                  row=0,
                  columnspan=2,
                  rowweight=0,
-                 sticky=Tkinter.EW)
+                 sticky=tkinter.EW)
     # tc status
     self.tcStatusField = UI.TKI.ValueField(self, row=1, label="TC status:")
     self.tcStatusField.set("INIT")
@@ -204,14 +205,14 @@ class GUIview(UI.TKI.GUItabView):
     self.messageLogger = UI.TKI.MessageLogger(self, "TC")
     self.appGrid(self.messageLogger, row=4, columnspan=2)
     # message line
-    self.messageline = Tkinter.Message(self, relief=Tkinter.GROOVE)
+    self.messageline = tkinter.Message(self, relief=tkinter.GROOVE)
     self.appGrid(self.messageline,
                  row=5,
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,
-                 sticky=Tkinter.EW)
-    self.grid(row=0, column=0, sticky=Tkinter.EW+Tkinter.NS)
+                 sticky=tkinter.EW)
+    self.grid(row=0, column=0, sticky=tkinter.EW+tkinter.NS)
     self.master.rowconfigure(0, weight=1)
     self.master.columnconfigure(0, weight=1)
   # ---------------------------------------------------------------------------
@@ -247,13 +248,13 @@ class GUIview(UI.TKI.GUItabView):
   def tcConnectedNotify(self):
     """Called when the TC connect function is successfully processed"""
     self.enableCommandMenuItem("SetPacketData")
-    self.menuButtons.setState("PKT", Tkinter.NORMAL)
+    self.menuButtons.setState("PKT", tkinter.NORMAL)
     self.updateTCstatusField()
   # ---------------------------------------------------------------------------
   def packetDataSetNotify(self):
     """Called when the setPacketData function is successfully processed"""
     self.enableCommandMenuItem("SendPacket")
-    self.menuButtons.setState("SND", Tkinter.NORMAL)
+    self.menuButtons.setState("SND", tkinter.NORMAL)
     self.updateTCstatusField()
     self.packetField.set(MC.IF.s_configuration.tcPacketData.pktName)
     self.routeField.set(MC.IF.s_configuration.tcPacketData.route)

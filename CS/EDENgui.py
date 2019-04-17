@@ -12,7 +12,7 @@
 #******************************************************************************
 # EDEN client GUI                                                             *
 #******************************************************************************
-import Tkinter
+import Tkinter as tkinter
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import EGSE.IF
 import UI.TKI
@@ -38,14 +38,14 @@ class GUIview(UI.TKI.GUItabView):
     # menu buttons
     self.menuButtons = UI.TKI.MenuButtons(self,
       [["CONN", self.connectPortCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
-       ["DCONN", self.disconnectPortCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, Tkinter.DISABLED],
+       ["DCONN", self.disconnectPortCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, tkinter.DISABLED],
        ["CONN2", self.connectPort2Callback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
-       ["DCONN2", self.disconnectPort2Callback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, Tkinter.DISABLED]])
+       ["DCONN2", self.disconnectPort2Callback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, tkinter.DISABLED]])
     self.appGrid(self.menuButtons,
                  row=0,
                  columnspan=2,
                  rowweight=0,
-                 sticky=Tkinter.EW)
+                 sticky=tkinter.EW)
     # EDEN interface host
     self.edenHostField = UI.TKI.ValueField(self, row=1, label="EDEN host:")
     self.edenHostField.set(EGSE.IF.s_edenClientConfiguration.edenHost)
@@ -67,14 +67,14 @@ class GUIview(UI.TKI.GUItabView):
     self.messageLogger = UI.TKI.MessageLogger(self, "EDEN")
     self.appGrid(self.messageLogger, row=6, columnspan=2)
     # message line
-    self.messageline = Tkinter.Message(self, relief=Tkinter.GROOVE)
+    self.messageline = tkinter.Message(self, relief=tkinter.GROOVE)
     self.appGrid(self.messageline,
                  row=7,
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,
-                 sticky=Tkinter.EW)
-    self.grid(row=0, column=0, sticky=Tkinter.EW+Tkinter.NS)
+                 sticky=tkinter.EW)
+    self.grid(row=0, column=0, sticky=tkinter.EW+tkinter.NS)
     self.master.rowconfigure(0, weight=1)
     self.master.columnconfigure(0, weight=1)
   # ---------------------------------------------------------------------------
@@ -119,8 +119,8 @@ class GUIview(UI.TKI.GUItabView):
     """Called when the EDEN port connect function is successfully processed"""
     self.edenStatusField.set("CONNECTED")
     self.edenStatusField.setBackground(COLOR_CONNECTED)
-    self.menuButtons.setState("CONN", Tkinter.DISABLED)
-    self.menuButtons.setState("DCONN", Tkinter.NORMAL)
+    self.menuButtons.setState("CONN", tkinter.DISABLED)
+    self.menuButtons.setState("DCONN", tkinter.NORMAL)
     self.disableCommandMenuItem("ConnectPort")
     self.enableCommandMenuItem("DisconnectPort")
   # ---------------------------------------------------------------------------
@@ -128,8 +128,8 @@ class GUIview(UI.TKI.GUItabView):
     """Called when the EDEN port disconnect function is successfully processed"""
     self.edenStatusField.set("DISCONNECTED")
     self.edenStatusField.setBackground(COLOR_INITIALISED)
-    self.menuButtons.setState("CONN", Tkinter.NORMAL)
-    self.menuButtons.setState("DCONN", Tkinter.DISABLED)
+    self.menuButtons.setState("CONN", tkinter.NORMAL)
+    self.menuButtons.setState("DCONN", tkinter.DISABLED)
     self.enableCommandMenuItem("ConnectPort")
     self.disableCommandMenuItem("DisconnectPort")
   # ---------------------------------------------------------------------------
@@ -137,8 +137,8 @@ class GUIview(UI.TKI.GUItabView):
     """Called when the EDEN port 2 connect function is successfully processed"""
     self.edenStatusField2.set("CONNECTED")
     self.edenStatusField2.setBackground(COLOR_CONNECTED)
-    self.menuButtons.setState("CONN2", Tkinter.DISABLED)
-    self.menuButtons.setState("DCONN2", Tkinter.NORMAL)
+    self.menuButtons.setState("CONN2", tkinter.DISABLED)
+    self.menuButtons.setState("DCONN2", tkinter.NORMAL)
     self.disableCommandMenuItem("ConnectPort2")
     self.enableCommandMenuItem("DisconnectPort2")
   # ---------------------------------------------------------------------------
@@ -146,7 +146,7 @@ class GUIview(UI.TKI.GUItabView):
     """Called when the EDEN port 2 disconnect function is successfully processed"""
     self.edenStatusField2.set("DISCONNECTED")
     self.edenStatusField2.setBackground(COLOR_INITIALISED)
-    self.menuButtons.setState("CONN2", Tkinter.NORMAL)
-    self.menuButtons.setState("DCONN2", Tkinter.DISABLED)
+    self.menuButtons.setState("CONN2", tkinter.NORMAL)
+    self.menuButtons.setState("DCONN2", tkinter.DISABLED)
     self.enableCommandMenuItem("ConnectPort2")
     self.disableCommandMenuItem("DisconnectPort2")

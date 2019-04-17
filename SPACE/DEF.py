@@ -12,7 +12,8 @@
 #******************************************************************************
 # Space Simulation - Space Data Definitions                                   #
 #******************************************************************************
-import os, cPickle, time
+import cPickle as pickle
+import os, time
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.DU, CCSDS.PACKET, CCSDS.TIME
 import PUS.PACKET, PUS.PKTID, PUS.VP
@@ -511,7 +512,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     fileName = self.definitionFileName
     try:
       file = open(fileName, "w")
-      cPickle.dump(self.definitionData, file)
+      pickle.dump(self.definitionData, file)
       file.close()
     except Exception, ex:
       LOG_ERROR("cannot save definitions: " + str(ex), "SPACE")
@@ -528,7 +529,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
         os.stat(fileName)
         try:
           file = open(fileName, "r")
-          self.definitionData = cPickle.load(file)
+          self.definitionData = pickle.load(file)
           file.close()
         except Exception, ex:
           LOG_ERROR("cannot load definitions: " + str(ex), "SPACE")

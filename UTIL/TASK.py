@@ -51,7 +51,7 @@
 #              The kind of sources that are processed from a Task can be      *
 #              enhanced or restricted in derived classes. This is needed to   *
 #              provide a transparent integration of a GUI library             *
-#              (e.g. Tkinter). In this case the GUI occupies the ParentTask.  *
+#              (e.g. tkinter). In this case the GUI occupies the ParentTask.  *
 #******************************************************************************
 from __future__ import print_function
 import os, signal, select, socket, struct, sys, threading, time

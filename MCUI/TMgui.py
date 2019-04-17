@@ -12,7 +12,8 @@
 #******************************************************************************
 # Monitoring and Control (M&C) - Monitoring (TM) GUI                          *
 #******************************************************************************
-import Tkinter, tkFileDialog
+import Tkinter as tkinter
+import tkFileDialog as filedialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import SCOS.ENV
 import UI.TKI
@@ -36,24 +37,24 @@ class GUIview(UI.TKI.GUItabView):
     # menu buttons
     self.menuButtons = UI.TKI.MenuButtons(self,
       [["REC+", self.recordPacketsCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
-       ["REC-", self.stopPacketRecorderCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, Tkinter.DISABLED]])
+       ["REC-", self.stopPacketRecorderCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, tkinter.DISABLED]])
     self.appGrid(self.menuButtons,
                  row=0,
                  columnspan=2,
                  rowweight=0,
-                 sticky=Tkinter.EW)
+                 sticky=tkinter.EW)
     # log messages (default logger)
     self.messageLogger = UI.TKI.MessageLogger(self, "TM")
     self.appGrid(self.messageLogger, row=1, columnspan=2)
     # message line
-    self.messageline = Tkinter.Message(self, relief=Tkinter.GROOVE)
+    self.messageline = tkinter.Message(self, relief=tkinter.GROOVE)
     self.appGrid(self.messageline,
                  row=2,
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,
-                 sticky=Tkinter.EW)
-    self.grid(row=0, column=0, sticky=Tkinter.EW+Tkinter.NS)
+                 sticky=tkinter.EW)
+    self.grid(row=0, column=0, sticky=tkinter.EW+tkinter.NS)
     self.master.rowconfigure(0, weight=1)
     self.master.columnconfigure(0, weight=1)
   # ---------------------------------------------------------------------------
@@ -67,8 +68,8 @@ class GUIview(UI.TKI.GUItabView):
   # ---------------------------------------------------------------------------
   def recordPacketsCallback(self):
     """Called when the RecordPackets menu entry is selected"""
-    fileName = tkFileDialog.asksaveasfilename(title="Create TM Packet Record File",
-                                              initialdir=SCOS.ENV.s_environment.tmFilesDir())
+    fileName = filedialog.asksaveasfilename(title="Create TM Packet Record File",
+                                            initialdir=SCOS.ENV.s_environment.tmFilesDir())
     if fileName != "" and fileName != ():
       self.notifyModelTask(["RECORDPACKETS", fileName])
   # ---------------------------------------------------------------------------
@@ -87,12 +88,12 @@ class GUIview(UI.TKI.GUItabView):
     """Called when the recordPackets function is successfully processed"""
     self.disableCommandMenuItem("RecordPackets")
     self.enableCommandMenuItem("StopPacketRecorder")
-    self.menuButtons.setState("REC+", Tkinter.DISABLED)
-    self.menuButtons.setState("REC-", Tkinter.NORMAL)
+    self.menuButtons.setState("REC+", tkinter.DISABLED)
+    self.menuButtons.setState("REC-", tkinter.NORMAL)
   # ---------------------------------------------------------------------------
   def packetRecStopped(self):
     """Called when the stopPacketRecorder function is successfully processed"""
     self.enableCommandMenuItem("RecordPackets")
     self.disableCommandMenuItem("StopPacketRecorder")
-    self.menuButtons.setState("REC+", Tkinter.NORMAL)
-    self.menuButtons.setState("REC-", Tkinter.DISABLED)
+    self.menuButtons.setState("REC+", tkinter.NORMAL)
+    self.menuButtons.setState("REC-", tkinter.DISABLED)

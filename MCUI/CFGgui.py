@@ -12,7 +12,7 @@
 #******************************************************************************
 # Monitoring and Control (M&C) Confiuration GUI                               *
 #******************************************************************************
-import Tkinter
+import Tkinter as tkinter
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import UI.TKI
 
@@ -40,19 +40,19 @@ class GUIview(UI.TKI.GUItabView):
                  row=0,
                  columnspan=2,
                  rowweight=0,
-                 sticky=Tkinter.EW)
+                 sticky=tkinter.EW)
     # log messages (default logger)
     self.messageLogger = UI.TKI.MessageLogger(self)
     self.appGrid(self.messageLogger, row=1, columnspan=2)
     # message line
-    self.messageline = Tkinter.Message(self, relief=Tkinter.GROOVE)
+    self.messageline = tkinter.Message(self, relief=tkinter.GROOVE)
     self.appGrid(self.messageline,
                  row=2,
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,
-                 sticky=Tkinter.EW)
-    self.grid(row=0, column=0, sticky=Tkinter.EW+Tkinter.NS)
+                 sticky=tkinter.EW)
+    self.grid(row=0, column=0, sticky=tkinter.EW+tkinter.NS)
     self.master.rowconfigure(0, weight=1)
     self.master.columnconfigure(0, weight=1)
   # ---------------------------------------------------------------------------
@@ -68,17 +68,17 @@ class GUIview(UI.TKI.GUItabView):
     """Called when the ListPackets menu entry is selected"""
     # disable the button during generation,
     # because generation could take some time
-    self.menuButtons.setState("LIST", Tkinter.DISABLED)
+    self.menuButtons.setState("LIST", tkinter.DISABLED)
     self.notifyModelTask(["LISTPACKETS"])
-    self.menuButtons.setState("LIST", Tkinter.NORMAL)
+    self.menuButtons.setState("LIST", tkinter.NORMAL)
   # ---------------------------------------------------------------------------
   def generateCallback(self):
     """Called when the Generate menu entry is selected"""
     # disable the button during generation,
     # because generation could take some time
-    self.menuButtons.setState("GEN", Tkinter.DISABLED)
+    self.menuButtons.setState("GEN", tkinter.DISABLED)
     self.notifyModelTask(["GENERATE"])
-    self.menuButtons.setState("GEN", Tkinter.NORMAL)
+    self.menuButtons.setState("GEN", tkinter.NORMAL)
   # ---------------------------------------------------------------------------
   def notifyStatus(self, status):
     """Generic callback when something changes in the model"""

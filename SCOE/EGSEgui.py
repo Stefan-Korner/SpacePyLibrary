@@ -12,7 +12,7 @@
 #******************************************************************************
 # EGSE server GUI                                                             *
 #******************************************************************************
-import Tkinter
+import Tkinter as tkinter
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import EGSE.IF
 import UI.TKI
@@ -48,7 +48,7 @@ class GUIview(UI.TKI.GUItabView):
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,
-                 sticky=Tkinter.W)
+                 sticky=tkinter.W)
     # EGSE protocol
     self.egseProtocolField = UI.TKI.ValueField(self, row=1, label="EGSE protocol:")
     self.egseProtocolField.set(EGSE.IF.s_serverConfiguration.egseProtocol)
@@ -70,14 +70,14 @@ class GUIview(UI.TKI.GUItabView):
     self.messageLogger = UI.TKI.MessageLogger(self)
     self.appGrid(self.messageLogger, row=6, columnspan=2)
     # message line
-    self.messageline = Tkinter.Message(self, relief=Tkinter.GROOVE)
+    self.messageline = tkinter.Message(self, relief=tkinter.GROOVE)
     self.appGrid(self.messageline,
                  row=7,
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,
-                 sticky=Tkinter.EW)
-    self.grid(row=0, column=0, sticky=Tkinter.EW+Tkinter.NS)
+                 sticky=tkinter.EW)
+    self.grid(row=0, column=0, sticky=tkinter.EW+tkinter.NS)
     self.master.rowconfigure(0, weight=1)
     self.master.columnconfigure(0, weight=1)
   # ---------------------------------------------------------------------------

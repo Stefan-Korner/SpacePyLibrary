@@ -12,7 +12,8 @@
 #******************************************************************************
 # Space Link Simulation GUI                                                   *
 #******************************************************************************
-import Tkinter, tkSimpleDialog
+import Tkinter as tkinter
+import tkSimpleDialog as simpledialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import LINK.IF
 import UI.TKI
@@ -46,7 +47,7 @@ class GUIview(UI.TKI.GUItabView):
                  row=0,
                  columnspan=2,
                  rowweight=0,
-                 sticky=Tkinter.EW)
+                 sticky=tkinter.EW)
     # checkbuttons
     self.checkButtons = UI.TKI.Checkbuttons(self,
       [["TM_FLOW", self.tmFlowCallback, False, COLOR_ON_OK],
@@ -57,32 +58,32 @@ class GUIview(UI.TKI.GUItabView):
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,
-                 sticky=Tkinter.W)
+                 sticky=tkinter.W)
     # tm status
     self.clcwStatusField = UI.TKI.ValueField(self, row=2, label="CLCW status:")
     self.clcwStatusField.set("CLCW=0")
     # uplink and downlink queue contents
     self.subFrame = UI.TKI.SubFrame(self)
-    uplinkQueueLabel = Tkinter.Label(self.subFrame, text="Uplink Queue Contents")
+    uplinkQueueLabel = tkinter.Label(self.subFrame, text="Uplink Queue Contents")
     self.subFrame.appGrid(uplinkQueueLabel,
                           row=0,
                           column=0,
                           rowweight=0,
                           columnweight=0,
-                          sticky=Tkinter.EW)
-    self.uplinkQueueContents = UI.TKI.ScrolledListbox(self.subFrame, selectmode=Tkinter.SINGLE)
+                          sticky=tkinter.EW)
+    self.uplinkQueueContents = UI.TKI.ScrolledListbox(self.subFrame, selectmode=tkinter.SINGLE)
     self.uplinkQueueContents.list().configure(font="courier")
     self.uplinkQueueContents.list().insert(0, QUEUE_HEADER1)
     self.uplinkQueueContents.list().insert(1, QUEUE_HEADER2)
     self.subFrame.appGrid(self.uplinkQueueContents, row=1, column=0)
-    downlinkQueueLabel = Tkinter.Label(self.subFrame, text="Downlink Queue Contents")
+    downlinkQueueLabel = tkinter.Label(self.subFrame, text="Downlink Queue Contents")
     self.subFrame.appGrid(downlinkQueueLabel,
                           row=0,
                           column=1,
                           rowweight=0,
                           columnweight=0,
-                          sticky=Tkinter.EW)
-    self.downlinkQueueContents = UI.TKI.ScrolledListbox(self.subFrame, selectmode=Tkinter.SINGLE)
+                          sticky=tkinter.EW)
+    self.downlinkQueueContents = UI.TKI.ScrolledListbox(self.subFrame, selectmode=tkinter.SINGLE)
     self.downlinkQueueContents.list().configure(font="courier")
     self.downlinkQueueContents.list().insert(0, QUEUE_HEADER1)
     self.downlinkQueueContents.list().insert(1, QUEUE_HEADER2)
@@ -92,14 +93,14 @@ class GUIview(UI.TKI.GUItabView):
     self.messageLogger = UI.TKI.MessageLogger(self, "LINK")
     self.appGrid(self.messageLogger, row=5, columnspan=2)
     # message line
-    self.messageline = Tkinter.Message(self, relief=Tkinter.GROOVE)
+    self.messageline = tkinter.Message(self, relief=tkinter.GROOVE)
     self.appGrid(self.messageline,
                  row=6,
                  columnspan=2,
                  rowweight=0,
                  columnweight=0,
-                 sticky=Tkinter.EW)
-    self.grid(row=0, column=0, sticky=Tkinter.EW+Tkinter.NS)
+                 sticky=tkinter.EW)
+    self.grid(row=0, column=0, sticky=tkinter.EW+tkinter.NS)
     self.master.rowconfigure(0, weight=1)
     self.master.columnconfigure(0, weight=1)
   # ---------------------------------------------------------------------------
@@ -120,9 +121,9 @@ class GUIview(UI.TKI.GUItabView):
   # ---------------------------------------------------------------------------
   def setCLCWcallback(self):
     """Called when the SetCLCW menu entry is selected"""
-    clcwStr = tkSimpleDialog.askstring(title="CLCW Dialog",
-                                       prompt="CLCW Report Value (0...255):",
-                                       initialvalue="0")
+    clcwStr = simpledialog.askstring(title="CLCW Dialog",
+                                     prompt="CLCW Report Value (0...255):",
+                                     initialvalue="0")
     if clcwStr != None:
       self.notifyModelTask(["SETCLCW", clcwStr])
   # ---------------------------------------------------------------------------
@@ -191,7 +192,7 @@ class GUIview(UI.TKI.GUItabView):
     txt = "CLCW=" + str(clcw.reportValue)
     self.clcwStatusField.set(txt)
     # update the queue display
-    self.uplinkQueueContents.list().delete(0, Tkinter.END)
+    self.uplinkQueueContents.list().delete(0, tkinter.END)
     self.uplinkQueueContents.list().insert(0, QUEUE_HEADER1)
     self.uplinkQueueContents.list().insert(1, QUEUE_HEADER2)
     entryPos = 2
@@ -208,7 +209,7 @@ class GUIview(UI.TKI.GUItabView):
   def tmFrameNotify(self):
     """Called when a TM frame is added to / removed from the queue"""
     # update the queue display
-    self.downlinkQueueContents.list().delete(0, Tkinter.END)
+    self.downlinkQueueContents.list().delete(0, tkinter.END)
     self.downlinkQueueContents.list().insert(0, QUEUE_HEADER1)
     self.downlinkQueueContents.list().insert(1, QUEUE_HEADER2)
     entryPos = 2
