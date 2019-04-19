@@ -10,5 +10,8 @@ PAR9	Unsigned Integer Parameter			3	14	32			N	R		F	N	0		1234	1	R	Y		0	B
 PAR10	String Parameter			8	8	64			T	R		F	N	0		1234	1	R	Y		0	B
 PAR11	Float32 Parameter			5	1	32			N	R		F	N	2		1234	1	R	Y		0	B
 PAR12	Float64 Parameter			5	2	64			N	R		F	N	4		1234	1	R	Y		0	B
+PAR13	SID			3	12	16			N	R		F	N	0		1234	1	R	Y		0	B
+PAR14	N			3	12	16			N	R		F	N	0		1234	1	R	Y		0	B
+PAR15	Parameter#			3	14	32			N	R		F	N	0		1234	1	R	Y		0	B
 TC_ID	Telecommand ID			3	12	16			N	R		F	N	0		1234	1	R	Y		0	B
 TC_SSC	TC Source Sequence Count			3	12	16			N	R		F	N	0		1234	1	R	Y		0	B

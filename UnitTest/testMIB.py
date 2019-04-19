@@ -27,7 +27,7 @@ def test_MIB():
   if mibDir != expectedMibDir:
     print("mibDir", mibDir, "does not match the expected one: ", expectedMibDir)
     return False
-  pidMap, picMap, tpcfMap, pcfMap, plfMap, ccfMap, cpcMap, cdfMap = SCOS.MIB.readAllTables()
+  pidMap, picMap, tpcfMap, pcfMap, plfMap, vpdMap, ccfMap, cpcMap, cdfMap = SCOS.MIB.readAllTables()
   if len(pidMap) == 0:
     print("pidMap does not contain entries")
     return False
@@ -42,6 +42,9 @@ def test_MIB():
     return False
   if len(plfMap) == 0:
     print("plfMap does not contain entries")
+    return False
+  if len(vpdMap) == 0:
+    print("vpdMap does not contain entries")
     return False
   if len(ccfMap) == 0:
     print("ccfMap does not contain entries")
