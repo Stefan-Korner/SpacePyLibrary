@@ -179,7 +179,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     tmParamDef.maxCommutations = max(tmParamDef.minCommutations, tmParamDef.maxCommutations)
     return tmParamDef
   # ---------------------------------------------------------------------------
-  def createTMdefinitions(self, pidMap, picMap, tpcfMap, pcfMap, plfMap):
+  def createTMdefinitions(self, pidMap, picMap, tpcfMap, pcfMap, plfMap, vpdMap):
     """helper method: create TM packet and parameter definitions from MIB tables"""
     tmPktDefs = []
     tmPktDefsSpidMap = {}
@@ -502,8 +502,8 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     """
     self.definitionData = DefinitionData()
     # read the mib tables and create the TM/TC definitions
-    pidMap, picMap, tpcfMap, pcfMap, plfMap, ccfMap, cpcMap, cdfMap = SCOS.MIB.readAllTables()
-    self.createTMdefinitions(pidMap, picMap, tpcfMap, pcfMap, plfMap)
+    pidMap, picMap, tpcfMap, pcfMap, plfMap, vpdMap, ccfMap, cpcMap, cdfMap = SCOS.MIB.readAllTables()
+    self.createTMdefinitions(pidMap, picMap, tpcfMap, pcfMap, plfMap, vpdMap)
     self.createTCdefinitions(ccfMap, cpcMap, cdfMap)
     d = time.localtime()
     self.definitionData.creationTime = "%04d.%02d.%02d %02d:%02d:%02d" % d[:6]

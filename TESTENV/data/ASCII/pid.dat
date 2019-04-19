@@ -6,4 +6,5 @@
 1	6	1234	0	0	10006	telecommand execution progress - failure		-1	12	Y		Y	1	N	
 1	7	1234	0	0	10007	telecommand execution completed - success		-1	12	Y		Y	1	N	
 1	8	1234	0	0	10008	telecommand execution completed - failure		-1	12	Y		Y	1	N	
+3	23	1234	1103	0	12343	variable housekeeping telemetry packet		12343	12	Y		Y	1	N	
 3	25	1234	0	0	12345	housekeeping telemetry packet with 10 parameters		-1	12	Y		Y	1	N	

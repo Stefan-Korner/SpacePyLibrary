@@ -31,6 +31,7 @@ class PIDrecord:
     self.pidPI2 = int(fields[4])
     self.pidSPID = int(fields[5])
     self.pidDescr = fields[6]
+    self.pidTPDS = int(fields[8])
     self.pidDFHsize = int(fields[9])
     self.pidCheck = bool(int((fields[13]+"0")[0]))
   # ---------------------------------------------------------------------------
@@ -138,6 +139,26 @@ class PLFrecord:
     return self.plfName
 
 # =============================================================================
+class VPDrecord:
+  """MIB record from vpd.dat"""
+  # ---------------------------------------------------------------------------
+  def __init__(self, fields):
+    """initialise selected attributes from the record"""
+    self.vpdTPSD = int(fields[0])
+    self.vpdPos = int(fields[1])
+    self.vpdName = fields[2]
+    # this field could be empty
+    vpdGrpSize = fields[3]
+    if vpdGrpSize == "":
+      self.vpdGrpSize = 0
+    else:
+      self.vpdGrpSize = int(vpdGrpSize)
+  # ---------------------------------------------------------------------------
+  def key(self):
+    """record key"""
+    return self.vpdTPSD
+
+# =============================================================================
 class CCFrecord:
   """MIB record from ccf.dat"""
   # ---------------------------------------------------------------------------
@@ -218,6 +239,8 @@ def getMinFieldNr(tableName):
     return 6
   if tableName == "plf.dat":
     return 6
+  if tableName == "vpd.dat":
+    return 4
   if tableName == "ccf.dat":
     return 6
   if tableName == "cpc.dat":
@@ -239,6 +262,8 @@ def createRecord(tableName, fields):
     return PCFrecord(fields)
   if tableName == "plf.dat":
     return PLFrecord(fields)
+  if tableName == "vpd.dat":
+    return VPDrecord(fields)
   if tableName == "ccf.dat":
     return CCFrecord(fields)
   if tableName == "cpc.dat":
@@ -291,7 +316,8 @@ def readAllTables():
   tpcfMap = SCOS.MIB.readTable("tpcf.dat")
   pcfMap = SCOS.MIB.readTable("pcf.dat")
   plfMap = SCOS.MIB.readTable("plf.dat", uniqueKeys=False)
+  vpdMap = SCOS.MIB.readTable("vpd.dat", uniqueKeys=False)
   ccfMap = SCOS.MIB.readTable("ccf.dat")
   cpcMap = SCOS.MIB.readTable("cpc.dat")
   cdfMap = SCOS.MIB.readTable("cdf.dat", uniqueKeys=False)
-  return (pidMap, picMap, tpcfMap, pcfMap, plfMap, ccfMap, cpcMap, cdfMap)
+  return (pidMap, picMap, tpcfMap, pcfMap, plfMap, vpdMap, ccfMap, cpcMap, cdfMap)
