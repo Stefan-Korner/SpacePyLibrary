@@ -54,7 +54,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     """get the testdata.sim file name incl. path"""
     return self.definitionFileName
   # ---------------------------------------------------------------------------
-  def createTMpktDef(self, pidRecord, picRecord, tpcfRecord):
+  def createTMpktDef(self, pidRecord, picRecord, tpcfRecord, vpdMap, pcfMap):
     """creates a TM packet definition"""
     tmPktDef = SPACE.IF.TMpktDef();
     tmPktDef.pktSPID = pidRecord.pidSPID
@@ -123,10 +123,11 @@ class DefinitionsImpl(SPACE.IF.Definitions):
       tmPktDef.pktSPDFdataSize = 0
     # raw value extractions
     tmPktDef.paramLinks = {}
+    tmPktDef.tmStructDef = self.createTmToplevelStructDef(tmPktDef.pktName, vpdMap, pcfMap)
     return tmPktDef
   # ---------------------------------------------------------------------------
-  def createTMparamDef(self, pcfRecord, plfRecords, tmPktDefs):
-    """creates a TM parameter definition"""
+  def createTMfixedParamDef(self, pcfRecord, plfRecords, tmPktDefs):
+    """creates a TM fixed parameter definition"""
     paramPtc = pcfRecord.pcfPtc
     paramPfc = pcfRecord.pcfPfc
     # getBitWidth(...) can raise an exception --> it is catched by the caller
@@ -179,6 +180,21 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     tmParamDef.maxCommutations = max(tmParamDef.minCommutations, tmParamDef.maxCommutations)
     return tmParamDef
   # ---------------------------------------------------------------------------
+  def createTmVarParamDef(self, paramName, defaultValue, pcfMap, isReadOnly):
+    return None
+  # ---------------------------------------------------------------------------
+  def createTmSlotDef(self, sortedVpdRecords, vpdRecordsPos, pcfMap):
+    return None
+  # ---------------------------------------------------------------------------
+  def createTmStructDef(self, structName, sortedVpdRecords, vpdRecordsPos, vpdRecordsEnd, pcfMap):
+    return None
+  # ---------------------------------------------------------------------------
+  def createTmListDef(self, sortedVpdRecords, vpdRecordsPos, pcfMap, isReadOnly):
+    return None
+  # ---------------------------------------------------------------------------
+  def createTmToplevelStructDef(self, structName, vpdMap, pcfMap):
+    return None
+  # ---------------------------------------------------------------------------
   def createTMdefinitions(self, pidMap, picMap, tpcfMap, pcfMap, plfMap, vpdMap):
     """helper method: create TM packet and parameter definitions from MIB tables"""
     tmPktDefs = []
@@ -207,7 +223,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
         tpcfRecord = tpcfMap[spid]
       else:
         tpcfRecord = None
-      tmPktDef = self.createTMpktDef(pidRecord, picRecord, tpcfRecord)
+      tmPktDef = self.createTMpktDef(pidRecord, picRecord, tpcfRecord, vpdMap, pcfMap)
       pktName = tmPktDef.pktName
       tmPktDefs.append(tmPktDef)
       tmPktDefsSpidMap[spid] = tmPktDef
@@ -240,7 +256,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
       else:
         plfRecords = []
       try:
-        tmParamDef = self.createTMparamDef(pcfRecord, plfRecords, tmPktDefsSpidMap)
+        tmParamDef = self.createTMfixedParamDef(pcfRecord, plfRecords, tmPktDefsSpidMap)
       except Exception as ex:
         # inconsistency
         LOG_WARNING("param " + paramName + ": " + str(ex) + " ---> ignored", "SPACE")
