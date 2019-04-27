@@ -146,6 +146,7 @@ class TMpktDef(object):
     self.pktSPDFsize = None
     self.pktSPDFdataSize = None
     self.paramLinks = None
+    self.tmStructDef = None
   # ---------------------------------------------------------------------------
   def __cmp__(self, other):
     """supports sorting by SPID"""
@@ -318,6 +319,7 @@ class TMpktDef(object):
     retVal += " paramLinks =\n"
     for paramToPacket in self.paramLinks.values():
       retVal += "  paramToPacket = " + str(paramToPacket)
+    retVal += " tmStructDef = " + str(self.tmStructDef) + "\n"
     return retVal
 
 # =============================================================================
