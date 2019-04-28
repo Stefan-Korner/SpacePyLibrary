@@ -31,7 +31,7 @@ class PIDrecord:
     self.pidPI2 = int(fields[4])
     self.pidSPID = int(fields[5])
     self.pidDescr = fields[6]
-    self.pidTPDS = int(fields[8])
+    self.pidTPSD = int(fields[8])
     self.pidDFHsize = int(fields[9])
     self.pidCheck = bool(int((fields[13]+"0")[0]))
   # ---------------------------------------------------------------------------
@@ -107,6 +107,7 @@ class PCFrecord:
     self.pcfDescr = fields[1]
     self.pcfPtc = int(fields[4])
     self.pcfPfc = int(fields[5])
+    self.pcfParVal = fields[15]
   # ---------------------------------------------------------------------------
   def key(self):
     """record key"""
@@ -153,6 +154,8 @@ class VPDrecord:
       self.vpdGrpSize = 0
     else:
       self.vpdGrpSize = int(vpdGrpSize)
+    self.vpdFixRep = fields[4]
+    self.vpdDisDesc = fields[7]
   # ---------------------------------------------------------------------------
   def key(self):
     """record key"""
@@ -236,11 +239,11 @@ def getMinFieldNr(tableName):
   if tableName == "tpcf.dat":
     return 2
   if tableName == "pcf.dat":
-    return 6
+    return 16
   if tableName == "plf.dat":
     return 6
   if tableName == "vpd.dat":
-    return 4
+    return 8
   if tableName == "ccf.dat":
     return 6
   if tableName == "cpc.dat":

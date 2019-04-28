@@ -124,7 +124,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
       tmPktDef.pktSPDFdataSize = 0
     # raw value extractions
     tmPktDef.paramLinks = {}
-    tmPktDef.tmStructDef = self.createTmToplevelStructDef(tmPktDef.pktName, vpdMap, pcfMap)
+    tmPktDef.tmStructDef = self.createTmToplevelStructDef(pidRecord.pidTPSD, vpdMap, pcfMap)
     return tmPktDef
   # ---------------------------------------------------------------------------
   def createTMfixedParamDef(self, pcfRecord, plfRecords, tmPktDefs):
@@ -181,20 +181,104 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     tmParamDef.maxCommutations = max(tmParamDef.minCommutations, tmParamDef.maxCommutations)
     return tmParamDef
   # ---------------------------------------------------------------------------
-  def createTmVarParamDef(self, paramName, defaultValue, pcfMap, isReadOnly):
-    return None
+  def createTmVarParamDef(self, paramName, pcfMap):
+    isReadOnly = False
+    try:
+      pcfRecord = pcfMap[paramName]
+      paramPtc = pcfRecord.pcfPtc
+      paramPfc = pcfRecord.pcfPfc
+      try:
+        paramType = getValueType(paramPtc, paramPfc)
+        bitWidth = getBitWidth(paramPtc, paramPfc)
+        defaultValue = pcfRecord.pcfParVal
+      except Exception, ex:
+        # inconsistency
+        LOG_WARNING("param " + paramName + ": " + str(ex) + " ---> dummy type", "SPACE")
+        paramType = UTIL.DU.UNSIGNED
+        bitWidth = 8
+        defaultValue = 0
+    except:
+      LOG_WARNING("TM param name " + paramName + " not found in pcf.dat ---> dummy param", "SPACE")
+      paramName = "dummy"
+      paramType = UTIL.DU.UNSIGNED
+      bitWidth = 8
+      defaultValue = 0
+    # special handling of time parameters
+    if paramType == UTIL.DU.TIME:
+      # TODO: differentiate between absolute and relative time
+      try:
+        timeFormat = getTimeFormat(paramPfc)
+        return PUS.VP.TimeParamDef(paramName,
+                                   timeFormat,
+                                   defaultValue,
+                                   isReadOnly)
+      except Exception, ex:
+        # inconsistency
+        LOG_WARNING("param " + paramName + ": " + str(ex) + " ---> dummy type", "SPACE")
+        paramType = UTIL.DU.UNSIGNED
+        bitWidth = 8
+        defaultValue = 0
+    # special handling of variable size parameters
+    if bitWidth == 0:
+      # TODO: consider also information in the MIB
+      lengthBytes = self.tcParamLengthBytes
+      return PUS.VP.VariableParamDef(paramName,
+                                     paramType,
+                                     lengthBytes,
+                                     defaultValue,
+                                     isReadOnly)
+    # default handling of normal parameters
+    return PUS.VP.SimpleParamDef(paramName,
+                                 paramType,
+                                 bitWidth,
+                                 defaultValue,
+                                 isReadOnly)
   # ---------------------------------------------------------------------------
   def createTmSlotDef(self, sortedVpdRecords, vpdRecordsPos, pcfMap):
-    return None
+    nextVpdRecord = sortedVpdRecords[vpdRecordsPos]
+    slotName = nextVpdRecord.vpdDisDesc
+    isReadOnly = False
+    # TODO: consider also fixed areas that don't have a related PCF record,
+    #       this is defined via vpdFixRep != 0
+    if nextVpdRecord.vpdGrpSize > 0:
+      # group repeater definition
+      childDef, vpdRecordsPos = self.createTmListDef(sortedVpdRecords, vpdRecordsPos, pcfMap)
+    else:
+      # parameter definition
+      paramName = nextVpdRecord.vpdName
+      childDef = self.createTmVarParamDef(paramName, pcfMap)
+      vpdRecordsPos += 1
+    return (PUS.VP.SlotDef(slotName, childDef), vpdRecordsPos)
   # ---------------------------------------------------------------------------
   def createTmStructDef(self, structName, sortedVpdRecords, vpdRecordsPos, vpdRecordsEnd, pcfMap):
-    return None
+    sortedSlotDefs = []
+    while vpdRecordsPos < vpdRecordsEnd:
+      nextSlotDef, vpdRecordsPos = self.createTmSlotDef(sortedVpdRecords, vpdRecordsPos, pcfMap)
+      sortedSlotDefs.append(nextSlotDef)
+    return (PUS.VP.StructDef(structName, sortedSlotDefs), vpdRecordsPos)
   # ---------------------------------------------------------------------------
-  def createTmListDef(self, sortedVpdRecords, vpdRecordsPos, pcfMap, isReadOnly):
-    return None
+  def createTmListDef(self, sortedVpdRecords, vpdRecordsPos, pcfMap):
+    nextVpdRecord = sortedVpdRecords[vpdRecordsPos]
+    lenParamName = nextVpdRecord.vpdName
+    lenParamDef = self.createTmVarParamDef(lenParamName, pcfMap)
+    vpdRecordsPos += 1
+    vpdRecordsEnd = vpdRecordsPos + nextVpdRecord.vpdGrpSize
+    entryDef, vpdRecordsPos = self.createTmStructDef("", sortedVpdRecords, vpdRecordsPos, vpdRecordsEnd, pcfMap)
+    return (PUS.VP.ListDef(lenParamDef, entryDef), vpdRecordsPos)
   # ---------------------------------------------------------------------------
-  def createTmToplevelStructDef(self, structName, vpdMap, pcfMap):
-    return None
+  def createTmToplevelStructDef(self, structID, vpdMap, pcfMap):
+    structName = str(structID)
+    # try to find a variable packet definition
+    try:
+      vpdRecords = vpdMap[structID]
+    except:
+      return None
+    # sort the related variable record definitions
+    sortedVpdRecords = sorted(vpdRecords, key=lambda vpdRecord: vpdRecord.vpdPos)
+    vpdRecordsPos = 0
+    vpdRecordsEnd = len(sortedVpdRecords)
+    structDef, vpdRecordsPos = self.createTmStructDef(structName, sortedVpdRecords, vpdRecordsPos, vpdRecordsEnd, pcfMap)
+    return structDef
   # ---------------------------------------------------------------------------
   def createTMdefinitions(self, pidMap, picMap, tpcfMap, pcfMap, plfMap, vpdMap):
     """helper method: create TM packet and parameter definitions from MIB tables"""
@@ -229,6 +313,8 @@ class DefinitionsImpl(SPACE.IF.Definitions):
       tmPktDefs.append(tmPktDef)
       tmPktDefsSpidMap[spid] = tmPktDef
       tmPktSpidNameMap[pktName] = spid
+      if pidRecord.pidTPSD != -1:
+        statusMessage += ", variable"
       LOG("TM packet " + pktName + "(" + str(spid) + "), " + statusMessage, "SPACE")
       # create the packet ID record for the packet identification
       apid = pidRecord.pidAPID
@@ -325,7 +411,6 @@ class DefinitionsImpl(SPACE.IF.Definitions):
   def createTcParamDef(self, paramName, defaultValue, cpcMap, isReadOnly):
     try:
       cpcRecord = cpcMap[paramName]
-      paramName = cpcRecord.cpcPName
       paramPtc = cpcRecord.cpcPtc
       paramPfc = cpcRecord.cpcPfc
       try:
