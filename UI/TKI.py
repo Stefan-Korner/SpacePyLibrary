@@ -465,7 +465,7 @@ class SubFrame(tkinter.Frame, AppGrid):
     tkinter.Frame.__init__(self, master, relief=tkinter.GROOVE, borderwidth=1)
 
 # =============================================================================
-class ValueField:
+class ValueField(object):
   """Combines a fixed label field and a dynamic value field managed by a StringVar"""
   # ---------------------------------------------------------------------------
   def __init__(self, master, row=0, column=0, label="", width=40, fieldColumnspan=1):
@@ -498,7 +498,7 @@ class ValueField:
     return self.stringVar.get()
 
 # =============================================================================
-class InputField:
+class InputField(object):
   """Combines a fixed label field and an entry field"""
   # ---------------------------------------------------------------------------
   def __init__(self, master, appGridMaster=None, row=0, column=0, label="", initVal=""):
@@ -537,7 +537,7 @@ class CheckbuttonField(object):
     return (self.stringVar.get() == "1")
 
 # =============================================================================
-class RadiobuttonsField:
+class RadiobuttonsField(object):
   """Combines fixed label fields and an radiobutton fields"""
   # ---------------------------------------------------------------------------
   def __init__(self, master, appGridMaster=None, row=0, column=0, labels=["?"]):

@@ -85,7 +85,7 @@ class TCpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
     pktSType = ""
     pktPI1val = ""
     pktPI2val = ""
-    self.tcStruct = None
+    tcStructDef = None
     if tcPktDef != None:
       pktName = tcPktDef.pktName
       pktDescr = tcPktDef.pktDescr
@@ -98,7 +98,6 @@ class TCpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
       if tcPktDef.pktPI2val != None:
         pktPI2val = tcPktDef.pktPI2val
       tcStructDef = tcPktDef.tcStructDef
-      self.tcStruct = PUS.VP.Struct(tcStructDef)
     # write the data into the GUI
     self.pktNameField.set(pktName)
     self.pktDescrField.set(pktDescr)
@@ -108,6 +107,7 @@ class TCpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
     self.pktSubtypeField.set(pktSType)
     self.pktPI1field.set(pktPI1val)
     self.pktPI2field.set(pktPI2val)
+    self.tcStruct = PUS.VP.Struct(tcStructDef)
     self.parametersTreeview.fillTree(pktName, self.tcStruct)
 
 # =============================================================================

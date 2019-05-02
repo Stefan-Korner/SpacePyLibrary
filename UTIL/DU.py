@@ -605,6 +605,12 @@ class BinaryUnit(object):
 # functions #
 #############
 # -----------------------------------------------------------------------------
+def isNumber(fieldType):
+  """predicate"""
+  return (fieldType == BITS or fieldType == SBITS or
+          fieldType == UNSIGNED or fieldType == SIGNED or
+          fieldType == FLOAT)
+# -----------------------------------------------------------------------------
 def fieldTypeStr(fieldType):
   """returns the stringified field type"""
   if fieldType == BITS:
