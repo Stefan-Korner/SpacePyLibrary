@@ -190,6 +190,8 @@ class DefinitionsImpl(SPACE.IF.Definitions):
         paramType = getValueType(paramPtc, paramPfc)
         bitWidth = getBitWidth(paramPtc, paramPfc)
         defaultValue = pcfRecord.pcfParVal
+        if defaultValue == "" and UTIL.DU.isNumber(paramType):
+          defaultValue = 0
       except Exception as ex:
         # inconsistency
         LOG_WARNING("param " + paramName + ": " + str(ex) + " ---> dummy type", "SPACE")
@@ -271,7 +273,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     try:
       vpdRecords = vpdMap[structID]
     except:
-      return None
+      vpdRecords = []
     # sort the related variable record definitions
     sortedVpdRecords = sorted(vpdRecords, key=lambda vpdRecord: vpdRecord.vpdPos)
     vpdRecordsPos = 0
@@ -499,7 +501,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     try:
       cdfRecords = cdfMap[structName]
     except:
-      LOG_WARNING("no variable packet definition " + structName +" in cdf.dat ---> dummy entry", "SPACE")
+      LOG_WARNING("no variable packet definition " + structName + " in cdf.dat ---> dummy entry", "SPACE")
       cdfRecords = []
     # sort the related variable record definitions
     sortedCdfRecords = sorted(cdfRecords, key=lambda cdfRecord: cdfRecord.cdfBit)

@@ -15,8 +15,10 @@
 import tkinter
 from tkinter import filedialog, simpledialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import PUS.VP
 import SCOS.ENV
 import SPACE.IF
+import SPACEUI.VPgui
 import UI.TKI
 import UTIL.TIME
 
@@ -58,23 +60,30 @@ class TMpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
     self.pktPI1field = UI.TKI.ValueField(self, row=7, label="Packet PI1:")
     # PI2
     self.pktPI2field = UI.TKI.ValueField(self, row=8, label="Packet PI2:")
-    # --- parameter listbox ---
-    label = tkinter.Label(self, text="Parameters")
+    # --- parameter tree ---
+    label = tkinter.Label(self, text="Variable Parameters")
     self.appGrid(label, row=0, column=2, rowweight=0)
-    self.parametersListbox = UI.TKI.ScrolledListbox(self, selectmode=tkinter.SINGLE)
-    self.appGrid(self.parametersListbox, row=1, column=2, rowspan=8, rowweight=0, columnweight=1)
-    # --- filler ---
-    filler = tkinter.Label(self)
-    self.appGrid(filler, row=9, columnspan=3, rowweight=0)
+    self.parametersTreeview = SPACEUI.VPgui.TreeView(self)
+    self.appGrid(self.parametersTreeview, row=1, column=2, rowspan=8, rowweight=0, columnweight=1)
+    # --- fixed parameters ---
     # parameter names
-    self.parameterNamesField = UI.TKI.InputField(self, row=10, label="Parameter names: optional")
-    self.appGrid(self.parameterNamesField.field, row=10, column=1, columnspan=2, rowweight=0)
+    label = tkinter.Label(self, text="Parameter names: optional", anchor=tkinter.W)
+    self.appGrid(label, row=10, columnspan=2, rowweight=0)
+    self.parameterNamesField = tkinter.Entry(self, width=40)
+    self.appGrid(self.parameterNamesField, row=11, columnspan=2, rowweight=0)
     # parameter values
-    self.parameterValuesField = UI.TKI.InputField(self, row=11, label="Parameter value: optional")
-    self.appGrid(self.parameterValuesField.field, row=11, column=1, columnspan=2, rowweight=0)
+    label = tkinter.Label(self, text="Parameter values: optional", anchor=tkinter.W)
+    self.appGrid(label, row=12, columnspan=2, rowweight=0)
+    self.parameterValuesField = tkinter.Entry(self, width=40)
+    self.appGrid(self.parameterValuesField, row=13, columnspan=2, rowweight=0)
+    # --- parameter listbox ---
+    label = tkinter.Label(self, text="Fixed Parameters")
+    self.appGrid(label, row=9, column=2, rowweight=0)
+    self.parametersListbox = UI.TKI.ScrolledListbox(self, selectmode=tkinter.SINGLE)
+    self.appGrid(self.parametersListbox, row=10, column=2, rowspan=10, rowweight=0, columnweight=1)
     # --- filler ---
     filler = tkinter.Label(self)
-    self.appGrid(filler, row=12, columnspan=3, rowweight=0)
+    self.appGrid(filler, row=20, columnspan=3, rowweight=0)
   # ---------------------------------------------------------------------------
   def update(self, tmPktDef):
     """Update the packet fields"""
@@ -87,6 +96,7 @@ class TMpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
     pktSType = ""
     pktPI1val = ""
     pktPI2val = ""
+    tmStructDef = None
     tmParamExtractions = []
     if tmPktDef != None:
       pktName = tmPktDef.pktName
@@ -99,6 +109,7 @@ class TMpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
         pktPI1val = tmPktDef.pktPI1val
       if tmPktDef.pktPI2val != None:
         pktPI2val = tmPktDef.pktPI2val
+      tmStructDef = tmPktDef.tmStructDef
       tmParamExtractions = tmPktDef.getParamExtractions()
     # write the data into the GUI
     self.pktNameField.set(pktName)
@@ -117,6 +128,8 @@ class TMpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
       text = tmParamExtraction.name + " ---> " + tmParamExtraction.descr
       self.parametersListbox.list().insert(lrow, text)
       lrow += 1
+    self.tmStruct = PUS.VP.Struct(tmStructDef)
+    self.parametersTreeview.fillTree(pktName, self.tmStruct)
 
 # =============================================================================
 class TMpacketBrowser(simpledialog.Dialog, UI.TKI.AppGrid):
@@ -280,7 +293,7 @@ class GUIview(UI.TKI.GUItabView):
     # do the dialog
     dialog = TMpacketBrowser(self,
       title="Set Packet Data Dialog",
-      prompt="Please select a packet and enter virtual channel and parameter name/values.")
+      prompt="Please select a packet and enter parameter name/values.")
     if dialog.result != None:
       packetName, paramNames, paramValues = dialog.result
       if paramNames == "" or paramValues == "":
