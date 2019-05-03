@@ -88,6 +88,7 @@ def test_TMGENoperations():
   tmPacket = SPACE.IF.s_tmPacketGenerator.getTMpacket(
     spid=testData.TM_PACKET_03_SPID,
     parameterValues=[],
+    tmStruct=None,
     dataField=None,
     segmentationFlags=CCSDS.PACKET.UNSEGMENTED,
     obtUTC=0.0,
@@ -147,6 +148,7 @@ def test_TMGENoperations():
   tmPacket = SPACE.IF.s_tmPacketGenerator.getTMpacket(
     spid=testData.TM_PACKET_03_SPID,
     parameterValues=parameterValuesList,
+    tmStruct=None,
     dataField=None,
     segmentationFlags=CCSDS.PACKET.UNSEGMENTED,
     obtUTC=0.0,

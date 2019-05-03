@@ -173,7 +173,15 @@ class TMpktDef(object):
   # ---------------------------------------------------------------------------
   def updateSPsize(self):
     """updates the source packet size from parameter positions"""
-    totalBitEndPos = 0
+    totalBitEndPos = CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE * 8
+    if self.pktHasDFhdr:
+      totalBitEndPos += self.pktDFHsize * 8
+    if self.pktPI1off != None:
+      pi1BitEndPos = (self.pktPI1off * 8) + self.pktPI1wid
+      totalBitEndPos = max(totalBitEndPos, pi1BitEndPos)
+    if self.pktPI2off != None:
+      pi2BitEndPos = (self.pktPI2off * 8) + self.pktPI2wid
+      totalBitEndPos = max(totalBitEndPos, pi2BitEndPos)
     # search the end position of all parameters
     for paramName, paramToPacket in self.paramLinks.items():
       paramDef = paramToPacket.paramDef
@@ -377,12 +385,14 @@ class TMpacketInjectData(object):
                pktMnemonic,
                params,
                values,
+               tmStruct,
                dataField,
                segmentationFlags):
     """Initialisation with default data"""
     self.pktName = pktMnemonic
     self.pktSPID = pktSPID
     self.parameterValuesList = []
+    self.tmStruct = tmStruct
     self.dataField = dataField
     self.segmentationFlags = segmentationFlags
     if params == "" or values == "":
@@ -522,6 +532,7 @@ class Definitions(object):
                             pktMnemonic,
                             params,
                             values,
+                            tmStruct,
                             dataField=None,
                             segmentationFlags=CCSDS.PACKET.UNSEGMENTED):
     """returns the data that are used for packet injection"""
@@ -531,6 +542,7 @@ class Definitions(object):
                                   spid,
                                   params,
                                   values,
+                                  tmStruct,
                                   dataField=None,
                                   segmentationFlags=CCSDS.PACKET.UNSEGMENTED):
     """returns the data that are used for packet injection"""
@@ -674,7 +686,8 @@ class TMpacketGenerator(object):
   # ---------------------------------------------------------------------------
   def getTMpacket(self,
                   spid,
-                  parameterValues=[],
+                  parameterValues,
+                  tmStruct,
                   dataField=None,
                   segmentationFlags=CCSDS.PACKET.UNSEGMENTED,
                   obtTimeStamp=None,

@@ -13,8 +13,9 @@
 # Monitoring and Control (M&C) - Telemetry Model                              *
 #******************************************************************************
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import CCSDS.PACKET
 import MC.IF
-import PUS.PACKET, PUS.SERVICES
+import PUS.PACKET, PUS.SERVICES, PUS.VP
 import SPACE.IF
 import UTIL.DU
 
@@ -35,13 +36,7 @@ class TMmodel(MC.IF.TMmodel):
     implementation of MC.IF.TMmodel.pushTMpacket
     """
     LOG_INFO("pushTMpacket", "TM")
-    # try to identify the TM packet ID
-    try:
-      tmPacketKey = SPACE.IF.s_definitions.getTMpacketKey(tmPacketDu)
-      LOG("KEY =     " + str(tmPacketKey), "TM")
-    except Exception, ex:
-      LOG_WARNING("packet cannot be identified: " + str(ex), "TM")
-    # packet processing
+    # other packet info
     LOG("APID =    " + str(tmPacketDu.applicationProcessId), "TM")
     LOG("SSC =     " + str(tmPacketDu.sequenceControlCount), "TM")
     if PUS.PACKET.isPUSpacketDU(tmPacketDu):
@@ -53,14 +48,26 @@ class TMmodel(MC.IF.TMmodel):
       # for SCOS-2000 compatibility we expect a CRC
       if not tmPacketDu.checkChecksum():
         LOG_ERROR("invalid TM packet CRC", "TM")
-      # processing of PUS telecommands
-      if tmPacketDu.serviceType == PUS.SERVICES.TC_ACK_TYPE:
-        # packet is a PUS TC Acknowledgement command
-        MC.IF.s_tcModel.notifyTCack(tmPacketDu.serviceSubType)
     else:
       # CCSDS packet
       LOG("non-PUS packet", "TM")
       LOG("tmPacketDu = " + str(tmPacketDu), "TM")
+    try:
+      # try to decode the packet
+      tmPacketKey = SPACE.IF.s_definitions.getTMpacketKey(tmPacketDu)
+      LOG("KEY =     " + str(tmPacketKey), "TM")
+      tmPktDef = SPACE.IF.s_definitions.getTMpktDefBySPID(tmPacketKey)
+      tmStructDef = tmPktDef.tmStructDef
+      structBitPos = (CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE + tmPktDef.pktDFHsize) << 3
+      tmStruct = PUS.VP.Struct(tmStructDef)
+      tmStruct.decode(tmPacketDu, structBitPos)
+      LOG("tmStruct =" + str(tmStruct), "TM")
+    except Exception, ex:
+      LOG_WARNING("packet cannot be decoded: " + str(ex), "TM")
+    # processing of PUS telecommands
+    if PUS.PACKET.isPUSpacketDU(tmPacketDu) and tmPacketDu.serviceType == PUS.SERVICES.TC_ACK_TYPE:
+      # packet is a PUS TC Acknowledgement command
+      MC.IF.s_tcModel.notifyTCack(tmPacketDu.serviceSubType)
     # forward the TM packet also to the TM recorder
     # where the packet is recorded on demand
     MC.IF.s_tmRecorder.pushTMpacket(tmPacketDu, ertUTC)

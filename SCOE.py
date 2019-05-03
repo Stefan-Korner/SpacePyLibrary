@@ -108,9 +108,9 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     elif (cmd == "DB") or (cmd == "EGSEDISABLEACK2"):
       retStatus = self.egseDisableAck2Cmd(argv)
     elif (cmd == "P") or (cmd == "SETPACKETDATA"):
-      retStatus = self.setPacketDataCmd(argv)
+      retStatus = self.setPacketDataCmd(argv, extraData)
     elif (cmd == "S") or (cmd == "SENDPACKET"):
-      retStatus = self.sendPacketCmd(argv)
+      retStatus = self.sendPacketCmd(argv, extraData)
     elif (cmd == "E") or (cmd == "ENABLECYCLIC"):
       retStatus = self.enableCyclicCmd(argv)
     elif (cmd == "D") or (cmd == "DISABLECYCLIC"):
@@ -289,7 +289,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     self.notifyGUItask("EGSE_DISABLED_ACK2")
     return True
   # ---------------------------------------------------------------------------
-  def setPacketDataCmd(self, argv):
+  def setPacketDataCmd(self, argv, extraData):
     """Decoded setPacketData command"""
     self.logMethod("setPacketDataCmd", "SPACE")
 
@@ -306,8 +306,9 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     else:
       params = argv[2]
       values = argv[3]
+    tmStruct = extraData
     # check the packet data
-    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic, params, values)
+    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic, params, values, tmStruct)
     if tmPacketData == None:
       LOG_WARNING("invalid data passed for setPacketData", "SPACE")
       return False
@@ -321,7 +322,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     self.notifyGUItask("PACKETDATA_SET")
     return True
   # ---------------------------------------------------------------------------
-  def sendPacketCmd(self, argv):
+  def sendPacketCmd(self, argv, extraData):
     """Decoded sendPacket command"""
     self.logMethod("sendPacketCmd", "SPACE")
 
@@ -344,8 +345,9 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       else:
         params = argv[2]
         values = argv[3]
+      tmStruct = extraData
       # check the packet data
-      tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic, params, values)
+      tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic, params, values, tmStruct)
       if tmPacketData == None:
         LOG_WARNING("invalid data passed for sendPacketCmd", "SPACE")
         return False

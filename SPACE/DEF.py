@@ -696,6 +696,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
                             pktMnemonic,
                             params,
                             values,
+                            tmStruct,
                             dataField=None,
                             segmentationFlags=CCSDS.PACKET.UNSEGMENTED):
     """
@@ -709,6 +710,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
                                        pktMnemonic,
                                        params,
                                        values,
+                                       tmStruct,
                                        dataField,
                                        segmentationFlags)
   # ---------------------------------------------------------------------------
@@ -729,6 +731,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
                                        pktDef.pktName,
                                        params,
                                        values,
+                                       tmStruct,
                                        dataField,
                                        segmentationFlags)
   # ---------------------------------------------------------------------------

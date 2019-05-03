@@ -106,9 +106,11 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     """
     params = ""
     values = ""
+    tmStruct = None
     tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
                                                                 params,
-                                                                values)
+                                                                values,
+                                                                tmStruct)
     # check the TM packet data
     if tmPacketData == None:
       LOG_ERROR("TM packet creation failed for " + pktMnemonic, "SPACE")
@@ -123,9 +125,11 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     """
     params = ""
     values = ""
+    tmStruct = None
     tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectDataBySPID(spid,
                                                                       params,
-                                                                      values)
+                                                                      values,
+                                                                      tmStruct)
 
     # check the TM packet data
     if tmPacketData == None:
@@ -142,10 +146,12 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     # create the TM packet
     spid = tmPacketData.pktSPID
     paramValues = tmPacketData.parameterValuesList
+    tmStruct = tmPacketData.tmStruct
     dataField = tmPacketData.dataField
     segmentationFlags = tmPacketData.segmentationFlags
     tmPacketDu = SPACE.IF.s_tmPacketGenerator.getTMpacket(spid,
                                                           paramValues,
+                                                          tmStruct,
                                                           dataField,
                                                           segmentationFlags,
                                                           obtUTC)
@@ -236,9 +242,11 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     values =  str(tcAPID)
     values += ","
     values += str(tcSSC)
+    tmStruct = None
     tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemo,
                                                                 params,
-                                                                values)
+                                                                values,
+                                                                tmStruct)
     # check the TM packet
     if tmPacketData == None:
       LOG_ERROR("packet creation failed for this acknowledgement: " + str(ackType), "SPACE")
@@ -358,9 +366,11 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     # create the TM packet
     params = ""
     values = ""
+    tmStruct = None
     tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemo,
                                                                 params,
-                                                                values)
+                                                                values,
+                                                                tmStruct)
     # check the TM packet
     if tmPacketData == None:
       LOG_ERROR("packet creation failed for cyclic TM", "SPACE")
