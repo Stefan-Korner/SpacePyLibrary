@@ -40,8 +40,6 @@ Backlog of features that shall be implemented
 
 030 Change initialization order in TMGEN when PUS packets are constructed.
 
-031 Support variable TM packets.
-
 034 Support direct console logging and use it when there is an exit.
 
 --------------------------------- implemented ---------------------------------
@@ -72,6 +70,8 @@ Backlog of features that shall be implemented
 017 Implement TC parameter encoding in CS TC model.
 
 021 Harmonize Python2 and Python3 code.
+
+031 Support variable TM packets.
 
 032 Support NCTRS data units version 0 and 1.
 

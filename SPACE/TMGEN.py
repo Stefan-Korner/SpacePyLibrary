@@ -69,7 +69,8 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
   # ---------------------------------------------------------------------------
   def getTMpacket(self,
                   spid,
-                  parameterValues=[],
+                  parameterValues,
+                  tmStruct,
                   dataField=None,
                   segmentationFlags=CCSDS.PACKET.UNSEGMENTED,
                   obtUTC=None,
@@ -125,9 +126,29 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
         minExpectedPacketSize += CCSDS.DU.CRC_BYTE_SIZE
       # re-size the packet if needed
       if len(packet) < minExpectedPacketSize:
-        packet.setLen(minExpectedPacketSize)
+        binarySize = minExpectedPacketSize
+        packet.setLen(binarySize)
         packet.setPacketLength()
       packet.setBytes(dataFieldOffset, len(dataFieldData), dataFieldData)
+    ### apply the encoded tmStruct ###
+    if tmStruct != None:
+      #-- find the correct position for the data
+      structBytePos = CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE
+      if tmPktDef.pktHasDFhdr:
+        # PUS packet
+        structBytePos += tmPktDef.pktDFHsize
+      structBitPos = structBytePos << 3
+      structEndBitPos = structBitPos + tmStruct.getBitWidth()
+      structEndBytePos = (structEndBitPos + 7) >> 3
+      #-- re-size the packet to exactly fit
+      tmPacketSize = structEndBytePos
+      if tmPktDef.pktCheck:
+        tmPacketSize += CCSDS.DU.CRC_BYTE_SIZE
+      binarySize = max(binarySize, tmPacketSize)
+      packet.setLen(binarySize)
+      packet.setPacketLength()
+      #-- encode the struct
+      tmStruct.encode(packet, structBitPos)
     # apply the parameters
     for paramNameValue in parameterValues:
       paramName, paramValue = paramNameValue

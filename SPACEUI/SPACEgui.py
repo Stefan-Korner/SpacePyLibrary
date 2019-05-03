@@ -196,7 +196,8 @@ class TMpacketBrowser(simpledialog.Dialog, UI.TKI.AppGrid):
     if packetName != "":
       paramNames = self.details.parameterNamesField.get()
       paramValues = self.details.parameterValuesField.get()
-      self.result = [packetName, paramNames, paramValues]
+      tmStruct = self.details.tmStruct
+      self.result = [packetName, paramNames, paramValues, tmStruct]
 
 # =============================================================================
 class GUIview(UI.TKI.GUItabView):
@@ -295,11 +296,13 @@ class GUIview(UI.TKI.GUItabView):
       title="Set Packet Data Dialog",
       prompt="Please select a packet and enter parameter name/values.")
     if dialog.result != None:
-      packetName, paramNames, paramValues = dialog.result
+      packetName, paramNames, paramValues, tmStruct = dialog.result
+      if len(tmStruct.slots) == 0:
+        tmStruct = None
       if paramNames == "" or paramValues == "":
-        self.notifyModelTask(["SETPACKETDATA", packetName])
+        self.notifyModelTask(["SETPACKETDATA", packetName], tmStruct)
       else:
-        self.notifyModelTask(["SETPACKETDATA", packetName, paramNames, paramValues])
+        self.notifyModelTask(["SETPACKETDATA", packetName, paramNames, paramValues], tmStruct)
   # ---------------------------------------------------------------------------
   def sendPacketCallback(self):
     """Called when the SendPacket menu entry is selected"""
