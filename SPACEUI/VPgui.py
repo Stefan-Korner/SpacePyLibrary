@@ -12,9 +12,11 @@
 #******************************************************************************
 # Variable Packet GUI                                                         *
 #******************************************************************************
+import tkinter
 from tkinter import ttk, simpledialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import PUS.VP
+import UI.TKI
 import UTIL.DU
 
 #############
@@ -26,36 +28,40 @@ COLOR_ITEM_DISABLE = "#808080"
 # classes #
 ###########
 # =============================================================================
-class TreeView(ttk.Treeview):
+class TreeView(UI.TKI.ScrolledTreeview):
   """Variable packet tree view"""
   # ---------------------------------------------------------------------------
   def __init__(self, root):
-    ttk.Treeview.__init__(self, root)
-    self.bind("<Double-1>", self.itemEvent)
-    self["columns"]=("name","value")
-    self.column("name", width=100 )
-    self.column("value", width=200)
-    self.heading("name", text="Name")
-    self.heading("value", text="Value")
-    self.tag_configure("readOnly", foreground=COLOR_ITEM_DISABLE)
+    UI.TKI.ScrolledTreeview.__init__(self, root)
+    innerTree = self.tree()
+    innerTree.bind("<Double-1>", self.itemEvent)
+    innerTree["columns"]=("name","value")
+    innerTree.column("#0", width=150, minwidth=150, stretch=False)
+    innerTree.column("name", width=100, minwidth=100, stretch=False)
+    innerTree.column("value", width=100, minwidth=400, stretch=True)
+    innerTree.heading("name", text="Name", anchor=tkinter.W)
+    innerTree.heading("value", text="Value", anchor=tkinter.W)
+    innerTree.tag_configure("readOnly", foreground=COLOR_ITEM_DISABLE)
     self.treeMap = {}
     self.toplevelStruct = None
   # ---------------------------------------------------------------------------
   def fillTree(self, treeName, struct):
     """fills a toplevel Struct into the tree"""
+    innerTree = self.tree()
     # delete the old contents
     self.treeMap = {}
-    self.delete(*self.get_children())
+    innerTree.delete(*innerTree.get_children())
     # fill the new contents
     self.toplevelStruct = struct
     self.fillStructInTree("", treeName, struct)
   # ---------------------------------------------------------------------------
   def fillParamInTree(self, parentNodeID, slotName, param):
     """fills a Param into the tree"""
+    innerTree = self.tree()
     paramName = param.getParamName()
     paramValue = param.value
     tags = ("readOnly",) if param.isReadOnly() else ()
-    nodeID = self.insert(
+    nodeID = innerTree.insert(
       parentNodeID,
       "end", 
       text=slotName,
@@ -77,7 +83,8 @@ class TreeView(ttk.Treeview):
   # ---------------------------------------------------------------------------
   def fillStructInTree(self, parentNodeID, structName, struct):
     """fills a Struct into the tree"""
-    nodeID = self.insert(
+    innerTree = self.tree()
+    nodeID = innerTree.insert(
       parentNodeID,
       "end",
       text=structName, values=("", ""),
@@ -88,9 +95,10 @@ class TreeView(ttk.Treeview):
   # ---------------------------------------------------------------------------
   def fillListInTree(self, parentNodeID, slotName, lst):
     """fills a List into the tree"""
+    innerTree = self.tree()
     lenParamName = lst.getLenParamName()
     tags = ("readOnly",) if lst.isReadOnly() else ()
-    nodeID = self.insert(
+    nodeID = innerTree.insert(
       parentNodeID,
       "end",
       text=slotName + " len",
@@ -105,7 +113,8 @@ class TreeView(ttk.Treeview):
   # ---------------------------------------------------------------------------
   def itemEvent(self, event):
     """callback when an item in the tree is clicked"""
-    nodeID = self.selection()[0]
+    innerTree = self.tree()
+    nodeID = innerTree.selection()[0]
     nodeObject = self.treeMap[nodeID]
     if type(nodeObject) == PUS.VP.Param:
       self.paramClicked(nodeObject, nodeID)
@@ -117,10 +126,11 @@ class TreeView(ttk.Treeview):
   # ---------------------------------------------------------------------------
   def paramClicked(self, param, nodeID):
     """callback when a Param node is clicked"""
+    innerTree = self.tree()
     if param.isReadOnly():
       return
-    nodeKey = self.item(nodeID, "text")
-    nodeValues = self.item(nodeID, "value")
+    nodeKey = innerTree.item(nodeID, "text")
+    nodeValues = innerTree.item(nodeID, "value")
     name = nodeValues[0]
     value = nodeValues[1]
     paramType = param.getParamType()
@@ -143,7 +153,7 @@ class TreeView(ttk.Treeview):
     # new parameter value entered --> update param object and tree
     newValue = answer
     param.value = newValue
-    self.set(nodeID, 1, newValue)
+    innerTree.set(nodeID, 1, newValue)
   # ---------------------------------------------------------------------------
   def structClicked(self, struct, nodeID):
     """callback when a Struct node is clicked"""
@@ -151,10 +161,11 @@ class TreeView(ttk.Treeview):
   # ---------------------------------------------------------------------------
   def listClicked(self, lst, nodeID):
     """callback when a List node is clicked"""
+    innerTree = self.tree()
     if lst.isReadOnly():
       return
-    nodeKey = self.item(nodeID, "text")
-    nodeValues = self.item(nodeID, "value")
+    nodeKey = innerTree.item(nodeID, "text")
+    nodeValues = innerTree.item(nodeID, "value")
     name = nodeValues[0]
     value = nodeValues[1]
     answer = simpledialog.askinteger("List Entries",
@@ -181,16 +192,16 @@ class TreeView(ttk.Treeview):
       lst.setLen(newLen)
       # iterate over a list copy, because tree is changed during interation
       i = 0
-      children = list(self.get_children(nodeID))
+      children = list(innerTree.get_children(nodeID))
       for child in children:
         if i >= newLen:
-          self.delete(child)
+          innerTree.delete(child)
         i += 1
     else:
       # do nothing
       return
     # update the len value in the display
-    self.set(nodeID, 1, str(len(lst)))
+    innerTree.set(nodeID, 1, str(len(lst)))
   # ---------------------------------------------------------------------------
   def dumpData(self):
     """helper method"""

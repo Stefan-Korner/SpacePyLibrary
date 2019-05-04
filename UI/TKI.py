@@ -357,6 +357,35 @@ class ScrolledListbox(tkinter.Frame):
     return self.listbox
 
 # =============================================================================
+class ScrolledTreeview(tkinter.Frame):
+  """ttk.Treeview with scroll bars, implemented as tkinter.Frame"""
+  # ---------------------------------------------------------------------------
+  def __init__(self, master):
+    """Attaches the scrollbars to the embedded treeview"""
+    tkinter.Frame.__init__(self, master, relief=tkinter.GROOVE, borderwidth=1)
+    # treeview
+    self.treeview = ttk.Treeview(self)
+    self.treeview.grid(row=0, column=0, sticky=tkinter.EW+tkinter.NS)
+    self.rowconfigure(0, weight=1)
+    self.columnconfigure(0, weight=1)
+    # horizontal scrollbar
+    self.hscrollbar = tkinter.Scrollbar(self,
+                                        orient=tkinter.HORIZONTAL,
+                                        command=self.treeview.xview)
+    self.hscrollbar.grid(row=1, column=0, sticky=tkinter.EW)
+    # vertival scrollbar
+    self.vscrollbar = tkinter.Scrollbar(self,
+                                        orient=tkinter.VERTICAL,
+                                        command=self.treeview.yview)
+    self.vscrollbar.grid(row=0, column=1, sticky=tkinter.NS)
+    self.treeview.config(xscrollcommand=self.hscrollbar.set,
+                         yscrollcommand=self.vscrollbar.set)
+  # ---------------------------------------------------------------------------
+  def tree(self):
+    """Helper for direct access of the embedded treeview"""
+    return self.treeview
+
+# =============================================================================
 class ScrolledText(tkinter.Frame):
   """tkinter.Text with scroll bars, implemented as tkinter.Frame"""
   # ---------------------------------------------------------------------------
