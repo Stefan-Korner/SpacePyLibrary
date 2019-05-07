@@ -68,6 +68,7 @@
 #  +-- s_8: Par8 = 182736489393276                                        936 *
 #  +-- s_9: Par9 = "This is the last variable string in the struct"      1320 *
 #******************************************************************************
+from __future__ import print_function
 import sys
 import Tkinter as tkinter
 import PUS.VP
