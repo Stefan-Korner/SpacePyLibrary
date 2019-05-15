@@ -72,7 +72,7 @@ class GUIview(UI.TKI.GUItabView):
                  rowweight=0,
                  columnweight=0,
                  sticky=tkinter.EW)
-    self.queueContents = UI.TKI.ScrolledListbox(self, selectmode=tkinter.SINGLE)
+    self.queueContents = UI.TKI.ScrolledListbox(self)
     self.queueContents.list().configure(font="courier")
     self.queueContents.list().insert(0, QUEUE_HEADER1)
     self.queueContents.list().insert(1, QUEUE_HEADER2)
