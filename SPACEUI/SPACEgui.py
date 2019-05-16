@@ -60,30 +60,19 @@ class TMpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
     self.pktPI1field = UI.TKI.ValueField(self, row=7, label="Packet PI1:")
     # PI2
     self.pktPI2field = UI.TKI.ValueField(self, row=8, label="Packet PI2:")
-    # --- parameter tree ---
+    # --- variable parameter tree ---
     label = tkinter.Label(self, text="Variable Parameters")
     self.appGrid(label, row=0, column=2, rowweight=0)
     self.parametersTreeview = SPACEUI.VPgui.TreeView(self)
     self.appGrid(self.parametersTreeview, row=1, column=2, rowspan=8, rowweight=0, columnweight=1)
-    # --- fixed parameters ---
-    # parameter names
-    label = tkinter.Label(self, text="Parameter names: optional", anchor=tkinter.W)
-    self.appGrid(label, row=10, columnspan=2, rowweight=0)
-    self.parameterNamesField = tkinter.Entry(self, width=40)
-    self.appGrid(self.parameterNamesField, row=11, columnspan=2, rowweight=0)
-    # parameter values
-    label = tkinter.Label(self, text="Parameter values: optional", anchor=tkinter.W)
-    self.appGrid(label, row=12, columnspan=2, rowweight=0)
-    self.parameterValuesField = tkinter.Entry(self, width=40)
-    self.appGrid(self.parameterValuesField, row=13, columnspan=2, rowweight=0)
-    # --- parameter listbox ---
+    # --- fixed parameter listbox ---
     label = tkinter.Label(self, text="Fixed Parameters")
     self.appGrid(label, row=9, column=2, rowweight=0)
     self.parametersListbox = UI.TKI.ScrolledListbox(self, self.parameterSelected)
-    self.appGrid(self.parametersListbox, row=10, column=2, rowspan=10, rowweight=0, columnweight=1)
+    self.appGrid(self.parametersListbox, row=10, column=2, rowspan=8, rowweight=0, columnweight=1)
     # --- filler ---
     filler = tkinter.Label(self)
-    self.appGrid(filler, row=20, columnspan=3, rowweight=0)
+    self.appGrid(filler, row=18, columnspan=3, rowweight=0)
   # ---------------------------------------------------------------------------
   def update(self, tmPktDef):
     """Update the packet fields"""
@@ -137,18 +126,10 @@ class TMpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
   # ---------------------------------------------------------------------------
   def parameterSelected(self, selectPos):
     """Callback when a parameter is selected"""
-    print("--- parameterSelected: selectPos=" + str(selectPos) + " ---")
     tmParamExtraction = self.tmParamExtractions[selectPos]
     name = tmParamExtraction.name
     descr = tmParamExtraction.descr
     paramType = tmParamExtraction.valueType
-    bitPos = tmParamExtraction.bitPos
-    bitWidth = tmParamExtraction.bitWidth
-    print("name = " + str(name))
-    print("descr = " + str(descr))
-    print("paramType = " + str(paramType))
-    print("bitPos = " + str(bitPos))
-    print("bitWidth = " + str(bitWidth))
     value = self.tmParamValues[selectPos]
     if paramType == UTIL.DU.BITS or paramType == UTIL.DU.SBITS or \
        paramType == UTIL.DU.UNSIGNED or paramType == UTIL.DU.SIGNED:
@@ -219,8 +200,21 @@ class TMpacketBrowser(simpledialog.Dialog, UI.TKI.AppGrid):
     """Callback when the OK button is pressed"""
     packetName = self.details.pktNameField.get()
     if packetName != "":
-      paramNames = self.details.parameterNamesField.get()
-      paramValues = self.details.parameterValuesField.get()
+      tmParamExtractionsAndValues = zip(
+        self.details.tmParamExtractions,
+        self.details.tmParamValues)
+      paramNames = ""
+      paramValues = ""
+      for paramExtr, paramValue in tmParamExtractionsAndValues:
+        if paramValue != None:
+          paramName = paramExtr.name
+          print(paramName + " = " + str(paramValue))
+          if paramNames == "":
+            paramNames = paramName
+            paramValues = str(paramValue)
+          else:
+            paramNames += ("," + paramName)
+            paramValues += ("," + str(paramValue))
       tmStruct = self.details.tmStruct
       self.result = [packetName, paramNames, paramValues, tmStruct]
 
