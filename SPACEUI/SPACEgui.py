@@ -80,7 +80,7 @@ class TMpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
     # --- parameter listbox ---
     label = tkinter.Label(self, text="Fixed Parameters")
     self.appGrid(label, row=9, column=2, rowweight=0)
-    self.parametersListbox = UI.TKI.ScrolledListbox(self, selectmode=tkinter.SINGLE)
+    self.parametersListbox = UI.TKI.ScrolledListbox(self, self.parameterSelected)
     self.appGrid(self.parametersListbox, row=10, column=2, rowspan=10, rowweight=0, columnweight=1)
     # --- filler ---
     filler = tkinter.Label(self)
@@ -123,14 +123,56 @@ class TMpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
     self.pktPI2field.set(pktPI2val)
     lrow = 0
     self.parametersListbox.list().delete(0, tkinter.END)
+    self.tmParamExtractions = []
+    self.tmParamValues = []
     for tmParamExtraction in tmParamExtractions:
       if tmParamExtraction.piValue:
         continue
-      text = tmParamExtraction.name + " ---> " + tmParamExtraction.descr
+      text = tmParamExtraction.descr + ": " + tmParamExtraction.name
       self.parametersListbox.list().insert(lrow, text)
+      self.tmParamExtractions.append(tmParamExtraction)
+      self.tmParamValues.append(None)
       lrow += 1
     self.tmStruct = PUS.VP.Struct(tmStructDef)
     self.parametersTreeview.fillTree(pktName, self.tmStruct)
+  # ---------------------------------------------------------------------------
+  def parameterSelected(self, selectPos):
+    """Callback when a parameter is selected"""
+    print("--- parameterSelected: selectPos=" + str(selectPos) + " ---")
+    tmParamExtraction = self.tmParamExtractions[selectPos]
+    name = tmParamExtraction.name
+    descr = tmParamExtraction.descr
+    paramType = tmParamExtraction.valueType
+    bitPos = tmParamExtraction.bitPos
+    bitWidth = tmParamExtraction.bitWidth
+    print("name = " + str(name))
+    print("descr = " + str(descr))
+    print("paramType = " + str(paramType))
+    print("bitPos = " + str(bitPos))
+    print("bitWidth = " + str(bitWidth))
+    value = self.tmParamValues[selectPos]
+    if paramType == UTIL.DU.BITS or paramType == UTIL.DU.SBITS or \
+       paramType == UTIL.DU.UNSIGNED or paramType == UTIL.DU.SIGNED:
+      answer = simpledialog.askinteger("Integer Parameter",
+                                       descr + ": " + name,
+                                       parent=self,
+                                       initialvalue=value)
+    elif paramType == UTIL.DU.BYTES or paramType == UTIL.DU.FLOAT or \
+         paramType == UTIL.DU.TIME or paramType == UTIL.DU.STRING:
+      answer = simpledialog.askstring("String Parameter",
+                                      descr + ": " + name,
+                                      parent=self,
+                                      initialvalue=value)
+    else:
+      answer = None
+    if answer == None:
+      return
+    # new parameter value entered --> update param value entry and list
+    newValue = answer
+    self.tmParamValues[selectPos] = newValue
+    text = tmParamExtraction.descr + ": " + tmParamExtraction.name + " = " + str(newValue)
+    self.parametersListbox.list().delete(selectPos)
+    self.parametersListbox.list().insert(selectPos, text)
 
 # =============================================================================
 class TMpacketBrowser(simpledialog.Dialog, UI.TKI.AppGrid):
@@ -140,11 +182,7 @@ class TMpacketBrowser(simpledialog.Dialog, UI.TKI.AppGrid):
     """Read the MIB for obtaining the initialisation data"""
     # initialise the dialog
     self.prompt = prompt
-    self.listboxCurrent = None
-    self.afterID = None
     simpledialog.Dialog.__init__(self, master, title=title)
-    if self.afterID != None:
-      self.after_cancel(self.afterID)
   # ---------------------------------------------------------------------------
   def body(self, master):
     """Intialise the dialog"""
@@ -157,14 +195,13 @@ class TMpacketBrowser(simpledialog.Dialog, UI.TKI.AppGrid):
       label.grid(row=row, column=0, columnspan=4)
       row += 1
     # scrolled list box
-    self.slistbox = UI.TKI.ScrolledListbox(master, selectmode=tkinter.SINGLE)
+    self.slistbox = UI.TKI.ScrolledListbox(master, self.packetSelected)
     self.appGrid(self.slistbox, row=row, column=0, columnweight=1)
     lrow = 0
     for tmPktDef in SPACE.IF.s_definitions.getTMpktDefs():
       packetName = tmPktDef.pktName
       self.insertListboxRow(lrow, packetName)
       lrow += 1
-    self.pollListbox()
     # details
     self.details = TMpacketDetails(master)
     self.appGrid(self.details, row=row, column=1, columnweight=0)
@@ -173,23 +210,11 @@ class TMpacketBrowser(simpledialog.Dialog, UI.TKI.AppGrid):
     """Inserts a row into self.slistbox"""
     self.slistbox.list().insert(row, text)
   # ---------------------------------------------------------------------------
-  def listboxHasChanged(self, pos):
-    """Callback when the selection of self.slistbox has been changed"""
-    if pos != None:
-      # display the packet data
-      tmPktDef = SPACE.IF.s_definitions.getTMpktDefByIndex(pos)
-      self.details.update(tmPktDef)
-  # ---------------------------------------------------------------------------
-  def pollListbox(self):
-    """Polls if the selection of self.slistbox has been changed"""
-    now = self.slistbox.list().curselection()
-    if now != self.listboxCurrent:
-      if len(now) > 0:
-        self.listboxHasChanged(int(now[0]))
-      else:
-        self.listboxHasChanged(None)
-      self.listboxCurrent = now
-    self.afterID = self.after(250, self.pollListbox)
+  def packetSelected(self, selectPos):
+    """Callback when packet is selected"""
+    # display the packet data
+    tmPktDef = SPACE.IF.s_definitions.getTMpktDefByIndex(selectPos)
+    self.details.update(tmPktDef)
   # ---------------------------------------------------------------------------
   def apply(self):
     """Callback when the OK button is pressed"""

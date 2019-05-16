@@ -71,7 +71,7 @@ class GUIview(UI.TKI.GUItabView):
                           rowweight=0,
                           columnweight=0,
                           sticky=tkinter.EW)
-    self.uplinkQueueContents = UI.TKI.ScrolledListbox(self.subFrame, selectmode=tkinter.SINGLE)
+    self.uplinkQueueContents = UI.TKI.ScrolledListbox(self.subFrame)
     self.uplinkQueueContents.list().configure(font="courier")
     self.uplinkQueueContents.list().insert(0, QUEUE_HEADER1)
     self.uplinkQueueContents.list().insert(1, QUEUE_HEADER2)
@@ -83,7 +83,7 @@ class GUIview(UI.TKI.GUItabView):
                           rowweight=0,
                           columnweight=0,
                           sticky=tkinter.EW)
-    self.downlinkQueueContents = UI.TKI.ScrolledListbox(self.subFrame, selectmode=tkinter.SINGLE)
+    self.downlinkQueueContents = UI.TKI.ScrolledListbox(self.subFrame)
     self.downlinkQueueContents.list().configure(font="courier")
     self.downlinkQueueContents.list().insert(0, QUEUE_HEADER1)
     self.downlinkQueueContents.list().insert(1, QUEUE_HEADER2)

@@ -334,11 +334,12 @@ class NotebookWindow(tkinter.Tk):
 class ScrolledListbox(tkinter.Frame):
   """tkinter.Listbox with scroll bars, implemented as tkinter.Frame"""
   # ---------------------------------------------------------------------------
-  def __init__(self, master, selectmode):
+  def __init__(self, master, selectCallback=None):
     """Attaches the scrollbars to the embedded listbox"""
+    # selectCallback has 1 parameter selectPos: 0...n-1
     tkinter.Frame.__init__(self, master, relief=tkinter.GROOVE, borderwidth=1)
     # listbox
-    self.listbox = tkinter.Listbox(self, selectmode=selectmode)
+    self.listbox = tkinter.Listbox(self, selectmode=tkinter.SINGLE)
     self.listbox.grid(row=0, column=0, sticky=tkinter.EW+tkinter.NS)
     self.rowconfigure(0, weight=1)
     self.columnconfigure(0, weight=1)
@@ -354,10 +355,19 @@ class ScrolledListbox(tkinter.Frame):
     self.vscrollbar.grid(row=0, column=1, sticky=tkinter.NS)
     self.listbox.config(xscrollcommand=self.hscrollbar.set,
                         yscrollcommand=self.vscrollbar.set)
+    # select callback
+    self.listbox.bind("<Double-1>", self.itemEvent)
+    self.selectCallback = selectCallback
   # ---------------------------------------------------------------------------
   def list(self):
     """Helper for direct access of the embedded listbox"""
     return self.listbox
+  # ---------------------------------------------------------------------------
+  def itemEvent(self, event):
+    """callback when an item in the list is clicked"""
+    selectPos = self.listbox.curselection()[0]
+    if self.selectCallback != None:
+      self.selectCallback(selectPos)
 
 # =============================================================================
 class ScrolledTreeview(tkinter.Frame):

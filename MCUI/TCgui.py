@@ -118,11 +118,7 @@ class TCpacketBrowser(simpledialog.Dialog, UI.TKI.AppGrid):
     """Read the MIB for obtaining the initialisation data"""
     # initialise the dialog
     self.prompt = prompt
-    self.listboxCurrent = None
-    self.afterID = None
     simpledialog.Dialog.__init__(self, master, title=title)
-    if self.afterID != None:
-      self.after_cancel(self.afterID)
   # ---------------------------------------------------------------------------
   def body(self, master):
     """Intialise the dialog"""
@@ -135,14 +131,13 @@ class TCpacketBrowser(simpledialog.Dialog, UI.TKI.AppGrid):
       label.grid(row=row, column=0, columnspan=4)
       row += 1
     # scrolled list box
-    self.slistbox = UI.TKI.ScrolledListbox(master, selectmode=tkinter.SINGLE)
+    self.slistbox = UI.TKI.ScrolledListbox(master, self.packetSelected)
     self.appGrid(self.slistbox, row=row, column=0, columnweight=1)
     lrow = 0
     for tcPktDef in SPACE.IF.s_definitions.getTCpktDefs():
       packetName = tcPktDef.pktName
       self.insertListboxRow(lrow, packetName)
       lrow += 1
-    self.pollListbox()
     # details
     self.details = TCpacketDetails(master)
     self.appGrid(self.details, row=row, column=1, columnweight=0)
@@ -151,23 +146,11 @@ class TCpacketBrowser(simpledialog.Dialog, UI.TKI.AppGrid):
     """Inserts a row into self.slistbox"""
     self.slistbox.list().insert(row, text)
   # ---------------------------------------------------------------------------
-  def listboxHasChanged(self, pos):
-    """Callback when the selection of self.slistbox has been changed"""
-    if pos != None:
-      # display the packet data
-      tcPktDef = SPACE.IF.s_definitions.getTCpktDefByIndex(pos)
-      self.details.update(tcPktDef)
-  # ---------------------------------------------------------------------------
-  def pollListbox(self):
-    """Polls if the selection of self.slistbox has been changed"""
-    now = self.slistbox.list().curselection()
-    if now != self.listboxCurrent:
-      if len(now) > 0:
-        self.listboxHasChanged(int(now[0]))
-      else:
-        self.listboxHasChanged(None)
-      self.listboxCurrent = now
-    self.afterID = self.after(250, self.pollListbox)
+  def packetSelected(self, selectPos):
+    """Callback when packet is selected"""
+    # display the packet data
+    tcPktDef = SPACE.IF.s_definitions.getTCpktDefByIndex(selectPos)
+    self.details.update(tcPktDef)
   # ---------------------------------------------------------------------------
   def apply(self):
     """Callback when the OK button is pressed"""
@@ -230,9 +213,9 @@ class GUIview(UI.TKI.GUItabView):
     dialog = TCpacketBrowser(self,
       title="Set Packet Data Dialog",
       prompt="Please select a packet.")
-    if dialog.result != None:
-      packetName, route, tcStruct = dialog.result
-      self.notifyModelTask(["SETPACKETDATA", packetName, route], tcStruct)
+    #if dialog.result != None:
+    #  packetName, route, tcStruct = dialog.result
+    #  self.notifyModelTask(["SETPACKETDATA", packetName, route], tcStruct)
   # ---------------------------------------------------------------------------
   def sendPacketCallback(self):
     """Called when the SendPacket menu entry is selected"""
