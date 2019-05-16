@@ -42,8 +42,6 @@ Backlog of features that shall be implemented
 
 034 Support direct console logging and use it when there is an exit.
 
-036 Support editing of fixed TM parameters.
-
 --------------------------------- implemented ---------------------------------
 
 001 Remove the dependency to MIB files TPKTconnTable.dat, TPKTconfigTable.dat:
@@ -81,3 +79,5 @@ Backlog of features that shall be implemented
 
 035 Import Python modules that differ in name between Python2 and Python3
     in the Python2 branch with the name of the Python3 module.
+
+036 Support editing of fixed TM parameters.
