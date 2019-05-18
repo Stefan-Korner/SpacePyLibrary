@@ -13,63 +13,39 @@
 #******************************************************************************
 # Unit Tests                                                                  *
 #******************************************************************************
-from __future__ import print_function
+import unittest
 import UTIL.CRC, testData
 
 #############
-# functions #
+# test case #
 #############
-def test_CRCoperation():
-  """function to test the CRC calculation"""
-  crc = UTIL.CRC.calculate(testData.TM_PACKET_02[:-2])
-  expectedCrc = (0x0100 * testData.TM_PACKET_02[-2]) + testData.TM_PACKET_02[-1]
-  if crc != expectedCrc:
-    print("CRC", ("%04X" % crc), "does not match the expected one: ", ("%04X" % expectedCrc))
-    return False
-  print("CRC =", ("%04X" % crc), " ---> OK")
-
-  crc = UTIL.CRC.calculate(testData.TM_PACKET_03[:-2])
-  expectedCrc = (0x0100 * testData.TM_PACKET_03[-2]) + testData.TM_PACKET_03[-1]
-  if crc != expectedCrc:
-    print("CRC", ("%04X" % crc), "does not match the expected one: ", ("%04X" % expectedCrc))
-    return False
-  print("CRC =", ("%04X" % crc), " ---> OK")
-
-  crc = UTIL.CRC.calculate(testData.TM_PACKET_04[:-2])
-  expectedCrc = (0x0100 * testData.TM_PACKET_04[-2]) + testData.TM_PACKET_04[-1]
-  if crc != expectedCrc:
-    print("CRC", ("%04X" % crc), "does not match the expected one: ", ("%04X" % expectedCrc))
-    return False
-  print("CRC =", ("%04X" % crc), " ---> OK")
-
-  crc = UTIL.CRC.calculate(testData.TC_PACKET_01[:-2])
-  expectedCrc = (0x0100 * testData.TC_PACKET_01[-2]) + testData.TC_PACKET_01[-1]
-  if crc != expectedCrc:
-    print("CRC", ("%04X" % crc), "does not match the expected one: ", ("%04X" % expectedCrc))
-    return False
-  print("CRC =", ("%04X" % crc), " ---> OK")
-
-
-
-
-  crc = UTIL.CRC.calculate(testData.TC_FRAME_01[:-2])
-  expectedCrc = (0x0100 * testData.TC_FRAME_01[-2]) + testData.TC_FRAME_01[-1]
-  if crc != expectedCrc:
-    print("CRC", ("%04X" % crc), "does not match the expected one: ", ("%04X" % expectedCrc))
-    return False
-  print("CRC =", ("%04X" % crc), " ---> OK")
-  crc = UTIL.CRC.calculate(testData.TC_FRAME_02[:-2])
-  expectedCrc = (0x0100 * testData.TC_FRAME_02[-2]) + testData.TC_FRAME_02[-1]
-  if crc != expectedCrc:
-    print("CRC", ("%04X" % crc), "does not match the expected one: ", ("%04X" % expectedCrc))
-    return False
-  print("CRC =", ("%04X" % crc), " ---> OK")
-  return True
+class TestCRC(unittest.TestCase):
+  def test(self):
+    """test the CRC from different CCSDS packets and CCSDS frames"""
+    crc = UTIL.CRC.calculate(testData.TM_PACKET_02[:-2])
+    expectedCrc = (0x0100 * testData.TM_PACKET_02[-2]) + testData.TM_PACKET_02[-1]
+    self.assertEqual(crc, expectedCrc)
+    crc = UTIL.CRC.calculate(testData.TM_PACKET_03[:-2])
+    expectedCrc = (0x0100 * testData.TM_PACKET_03[-2]) + testData.TM_PACKET_03[-1]
+    self.assertEqual(crc, expectedCrc)
+    crc = UTIL.CRC.calculate(testData.TM_PACKET_04[:-2])
+    expectedCrc = (0x0100 * testData.TM_PACKET_04[-2]) + testData.TM_PACKET_04[-1]
+    self.assertEqual(crc, expectedCrc)
+    crc = UTIL.CRC.calculate(testData.TM_FRAME_01[:-2])
+    expectedCrc = (0x0100 * testData.TM_FRAME_01[-2]) + testData.TM_FRAME_01[-1]
+    self.assertEqual(crc, expectedCrc)
+    crc = UTIL.CRC.calculate(testData.TC_PACKET_01[:-2])
+    expectedCrc = (0x0100 * testData.TC_PACKET_01[-2]) + testData.TC_PACKET_01[-1]
+    self.assertEqual(crc, expectedCrc)
+    crc = UTIL.CRC.calculate(testData.TC_FRAME_01[:-2])
+    expectedCrc = (0x0100 * testData.TC_FRAME_01[-2]) + testData.TC_FRAME_01[-1]
+    self.assertEqual(crc, expectedCrc)
+    crc = UTIL.CRC.calculate(testData.TC_FRAME_02[:-2])
+    expectedCrc = (0x0100 * testData.TC_FRAME_02[-2]) + testData.TC_FRAME_02[-1]
+    self.assertEqual(crc, expectedCrc)
 
 ########
 # main #
 ########
 if __name__ == "__main__":
-  print("***** test_CRCoperation() start")
-  retVal = test_CRCoperation()
-  print("***** test_CRCoperation() done:", retVal)
+  unittest.main()
