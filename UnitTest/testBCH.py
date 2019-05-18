@@ -13,43 +13,38 @@
 #******************************************************************************
 # Unit Tests                                                                  *
 #******************************************************************************
+import unittest
 import UTIL.BCH, testData
 
 #############
-# functions #
+# test case #
 #############
-def test_BCHoperations():
-  """function to test the BCH encoding operations"""
-  sreg = UTIL.BCH.encodeStart()
-  sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_01[0])
-  sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_01[1])
-  sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_01[2])
-  sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_01[3])
-  sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_01[4])
-  sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_01[5])
-  sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_01[6])
-  code = UTIL.BCH.encodeStop(sreg)
-  if code != testData.BCH_BLOCK_01[7]:
-    print("BCH code wrong:", ("%02X" % code), "- should be", ("%02X" % testData.BCH_BLOCK_01[7]))
-    return False
-  sreg = UTIL.BCH.encodeStart()
-  sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_02[0])
-  sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_02[1])
-  sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_02[2])
-  sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_02[3])
-  sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_02[4])
-  sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_02[5])
-  sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_02[6])
-  code = UTIL.BCH.encodeStop(sreg)
-  if code != testData.BCH_BLOCK_02[7]:
-    print("BCH code wrong:", ("%02X" % code), "- should be", ("%02X" % testData.BCH_BLOCK_02[7]))
-    return False
-  return True
+class TestCRC(unittest.TestCase):
+  def test(self):
+    """test the BCH encoding"""
+    sreg = UTIL.BCH.encodeStart()
+    sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_01[0])
+    sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_01[1])
+    sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_01[2])
+    sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_01[3])
+    sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_01[4])
+    sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_01[5])
+    sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_01[6])
+    code = UTIL.BCH.encodeStop(sreg)
+    self.assertEqual(code, testData.BCH_BLOCK_01[7])
+    sreg = UTIL.BCH.encodeStart()
+    sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_02[0])
+    sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_02[1])
+    sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_02[2])
+    sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_02[3])
+    sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_02[4])
+    sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_02[5])
+    sreg = UTIL.BCH.encodeStep(sreg, testData.BCH_BLOCK_02[6])
+    code = UTIL.BCH.encodeStop(sreg)
+    self.assertEqual(code, testData.BCH_BLOCK_02[7])
 
 ########
 # main #
 ########
 if __name__ == "__main__":
-  print("***** test_BCHoperations() start")
-  retVal = test_BCHoperations()
-  print("***** test_BCHoperations() done:", retVal)
+  unittest.main()
