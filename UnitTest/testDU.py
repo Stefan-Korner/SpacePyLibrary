@@ -13,233 +13,229 @@
 #******************************************************************************
 # Unit Tests                                                                  *
 #******************************************************************************
-import array
+import array, unittest
 import CCSDS.DU, CCSDS.TIME
 import UTIL.DU, UTIL.TCO, UTIL.TIME
-from UTIL.SYS import LOG, LOG_ERROR
 import testData
 
 #############
-# functions #
+# test case #
 #############
-# -----------------------------------------------------------------------------
-def test_DUtimeOperations():
-  """function to test time operations"""
-  UTIL.TCO.setOBTmissionEpochStr(UTIL.TCO.UNIX_MISSION_EPOCH_STR)
-  UTIL.TCO.setOBTleapSeconds(0)
-  b = CCSDS.DU.DataUnit(testData.ZERO_CUC2_TIME_FIELD,
-                        testData.CUC2_TIME_DU_BYTE_SIZE,
-                        testData.CUC2_TIME_DU_ATTRIBUTES)
-  zeroTime = b.time
-  zeroEpochTime = UTIL.TCO.correlateFromOBTmissionEpoch(zeroTime)
-  if zeroEpochTime != 0:
-    zeroEpochTimeStr = UTIL.TIME.getASDtimeStr(zeroEpochTime)
-    print("Invalid zero epoch time:", zeroEpochTimeStr)
-    return False
-  UTIL.TCO.setOBTmissionEpochStr(UTIL.TCO.GPS_MISSION_EPOCH_STR)
-  UTIL.TCO.setOBTleapSeconds(UTIL.TCO.GPS_LEAP_SECONDS_2009)
-  b = CCSDS.DU.DataUnit(testData.CUC2_TIME1_FIELD,
-                        testData.CUC2_TIME_DU_BYTE_SIZE,
-                        testData.CUC2_TIME_DU_ATTRIBUTES)
-  timeCorr = UTIL.TCO.correlateFromOBTmissionEpoch(b.time)
-  timeStr = UTIL.TIME.getASDtimeStr(timeCorr, withMicros=True)
-  if timeStr != testData.CUC2_TIME1_STR:
-    print("Invalid CUC time 1:", timeStr)
-    return False
-  b = CCSDS.DU.DataUnit(testData.CUC2_TIME2_FIELD,
-                        testData.CUC2_TIME_DU_BYTE_SIZE,
-                        testData.CUC2_TIME_DU_ATTRIBUTES)
-  timeCorr = UTIL.TCO.correlateFromOBTmissionEpoch(b.time)
-  timeStr = UTIL.TIME.getASDtimeStr(timeCorr, withMicros=True)
-  if timeStr != testData.CUC2_TIME2_STR:
-    print("Invalid CUC time 2:", timeStr)
-    return False
-  b = CCSDS.DU.DataUnit(testData.CUC2_TIME3_FIELD,
-                        testData.CUC2_TIME_DU_BYTE_SIZE,
-                        testData.CUC2_TIME_DU_ATTRIBUTES)
-  timeCorr = UTIL.TCO.correlateFromOBTmissionEpoch(b.time)
-  timeStr = UTIL.TIME.getASDtimeStr(timeCorr, withMicros=True)
-  if timeStr != testData.CUC2_TIME3_STR:
-    print("Invalid CUC time 3:", timeStr)
-    return False
-  b = CCSDS.DU.DataUnit(testData.CUC2_TIME4_FIELD,
-                        testData.CUC2_TIME_DU_BYTE_SIZE,
-                        testData.CUC2_TIME_DU_ATTRIBUTES)
-  timeCorr = UTIL.TCO.correlateFromOBTmissionEpoch(b.time)
-  timeStr = UTIL.TIME.getASDtimeStr(timeCorr, withMicros=True)
-  if timeStr != testData.CUC2_TIME4_STR:
-    print("Invalid CUC time 4:", timeStr)
-    return False
-  b = CCSDS.DU.DataUnit(testData.CUC2_TIME5_FIELD,
-                        testData.CUC2_TIME_DU_BYTE_SIZE,
-                        testData.CUC2_TIME_DU_ATTRIBUTES)
-  timeCorr = UTIL.TCO.correlateFromOBTmissionEpoch(b.time)
-  timeStr = UTIL.TIME.getASDtimeStr(timeCorr, withMicros=True)
-  if timeStr != testData.CUC2_TIME5_STR:
-    print("Invalid CUC time 5:", timeStr)
-    return False
-  b = CCSDS.DU.DataUnit(testData.CUC2_TIME6_FIELD,
-                        testData.CUC2_TIME_DU_BYTE_SIZE,
-                        testData.CUC2_TIME_DU_ATTRIBUTES)
-  timeCorr = UTIL.TCO.correlateFromOBTmissionEpoch(b.time)
-  timeStr = UTIL.TIME.getASDtimeStr(timeCorr, withMicros=True)
-  if timeStr != testData.CUC2_TIME6_STR:
-    print("Invalid CUC time 6:", timeStr)
-    return False
-  return True
-# -----------------------------------------------------------------------------
-def test_DUoperations():
-  """function to test the data unit operations"""
-  # test UTIL.DU.fieldTypeStr()
-  if UTIL.DU.fieldTypeStr(UTIL.DU.BITS) != "BITS":
-    return False
-  if UTIL.DU.fieldTypeStr(UTIL.DU.SBITS) != "SBITS":
-    return False
-  if UTIL.DU.fieldTypeStr(UTIL.DU.BYTES) != "BYTES":
-    return False
-  if UTIL.DU.fieldTypeStr(UTIL.DU.UNSIGNED) != "UNSIGNED":
-    return False
-  if UTIL.DU.fieldTypeStr(UTIL.DU.SIGNED) != "SIGNED":
-    return False
-  if UTIL.DU.fieldTypeStr(UTIL.DU.FLOAT) != "FLOAT":
-    return False
-  if UTIL.DU.fieldTypeStr(UTIL.DU.TIME) != "TIME":
-    return False
-  if UTIL.DU.fieldTypeStr(UTIL.DU.STRING) != "STRING":
-    return False
-  if UTIL.DU.fieldTypeStr(99) != "???":
-    return False
-  # other tests
-  b = UTIL.DU.BinaryUnit()
-  print("b =", b)
-  print("len(b) =", len(b))
-  b = UTIL.DU.BinaryUnit("1234")
-  print("b =", b)
-  print("len(b) =", len(b))
-  b.setLen(10)
-  print("b =", b)
-  print("len(b) =", len(b))
-  b.append("Hello, world!")
-  print("b =", b)
-  print("len(b) =", len(b))
-  b.setLen(255)
-  print("b =", b)
-  print("len(b) =", len(b))
-  b.setLen(256)
-  print("b =", b)
-  print("len(b) =", len(b))
-  b.setLen(257)
-  print("b =", b)
-  print("len(b) =", len(b))
-  b = UTIL.DU.BinaryUnit("1234")
-  print("b =", b)
-  print("b.getBits( 0,  8) =", ("%08X" % b.getBits( 0,  8)))
-  print("b.getBits( 8,  8) =", ("%08X" % b.getBits( 8,  8)))
-  print("b.getBits( 8, 16) =", ("%08X" % b.getBits( 8, 16)))
-  print("b.getBits(12, 16) =", ("%08X" % b.getBits(12, 16)))
-  print("b.getBits( 2,  1) =", ("%08X" % b.getBits( 2,  1)))
-  value = b.getBits(2, 2)
-  LOG("b.getBits( 2,  2) = " + str("%08X" % value))
-  if value != 0x0000003:
-    LOG_ERROR("unexpected unsigned value")
-    return False
-  value = b.getSBits(2, 2)
-  LOG("b.getSBits(2,  2) = " + str(value))
-  if value != -1:
-    LOG_ERROR("unexpected signed value")
-    return False
-  b.setSBits(1, 7, -16)
-  LOG("b.setBits( 1,  7, -16) = " + str(b))
-  value = b.getBits(1, 7)
-  LOG("b.getBits( 1,  7) = " + str("%08X" % value))
-  if value != 0x0000070:
-    LOG_ERROR("unexpected unsigned value")
-    return False
-  value = b.getSBits(1, 7)
-  LOG("b.getSBits(1,  7) = " + str(value))
-  if value != -16:
-    LOG_ERROR("unexpected signed value")
-    return False
-  b.setBits( 0,  8, 0x00000087)
-  print("b.setBits( 0,  8, 0x00000087) =", b)
-  b.setBits( 8,  4, 0x00000006)
-  print("b.setBits( 8,  4, 0x00000006) =", b)
-  b.setBits(12, 16, 0x00005432)
-  print("b.setBits(12, 16, 0x00005432) =", b)
-  b.setBits(28,  4, 0x00000001)
-  print("b.setBits(28,  4, 0x00000001) =", b)
-  print("b.getBytes(1, 2) =", b.getBytes(1, 2))
-  b.setBytes(1, 2, array.array('B', 'AB'.encode()))
-  print("b.setBytes(1, 2, array.array('B', 'AB'.encode())) =", b)
-  value = b.getUnsigned(1, 2)
-  LOG("b.getUnsigned(1, 2) = " + str("%08X" % value))
-  if value != 0x00004142:
-    LOG_ERROR("unexpected unsigned value")
-    return False
-  value = b.getSigned(1, 2)
-  LOG("b.getSigned(1, 2) = " + str("%08X" % value))
-  if value != 0x00004142:
-    LOG_ERROR("unexpected signed value")
-    return False
-  b.setUnsigned(0, 2, 0x0000F234)
-  LOG("b.setUnsigned(0, 2, 0x0000F234) = " + str(b))
-  value = b.getUnsigned(0, 2)
-  LOG("b.getUnsigned(0, 2) = " + str("%08X" % value))
-  if value != 0x0000F234:
-    LOG_ERROR("unexpected unsigned value")
-    return False
-  value = b.getSigned(0, 2)
-  LOG("b.getSigned(0, 2) = " + str(value))
-  if value != -3532:
-    LOG_ERROR("unexpected signed value")
-    return False
-  b.setSigned(0, 2, -1)
-  LOG("b.setSigned(0, 2, -1) = " + str(b))
-  value = b.getUnsigned(0, 2)
-  LOG("b.getUnsigned(0, 2) = " + str("%08X" % value))
-  if value != 0x0000FFFF:
-    LOG_ERROR("unexpected unsigned value")
-    return False
-  value = b.getSigned(0, 2)
-  LOG("b.getSigned(0, 2) = " + str(value))
-  if value != -1:
-    LOG_ERROR("unexpected signed value")
-    return False
-  b = UTIL.DU.BinaryUnit(16 * 'w')
-  print("b =", b)
-  value = 10.0
-  b.setFloat(0, 4, value)
-  print("b =", b)
-  if str(b) != "\n0000 41 20 00 00 77 77 77 77 77 77 77 77 77 77 77 77 A ..wwwwwwwwwwww":
-    print("unexpected float encoding")
-    return False
-  b.setFloat(6, 8, value)
-  print("b =", b)
-  if str(b) != "\n0000 41 20 00 00 77 77 40 24 00 00 00 00 00 00 77 77 A ..ww@$......ww":
-    print("unexpected float encoding")
-    return False
-  value1 = b.getFloat(0, 4)
-  print("value1 =", value1)
-  if value1 != value:
-    print("unexpected float32 decoding")
-    return False
-  value2 = b.getFloat(6, 8)
-  print("value2 =", value2)
-  if value2 != value:
-    print("unexpected float64 decoding")
-    return False
-  a = UTIL.DU.str2array("00 01 FF FE 64 12")
-  print('str2array("00 01 FF FE 64 12") =', a)
-  a = UTIL.DU.str2array("0001FFFE6412", True)
-  print('str2array("0001FFFE6412", True) =', a)
-  h = UTIL.DU.array2str(a)
-  print("array2str([0, 1, 255, 254, 100, 18]) =", h)
-  return test_DUtimeOperations()
+class TestDU(unittest.TestCase):
+  def test_DUtime(self):
+    """function to test time operations"""
+    UTIL.TCO.setOBTmissionEpochStr(UTIL.TCO.UNIX_MISSION_EPOCH_STR)
+    UTIL.TCO.setOBTleapSeconds(0)
+    b = CCSDS.DU.DataUnit(testData.ZERO_CUC2_TIME_FIELD,
+                          testData.CUC2_TIME_DU_BYTE_SIZE,
+                          testData.CUC2_TIME_DU_ATTRIBUTES)
+    zeroTime = b.time
+    zeroEpochTime = UTIL.TCO.correlateFromOBTmissionEpoch(zeroTime)
+    self.assertEqual(zeroEpochTime, 0)
+    UTIL.TCO.setOBTmissionEpochStr(UTIL.TCO.GPS_MISSION_EPOCH_STR)
+    UTIL.TCO.setOBTleapSeconds(UTIL.TCO.GPS_LEAP_SECONDS_2009)
+    b = CCSDS.DU.DataUnit(testData.CUC2_TIME1_FIELD,
+                          testData.CUC2_TIME_DU_BYTE_SIZE,
+                          testData.CUC2_TIME_DU_ATTRIBUTES)
+    timeCorr = UTIL.TCO.correlateFromOBTmissionEpoch(b.time)
+    timeStr = UTIL.TIME.getASDtimeStr(timeCorr, withMicros=True)
+    self.assertEqual(timeStr, testData.CUC2_TIME1_STR)
+    b = CCSDS.DU.DataUnit(testData.CUC2_TIME2_FIELD,
+                          testData.CUC2_TIME_DU_BYTE_SIZE,
+                          testData.CUC2_TIME_DU_ATTRIBUTES)
+    timeCorr = UTIL.TCO.correlateFromOBTmissionEpoch(b.time)
+    timeStr = UTIL.TIME.getASDtimeStr(timeCorr, withMicros=True)
+    self.assertEqual(timeStr, testData.CUC2_TIME2_STR)
+    b = CCSDS.DU.DataUnit(testData.CUC2_TIME3_FIELD,
+                          testData.CUC2_TIME_DU_BYTE_SIZE,
+                          testData.CUC2_TIME_DU_ATTRIBUTES)
+    timeCorr = UTIL.TCO.correlateFromOBTmissionEpoch(b.time)
+    timeStr = UTIL.TIME.getASDtimeStr(timeCorr, withMicros=True)
+    self.assertEqual(timeStr, testData.CUC2_TIME3_STR)
+    b = CCSDS.DU.DataUnit(testData.CUC2_TIME4_FIELD,
+                          testData.CUC2_TIME_DU_BYTE_SIZE,
+                          testData.CUC2_TIME_DU_ATTRIBUTES)
+    timeCorr = UTIL.TCO.correlateFromOBTmissionEpoch(b.time)
+    timeStr = UTIL.TIME.getASDtimeStr(timeCorr, withMicros=True)
+    self.assertEqual(timeStr, testData.CUC2_TIME4_STR)
+    b = CCSDS.DU.DataUnit(testData.CUC2_TIME5_FIELD,
+                          testData.CUC2_TIME_DU_BYTE_SIZE,
+                          testData.CUC2_TIME_DU_ATTRIBUTES)
+    timeCorr = UTIL.TCO.correlateFromOBTmissionEpoch(b.time)
+    timeStr = UTIL.TIME.getASDtimeStr(timeCorr, withMicros=True)
+    self.assertEqual(timeStr, testData.CUC2_TIME5_STR)
+    b = CCSDS.DU.DataUnit(testData.CUC2_TIME6_FIELD,
+                          testData.CUC2_TIME_DU_BYTE_SIZE,
+                          testData.CUC2_TIME_DU_ATTRIBUTES)
+    timeCorr = UTIL.TCO.correlateFromOBTmissionEpoch(b.time)
+    timeStr = UTIL.TIME.getASDtimeStr(timeCorr, withMicros=True)
+    self.assertEqual(timeStr, testData.CUC2_TIME6_STR)
+  def test_DU(self):
+    """function to test the data unit operations"""
+    # test UTIL.DU.fieldTypeStr()
+    self.assertEqual(UTIL.DU.fieldTypeStr(UTIL.DU.BITS), "BITS")
+    self.assertEqual(UTIL.DU.fieldTypeStr(UTIL.DU.SBITS), "SBITS")
+    self.assertEqual(UTIL.DU.fieldTypeStr(UTIL.DU.BYTES), "BYTES")
+    self.assertEqual(UTIL.DU.fieldTypeStr(UTIL.DU.UNSIGNED), "UNSIGNED")
+    self.assertEqual(UTIL.DU.fieldTypeStr(UTIL.DU.SIGNED), "SIGNED")
+    self.assertEqual(UTIL.DU.fieldTypeStr(UTIL.DU.FLOAT), "FLOAT")
+    self.assertEqual(UTIL.DU.fieldTypeStr(UTIL.DU.TIME), "TIME")
+    self.assertEqual(UTIL.DU.fieldTypeStr(UTIL.DU.STRING), "STRING")
+    self.assertEqual(UTIL.DU.fieldTypeStr(99), "???")
+    # other tests
+    b = UTIL.DU.BinaryUnit()
+    self.assertEqual(str(b), "EMPTY")
+    self.assertEqual(len(b), 0)
+    b = UTIL.DU.BinaryUnit("1234")
+    self.assertEqual(str(b), "\n"
+"0000 31 32 33 34                                     1234")
+    self.assertEqual(len(b), 4)
+    b.setLen(10)
+    self.assertEqual(str(b), "\n"
+"0000 31 32 33 34 00 00 00 00 00 00                   1234......")
+    self.assertEqual(len(b), 10)
+    b.append("Hello, world!")
+    self.assertEqual(str(b), "\n"
+"0000 31 32 33 34 00 00 00 00 00 00 48 65 6C 6C 6F 2C 1234......Hello,\n"
+"0010 20 77 6F 72 6C 64 21                             world!")
+    self.assertEqual(len(b), 23)
+    b.setLen(255)
+    self.assertEqual(str(b), "\n"
+"0000 31 32 33 34 00 00 00 00 00 00 48 65 6C 6C 6F 2C 1234......Hello,\n"
+"0010 20 77 6F 72 6C 64 21 00 00 00 00 00 00 00 00 00  world!.........\n"
+"0020 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0030 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0040 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0050 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0060 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0070 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0080 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0090 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"00A0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"00B0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"00C0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"00D0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"00E0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"00F0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00    ...............")
+    self.assertEqual(len(b), 255)
+    b.setLen(256)
+    self.assertEqual(str(b), "\n"
+"0000 31 32 33 34 00 00 00 00 00 00 48 65 6C 6C 6F 2C 1234......Hello,\n"
+"0010 20 77 6F 72 6C 64 21 00 00 00 00 00 00 00 00 00  world!.........\n"
+"0020 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0030 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0040 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0050 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0060 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0070 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0080 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0090 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"00A0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"00B0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"00C0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"00D0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"00E0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"00F0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................")
+    self.assertEqual(len(b), 256)
+    b.setLen(257)
+    self.assertEqual(str(b), "\n"
+"0000 31 32 33 34 00 00 00 00 00 00 48 65 6C 6C 6F 2C 1234......Hello,\n"
+"0010 20 77 6F 72 6C 64 21 00 00 00 00 00 00 00 00 00  world!.........\n"
+"0020 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0030 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0040 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0050 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0060 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0070 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0080 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0090 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"00A0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"00B0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"00C0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"00D0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"00E0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"00F0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................\n"
+"0100 00                                              .")
+    self.assertEqual(len(b), 257)
+    b = UTIL.DU.BinaryUnit("1234")
+    self.assertEqual(str(b), "\n"
+"0000 31 32 33 34                                     1234")
+    self.assertEqual("%08X" % b.getBits( 0,  8), "00000031")
+    self.assertEqual("%08X" % b.getBits( 8,  8), "00000032")
+    self.assertEqual("%08X" % b.getBits( 8, 16), "00003233")
+    self.assertEqual("%08X" % b.getBits(12, 16), "00002333")
+    self.assertEqual("%08X" % b.getBits( 2,  1), "00000001")
+    value = b.getBits(2, 2)
+    self.assertEqual(value, 0x0000003)
+    value = b.getSBits(2, 2)
+    self.assertEqual(value, -1)
+    b.setSBits(1, 7, -16)
+    self.assertEqual(str(b), "\n"
+"0000 70 32 33 34                                     p234")
+    value = b.getBits(1, 7)
+    self.assertEqual(value, 0x0000070)
+    value = b.getSBits(1, 7)
+    self.assertEqual(value, -16)
+    b.setBits( 0,  8, 0x00000087)
+    self.assertEqual(str(b), "\n"
+"0000 87 32 33 34                                     .234")
+    b.setBits( 8,  4, 0x00000006)
+    self.assertEqual(str(b), "\n"
+"0000 87 62 33 34                                     .b34")
+    b.setBits(12, 16, 0x00005432)
+    self.assertEqual(str(b), "\n"
+"0000 87 65 43 24                                     .eC$")
+    b.setBits(28,  4, 0x00000001)
+    self.assertEqual(str(b), "\n"
+"0000 87 65 43 21                                     .eC!")
+    self.assertEqual(str(b.getBytes(1, 2)), "array('B', [101, 67])")
+    b.setBytes(1, 2, array.array('B', 'AB'.encode()))
+    self.assertEqual(str(b), "\n"
+"0000 87 41 42 21                                     .AB!")
+    value = b.getUnsigned(1, 2)
+    self.assertEqual(value, 0x00004142)
+    value = b.getSigned(1, 2)
+    self.assertEqual(value, 0x00004142)
+    b.setUnsigned(0, 2, 0x0000F234)
+    self.assertEqual(str(b), "\n"
+"0000 F2 34 42 21                                     .4B!")
+    value = b.getUnsigned(0, 2)
+    self.assertEqual(value, 0x0000F234)
+    value = b.getSigned(0, 2)
+    self.assertEqual(value, -3532)
+    b.setSigned(0, 2, -1)
+    self.assertEqual(str(b), "\n"
+"0000 FF FF 42 21                                     ..B!")
+    value = b.getUnsigned(0, 2)
+    self.assertEqual(value, 0x0000FFFF)
+    value = b.getSigned(0, 2)
+    self.assertEqual(value, -1)
+    b = UTIL.DU.BinaryUnit(16 * 'w')
+    self.assertEqual(str(b), "\n"
+"0000 77 77 77 77 77 77 77 77 77 77 77 77 77 77 77 77 wwwwwwwwwwwwwwww")
+    value = 10.0
+    b.setFloat(0, 4, value)
+    self.assertEqual(str(b), "\n"
+"0000 41 20 00 00 77 77 77 77 77 77 77 77 77 77 77 77 A ..wwwwwwwwwwww")
+    b.setFloat(6, 8, value)
+    self.assertEqual(str(b), "\n"
+"0000 41 20 00 00 77 77 40 24 00 00 00 00 00 00 77 77 A ..ww@$......ww")
+    value1 = b.getFloat(0, 4)
+    self.assertEqual(str(value1), "10.0")
+    self.assertEqual(value1, value)
+    value2 = b.getFloat(6, 8)
+    self.assertEqual(str(value2), "10.0")
+    self.assertEqual(value2, value)
+    a = UTIL.DU.str2array("00 01 FF FE 64 12")
+    self.assertEqual(str(a), "array('B', [0, 1, 255, 254, 100, 18])")
+    a = UTIL.DU.str2array("0001FFFE6412", True)
+    self.assertEqual(str(a), "array('B', [0, 1, 255, 254, 100, 18])")
+    h = UTIL.DU.array2str(a)
+    self.assertEqual(str(h), "\n"
+"0000 00 01 FF FE 64 12                               ....d.")
 
 ########
 # main #
 ########
 if __name__ == "__main__":
-  print("***** test_DUoperations() start")
-  retVal = test_DUoperations()
-  print("***** test_DUoperations() done:", retVal)
+  unittest.main()
