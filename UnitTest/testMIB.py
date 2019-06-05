@@ -13,53 +13,31 @@
 #******************************************************************************
 # Unit Tests                                                                  *
 #******************************************************************************
+import unittest
 import SCOS.ENV, SCOS.MIB
 
 #############
-# functions #
+# test case #
 #############
-# -----------------------------------------------------------------------------
-def test_MIB():
-  """load MIB tables"""
-  mibDir = SCOS.ENV.s_environment.mibDir()
-  expectedMibDir = "../TESTENV/data/ASCII"
-  if mibDir != expectedMibDir:
-    print("mibDir", mibDir, "does not match the expected one: ", expectedMibDir)
-    return False
-  pidMap, picMap, tpcfMap, pcfMap, plfMap, vpdMap, ccfMap, cpcMap, cdfMap = SCOS.MIB.readAllTables()
-  if len(pidMap) == 0:
-    print("pidMap does not contain entries")
-    return False
-  if len(picMap) == 0:
-    print("picMap does not contain entries")
-    return False
-  if len(tpcfMap) == 0:
-    print("tpcfMap does not contain entries")
-    return False
-  if len(pcfMap) == 0:
-    print("pcfMap does not contain entries")
-    return False
-  if len(plfMap) == 0:
-    print("plfMap does not contain entries")
-    return False
-  if len(vpdMap) == 0:
-    print("vpdMap does not contain entries")
-    return False
-  if len(ccfMap) == 0:
-    print("ccfMap does not contain entries")
-    return False
-  if len(cpcMap) == 0:
-    print("cpcMap does not contain entries")
-    return False
-  if len(cdfMap) == 0:
-    print("cdfMap does not contain entries")
-    return False
-  return True
+class TestMIB(unittest.TestCase):
+  def test(self):
+    """load MIB tables"""
+    mibDir = SCOS.ENV.s_environment.mibDir()
+    expectedMibDir = "../TESTENV/data/ASCII"
+    self.assertEqual(mibDir, expectedMibDir)
+    pidMap, picMap, tpcfMap, pcfMap, plfMap, vpdMap, ccfMap, cpcMap, cdfMap = SCOS.MIB.readAllTables()
+    self.assertNotEqual(len(pidMap), 0)
+    self.assertNotEqual(len(picMap), 0)
+    self.assertNotEqual(len(tpcfMap), 0)
+    self.assertNotEqual(len(pcfMap), 0)
+    self.assertNotEqual(len(plfMap), 0)
+    self.assertNotEqual(len(vpdMap), 0)
+    self.assertNotEqual(len(ccfMap), 0)
+    self.assertNotEqual(len(cpcMap), 0)
+    self.assertNotEqual(len(cdfMap), 0)
 
 ########
 # main #
 ########
 if __name__ == "__main__":
-  print("***** test_MIB() start")
-  retVal = test_MIB()
-  print("***** test_MIB() done:", retVal)
+  unittest.main()
