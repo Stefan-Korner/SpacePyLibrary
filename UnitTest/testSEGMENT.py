@@ -19,7 +19,7 @@ import CCSDS.SEGMENT, testData
 #############
 # test case #
 #############
-class TestSEGMENT_DUoperations(unittest.TestCase):
+class TestSEGMENT(unittest.TestCase):
   def test(self):
     """test the transfer segment data units"""
     tcSegment1 = CCSDS.SEGMENT.TCsegment(testData.TC_SEGMENT_01)
