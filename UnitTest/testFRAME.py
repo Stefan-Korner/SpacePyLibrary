@@ -13,129 +13,113 @@
 #******************************************************************************
 # CCSDS Stack - Unit Tests                                                    *
 #******************************************************************************
-from __future__ import print_function
+import unittest
 import CCSDS.FRAME, testData
 
 #############
-# functions #
+# test case #
 #############
-def test_FRAME_DUoperations():
-  """function to test the transfer frame data units"""
-  tmFrame0 = CCSDS.FRAME.TMframe()
-  print("tmFrame0 =", tmFrame0)
-  print("")
-  tmFrame1 = CCSDS.FRAME.TMframe(testData.TM_FRAME_01)
-  print("tmFrame1 =", tmFrame1)
-  if tmFrame1.versionNumber != testData.TM_FRAME_01_versionNumber:
-    print("tmFrame1 versionNumber wrong:", tmFrame1.versionNumber, "- should be", testData.TM_FRAME_01_versionNumber)
-    return False
-  if tmFrame1.spacecraftId != testData.TM_FRAME_01_spacecraftId:
-    print("tmFrame1 spacecraftId wrong:", tmFrame1.spacecraftId, "- should be", testData.TM_FRAME_01_spacecraftId)
-    return False
-  if tmFrame1.virtualChannelId != testData.TM_FRAME_01_virtualChannelId:
-    print("tmFrame1 virtualChannelId wrong:", tmFrame1.virtualChannelId, "- should be", testData.TM_FRAME_01_virtualChannelId)
-    return False
-  if tmFrame1.operationalControlField != testData.TM_FRAME_01_operationalControlField:
-    print("tmFrame1 operationalControlField wrong:", tmFrame1.operationalControlField, "- should be", testData.TM_FRAME_01_operationalControlField)
-    return False
-  if tmFrame1.masterChannelFrameCount != testData.TM_FRAME_01_masterChannelFrameCount:
-    print("tmFrame1 masterChannelFrameCount wrong:", tmFrame1.masterChannelFrameCount, "- should be", testData.TM_FRAME_01_masterChannelFrameCount)
-    return False
-  if tmFrame1.virtualChannelFCountLow != testData.TM_FRAME_01_virtualChannelFCountLow:
-    print("tmFrame1 virtualChannelFCountLow wrong:", tmFrame1.virtualChannelFCountLow, "- should be", testData.TM_FRAME_01_virtualChannelFCountLow)
-    return False
-  if tmFrame1.secondaryHeaderFlag != testData.TM_FRAME_01_secondaryHeaderFlag:
-    print("tmFrame1 secondaryHeaderFlag wrong:", tmFrame1.secondaryHeaderFlag, "- should be", testData.TM_FRAME_01_secondaryHeaderFlag)
-    return False
-  if tmFrame1.synchronisationFlag != testData.TM_FRAME_01_synchronisationFlag:
-    print("tmFrame1 synchronisationFlag wrong:", tmFrame1.synchronisationFlag, "- should be", testData.TM_FRAME_01_synchronisationFlag)
-    return False
-  if tmFrame1.packetOrderFlag != testData.TM_FRAME_01_packetOrderFlag:
-    print("tmFrame1 packetOrderFlag wrong:", tmFrame1.packetOrderFlag, "- should be", testData.TM_FRAME_01_packetOrderFlag)
-    return False
-  if tmFrame1.segmentLengthId != testData.TM_FRAME_01_segmentLengthId:
-    print("tmFrame1 segmentLengthId wrong:", tmFrame1.segmentLengthId, "- should be", testData.TM_FRAME_01_segmentLengthId)
-    return False
-  if tmFrame1.firstHeaderPointer != testData.TM_FRAME_01_firstHeaderPointer:
-    print("tmFrame1 firstHeaderPointer wrong:", tmFrame1.firstHeaderPointer, "- should be", testData.TM_FRAME_01_firstHeaderPointer)
-    return False
-  # extract packets and check it
-  leadingFragment, packets, trailingFragment = tmFrame1.getPackets()
-  if leadingFragment != testData.TM_FRAME_01_leadingFragment:
-    print("tmFrame1 leadingFragment wrong:", leadingFragment, "- should be", testData.TM_FRAME_01_leadingFragment)
-    return False
-  if len(packets) != testData.TM_FRAME_01_nrPackets:
-    print("tmFrame1 nr. of packets wrong:", len(packets), "- should be", testData.TM_FRAME_01_nrPackets)
-    return False
-  if trailingFragment != testData.TM_FRAME_01_trailingFragment:
-    print("tmFrame1 trailingFragment wrong:", trailingFragment, "- should be", testData.TM_FRAME_01_trailingFragment)
-    return False
-  print("")
-  tcFrame1 = CCSDS.FRAME.TCframe(testData.TC_FRAME_01)
-  print("tcFrame1 =", tcFrame1)
-  if tcFrame1.versionNumber != testData.TC_FRAME_01_versionNumber:
-    print("tcFrame1 versionNumber wrong:", tcFrame1.versionNumber, "- should be", testData.TC_FRAME_01_versionNumber)
-    return False
-  if tcFrame1.reservedFieldB != testData.TC_FRAME_01_reservedFieldB:
-    print("tcFrame1 reservedFieldB wrong:", tcFrame1.reservedFieldB, "- should be", testData.TC_FRAME_01_reservedFieldB)
-    return False
-  if tcFrame1.virtualChannelId != testData.TC_FRAME_01_virtualChannelId:
-    print("tcFrame1 virtualChannelId wrong:", tcFrame1.virtualChannelId, "- should be", testData.TC_FRAME_01_virtualChannelId)
-    return False
-  if tcFrame1.controlCommandFlag != testData.TC_FRAME_01_controlCommandFlag:
-    print("tcFrame1 controlCommandFlag wrong:", tcFrame1.controlCommandFlag, "- should be", testData.TC_FRAME_01_controlCommandFlag)
-    return False
-  if tcFrame1.reservedFieldA != testData.TC_FRAME_01_reservedFieldA:
-    print("tcFrame1 reservedFieldA wrong:", tcFrame1.reservedFieldA, "- should be", testData.TC_FRAME_01_reservedFieldA)
-    return False
-  if tcFrame1.frameLength != testData.TC_FRAME_01_frameLength:
-    print("tcFrame1 frameLength wrong:", tcFrame1.frameLength, "- should be", testData.TC_FRAME_01_frameLength)
-    return False
-  if tcFrame1.sequenceNumber != testData.TC_FRAME_01_sequenceNumber:
-    print("tcFrame1 sequenceNumber wrong:", tcFrame1.sequenceNumber, "- should be", testData.TC_FRAME_01_sequenceNumber)
-    return False
-  if tcFrame1.spacecraftId != testData.TC_FRAME_01_spacecraftId:
-    print("tcFrame1 spacecraftId wrong:", tcFrame1.spacecraftId, "- should be", testData.TC_FRAME_01_spacecraftId)
-    return False
-  if tcFrame1.bypassFlag != testData.TC_FRAME_01_bypassFlag:
-    print("tcFrame1 bypassFlag wrong:", tcFrame1.bypassFlag, "- should be", testData.TC_FRAME_01_bypassFlag)
-    return False
-  tcFrame2 = CCSDS.FRAME.TCframe(testData.TC_FRAME_02)
-  if tcFrame2.versionNumber != testData.TC_FRAME_02_versionNumber:
-    print("tcFrame2 versionNumber wrong:", tcFrame2.versionNumber, "- should be", testData.TC_FRAME_02_versionNumber)
-    return False
-  if tcFrame2.reservedFieldB != testData.TC_FRAME_02_reservedFieldB:
-    print("tcFrame2 reservedFieldB wrong:", tcFrame2.reservedFieldB, "- should be", testData.TC_FRAME_02_reservedFieldB)
-    return False
-  if tcFrame2.virtualChannelId != testData.TC_FRAME_02_virtualChannelId:
-    print("tcFrame2 virtualChannelId wrong:", tcFrame2.virtualChannelId, "- should be", testData.TC_FRAME_02_virtualChannelId)
-    return False
-  if tcFrame2.controlCommandFlag != testData.TC_FRAME_02_controlCommandFlag:
-    print("tcFrame2 controlCommandFlag wrong:", tcFrame2.controlCommandFlag, "- should be", testData.TC_FRAME_02_controlCommandFlag)
-    return False
-  if tcFrame2.reservedFieldA != testData.TC_FRAME_02_reservedFieldA:
-    print("tcFrame2 reservedFieldA wrong:", tcFrame2.reservedFieldA, "- should be", testData.TC_FRAME_02_reservedFieldA)
-    return False
-  if tcFrame2.frameLength != testData.TC_FRAME_02_frameLength:
-    print("tcFrame2 frameLength wrong:", tcFrame2.frameLength, "- should be", testData.TC_FRAME_02_frameLength)
-    return False
-  if tcFrame2.sequenceNumber != testData.TC_FRAME_02_sequenceNumber:
-    print("tcFrame2 sequenceNumber wrong:", tcFrame2.sequenceNumber, "- should be", testData.TC_FRAME_02_sequenceNumber)
-    return False
-  if tcFrame2.spacecraftId != testData.TC_FRAME_02_spacecraftId:
-    print("tcFrame2 spacecraftId wrong:", tcFrame2.spacecraftId, "- should be", testData.TC_FRAME_02_spacecraftId)
-    return False
-  if tcFrame2.bypassFlag != testData.TC_FRAME_02_bypassFlag:
-    print("tcFrame2 bypassFlag wrong:", tcFrame2.bypassFlag, "- should be", testData.TC_FRAME_02_bypassFlag)
-    return False
-  clcw = CCSDS.FRAME.CLCW()
-  print("clcw =", clcw)
-  return True
+class TestFRAME(unittest.TestCase):
+  def test(self):
+    """test the transfer frame data units"""
+    tmFrame0 = CCSDS.FRAME.TMframe()
+    self.assertEqual(tmFrame0.versionNumber, 0)
+    self.assertEqual(tmFrame0.spacecraftId, 0)
+    self.assertEqual(tmFrame0.virtualChannelId, 0)
+    self.assertEqual(tmFrame0.operationalControlField, 0)
+    self.assertEqual(tmFrame0.masterChannelFrameCount, 0)
+    self.assertEqual(tmFrame0.virtualChannelFCountLow, 0)
+    self.assertEqual(tmFrame0.secondaryHeaderFlag, 0)
+    self.assertEqual(tmFrame0.synchronisationFlag, 0)
+    self.assertEqual(tmFrame0.packetOrderFlag, 0)
+    self.assertEqual(tmFrame0.segmentLengthId, 0)
+    self.assertEqual(tmFrame0.firstHeaderPointer, 0)
+    tmFrame1 = CCSDS.FRAME.TMframe(testData.TM_FRAME_01)
+    self.assertEqual(tmFrame1.versionNumber,
+                     testData.TM_FRAME_01_versionNumber)
+    self.assertEqual(tmFrame1.spacecraftId,
+                     testData.TM_FRAME_01_spacecraftId)
+    self.assertEqual(tmFrame1.virtualChannelId,
+                     testData.TM_FRAME_01_virtualChannelId)
+    self.assertEqual(tmFrame1.operationalControlField,
+                     testData.TM_FRAME_01_operationalControlField)
+    self.assertEqual(tmFrame1.masterChannelFrameCount,
+                     testData.TM_FRAME_01_masterChannelFrameCount)
+    self.assertEqual(tmFrame1.virtualChannelFCountLow,
+                     testData.TM_FRAME_01_virtualChannelFCountLow)
+    self.assertEqual(tmFrame1.secondaryHeaderFlag,
+                     testData.TM_FRAME_01_secondaryHeaderFlag)
+    self.assertEqual(tmFrame1.synchronisationFlag,
+                     testData.TM_FRAME_01_synchronisationFlag)
+    self.assertEqual(tmFrame1.packetOrderFlag,
+                     testData.TM_FRAME_01_packetOrderFlag)
+    self.assertEqual(tmFrame1.segmentLengthId,
+                     testData.TM_FRAME_01_segmentLengthId)
+    self.assertEqual(tmFrame1.firstHeaderPointer,
+                     testData.TM_FRAME_01_firstHeaderPointer)
+    # extract packets and check it
+    leadingFragment, packets, trailingFragment = tmFrame1.getPackets()
+    self.assertEqual(leadingFragment,
+                     testData.TM_FRAME_01_leadingFragment)
+    self.assertEqual(len(packets), testData.TM_FRAME_01_nrPackets)
+    self.assertEqual(trailingFragment,
+                     testData.TM_FRAME_01_trailingFragment)
+    tcFrame1 = CCSDS.FRAME.TCframe(testData.TC_FRAME_01)
+    self.assertEqual(tcFrame1.versionNumber,
+                     testData.TC_FRAME_01_versionNumber)
+    self.assertEqual(tcFrame1.reservedFieldB,
+                     testData.TC_FRAME_01_reservedFieldB)
+    self.assertEqual(tcFrame1.virtualChannelId,
+                     testData.TC_FRAME_01_virtualChannelId)
+    self.assertEqual(tcFrame1.controlCommandFlag,
+                     testData.TC_FRAME_01_controlCommandFlag)
+    self.assertEqual(tcFrame1.reservedFieldA,
+                     testData.TC_FRAME_01_reservedFieldA)
+    self.assertEqual(tcFrame1.frameLength,
+                     testData.TC_FRAME_01_frameLength)
+    self.assertEqual(tcFrame1.sequenceNumber,
+                     testData.TC_FRAME_01_sequenceNumber)
+    self.assertEqual(tcFrame1.spacecraftId,
+                     testData.TC_FRAME_01_spacecraftId)
+    self.assertEqual(tcFrame1.bypassFlag,
+                     testData.TC_FRAME_01_bypassFlag)
+    tcFrame2 = CCSDS.FRAME.TCframe(testData.TC_FRAME_02)
+    self.assertEqual(tcFrame2.versionNumber,
+                     testData.TC_FRAME_02_versionNumber)
+    self.assertEqual(tcFrame2.reservedFieldB,
+                     testData.TC_FRAME_02_reservedFieldB)
+    self.assertEqual(tcFrame2.virtualChannelId,
+                     testData.TC_FRAME_02_virtualChannelId)
+    self.assertEqual(tcFrame2.controlCommandFlag,
+                     testData.TC_FRAME_02_controlCommandFlag)
+    self.assertEqual(tcFrame2.reservedFieldA,
+                     testData.TC_FRAME_02_reservedFieldA)
+    self.assertEqual(tcFrame2.frameLength,
+                     testData.TC_FRAME_02_frameLength)
+    self.assertEqual(tcFrame2.sequenceNumber,
+                     testData.TC_FRAME_02_sequenceNumber)
+    self.assertEqual(tcFrame2.spacecraftId,
+                     testData.TC_FRAME_02_spacecraftId)
+    self.assertEqual(tcFrame2.bypassFlag,
+                     testData.TC_FRAME_02_bypassFlag)
+    clcw = CCSDS.FRAME.CLCW()
+    self.assertEqual(clcw.type, 0)
+    self.assertEqual(clcw.version, 0)
+    self.assertEqual(clcw.statusField, 0)
+    self.assertEqual(clcw.copInEffect, 0)
+    self.assertEqual(clcw.virtualChannelId, 0)
+    self.assertEqual(clcw.spareField, 0)
+    self.assertEqual(clcw.noRfAvailable, 0)
+    self.assertEqual(clcw.noBitLock, 0)
+    self.assertEqual(clcw.lockout, 0)
+    self.assertEqual(clcw.wait, 0)
+    self.assertEqual(clcw.retransmit, 0)
+    self.assertEqual(clcw.farmBcounter, 0)
+    self.assertEqual(clcw.reportType, 0)
+    self.assertEqual(clcw.reportValue, 0)
 
 ########
 # main #
 ########
 if __name__ == "__main__":
-  print("***** test_FRAME_DUoperations() start")
-  retVal = test_FRAME_DUoperations()
-  print("***** test_FRAME_DUoperations() done:", retVal)
+  unittest.main()
