@@ -13,54 +13,36 @@
 #******************************************************************************
 # CCSDS Stack - Unit Tests                                                    *
 #******************************************************************************
-import array
+import array, unittest
 import CCSDS.CLTU, testData
 
 #############
-# functions #
+# test case #
 #############
-def test_CLTUoperations():
-  """function to test the BCH encoding operations"""
-  frame1a = array.array("B", testData.TC_FRAME_01)
-  cltu1 = CCSDS.CLTU.encodeCltu(frame1a)
-  okState, msg = CCSDS.CLTU.checkCltu(cltu1)
-  if not okState:
-    print("CLTU 1 check failed:", msg)
-    return False
-  if cltu1 != array.array("B", testData.CLTU_01):
-    print("CLTU 1 does not match the expected one")
-    return False
-  frame1b = CCSDS.CLTU.decodeCltu(cltu1)
-  if frame1b == None:
-    print("CLTU 1 decoding failed")
-    return False
-  # ignore the fill bytes
-  if frame1a != frame1b[:len(frame1a)]:
-    print("CLTU 1 encoding and decoding not symmetrical")
-    return False
-  frame2a = array.array("B", testData.TC_FRAME_02)
-  cltu2 = CCSDS.CLTU.encodeCltu(frame2a)
-  okState, msg = CCSDS.CLTU.checkCltu(cltu2)
-  if not okState:
-    print("CLTU 2 check failed:", msg)
-    return False
-  if cltu2 != array.array("B", testData.CLTU_02):
-    print("CLTU 2 does not match the expected one")
-    return False
-  frame2b = CCSDS.CLTU.decodeCltu(cltu2)
-  if frame2b == None:
-    print("CLTU 2 decoding failed")
-    return False
-  # ignore the fill bytes
-  if frame2a != frame2b[:len(frame2a)]:
-    print("CLTU 2 encoding and decoding not symmetrical")
-    return False
-  return True
+class TestCLTU(unittest.TestCase):
+  def test(self):
+    """test the BCH encoding operations"""
+    frame1a = array.array("B", testData.TC_FRAME_01)
+    cltu1 = CCSDS.CLTU.encodeCltu(frame1a)
+    okState, msg = CCSDS.CLTU.checkCltu(cltu1)
+    self.assertTrue(okState)
+    self.assertEqual(cltu1, array.array("B", testData.CLTU_01))
+    frame1b = CCSDS.CLTU.decodeCltu(cltu1)
+    self.assertIsNotNone(frame1b)
+    # ignore the fill bytes
+    self.assertEqual(frame1a, frame1b[:len(frame1a)])
+    frame2a = array.array("B", testData.TC_FRAME_02)
+    cltu2 = CCSDS.CLTU.encodeCltu(frame2a)
+    okState, msg = CCSDS.CLTU.checkCltu(cltu2)
+    self.assertTrue(okState)
+    self.assertEqual(cltu2, array.array("B", testData.CLTU_02))
+    frame2b = CCSDS.CLTU.decodeCltu(cltu2)
+    self.assertIsNotNone(frame2b)
+    # ignore the fill bytes
+    self.assertEqual(frame2a, frame2b[:len(frame2a)])
 
 ########
 # main #
 ########
 if __name__ == "__main__":
-  print("***** test_CLTUoperations() start")
-  retVal = test_CLTUoperations()
-  print("***** test_CLTUoperations() done:", retVal)
+  unittest.main()
