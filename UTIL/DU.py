@@ -106,37 +106,37 @@ class BinaryUnit(object):
     """compares if self < other"""
     if other == None:
       return False
-    return self.getBufferString().__lt__(other.getBufferString())
+    return self.getBuffer().__lt__(other.getBuffer())
   # ---------------------------------------------------------------------------
   def __le__(self, other):
     """compares if self <= other"""
     if other == None:
       return False
-    return self.getBufferString().__le__(other.getBufferString())
+    return self.getBuffer().__le__(other.getBuffer())
   # ---------------------------------------------------------------------------
   def __eq__(self, other):
     """compares if self == other"""
     if other == None:
       return False
-    return self.getBufferString().__eq__(other.getBufferString())
+    return self.getBuffer().__eq__(other.getBuffer())
   # ---------------------------------------------------------------------------
   def __ne__(self, other):
     """compares if self != other"""
     if other == None:
       return True
-    return self.getBufferString().__ne__(other.getBufferString())
+    return self.getBuffer().__ne__(other.getBuffer())
   # ---------------------------------------------------------------------------
   def __gt__(self, other):
     """compares self > other"""
     if other == None:
       return False
-    return self.getBufferString().__gt__(other.getBufferString())
+    return self.getBuffer().__gt__(other.getBuffer())
   # ---------------------------------------------------------------------------
   def __ge__(self, other):
     """compares if self >= other"""
     if other == None:
       return False
-    return self.getBufferString().__ge__(other.getBufferString())
+    return self.getBuffer().__ge__(other.getBuffer())
   # ---------------------------------------------------------------------------
   def getDumpString(self, maxLen=65536):
     """returns the buffer in a readable data dump"""
