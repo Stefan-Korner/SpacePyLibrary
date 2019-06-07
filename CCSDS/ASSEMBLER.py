@@ -233,9 +233,9 @@ class Assembler(object):
       # note: this might cause a spillover if the idle packet
       idlePacketSize = max(idlePacketSize, CCSDS.PACKET.PACKET_MIN_BYTE_SIZE)
       tmIdlePacket = CCSDS.PACKET.createIdlePacket(idlePacketSize)
-      self.pendingFrame.append(tmIdlePacket.getBufferString())
+      self.pendingFrame.append(tmIdlePacket.getBuffer())
     # append CLCW
-    self.pendingFrame.append(self.clcw.getBufferString())
+    self.pendingFrame.append(self.clcw.getBuffer())
     # append CRC
     if CCSDS.FRAME.CRC_CHECK:
       self.pendingFrame.append("\0" * CCSDS.DU.CRC_BYTE_SIZE)
