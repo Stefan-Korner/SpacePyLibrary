@@ -22,8 +22,9 @@ import testData
 # test case #
 #############
 class TestDU(unittest.TestCase):
+  # ---------------------------------------------------------------------------
   def test_DUtime(self):
-    """function to test time operations"""
+    """test time operations"""
     UTIL.TCO.setOBTmissionEpochStr(UTIL.TCO.UNIX_MISSION_EPOCH_STR)
     UTIL.TCO.setOBTleapSeconds(0)
     b = CCSDS.DU.DataUnit(testData.ZERO_CUC2_TIME_FIELD,
@@ -70,8 +71,9 @@ class TestDU(unittest.TestCase):
     timeCorr = UTIL.TCO.correlateFromOBTmissionEpoch(b.time)
     timeStr = UTIL.TIME.getASDtimeStr(timeCorr, withMicros=True)
     self.assertEqual(timeStr, testData.CUC2_TIME6_STR)
+  # ---------------------------------------------------------------------------
   def test_DU(self):
-    """function to test the data unit operations"""
+    """test the data unit operations"""
     # test UTIL.DU.fieldTypeStr()
     self.assertEqual(UTIL.DU.fieldTypeStr(UTIL.DU.BITS), "BITS")
     self.assertEqual(UTIL.DU.fieldTypeStr(UTIL.DU.SBITS), "SBITS")
@@ -233,6 +235,59 @@ class TestDU(unittest.TestCase):
     h = UTIL.DU.array2str(a)
     self.assertEqual(str(h), "\n"
 "0000 00 01 FF FE 64 12                               ....d.")
+  # ---------------------------------------------------------------------------
+  def test_DUcompare(self):
+    """test the data unit compare operations"""
+    b1 = UTIL.DU.BinaryUnit("1")
+    b2 = UTIL.DU.BinaryUnit("1")
+    self.assertTrue(b1 == b2)
+    self.assertFalse(b1 != b2)
+    self.assertFalse(b1 < b2)
+    self.assertTrue(b1 <= b2)
+    self.assertFalse(b1 > b2)
+    self.assertTrue(b1 >= b2)
+    b2 = UTIL.DU.BinaryUnit("2")
+    self.assertFalse(b1 == b2)
+    self.assertTrue(b1 != b2)
+    self.assertTrue(b1 < b2)
+    self.assertTrue(b1 <= b2)
+    self.assertFalse(b1 > b2)
+    self.assertFalse(b1 >= b2)
+    b2 = UTIL.DU.BinaryUnit("11")
+    self.assertFalse(b1 == b2)
+    self.assertTrue(b1 != b2)
+    self.assertTrue(b1 < b2)
+    self.assertTrue(b1 <= b2)
+    self.assertFalse(b1 > b2)
+    self.assertFalse(b1 >= b2)
+    b1 = UTIL.DU.BinaryUnit("2")
+    self.assertFalse(b1 == b2)
+    self.assertTrue(b1 != b2)
+    self.assertFalse(b1 < b2)
+    self.assertFalse(b1 <= b2)
+    self.assertTrue(b1 > b2)
+    self.assertTrue(b1 >= b2)
+    b1 = UTIL.DU.BinaryUnit("@")
+    self.assertFalse(b1 == b2)
+    self.assertTrue(b1 != b2)
+    self.assertFalse(b1 < b2)
+    self.assertFalse(b1 <= b2)
+    self.assertTrue(b1 > b2)
+    self.assertTrue(b1 >= b2)
+    b1 = UTIL.DU.BinaryUnit("A")
+    self.assertFalse(b1 == b2)
+    self.assertTrue(b1 != b2)
+    self.assertFalse(b1 < b2)
+    self.assertFalse(b1 <= b2)
+    self.assertTrue(b1 > b2)
+    self.assertTrue(b1 >= b2)
+    b1 = UTIL.DU.BinaryUnit("a")
+    self.assertFalse(b1 == b2)
+    self.assertTrue(b1 != b2)
+    self.assertFalse(b1 < b2)
+    self.assertFalse(b1 <= b2)
+    self.assertTrue(b1 > b2)
+    self.assertTrue(b1 >= b2)
 
 ########
 # main #
