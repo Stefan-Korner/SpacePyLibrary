@@ -44,7 +44,7 @@ class DataUnit(BinaryUnit):
     """set a time"""
     timeDU = CCSDS.TIME.convertToCCSDS(value, timeFormat)
     byteSize = len(timeDU)
-    timeData = timeDU.getBufferString()
+    timeData = timeDU.getBuffer()
     self.setBytes(bytePos, byteSize, timeData)
   # ---------------------------------------------------------------------------
   def setChecksum(self):
