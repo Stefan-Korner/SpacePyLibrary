@@ -19,7 +19,7 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import UTIL.SYS, UTIL.TASK
 import GRND.NCTRS, GRND.NCTRSDU, GRND.NCTRSDUhelpers
 import CCSDS.CLTU
-import testData
+import UnitTest.testData
 
 ####################
 # global variables #
@@ -85,7 +85,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
   def packet1Cmd(self, argv):
     """Decoded packet1 command"""
     global s_tcSender
-    packetData = testData.TC_PACKET_01
+    packetData = UnitTest.testData.TC_PACKET_01
     s_tcSender.sendTCpacket(packetData)
   # ---------------------------------------------------------------------------
   def packet2Cmd(self, argv):
@@ -95,7 +95,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
   def frameCmd(self, argv):
     """Decoded frame command"""
     global s_tcSender
-    frame = testData.TC_FRAME_01
+    frame = UnitTest.testData.TC_FRAME_01
     cltu = CCSDS.CLTU.encodeCLTU(frame)
     okState, msg = CCSDS.CLTU.checkCLTU(cltu)
     if not okState:
@@ -104,24 +104,24 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       return
     tcCltuDu = GRND.NCTRSDU.TCcltuDataUnit()
     tcCltuDu.setCltu(cltu)
-    tcCltuDu.spacecraftId = testData.NCTRS_CLTU_01_spacecraftId
-    tcCltuDu.delay = testData.NCTRS_CLTU_01_delay
-    tcCltuDu.latestProdTime = testData.NCTRS_CLTU_01_latestProdTime
-    tcCltuDu.serviceType = testData.NCTRS_CLTU_01_serviceType
-    tcCltuDu.earliestProdTime = testData.NCTRS_CLTU_01_earliestProdTime
-    tcCltuDu.virtualChannelId = testData.NCTRS_CLTU_01_virtualChannelId
-    tcCltuDu.mapId = testData.NCTRS_CLTU_01_mapId
-    tcCltuDu.aggregationFlag = testData.NCTRS_CLTU_01_aggregationFlag
-    tcCltuDu.tcId = testData.NCTRS_CLTU_01_tcId
-    tcCltuDu.earliestProdTimeFlag = testData.NCTRS_CLTU_01_earliestProdTimeFlag
-    tcCltuDu.latestProdTimeFlag = testData.NCTRS_CLTU_01_latestProdTimeFlag
+    tcCltuDu.spacecraftId = UnitTest.testData.NCTRS_CLTU_01_spacecraftId
+    tcCltuDu.delay = UnitTest.testData.NCTRS_CLTU_01_delay
+    tcCltuDu.latestProdTime = UnitTest.testData.NCTRS_CLTU_01_latestProdTime
+    tcCltuDu.serviceType = UnitTest.testData.NCTRS_CLTU_01_serviceType
+    tcCltuDu.earliestProdTime = UnitTest.testData.NCTRS_CLTU_01_earliestProdTime
+    tcCltuDu.virtualChannelId = UnitTest.testData.NCTRS_CLTU_01_virtualChannelId
+    tcCltuDu.mapId = UnitTest.testData.NCTRS_CLTU_01_mapId
+    tcCltuDu.aggregationFlag = UnitTest.testData.NCTRS_CLTU_01_aggregationFlag
+    tcCltuDu.tcId = UnitTest.testData.NCTRS_CLTU_01_tcId
+    tcCltuDu.earliestProdTimeFlag = UnitTest.testData.NCTRS_CLTU_01_earliestProdTimeFlag
+    tcCltuDu.latestProdTimeFlag = UnitTest.testData.NCTRS_CLTU_01_latestProdTimeFlag
     print("tcCltuDu =", tcCltuDu)
     s_tcSender.sendTcDataUnit(tcCltuDu)
   # ---------------------------------------------------------------------------
   def cltu1Cmd(self, argv):
     """Decoded cltu1 command"""
     global s_tcSender
-    cltu = testData.CLTU_01
+    cltu = UnitTest.testData.CLTU_01
     okState, msg = CCSDS.CLTU.checkCltu(cltu)
     if not okState:
       LOG_ERROR("CLTU check failed: " + msg)
@@ -129,24 +129,24 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       return
     tcCltuDu = GRND.NCTRSDU.TCcltuDataUnit()
     tcCltuDu.setCltu(cltu)
-    tcCltuDu.spacecraftId = testData.NCTRS_CLTU_01_spacecraftId
-    tcCltuDu.delay = testData.NCTRS_CLTU_01_delay
-    tcCltuDu.latestProdTime = testData.NCTRS_CLTU_01_latestProdTime
-    tcCltuDu.serviceType = testData.NCTRS_CLTU_01_serviceType
-    tcCltuDu.earliestProdTime = testData.NCTRS_CLTU_01_earliestProdTime
-    tcCltuDu.virtualChannelId = testData.NCTRS_CLTU_01_virtualChannelId
-    tcCltuDu.mapId = testData.NCTRS_CLTU_01_mapId
-    tcCltuDu.aggregationFlag = testData.NCTRS_CLTU_01_aggregationFlag
-    tcCltuDu.tcId = testData.NCTRS_CLTU_01_tcId
-    tcCltuDu.earliestProdTimeFlag = testData.NCTRS_CLTU_01_earliestProdTimeFlag
-    tcCltuDu.latestProdTimeFlag = testData.NCTRS_CLTU_01_latestProdTimeFlag
+    tcCltuDu.spacecraftId = UnitTest.testData.NCTRS_CLTU_01_spacecraftId
+    tcCltuDu.delay = UnitTest.testData.NCTRS_CLTU_01_delay
+    tcCltuDu.latestProdTime = UnitTest.testData.NCTRS_CLTU_01_latestProdTime
+    tcCltuDu.serviceType = UnitTest.testData.NCTRS_CLTU_01_serviceType
+    tcCltuDu.earliestProdTime = UnitTest.testData.NCTRS_CLTU_01_earliestProdTime
+    tcCltuDu.virtualChannelId = UnitTest.testData.NCTRS_CLTU_01_virtualChannelId
+    tcCltuDu.mapId = UnitTest.testData.NCTRS_CLTU_01_mapId
+    tcCltuDu.aggregationFlag = UnitTest.testData.NCTRS_CLTU_01_aggregationFlag
+    tcCltuDu.tcId = UnitTest.testData.NCTRS_CLTU_01_tcId
+    tcCltuDu.earliestProdTimeFlag = UnitTest.testData.NCTRS_CLTU_01_earliestProdTimeFlag
+    tcCltuDu.latestProdTimeFlag = UnitTest.testData.NCTRS_CLTU_01_latestProdTimeFlag
     print("tcCltuDu =", tcCltuDu)
     s_tcSender.sendTcDataUnit(tcCltuDu)
   # ---------------------------------------------------------------------------
   def cltu2Cmd(self, argv):
     """Decoded cltu2 command"""
     global s_tcSender
-    nctrsCltu = testData.NCTRS_CLTU_02
+    nctrsCltu = UnitTest.testData.NCTRS_CLTU_02
     tcCltuDu = GRND.NCTRSDU.TCcltuDataUnit(nctrsCltu)
     print("tcCltuDu =", tcCltuDu)
     s_tcSender.sendTcDataUnit(tcCltuDu)

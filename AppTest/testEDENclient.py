@@ -15,17 +15,15 @@
 #******************************************************************************
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CCSDS.PACKET
-import EGSE.CNC, EGSE.IF
+import EGSE.EDEN
 import UTIL.SYS, UTIL.TASK
-import testData
+import UnitTest.testData
 
 ####################
 # global variables #
 ####################
-# CNC servers are singletons
-s_server = None
-s_server2 = None
+# EDEN client is a singleton
+s_client = None
 
 ###########
 # classes #
@@ -47,58 +45,69 @@ class ModelTask(UTIL.TASK.ProcessingTask):
         self.helpCmd(argv)
       elif cmd == "Q" or cmd == "QUIT":
         self.quitCmd(argv)
-      elif cmd == "1" or cmd == "TM_PKT":
-        self.tmPktCmd(argv)
+      elif cmd == "1" or cmd == "TC_SPACE":
+        self.tcSpaceCmd(argv)
+      elif cmd == "2" or cmd == "TC_SCOE":
+        self.tcScoeCmd(argv)
+      elif cmd == "3" or cmd == "CMD_EXEC":
+        self.cmdExecCmd(argv)
       else:
         LOG_WARNING("Invalid command " + argv[0])
-        self.helpCmd([])
     return 0
   # ---------------------------------------------------------------------------
   def helpCmd(self, argv):
     """Decoded help command"""
-    LOG_INFO("Available commands:")
+    LOG("Available commands:")
+    LOG("-------------------")
     LOG("")
-    LOG("h | help .....provides this information")
-    LOG("q | quit .....terminates the application")
-    LOG("1 | tm_pkt ...send a CCSDS TM packet")
+    LOG("h | help .......provides this information")
+    LOG("q | quit .......terminates the application")
+    LOG("1 | tc_space ...send TC via EDEN (TC,SPACE)")
+    LOG("2 | tc_scoe ....send TC via EDEN (TC,SCOE)")
+    LOG("3 | cmd_exec ...send message via EDEN (CMD,EXEC)")
     LOG("")
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
     """Decoded quit command"""
     UTIL.TASK.s_parentTask.stop()
   # ---------------------------------------------------------------------------
-  def tmPktCmd(self, argv):
-    """Decoded TM-packet command"""
-    global s_client1
+  def tcSpaceCmd(self, argv):
+    """Decoded (TC,SPACE) command"""
+    global s_client
     if len(argv) != 1:
       LOG_WARNING("Invalid command argument(s)")
-      LOG("usage: tm_pkt")
+      LOG("usage: tc_space")
       LOG("or:    1")
       return
-    tmPacketDU = CCSDS.PACKET.TMpacket(testData.TM_PACKET_01)
-    s_server2.sendTMpacket(tmPacketDU.getBufferString())
+    s_client.sendTcSpace(UnitTest.testData.TC_PACKET_01)
+  # ---------------------------------------------------------------------------
+  def tcScoeCmd(self, argv):
+    """Decoded (TC,SCOE) command"""
+    global s_client
+    if len(argv) != 1:
+      LOG_WARNING("Invalid command argument(s)")
+      LOG("usage: tc_scoe")
+      LOG("or:    2")
+      return
+    s_client.sendTcScoe(UnitTest.testData.TC_PACKET_01)
+  # ---------------------------------------------------------------------------
+  def cmdExecCmd(self, argv):
+    """Decoded (CMD,EXEC) command"""
+    global s_client
+    if len(argv) != 2:
+      LOG_WARNING("Invalid command argument(s)")
+      LOG("usage: cmd_exec <message>")
+      LOG("or:    3 <message>")
+      return
+    message = argv[1]
+    s_client.sendCmdExec(message)
 
 # =============================================================================
-class TCserver(EGSE.CNC.TCserver):
-  """Subclass of EGSE.CNC.TCserver"""
-  # ---------------------------------------------------------------------------
-  def __init__(self, portNr):
+class Client(EGSE.EDEN.Client):
+  """Subclass of EGSE.EDEN.Client"""
+  def __init__(self):
     """Initialise attributes only"""
-    EGSE.CNC.TCserver.__init__(self, portNr)
-  # ---------------------------------------------------------------------------
-  def clientAccepted(self):
-    LOG_INFO("Client accepted")
-
-# =============================================================================
-class TMserver(EGSE.CNC.TMserver):
-  """Subclass of EGSE.CNC.TMserver"""
-  # ---------------------------------------------------------------------------
-  def __init__(self, portNr):
-    """Initialise attributes only"""
-    EGSE.CNC.TMserver.__init__(self, portNr)
-  # ---------------------------------------------------------------------------
-  def clientAccepted(self):
-    LOG_INFO("Client accepted")
+    EGSE.EDEN.Client.__init__(self)
 
 #############
 # functions #
@@ -108,20 +117,16 @@ def initConfiguration():
   """initialise the system configuration"""
   UTIL.SYS.s_configuration.setDefaults([
     ["SYS_COLOR_LOG", "1"],
-    ["EGSE_PROTOCOL", "CNC"],
     ["HOST", "127.0.0.1"],
-    ["CCS_SERVER_PORT", "48569"],
-    ["CCS_SERVER_PORT2", "48570"]])
+    ["CCS_SERVER_PORT", "48569"]])
 # -----------------------------------------------------------------------------
-def createServers():
-  """create the CNC servers"""
-  global s_server, s_server2
-  EGSE.IF.s_serverConfiguration = EGSE.IF.ServerConfiguration()
-  s_server = TCserver(portNr=int(UTIL.SYS.s_configuration.CCS_SERVER_PORT))
-  if not s_server.openConnectPort(UTIL.SYS.s_configuration.HOST):
-    sys.exit(-1)
-  s_server2 = TMserver(portNr=int(UTIL.SYS.s_configuration.CCS_SERVER_PORT2))
-  if not s_server2.openConnectPort(UTIL.SYS.s_configuration.HOST):
+def createClient():
+  """create the EDEN client"""
+  global s_client
+  s_client = Client()
+  if not s_client.connectToServer(
+    serverHost=UTIL.SYS.s_configuration.HOST,
+    serverPort=int(UTIL.SYS.s_configuration.CCS_SERVER_PORT)):
     sys.exit(-1)
 
 ########
@@ -136,9 +141,9 @@ if __name__ == "__main__":
   modelTask = ModelTask()
   # register the console handler
   modelTask.registerConsoleHandler(consoleHandler)
-  # create the CNC servers
-  LOG("Open the CNC servers")
-  createServers()
+  # create the EDEN client
+  LOG("Open the EDEN client")
+  createClient()
   # start the tasks
   LOG("start modelTask...")
   modelTask.start()

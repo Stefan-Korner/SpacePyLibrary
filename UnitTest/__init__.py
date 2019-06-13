@@ -10,8 +10,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT License    *
 # for more details.                                                           *
 #******************************************************************************
-# Setup the sh Linux environment for Unit Tests, file needs to be sourced.    *
+# Unit Tests                                                                  *
 #******************************************************************************
-export PYTHONPATH=${HOME}/Python/SpacePyLibrary
-export HOST=127.0.0.1
-export TESTENV=../TESTENV
+__all__ = ["testData"]

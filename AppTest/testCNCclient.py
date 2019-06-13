@@ -11,20 +11,19 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT License    *
 # for more details.                                                           *
 #******************************************************************************
-# Ground Simulation - Unit Tests                                              *
+# EGSE interfaces - Unit Tests                                                *
 #******************************************************************************
-from __future__ import print_function
 import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+import EGSE.CNC
 import UTIL.SYS, UTIL.TASK
-import GRND.NCTRS
-import testData
 
 ####################
 # global variables #
 ####################
-# TM sender is a singleton
-s_tmSender = None
+# CNC clients are singletons
+s_client = None
+s_client2 = None
 
 ###########
 # classes #
@@ -32,6 +31,7 @@ s_tmSender = None
 # =============================================================================
 class ModelTask(UTIL.TASK.ProcessingTask):
   """Subclass of UTIL.TASK.ProcessingTask"""
+  # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise attributes only"""
     UTIL.TASK.ProcessingTask.__init__(self, isParent=True)
@@ -45,13 +45,10 @@ class ModelTask(UTIL.TASK.ProcessingTask):
         self.helpCmd(argv)
       elif cmd == "Q" or cmd == "QUIT":
         self.quitCmd(argv)
-      elif cmd == "F" or cmd == "FRAME1":
-        self.frame1Cmd(argv)
-      elif cmd == "V" or cmd == "FRAME2":
-        self.frame2Cmd(argv)
+      elif cmd == "1" or cmd == "CNC_COMMAND":
+        self.cncCommand(argv)
       else:
         LOG_WARNING("Invalid command " + argv[0])
-        self.helpCmd([])
     return 0
   # ---------------------------------------------------------------------------
   def helpCmd(self, argv):
@@ -59,46 +56,42 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("Available commands:")
     LOG("-------------------")
     LOG("")
-    LOG("h | help .....provides this information")
-    LOG("q | quit .....terminates the application")
-    LOG("f | frame1 ...send TM frame via NCTRS TM frame")
-    LOG("v | frame2 ...send NCTRS TM frame")
+    LOG("h | help ..........provides this information")
+    LOG("q | quit ..........terminates the application")
+    LOG("1 | cnc_command ...send TC via CNC (TC,SPACE)")
     LOG("")
   # ---------------------------------------------------------------------------
   def quitCmd(self, argv):
     """Decoded quit command"""
     UTIL.TASK.s_parentTask.stop()
   # ---------------------------------------------------------------------------
-  def frame1Cmd(self, argv):
-    """Decoded frame1 command"""
-    global s_tmSender
-    frame = testData.TM_FRAME_01
-    tmDu = GRND.NCTRSDU.TMdataUnit()
-    tmDu.setFrame(frame)
-    tmDu.spacecraftId = testData.NCTRS_TM_FRAME_01_spacecraftId
-    tmDu.dataStreamType = testData.NCTRS_TM_FRAME_01_dataStreamType
-    tmDu.virtualChannelId = testData.NCTRS_TM_FRAME_01_virtualChannelId
-    tmDu.routeId = testData.NCTRS_TM_FRAME_01_routeId
-    tmDu.earthReceptionTime = testData.NCTRS_TM_FRAME_01_earthReceptionTime
-    tmDu.sequenceFlag = testData.NCTRS_TM_FRAME_01_sequenceFlag
-    tmDu.qualityFlag = testData.NCTRS_TM_FRAME_01_qualityFlag
-    print("tmDu =", tmDu)
-    s_tmSender.sendTmDataUnit(tmDu)
-  # ---------------------------------------------------------------------------
-  def frame2Cmd(self, argv):
-    """Decoded frame2 command"""
-    frame = testData.TM_FRAME_01
-    s_tmSender.sendFrame(frame)
+  def cncCommand(self, argv):
+    """CnC command"""
+    global s_client
+    if len(argv) != 2:
+      LOG_WARNING("Invalid command argument(s)")
+      LOG("usage: cnc_command <message>")
+      LOG("or:    1 <message>")
+      return
+    message = argv[1]
+    cncTCpacketDU = EGSE.CNCPDU.CNCcommand()
+    cncTCpacketDU.applicationProcessId = 1234
+    cncTCpacketDU.setCNCmessage(message)
+    s_client.sendCNCpacket(cncTCpacketDU.getBufferString())
 
 # =============================================================================
-class TMsender(GRND.NCTRS.TMsender):
-  """Subclass of GRND.NCTRS.TMsender"""
-  def __init__(self, portNr, nctrsTMfields):
+class TCclient(EGSE.CNC.TCclient):
+  """Subclass of EGSE.CNC.TCclient"""
+  def __init__(self):
     """Initialise attributes only"""
-    GRND.NCTRS.TMsender.__init__(self, portNr, nctrsTMfields)
-  # ---------------------------------------------------------------------------
-  def clientAccepted(self):
-    LOG_INFO("NCTRS TM receiver (client) accepted")
+    EGSE.CNC.TCclient.__init__(self)
+
+# =============================================================================
+class TMclient(EGSE.CNC.TMclient):
+  """Subclass of EGSE.CNC.TMclient"""
+  def __init__(self):
+    """Initialise attributes only"""
+    EGSE.CNC.TMclient.__init__(self)
 
 #############
 # functions #
@@ -109,19 +102,21 @@ def initConfiguration():
   UTIL.SYS.s_configuration.setDefaults([
     ["SYS_COLOR_LOG", "1"],
     ["HOST", "127.0.0.1"],
-    ["NCTRS_TM_SERVER_PORT", "2502"],
-    ["NCTRS_TM_DU_VERSION", "V0"],
-    ["SPACECRAFT_ID", "758"]])
+    ["CCS_SERVER_PORT", "48569"],
+    ["CCS_SERVER_PORT2", "48570"]])
 # -----------------------------------------------------------------------------
-def createTMsender():
-  """create the NCTRS TM sender"""
-  global s_tmSender
-  nctrsTMfields = GRND.NCTRS.NCTRStmFields()
-  nctrsTMfields.spacecraftId = int(UTIL.SYS.s_configuration.SPACECRAFT_ID)
-  s_tmSender = TMsender(
-    portNr=int(UTIL.SYS.s_configuration.NCTRS_TM_SERVER_PORT),
-    nctrsTMfields=nctrsTMfields)
-  if not s_tmSender.openConnectPort(UTIL.SYS.s_configuration.HOST):
+def createClients():
+  """create the CNC clients"""
+  global s_client, s_client2
+  s_client = TCclient()
+  if not s_client.connectToServer(
+    serverHost=UTIL.SYS.s_configuration.HOST,
+    serverPort=int(UTIL.SYS.s_configuration.CCS_SERVER_PORT)):
+    sys.exit(-1)
+  s_client2 = TMclient()
+  if not s_client2.connectToServer(
+    serverHost=UTIL.SYS.s_configuration.HOST,
+    serverPort=int(UTIL.SYS.s_configuration.CCS_SERVER_PORT2)):
     sys.exit(-1)
 
 ########
@@ -136,9 +131,9 @@ if __name__ == "__main__":
   modelTask = ModelTask()
   # register the console handler
   modelTask.registerConsoleHandler(consoleHandler)
-  # create the NCTRS TM sender
-  LOG("Open the NCTRS TM sender (server)")
-  createTMsender()
+  # create the CNC clients
+  LOG("Open the CNC clients")
+  createClients()
   # start the tasks
   LOG("start modelTask...")
   modelTask.start()

@@ -17,7 +17,6 @@ import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import UTIL.SYS, UTIL.TASK
 import GRND.NCTRS, GRND.NCTRSDU, GRND.NCTRSDUhelpers
-import testData
 
 ####################
 # global variables #
