@@ -70,9 +70,7 @@
 #******************************************************************************
 from __future__ import print_function
 import sys
-import Tkinter as tkinter
 import PUS.VP
-import SPACEUI.VPgui
 import UTIL.DU
 
 #############
@@ -302,10 +300,3 @@ print("dStruct-->", dStruct)
 if not testStruct2(dStruct):
   print("encoded & decoded struct2 has invalid structure")
   sys.exit(-1)
-
-#******************************************************************************
-# GUI with tree widget                                                        *
-#******************************************************************************
-root = tkinter.Tk()
-root.withdraw()
-dialog = SPACEUI.VPgui.TreeBrowser(root, "Packet_01", struct)
