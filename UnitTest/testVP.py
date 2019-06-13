@@ -69,9 +69,7 @@
 #  +-- s_9: Par9 = "This is the last variable string in the struct"      1320 *
 #******************************************************************************
 import sys
-import tkinter
 import PUS.VP
-import SPACEUI.VPgui
 import UTIL.DU
 
 #############
@@ -301,10 +299,3 @@ print("dStruct-->", dStruct)
 if not testStruct2(dStruct):
   print("encoded & decoded struct2 has invalid structure")
   sys.exit(-1)
-
-#******************************************************************************
-# GUI with tree widget                                                        *
-#******************************************************************************
-root = tkinter.Tk()
-root.withdraw()
-dialog = SPACEUI.VPgui.TreeBrowser(root, "Packet_01", struct)
