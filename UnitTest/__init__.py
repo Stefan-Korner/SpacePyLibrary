@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 #******************************************************************************
 # (C) 2018, Stefan Korner, Austria                                            *
 #                                                                             *
@@ -11,21 +10,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT License    *
 # for more details.                                                           *
 #******************************************************************************
-# TASK framework - Unit Test: empty Model Task with default behaviour         *
+# Unit Tests                                                                  *
 #******************************************************************************
-from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import UTIL.TASK
-
-########
-# main #
-########
-if __name__ == "__main__":
-  # initialise the console handler
-  consoleHandler = UTIL.TASK.ConsoleHandler()
-  # initialise the model
-  modelTask = UTIL.TASK.ProcessingTask(isParent=True)
-  # register the console handler
-  modelTask.registerConsoleHandler(consoleHandler)
-  # start the tasks
-  LOG("start modelTask...")
-  modelTask.start()
+__all__ = ["testData"]
