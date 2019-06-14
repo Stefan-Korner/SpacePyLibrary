@@ -68,8 +68,7 @@
 #  +-- s_8: Par8 = 182736489393276                                        936 *
 #  +-- s_9: Par9 = "This is the last variable string in the struct"      1320 *
 #******************************************************************************
-from __future__ import print_function
-import sys
+import sys, unittest
 import PUS.VP
 import UTIL.DU
 
@@ -278,25 +277,86 @@ def encodeDecode(struct, structDef):
   dStruct.decode(du, 0)
   return dStruct
 
-structDef = createStruct1Definition()
-print("structDef:", structDef)
-struct = PUS.VP.Struct(structDef)
-print("struct-->", struct)
-if not testStruct1(struct):
-  print("struct1 has invalid structure")
-  sys.exit(-1)
-dStruct = encodeDecode(struct, structDef)
-print("dStruct-->", dStruct)
-if not testStruct1(dStruct):
-  print("encoded & decoded struct1 has invalid structure")
-  sys.exit(-1)
-changeStruct1(struct)
-print("struct-->", struct)
-if not testStruct2(struct):
-  print("struct2 has invalid structure")
-  sys.exit(-1)
-dStruct = encodeDecode(struct, structDef)
-print("dStruct-->", dStruct)
-if not testStruct2(dStruct):
-  print("encoded & decoded struct2 has invalid structure")
-  sys.exit(-1)
+#############
+# test case #
+#############
+class TestVP(unittest.TestCase):
+  def test(self):
+    """test variable packet processing"""
+    structDef = createStruct1Definition()
+    self.assertEqual(str(structDef), "\n" + \
+      "StructDef.XXXX1234.s_1.Par1 = UNSIGNED, 16, 123 RW\n" + \
+      "StructDef.XXXX1234.s_2.Par2 = STRING, 128, This is a string RO\n" + \
+      "StructDef.XXXX1234.s_3.Par3 = UNSIGNED, 32, 4193 RO\n" + \
+      "StructDef.XXXX1234.s_4.Par4 = STRING, 2, This is a variable string RO\n" + \
+      "StructDef.XXXX1234.s_5.len.Par5 = UNSIGNED, 8, 3 RW\n" + \
+      "StructDef.XXXX1234.s_5[*].s_6.Par6 = UNSIGNED, 32, 15362 RW\n" + \
+      "StructDef.XXXX1234.s_5[*].s_7.Par7 = STRING, 2, This is also a variable string RW\n" + \
+      "StructDef.XXXX1234.s_8.Par8 = UNSIGNED, 64, 182736489393276 RO\n" + \
+      "StructDef.XXXX1234.s_9.Par9 = STRING, 2, This is the last variable string in the struct RO")
+    struct = PUS.VP.Struct(structDef)
+    self.assertEqual(str(struct), "\n" + \
+      "Struct.s_1 = 123\n" + \
+      "Struct.s_2 = This is a string\n" + \
+      "Struct.s_3 = 4193\n" + \
+      "Struct.s_4 = This is a variable string\n" + \
+      "Struct.s_5.len = 3\n" + \
+      "Struct.s_5[0].s_6 = 15362\n" + \
+      "Struct.s_5[0].s_7 = This is also a variable string\n" + \
+      "Struct.s_5[1].s_6 = 15362\n" + \
+      "Struct.s_5[1].s_7 = This is also a variable string\n" + \
+      "Struct.s_5[2].s_6 = 15362\n" + \
+      "Struct.s_5[2].s_7 = This is also a variable string\n" + \
+      "Struct.s_8 = 182736489393276\n" + \
+      "Struct.s_9 = This is the last variable string in the struct")
+    self.assertTrue(testStruct1(struct))
+    dStruct = encodeDecode(struct, structDef)
+    self.assertEqual(str(dStruct), "\n" + \
+      "Struct.s_1 = 123\n" + \
+      "Struct.s_2 = This is a string\n" + \
+      "Struct.s_3 = 4193\n" + \
+      "Struct.s_4 = This is a variable string\n" + \
+      "Struct.s_5.len = 3\n" + \
+      "Struct.s_5[0].s_6 = 15362\n" + \
+      "Struct.s_5[0].s_7 = This is also a variable string\n" + \
+      "Struct.s_5[1].s_6 = 15362\n" + \
+      "Struct.s_5[1].s_7 = This is also a variable string\n" + \
+      "Struct.s_5[2].s_6 = 15362\n" + \
+      "Struct.s_5[2].s_7 = This is also a variable string\n" + \
+      "Struct.s_8 = 182736489393276\n" + \
+      "Struct.s_9 = This is the last variable string in the struct")
+    self.assertTrue(testStruct1(dStruct))
+    changeStruct1(struct)
+    self.assertEqual(str(struct), "\n" + \
+      "Struct.s_1 = 65535\n" + \
+      "Struct.s_2 = This is a string\n" + \
+      "Struct.s_3 = 4193\n" + \
+      "Struct.s_4 = This is a variable string\n" + \
+      "Struct.s_5.len = 2\n" + \
+      "Struct.s_5[0].s_6 = 101010\n" + \
+      "Struct.s_5[0].s_7 = new value for s_7\n" + \
+      "Struct.s_5[1].s_6 = 15362\n" + \
+      "Struct.s_5[1].s_7 = This is also a variable string\n" + \
+      "Struct.s_8 = 182736489393276\n" + \
+      "Struct.s_9 = This is the last variable string in the struct")
+    self.assertTrue(testStruct2(struct))
+    dStruct = encodeDecode(struct, structDef)
+    self.assertEqual(str(dStruct), "\n" + \
+      "Struct.s_1 = 65535\n" + \
+      "Struct.s_2 = This is a string\n" + \
+      "Struct.s_3 = 4193\n" + \
+      "Struct.s_4 = This is a variable string\n" + \
+      "Struct.s_5.len = 2\n" + \
+      "Struct.s_5[0].s_6 = 101010\n" + \
+      "Struct.s_5[0].s_7 = new value for s_7\n" + \
+      "Struct.s_5[1].s_6 = 15362\n" + \
+      "Struct.s_5[1].s_7 = This is also a variable string\n" + \
+      "Struct.s_8 = 182736489393276\n" + \
+      "Struct.s_9 = This is the last variable string in the struct")
+    self.assertTrue(testStruct2(dStruct))
+
+########
+# main #
+########
+if __name__ == "__main__":
+  unittest.main()
