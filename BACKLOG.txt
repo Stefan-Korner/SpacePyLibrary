@@ -8,8 +8,6 @@ Backlog of features that shall be implemented
 
 008 Support ERT time in FRAME2PACKET.py
 
-012 Use unittest framework.
-
 013 Support stringified time as TM parameter (TMGEN.py).
 
 014 Support COP-1 protocol for CCSDS frame layer (see related issue).
@@ -65,7 +63,7 @@ Backlog of features that shall be implemented
 
 011 Change the license to MIT.
 
-015 Implement a rudimentary control system (CS).
+012 Use unittest framework.
 
 017 Implement TC parameter encoding in CS TC model.
 
