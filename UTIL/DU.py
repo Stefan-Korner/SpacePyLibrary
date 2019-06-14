@@ -80,7 +80,7 @@ class BinaryUnit(object):
   # ---------------------------------------------------------------------------
   def getBufferString(self):
     """returns the used elements of the buffer as binary string"""
-    return self.buffer[0:self.usedBufferSize].tostring()
+    return self.buffer[0:self.usedBufferSize].tobytes()
   # ---------------------------------------------------------------------------
   def getBufferHeader(self):
     """returns the header part of the buffer"""
@@ -476,7 +476,7 @@ class BinaryUnit(object):
   # ---------------------------------------------------------------------------
   def getString(self, bytePos, byteLength):
     """extracts a string"""
-    return self.getBytes(bytePos, byteLength).tostring().decode("ascii")
+    return self.getBytes(bytePos, byteLength).tobytes().decode("ascii")
   # ---------------------------------------------------------------------------
   def setString(self, bytePos, byteLength, byteArray):
     """set a string"""
