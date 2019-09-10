@@ -11,7 +11,9 @@
 :: for more details.                                                          *
 ::*****************************************************************************
 :: Start scrip for the Control System (CS).                                   *
+:: The file must be adopted if the library is installed in a different folder *
+:: than C:\Programming\SpacePyLibrary                                         *
 ::*****************************************************************************
-set TESTENV=C:\Programming\SpacePyLibrary\TESTENV
 set PYTHONPATH=C:\Programming\SpacePyLibrary
+set TESTENV=C:\Programming\SpacePyLibrary\TESTENV
 python CS.py dummy

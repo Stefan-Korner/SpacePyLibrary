@@ -13,7 +13,7 @@
 #******************************************************************************
 # Start scrip for the Control System (CS).                                    *
 #******************************************************************************
-setenv TESTENV ${HOME}/Python/SpacePyLibrary/TESTENV
-setenv PYTHON python
 setenv PYTHONPATH ${HOME}/Python/SpacePyLibrary
+setenv TESTENV ${PYTHONPATH}/TESTENV
+setenv PYTHON python
 ${PYTHON} CS.py dummy

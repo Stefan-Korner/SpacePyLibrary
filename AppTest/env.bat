@@ -10,8 +10,10 @@
 :: MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT License   *
 :: for more details.                                                          *
 ::*****************************************************************************
-:: Setup the csh Linux environment for Unit Tests, file needs to be sourced.  *
+:: Setup the Windows environment for Unit Tests, file needs to be sourced.    *
+:: The file must be adopted if the library is installed in a different folder *
+:: than C:\Programming\SpacePyLibrary                                         *
 ::*****************************************************************************
 set PYTHONPATH=C:\Programming\SpacePyLibrary
+set TESTENV=C:\Programming\SpacePyLibrary\TESTENV
 set HOST=127.0.0.1
-set TESTENV=..\TESTENV

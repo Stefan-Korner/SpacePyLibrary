@@ -13,5 +13,5 @@
 # Setup the sh Linux environment for Unit Tests, file needs to be sourced.    *
 #******************************************************************************
 export PYTHONPATH=${HOME}/Python/SpacePyLibrary
+export TESTENV=${PYTHONPATH}/TESTENV
 export HOST=127.0.0.1
-export TESTENV=../TESTENV
