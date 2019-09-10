@@ -13,8 +13,10 @@
 #******************************************************************************
 # Start scrip for the SCOE.                                                   *
 #******************************************************************************
-setenv EGSE_PROTOCOL CNC
+setenv PYTHONPATH ${HOME}/Python/SpacePyLibrary
+setenv TESTENV ${PYTHONPATH}/TESTENV
 setenv HOST 127.0.0.1
+setenv EGSE_PROTOCOL CNC
 setenv CCS_SERVER_PORT2 48570
 setenv TC_ACK_ACCEPT_SUCC_MNEMO ACK1
 setenv TC_ACK_ACCEPT_FAIL_MNEMO NAK1
@@ -31,7 +33,5 @@ setenv TC_FKT_ID_BYTE_SIZE 4
 setenv TM_TT_TIME_FORMAT CUC4
 setenv TM_TT_TIME_BYTE_OFFSET 10
 setenv TM_CYCLIC_MNEMO TM_PKT1
-setenv TESTENV ${HOME}/Python/SpacePyLibrary/TESTENV
 setenv PYTHON python3
-setenv PYTHONPATH ${HOME}/Python/SpacePyLibrary
 ${PYTHON} SCOE.py dummy

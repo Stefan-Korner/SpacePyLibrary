@@ -11,7 +11,11 @@
 :: for more details.                                                          *
 ::*****************************************************************************
 :: Start scrip for the SIM simulator.                                         *
+:: The file must be adopted if the library is installed in a different folder *
+:: than C:\Programming\SpacePyLibrary                                         *
 ::*****************************************************************************
+set PYTHONPATH=C:\Programming\SpacePyLibrary
+set TESTENV=C:\Programming\SpacePyLibrary\TESTENV
 set HOST=127.0.0.1
 set NCTRS_ADMIN_SERVER_PORT=32010
 set NCTRS_TC_SERVER_PORT=32009
@@ -35,6 +39,4 @@ set TM_TT_TIME_FORMAT=CUC4
 set TM_TT_TIME_BYTE_OFFSET=10
 set TM_RECORD_FORMAT=NCTRS
 set SYS_COLOR_LOG=1
-set TESTENV=C:\Programming\SpacePyLibrary\TESTENV
-set PYTHONPATH=C:\Programming\SpacePyLibrary
 python3 SIM.py dummy

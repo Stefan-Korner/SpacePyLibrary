@@ -13,5 +13,5 @@
 # Setup the csh Linux environment for Unit Tests, file needs to be sourced.   *
 #******************************************************************************
 setenv PYTHONPATH ${HOME}/Python/SpacePyLibrary
+setenv TESTENV ${PYTHONPATH}/TESTENV
 setenv HOST 127.0.0.1
-setenv TESTENV ../TESTENV

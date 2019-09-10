@@ -11,9 +11,13 @@
 :: for more details.                                                          *
 ::*****************************************************************************
 :: Start scrip for the SCOE.                                                  *
+:: The file must be adopted if the library is installed in a different folder *
+:: than C:\Programming\SpacePyLibrary                                         *
 ::*****************************************************************************
-set EGSE_PROTOCOL=CNC
+set PYTHONPATH=C:\Programming\SpacePyLibrary
+set TESTENV=C:\Programming\SpacePyLibrary\TESTENV
 set HOST=127.0.0.1
+set EGSE_PROTOCOL=CNC
 set CCS_SERVER_PORT2=48570
 set TC_ACK_ACCEPT_SUCC_MNEMO=ACK1
 set TC_ACK_ACCEPT_FAIL_MNEMO=NAK1
@@ -30,6 +34,4 @@ set TC_FKT_ID_BYTE_SIZE=4
 set TM_TT_TIME_FORMAT=CUC4
 set TM_TT_TIME_BYTE_OFFSET=10
 set TM_CYCLIC_MNEMO=TM_PKT1
-set TESTENV=C:\Programming\SpacePyLibrary\TESTENV
-set PYTHONPATH=C:\Programming\SpacePyLibrary
 python3 SCOE.py dummy
