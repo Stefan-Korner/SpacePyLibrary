@@ -40,6 +40,8 @@ Backlog of features that shall be implemented
 
 034 Support direct console logging and use it when there is an exit.
 
+037 Provide a tutorial with examples.
+
 --------------------------------- implemented ---------------------------------
 
 001 Remove the dependency to MIB files TPKTconnTable.dat, TPKTconfigTable.dat:
