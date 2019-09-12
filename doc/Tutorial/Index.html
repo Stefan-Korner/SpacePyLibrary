@@ -18,20 +18,33 @@
    Tutorial for the SpacePyLibrary
   </H1>
   This is the tutorial for the SpacePyLibrary. It shall provide useful examples
-  for representative use cases of the SpacePyLibrary:
+  for representative use cases of the SpacePyLibrary:<BR>
+  <BR>
+  <B><A href="#General">General</A></B>
   <DIR>
    <LI><A href="#Example_1">Example_1: Getting started</A>
    <LI><A href="#Example_2">Example_2: Logging</A>
    <LI><A href="#Example_3">Example_3: Configuration</A>
    <LI><A href="#Example_4">Example_4: More configuration</A>
   </DIR>
+  <B><A href="#TM_Frames">CCSDS Telemetry Frames</A></B>
+  <DIR>
+   <LI><A href="#Example_5">Example_5: Decode Telemetry Frame</A>
+   <LI><A href="#Example_6">Example_6: Extract Packets from Telemetry Frame</A>
+  </DIR>
 
   <!-- -------------------------------------------------------------------- -->
   <H2>
+   <A id="General">
+    General
+   </A>
+  </H2>
+  <!-- -------------------------------------------------------------------- -->
+  <H3>
    <A id="Example_1">
     Example_1: Getting started
    </A>
-  </H2>
+  </H3>
   All examples in this tutorial are available in the SpacePyLibrary GIT
   repository in directory <CODE>Tutorial</CODE>. The environment for these
   examples must be set, before they can be executed. Depending on the platform,
@@ -63,13 +76,12 @@ LOG("hello, world")
   <PRE>
 hello, world
   </PRE>
-
   <!-- -------------------------------------------------------------------- -->
-  <H2>
+  <H3>
    <A id="Example_2">
     Example_2: Logging
    </A>
-  </H2>
+  </H3>
   In <A href="#Example_1">Example_1</A> the logging function
   <CODE>LOG(...)</CODE> has been used. Beside this function there are other
   functions that can be used as well:
@@ -107,13 +119,12 @@ INFO: this is an info message
 WARNING: this is a warning message
 ERROR: this is an error message
   </PRE>
-
   <!-- -------------------------------------------------------------------- -->
-  <H2>
+  <H3>
    <A id="Example_3">
     Example_3: Configuration
    </A>
-  </H2>
+  </H3>
   This examples shows how configuration items are used in the library. The
   configuration items <CODE>ENV_VAR_1</CODE> and <CODE>ENV_VAR_2</CODE> are
   defined in the program for this purpose:
@@ -160,13 +171,12 @@ ENV_VAR_1 = 10203040 (env)
 <GRAY>ENV_VAR_2 = second configuration variable (default)</GRAY>
   </PRE>
   The overwritten value is marked with the suffix <CODE>(env)</CODE>.
-
   <!-- -------------------------------------------------------------------- -->
-  <H2>
+  <H3>
    <A id="Example_4">
     Example_4: More configuration
    </A>
-  </H2>
+  </H3>
   This examples is an enhancement of <A href="#Example_3">Example_3</A>. It
   shows how configuration items can be used in the application code:
   <PRE>
@@ -207,6 +217,129 @@ ENV_VAR_2 = second configuration variable
   numerical calculations, then it must be converted, e.g.:
   <PRE>
 myNumber1 = int(UTIL.SYS.s_configuration.ENV_VAR_1)
+  </PRE>
+
+  <!-- -------------------------------------------------------------------- -->
+  <H2>
+   <A id="TM_Frames">
+    CCSDS Telemetry Frames
+   </A>
+  </H2>
+  <!-- -------------------------------------------------------------------- -->
+  <H3>
+   <A id="Example_5">
+    Example_5: Decode Telemetry Frame
+   </A>
+  </H3>
+  A common use case is the processing of telemetry frames that are sent from
+  the spacecraft. The SpacePyLibrary provides the required functionality to
+  encode and decode telemetry frames which shall be compliant to the CCSDS
+  standard. This example shows a simple way to perfrom the decoding:
+  <PRE>
+from UTIL.SYS import LOG
+import CCSDS.FRAME
+TM_FRAME = [
+  0x2F, 0x61, 0x00, 0x00, 0x18, 0x00, 0x0C, 0xD2,
+  0xC0, 0x00, ................, 0x01, 0x00, 0x00,
+  0x00, 0xBB, 0xD6]
+tmFrame = CCSDS.FRAME.TMframe(TM_FRAME)
+LOG("versionNumber = " + str(tmFrame.versionNumber))
+LOG("spacecraftId = " + str(tmFrame.spacecraftId))
+LOG("virtualChannelId = " + str(tmFrame.virtualChannelId))
+LOG("operationalControlField = " + str(tmFrame.operationalControlField))
+LOG("masterChannelFrameCount = " + str(tmFrame.masterChannelFrameCount))
+LOG("virtualChannelFCountLow = " + str(tmFrame.virtualChannelFCountLow))
+LOG("secondaryHeaderFlag = " + str(tmFrame.secondaryHeaderFlag))
+LOG("synchronisationFlag = " + str(tmFrame.synchronisationFlag))
+LOG("packetOrderFlag = " + str(tmFrame.packetOrderFlag))
+LOG("segmentLengthId = " + str(tmFrame.segmentLengthId))
+LOG("firstHeaderPointer = " + str(tmFrame.firstHeaderPointer))
+  </PRE>
+  The example contains a binary telemetry frame which is hardcoded in the array
+  <CODE>TM_FRAME</CODE>. The size of this array is according to the CCSDS
+  standard 1115 bytes.<BR>
+  <B>Note:</B> The code above does not show the full array, only the first 10
+  bytes and the last 6 bytes are shown. The full array is in the example file
+  <CODE>Example_5.py</CODE>.<BR>
+  The frame object is initialized with this binary array and stored in the
+  variable <CODE>tmFrame</CODE>. Access to the frame fields is then done
+  via qualifying the fields as object attributes:
+  <CODE>tmFrame.<I>ATTRIBUTE</I></CODE>.<BR>
+  The program shall be started from the command line:
+  <DIR>
+   <LI>on Windows:<BR>
+       <CODE>python Example_5.py</CODE>
+   <LI>on Unix:<BR>
+       <CODE>python Example_5.py</CODE><BR>
+       or<BR>
+       <CODE>./Example_5.py</CODE>
+  </DIR>
+  During the execution the following is printed:
+  <PRE>
+versionNumber = 0
+spacecraftId = 758
+virtualChannelId = 0
+operationalControlField = 1
+masterChannelFrameCount = 0
+virtualChannelFCountLow = 0
+secondaryHeaderFlag = 0
+synchronisationFlag = 0
+packetOrderFlag = 0
+segmentLengthId = 3
+firstHeaderPointer = 0
+  </PRE>
+  <!-- -------------------------------------------------------------------- -->
+  <H3>
+   <A id="Example_6">
+    Example_6: Extract Packets from Telemetry Frame
+   </A>
+  </H3>
+  CCSDS Telemetry Frames are used to store CCSDS Telemetry Packets inside. In
+  the most simple case a Telemetry Frame contains several Telemetry Packets
+  that occupy exactly the avaialable space of the Frame. In our example, which
+  is an enhancement of <A href="#Example_5">Example_5</A> this is the case:
+  There are 2 Packets in the Frame. The code picks out these Packets:
+  <PRE>
+<GRAY>from UTIL.SYS import LOG
+import CCSDS.FRAME</GRAY>
+import UTIL.DU
+<GRAY>TM_FRAME = [
+  0x2F, 0x61, 0x00, 0x00, 0x18, 0x00, 0x0C, 0xD2,
+  0xC0, 0x00, ................, 0x01, 0x00, 0x00,
+  0x00, 0xBB, 0xD6]
+tmFrame = CCSDS.FRAME.TMframe(TM_FRAME)</GRAY>
+leadingFragment, tmPackets, trailingFragment = tmFrame.getPackets()
+LOG("leadingFragment = " + str(leadingFragment))
+for i, tmPacket in enumerate(tmPackets):
+  LOG("tmPacket_" + str(i) + " = " + UTIL.DU.array2str(tmPacket))
+LOG("trailingFragment = " + str(trailingFragment))
+  </PRE>
+  The method <CODE>tmFrame.getPackets()</CODE> is used to pick out the
+  Packets.<BR>
+  <B>Note:</B> Beside the Packets also a possible leading fragment and
+  trailing fragment are returned. Such fragments occur when Packets do not
+  exactly fit into Frames.<BR>
+  The program shall be started from the command line:
+  <DIR>
+   <LI>on Windows:<BR>
+       <CODE>python Example_6.py</CODE>
+   <LI>on Unix:<BR>
+       <CODE>python Example_6.py</CODE><BR>
+       or<BR>
+       <CODE>./Example_6.py</CODE>
+  </DIR>
+  During the execution the following is printed:
+  <PRE>
+leadingFragment = None
+tmPacket_0 = 
+0000 0C D2 C0 00 00 1A 10 03 19 16 92 5E 92 00 00 00 ...........^....
+0010 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 89 ................
+0020 E4                                              .
+tmPacket_1 = 
+0000 07 FF C0 00 04 27 00 00 00 00 00 00 00 00 00 00 .....'..........
+        :
+0420 00 00 00 00 00 00 00 00 00 00 00 00 C9 48       .............H
+trailingFragment = None
   </PRE>
  </BODY>
 </HTML>
