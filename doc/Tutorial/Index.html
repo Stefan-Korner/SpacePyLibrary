@@ -1,0 +1,212 @@
+<HTML>
+ <HEAD>
+  <STYLE type=text/css>
+   BODY { FONT-FAMILY: "Helvetica" }
+   PRE  { COLOR: #0000FF }
+   CODE { COLOR: #0000FF }
+   GRAY { COLOR: #808080 }
+   H1   { TEXT-ALIGN: center }
+   H2   { TEXT-ALIGN: center }
+   H3   { TEXT-ALIGN: center }
+   H4   { TEXT-ALIGN: center }
+   H5   { TEXT-ALIGN: center }
+   H6   { TEXT-ALIGN: center }
+  </STYLE>
+ </HEAD>
+ <BODY>
+  <H1>
+   Tutorial for the SpacePyLibrary
+  </H1>
+  This is the tutorial for the SpacePyLibrary. It shall provide useful examples
+  for representative use cases of the SpacePyLibrary:
+  <DIR>
+   <LI><A href="#Example_1">Example_1: Getting started</A>
+   <LI><A href="#Example_2">Example_2: Logging</A>
+   <LI><A href="#Example_3">Example_3: Configuration</A>
+   <LI><A href="#Example_4">Example_4: More configuration</A>
+  </DIR>
+
+  <!-- -------------------------------------------------------------------- -->
+  <H2>
+   <A id="Example_1">
+    Example_1: Getting started
+   </A>
+  </H2>
+  All examples in this tutorial are available in the SpacePyLibrary GIT
+  repository in directory <CODE>Tutorial</CODE>. The environment for these
+  examples must be set, before they can be executed. Depending on the platform,
+  this shall be done in the Tutorial folder with the following command:
+  <DIR>
+   <LI>on Windows:<BR>
+       <CODE>env.bat</CODE>
+   <LI>on Unix with c-shell:<BR>
+       <CODE>source env.csh</CODE>
+   <LI>on Unix with bourne-shell:<BR>
+       <CODE>source env.sh</CODE>
+  </DIR>
+  The first example is a simple program that prints a
+  <CODE>"hello, world"</CODE> message:
+  <PRE>
+from UTIL.SYS import LOG
+LOG("hello, world")
+  </PRE>
+  The program shall be started from the command line:
+  <DIR>
+   <LI>on Windows:<BR>
+       <CODE>python3 Example_1.py</CODE>
+   <LI>on Unix:<BR>
+       <CODE>python3 Example_1.py</CODE><BR>
+       or<BR>
+       <CODE>./Example_1.py</CODE>
+  </DIR>
+  During the execution the following is printed:
+  <PRE>
+hello, world
+  </PRE>
+
+  <!-- -------------------------------------------------------------------- -->
+  <H2>
+   <A id="Example_2">
+    Example_2: Logging
+   </A>
+  </H2>
+  In <A href="#Example_1">Example_1</A> the logging function
+  <CODE>LOG(...)</CODE> has been used. Beside this function there are other
+  functions that can be used as well:
+  <DIR>
+   <LI><CODE>LOG</CODE>: logs a message
+   <LI><CODE>LOG_INFO</CODE>: logs an info message 
+   <LI><CODE>LOG_WARNING</CODE>: logs a warning message
+   <LI><CODE>LOG_ERROR</CODE>: logs an error message
+  </DIR>
+  These functions shall be used in preference to the standard Python
+  <CODE>print</CODE> statement, because it passes the information to a logging
+  framework which is more powerfull and flexible. Another advantage is the
+  portability between Python 2 and Python 3.<BR>
+  Below is an example code for using the different logging functions:
+  <PRE>
+from UTIL.SYS import LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
+LOG("this is a simple message")
+LOG_INFO("this is an info message")
+LOG_WARNING("this is a warning message")
+LOG_ERROR("this is an error message")
+  </PRE>
+  The program shall be started from the command line:
+  <DIR>
+   <LI>on Windows:<BR>
+       <CODE>python3 Example_2.py</CODE>
+   <LI>on Unix:<BR>
+       <CODE>python3 Example_2.py</CODE><BR>
+       or<BR>
+       <CODE>./Example_2.py</CODE>
+  </DIR>
+  During the execution the following is printed:
+  <PRE>
+this is a simple message
+INFO: this is an info message
+WARNING: this is a warning message
+ERROR: this is an error message
+  </PRE>
+
+  <!-- -------------------------------------------------------------------- -->
+  <H2>
+   <A id="Example_3">
+    Example_3: Configuration
+   </A>
+  </H2>
+  This examples shows how configuration items are used in the library. The
+  configuration items <CODE>ENV_VAR_1</CODE> and <CODE>ENV_VAR_2</CODE> are
+  defined in the program for this purpose:
+  <PRE>
+import UTIL.SYS
+SYS_CONFIGURATION = [
+  ["ENV_VAR_1", "123"],
+  ["ENV_VAR_2", "second configuration variable"]]
+UTIL.SYS.s_configuration.setDefaults(SYS_CONFIGURATION)
+  </PRE>
+  The program shall be started from the command line:
+  <DIR>
+   <LI>on Windows:<BR>
+       <CODE>python3 Example_3.py</CODE>
+   <LI>on Unix:<BR>
+       <CODE>python3 Example_3.py</CODE><BR>
+       or<BR>
+       <CODE>./Example_3.py</CODE>
+  </DIR>
+  During the execution the following is printed:
+  <PRE>
+<GRAY>INFO: configuration variables</GRAY>
+ENV_VAR_1 = 123 (default)
+ENV_VAR_2 = second configuration variable (default)
+  </PRE>
+  The system prints automatically all the configuration items that are defined
+  in the <CODE>SYS_CONFIGURATION</CODE> list. The suffix <CODE>(default)</CODE>
+  indicates that the value is hardcoded default value defined in the program.
+  It is possible to overwrite the hardcoded value via setting of a related
+  environment variable before the program is started, e.g.:
+  <DIR>
+   <LI>on Windows:<BR>
+       <CODE>set ENV_VAR_1=10203040</CODE>
+   <LI>on Unix with c-shell:<BR>
+       <CODE>setenv ENV_VAR_1 10203040</CODE>
+   <LI>on Unix with bourne-shell:<BR>
+       <CODE>export ENV_VAR_1=10203040</CODE>
+  </DIR>
+  When the program is re-started from the command line, then the following is
+  printed:
+  <PRE>
+<GRAY>INFO: configuration variables</GRAY>
+ENV_VAR_1 = 10203040 (env)
+<GRAY>ENV_VAR_2 = second configuration variable (default)</GRAY>
+  </PRE>
+  The overwritten value is marked with the suffix <CODE>(env)</CODE>.
+
+  <!-- -------------------------------------------------------------------- -->
+  <H2>
+   <A id="Example_4">
+    Example_4: More configuration
+   </A>
+  </H2>
+  This examples is an enhancement of <A href="#Example_3">Example_3</A>. It
+  shows how configuration items can be used in the application code:
+  <PRE>
+from UTIL.SYS import LOG
+<GRAY>import UTIL.SYS
+SYS_CONFIGURATION = [
+  ["ENV_VAR_1", "123"],
+  ["ENV_VAR_2", "second configuration variable"]]
+UTIL.SYS.s_configuration.setDefaults(SYS_CONFIGURATION)</GRAY>
+LOG("ENV_VAR_1 = " + UTIL.SYS.s_configuration.ENV_VAR_1)
+LOG("ENV_VAR_2 = " + UTIL.SYS.s_configuration.ENV_VAR_2)
+  </PRE>
+  The program shall be started from the command line:
+  <DIR>
+   <LI>on Windows:<BR>
+       <CODE>python3 Example_4.py</CODE>
+   <LI>on Unix:<BR>
+       <CODE>python3 Example_4.py</CODE><BR>
+       or<BR>
+       <CODE>./Example_4.py</CODE>
+  </DIR>
+  During the execution the following is printed:
+  <PRE>
+<GRAY>INFO: configuration variables
+ENV_VAR_1 = 123 (default)
+ENV_VAR_2 = second configuration variable (default)</GRAY>
+ENV_VAR_1 = 123
+ENV_VAR_2 = second configuration variable
+  </PRE>
+  The configuration items can be accessed with their name as attribute of
+  the object in <CODE>UTIL.SYS.s_configuration</CODE>.<BR>
+  <B>Note:</B> The program is also using the logging function
+  <CODE>LOG(...)</CODE>, which has been discussed in
+  <A href="#Example_1">Example_1</A> and
+  <A href="#Example_2">Example_2</A>.<BR>
+  <B>Note:</B> All configuration items are provided in the application code as
+  strings. If the item contains in fact a number which shall be used for
+  numerical calculations, then it must be converted, e.g.:
+  <PRE>
+myNumber1 = int(UTIL.SYS.s_configuration.ENV_VAR_1)
+  </PRE>
+ </BODY>
+</HTML>
