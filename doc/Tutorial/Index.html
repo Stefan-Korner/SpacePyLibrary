@@ -31,6 +31,7 @@
   <DIR>
    <LI><A href="#Example_5">Example_5: Decode Telemetry Frame</A>
    <LI><A href="#Example_6">Example_6: Extract Packets from Telemetry Frame</A>
+   <LI><A href="#Example_7">Example_7: Read Telemetry Frames from a file</A>
   </DIR>
 
   <!-- -------------------------------------------------------------------- -->
@@ -315,10 +316,11 @@ for i, tmPacket in enumerate(tmPackets):
 LOG("trailingFragment = " + str(trailingFragment))
   </PRE>
   The method <CODE>tmFrame.getPackets()</CODE> is used to pick out the
-  Packets.<BR>
+  Packets and the function <CODE>UTIL.DU.array2str</CODE> is used to format the
+  binary packet into a hex dump for printing.<BR>
   <B>Note:</B> Beside the Packets also a possible leading fragment and
-  trailing fragment are returned. Such fragments occur when Packets do not
-  exactly fit into Frames.<BR>
+  trailing fragment are returned by <CODE>tmFrame.getPackets()</CODE>. Such
+  fragments occur when Packets do not exactly fit into Frames.<BR>
   The program shall be started from the command line:
   <DIR>
    <LI>on Windows:<BR>
@@ -340,6 +342,79 @@ tmPacket_1 =
         :
 0420 00 00 00 00 00 00 00 00 00 00 00 00 C9 48       .............H
 trailingFragment = None
+  </PRE>
+  <!-- -------------------------------------------------------------------- -->
+  <H3>
+   <A id="Example_7">
+    Example_7: Read Telemetry Frames from a file
+   </A>
+  </H3>
+  In <A href="#Example_6">Example_6</A> only a single Telemetry Frame has been
+  used that was hardcoded in the program. In real scenarios the Telemetry
+  Frames are recorded in files. There is no standard for CCSDS Telemetry Frame
+  files and this example uses one possible format which is an ASCII format
+  with hexadecimal values for the raw Frame data. Each Frame is defined in a
+  single line of this file and the file name is: <CODE>Example_7.hex</CODE>.
+  The code of this example is:<BR>
+  <PRE>
+import sys
+from UTIL.SYS import LOG, LOG_ERROR
+<GRAY>import CCSDS.FRAME
+import UTIL.DU</GRAY>
+FRAME_FILE_NAME = "Example_7.hex"
+try:
+  frameFile = open(FRAME_FILE_NAME, "r")
+except:
+  LOG_ERROR("cannot read " + self.frameDumpFileName)
+  sys.exit(-1)
+for h, hexFrame in enumerate(frameFile.readlines()):
+  LOG("--- fmFrame_" + str(h) + " ---")
+  binFrame = UTIL.DU.str2array(hexFrame)
+  <GRAY>tmFrame = CCSDS.FRAME.TMframe(binFrame)
+  leadingFragment, tmPackets, trailingFragment = tmFrame.getPackets()
+  LOG("leadingFragment = " + str(leadingFragment))
+  for i, tmPacket in enumerate(tmPackets):
+    LOG("tmPacket_" + str(i) + " = " + UTIL.DU.array2str(tmPacket))
+  LOG("trailingFragment = " + str(trailingFragment))</GRAY>
+frameFile.close()
+  </PRE>
+  The Frame file <CODE>Example_7.hex</CODE> contains two Telemetry Frames with
+  the same contents as the hardcoded Frame in
+  <A href="#Example_6">Example_6</A>. Therfore the output of the program shows
+  the same information of <A href="#Example_6">Example_6</A> but twice.<BR>
+  The program shall be started from the command line:
+  <DIR>
+   <LI>on Windows:<BR>
+       <CODE>python3 Example_7.py</CODE>
+   <LI>on Unix:<BR>
+       <CODE>python3 Example_7.py</CODE><BR>
+       or<BR>
+       <CODE>./Example_7.py</CODE>
+  </DIR>
+  During the execution the following is printed:
+  <PRE>
+--- tmFrame_0 ---
+<GRAY>leadingFragment = None
+tmPacket_0 = 
+0000 0C D2 C0 00 00 1A 10 03 19 16 92 5E 92 00 00 00 ...........^....
+0010 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 89 ................
+0020 E4                                              .
+tmPacket_1 = 
+0000 07 FF C0 00 04 27 00 00 00 00 00 00 00 00 00 00 .....'..........
+        :
+0420 00 00 00 00 00 00 00 00 00 00 00 00 C9 48       .............H
+trailingFragment = None</GRAY>
+--- tmFrame_1 ---
+<GRAY>leadingFragment = None
+tmPacket_0 = 
+0000 0C D2 C0 00 00 1A 10 03 19 16 92 5E 92 00 00 00 ...........^....
+0010 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 89 ................
+0020 E4                                              .
+tmPacket_1 = 
+0000 07 FF C0 00 04 27 00 00 00 00 00 00 00 00 00 00 .....'..........
+        :
+0420 00 00 00 00 00 00 00 00 00 00 00 00 C9 48       .............H
+trailingFragment = None</GRAY>
   </PRE>
  </BODY>
 </HTML>
