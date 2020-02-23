@@ -97,7 +97,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       retStatus = self.generateCmd(argv)
     elif (cmd == "RP") or (cmd == "RECORDPACKETS"):
       retStatus = self.recordPacketsCmd(argv)
-    elif (cmd == "SR") or (cmd == "STOPPACKETRECORDER"):
+    elif (cmd == "SP") or (cmd == "STOPPACKETRECORDER"):
       retStatus = self.stopPacketRecorderCmd(argv)
     elif (cmd == "P") or (cmd == "SETPACKETDATA"):
       retStatus = self.setPacketDataCmd(argv, extraData)
@@ -119,7 +119,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       retStatus = self.connectEDEN2cmd(argv)
     elif (cmd == "F2") or (cmd == "DISCONNECTEDEN2"):
       retStatus = self.disconnectEDEN2cmd(argv)
-    elif (cmd == "RF") or (cmd == "REPLAYFRAMES"):
+    elif (cmd == "PF") or (cmd == "REPLAYFRAMES"):
       retStatus = self.replayFramesCmd(argv)
     elif (cmd == "N1") or (cmd == "CONNECTNCTRS1"):
       retStatus = self.connectNCTRS1cmd(argv)
@@ -159,7 +159,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("q  | quit ................terminates SIM application", "TM")
     LOG("u  | dumpConfiguration....dumps the configuration", "TM")
     LOG("rp | recordPackets <recordFile> records TM packets", "TM")
-    LOG("sr | stopPacketRecorder...stops recording of TM packets", "TM")
+    LOG("sp | stopPacketRecorder...stops recording of TM packets", "TM")
     LOG_INFO("Available control commands:", "TC")
     LOG("", "TC")
     LOG("x  | exit ...............terminates client connection (only for TCP/IP clients)", "TC")
@@ -196,7 +196,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("h  | help ...............provides this information", "FRAME")
     LOG("q  | quit ...............terminates SIM application", "FRAME")
     LOG("u  | dumpConfiguration...dumps the configuration", "FRAME")
-    LOG("rf | replayFrames <replayFile> replays NCTRS frames", "FRAME")
+    LOG("pf | replayFrames <replayFile> replays NCTRS frames", "FRAME")
     LOG_INFO("Available control commands:", "NCTRS")
     LOG("", "NCTRS")
     LOG("x  | exit ...............terminates client connection (only for TCP/IP clients)", "NCTRS")

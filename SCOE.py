@@ -140,7 +140,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       retStatus = self.obcDisableAck4Cmd(argv)
     elif (cmd == "A") or (cmd == "SENDACK"):
       retStatus = self.sendAckCmd(argv)
-    elif (cmd == "RP") or (cmd == "REPLAYPACKETS"):
+    elif (cmd == "PP") or (cmd == "REPLAYPACKETS"):
       retStatus = self.replayPacketsCmd(argv)
     elif (cmd == "L") or (cmd == "LISTPACKETS"):
       retStatus = self.listPacketsCmd(argv)
@@ -196,7 +196,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("n4 | obcEnableNak4.......enables autom. sending of NAK4 for TCs", "SPACE")
     LOG("d4 | obcDisableAck4......disables autom. sending of ACK4 for TCs", "SPACE")
     LOG("a  | sendAck <apid> <ssc> <stype> sends a TC acknowledgement", "SPACE")
-    LOG("rp | replayPackets <replayFile> replays TM packets", "SPACE")
+    LOG("pp | replayPackets <replayFile> replays TM packets", "SPACE")
     LOG("l  | listPackets.........lists available packets", "SPACE")
     LOG("g  | generate............generates the testdata.sim file in testbin directory", "SPACE")
     LOG("t  | test <testMode>.....executes a test command", "SPACE")

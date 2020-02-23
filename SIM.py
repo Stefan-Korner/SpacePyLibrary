@@ -120,7 +120,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       retStatus = self.grndDisableAck2Cmd(argv)
     elif (cmd == "RF") or (cmd == "RECORDFRAMES"):
       retStatus = self.recordFramesCmd(argv)
-    elif (cmd == "SR") or (cmd == "STOPFRAMERECORDER"):
+    elif (cmd == "SF") or (cmd == "STOPFRAMERECORDER"):
       retStatus = self.stopFrameRecorderCmd(argv)
     elif (cmd == "T") or (cmd == "SETCLCW"):
       retStatus = self.setCLCWcmd(argv)
@@ -170,7 +170,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       retStatus = self.obcDisableAck4Cmd(argv)
     elif (cmd == "A") or (cmd == "SENDACK"):
       retStatus = self.sendAckCmd(argv)
-    elif (cmd == "RP") or (cmd == "REPLAYPACKETS"):
+    elif (cmd == "PP") or (cmd == "REPLAYPACKETS"):
       retStatus = self.replayPacketsCmd(argv)
     elif (cmd == "L") or (cmd == "LISTPACKETS"):
       retStatus = self.listPacketsCmd(argv)
@@ -225,7 +225,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("nb | grndEnableNak2......enables autom. sending of NAK2 for TCs", "GRND")
     LOG("db | grndDisableAck2.....disables autom. sending of ACK2 for TCs", "GRND")
     LOG("rf | recordFrames <recordFile> records TM frames", "GRND")
-    LOG("sr | stopFrameRecorder...stops recording of TM frames", "GRND")
+    LOG("sf | stopFrameRecorder...stops recording of TM frames", "GRND")
     LOG_INFO("Available space link commands:", "LINK")
     LOG("", "LINK")
     LOG("x | exit ................terminates client connection (only for TCP/IP clients)", "LINK")
@@ -264,7 +264,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("n4 | obcEnableNak4.......enables autom. sending of NAK4 for TCs", "SPACE")
     LOG("d4 | obcDisableAck4......disables autom. sending of ACK4 for TCs", "SPACE")
     LOG("a  | sendAck <apid> <ssc> <stype> sends a TC acknowledgement", "SPACE")
-    LOG("rp | replayPackets <replayFile> replays TM packets", "SPACE")
+    LOG("pp | replayPackets <replayFile> replays TM packets", "SPACE")
     LOG("l  | listPackets.........lists available packets", "SPACE")
     LOG("g  | generate............generates the testdata.sim file in testbin directory", "SPACE")
     LOG_INFO("Available onboard queue commands:", "OBQ")
