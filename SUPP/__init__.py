@@ -1,5 +1,5 @@
 #******************************************************************************
-# (C) 2018, Stefan Korner, Austria                                            *
+# (C) 2020, Stefan Korner, Austria                                            *
 #                                                                             *
 # The Space Python Library is free software; you can redistribute it and/or   *
 # modify it under under the terms of the MIT License as published by the      *
@@ -10,6 +10,6 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT License    *
 # for more details.                                                           *
 #******************************************************************************
-# Space Simulation                                                            *
+# Supplement to TM/TC processing                                              *
 #******************************************************************************
-__all__ = ["ASW", "IF", "MIL", "OBC", "OBQ", "TMGEN", "TMRPLY"]
+__all__ = ["DEF"]
