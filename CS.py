@@ -29,7 +29,7 @@ import EGSE.IF
 import GRND.IF
 import MC.IF, MC.TCGEN, MC.TCmodel, MC.TMmodel, MC.TMrecorder
 import MCUI.CFGgui, MCUI.TMgui, MCUI.TCgui
-import SPACE.DEF, SPACE.IF
+import SUPP.DEF, SUPP.IF
 import UI.TKI
 import UTIL.SYS, UTIL.TCO, UTIL.TASK
 
@@ -234,9 +234,9 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       return False
     # dump the packet definitions
     try:
-      for tmPktDef in SPACE.IF.s_definitions.getTMpktDefs():
+      for tmPktDef in SUPP.IF.s_definitions.getTMpktDefs():
         LOG("TM: " + tmPktDef.pktName + " (SPID = " + str(tmPktDef.pktSPID) + ") - " + tmPktDef.pktDescr, "CFG")
-      for tcPktDef in SPACE.IF.s_definitions.getTCpktDefs():
+      for tcPktDef in SUPP.IF.s_definitions.getTCpktDefs():
         LOG("TC: " + tcPktDef.pktName + " (APID = " + str(tcPktDef.pktAPID) + ", TYPE = " + str(tcPktDef.pktType) + ", STPYE = " + str(tcPktDef.pktSType) + ") - " + tcPktDef.pktDescr, "CFG")
     except Exception as ex:
       LOG_ERROR("MIB Error: " + str(ex), "CFG")
@@ -251,11 +251,11 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       LOG_WARNING("invalid parameters passed", "CFG")
       return False
     # generate the testdata.sim file
-    definitionFileName = SPACE.IF.s_definitions.getDefinitionFileName()
+    definitionFileName = SUPP.IF.s_definitions.getDefinitionFileName()
     LOG("generate to " + definitionFileName, "CFG")
     try:
       # update the TM definitions to ensure an actual testdata.sim
-      SPACE.IF.s_definitions.createDefinitions()
+      SUPP.IF.s_definitions.createDefinitions()
       LOG(definitionFileName + " generated", "CFG")
     except Exception as ex:
       LOG_ERROR("Generation Error: " + str(ex), "CFG")
@@ -304,7 +304,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     route = argv[2]
     tcStruct = extraData
     # check the packet data
-    tcPacketData = SPACE.IF.s_definitions.getTCpacketInjectData(pktMnemonic, route, tcStruct)
+    tcPacketData = SUPP.IF.s_definitions.getTCpacketInjectData(pktMnemonic, route, tcStruct)
     if tcPacketData == None:
       LOG_WARNING("invalid data passed for setPacketData", "TC")
       return False
@@ -336,7 +336,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       route = argv[2]
       tcStruct = extraData
       # check the packet data
-      tcPacketData = SPACE.IF.s_definitions.getTCpacketInjectData(pktMnemonic, route, tcStruct)
+      tcPacketData = SUPP.IF.s_definitions.getTCpacketInjectData(pktMnemonic, route, tcStruct)
       if tcPacketData == None:
         LOG_WARNING("invalid data passed for sendPacket", "TC")
         return False
@@ -591,7 +591,7 @@ if cmdPrompt:
   modelTask.registerConsoleHandler(requestHandler)
 
 # initialise singletons
-SPACE.DEF.init()
+SUPP.DEF.init()
 MC.TCGEN.init()
 
 # create the CNC clients
@@ -621,7 +621,7 @@ CS.FRAMErply.init()
 
 # load the definition data
 print("load definition data (take some time) ...")
-SPACE.IF.s_definitions.initDefinitions()
+SUPP.IF.s_definitions.initDefinitions()
 print("definition data loaded")
 
 # start the tasks

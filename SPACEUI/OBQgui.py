@@ -14,7 +14,7 @@
 #******************************************************************************
 import tkinter
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import SPACE.DEF, SPACE.IF
+import SPACE.IF
 import UI.TKI
 import UTIL.TIME
 

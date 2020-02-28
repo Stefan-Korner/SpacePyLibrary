@@ -19,6 +19,7 @@ import PUS.VP
 import SCOS.ENV
 import SPACE.IF
 import SPACEUI.VPgui
+import SUPP.IF
 import UI.TKI
 import UTIL.TIME
 
@@ -178,7 +179,7 @@ class TMpacketBrowser(simpledialog.Dialog, UI.TKI.AppGrid):
     self.slistbox = UI.TKI.ScrolledListbox(master, self.packetSelected)
     self.appGrid(self.slistbox, row=row, column=0, columnweight=1)
     lrow = 0
-    for tmPktDef in SPACE.IF.s_definitions.getTMpktDefs():
+    for tmPktDef in SUPP.IF.s_definitions.getTMpktDefs():
       packetName = tmPktDef.pktName
       self.insertListboxRow(lrow, packetName)
       lrow += 1
@@ -193,7 +194,7 @@ class TMpacketBrowser(simpledialog.Dialog, UI.TKI.AppGrid):
   def packetSelected(self, selectPos):
     """Callback when packet is selected"""
     # display the packet data
-    tmPktDef = SPACE.IF.s_definitions.getTMpktDefByIndex(selectPos)
+    tmPktDef = SUPP.IF.s_definitions.getTMpktDefByIndex(selectPos)
     self.details.update(tmPktDef)
   # ---------------------------------------------------------------------------
   def apply(self):

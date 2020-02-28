@@ -21,8 +21,9 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import EGSE.IF
 import PUS.PACKET, PUS.SERVICES
 import SCOE.EGSEserver, SCOE.EGSEgui
-import SPACE.ASW, SPACE.DEF, SPACE.IF, SPACE.MIL, SPACE.OBC, SPACE.TMGEN, SPACE.TMRPLY
+import SPACE.ASW, SPACE.IF, SPACE.MIL, SPACE.OBC, SPACE.TMGEN, SPACE.TMRPLY
 import SPACEUI.SPACEgui, SPACEUI.MILgui
+import SUPP.DEF, SUPP.IF
 import UI.TKI
 import UTIL.SYS, UTIL.TCO, UTIL.TASK
 
@@ -307,7 +308,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       values = argv[3]
     tmStruct = extraData
     # check the packet data
-    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic, params, values, tmStruct)
+    tmPacketData = SUPP.IF.s_definitions.getTMpacketInjectData(pktMnemonic, params, values, tmStruct)
     if tmPacketData == None:
       LOG_WARNING("invalid data passed for setPacketData", "SPACE")
       return False
@@ -346,7 +347,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
         values = argv[3]
       tmStruct = extraData
       # check the packet data
-      tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic, params, values, tmStruct)
+      tmPacketData = SUPP.IF.s_definitions.getTMpacketInjectData(pktMnemonic, params, values, tmStruct)
       if tmPacketData == None:
         LOG_WARNING("invalid data passed for sendPacketCmd", "SPACE")
         return False
@@ -589,9 +590,9 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       return False
     # dump the packet definitions
     try:
-      for tmPktDef in SPACE.IF.s_definitions.getTMpktDefs():
+      for tmPktDef in SUPP.IF.s_definitions.getTMpktDefs():
         LOG("TM: " + tmPktDef.pktName + " (SPID = " + str(tmPktDef.pktSPID) + ") - " + tmPktDef.pktDescr, "SPACE")
-      for tcPktDef in SPACE.IF.s_definitions.getTCpktDefs():
+      for tcPktDef in SUPP.IF.s_definitions.getTCpktDefs():
         LOG("TC: " + tcPktDef.pktName + " (APID = " + str(tcPktDef.pktAPID) + ", TYPE = " + str(tcPktDef.pktType) + ", STPYE = " + str(tcPktDef.pktSType) + ") - " + tcPktDef.pktDescr, "SPACE")
     except Exception as ex:
       LOG_ERROR("MIB Error: " + str(ex), "SPACE")
@@ -606,11 +607,11 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       LOG_WARNING("invalid parameters passed", "SPACE")
       return False
     # generate the testdata.sim file
-    definitionFileName = SPACE.IF.s_definitions.getDefinitionFileName()
+    definitionFileName = SUPP.IF.s_definitions.getDefinitionFileName()
     LOG("generate to " + definitionFileName, "SPACE")
     try:
       # update the TM definitions to ensure an actual testdata.sim
-      SPACE.IF.s_definitions.createDefinitions()
+      SUPP.IF.s_definitions.createDefinitions()
       LOG(definitionFileName + " generated", "SPACE")
     except Exception as ex:
       LOG_ERROR("Generation Error: " + str(ex), "SPACE")
@@ -764,7 +765,7 @@ if cmdPrompt:
   modelTask.registerConsoleHandler(requestHandler)
 
 # initialise singletons
-SPACE.DEF.init()
+SUPP.DEF.init()
 SPACE.OBC.init(egseMode=True)
 SPACE.TMGEN.init()
 SPACE.TMRPLY.init()
@@ -777,7 +778,7 @@ SCOE.EGSEserver.createEGSEservers(UTIL.SYS.s_configuration.HOST)
 
 # load the definition data
 print("load definition data (take some time) ...")
-SPACE.IF.s_definitions.initDefinitions()
+SUPP.IF.s_definitions.initDefinitions()
 print("definition data loaded")
 
 # start the tasks

@@ -16,7 +16,7 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.PACKET
 import MC.IF
 import PUS.PACKET, PUS.SERVICES, PUS.VP
-import SPACE.IF
+import SUPP.IF
 import UTIL.DU
 
 ###########
@@ -54,9 +54,9 @@ class TMmodel(MC.IF.TMmodel):
       LOG("tmPacketDu = " + str(tmPacketDu), "TM")
     try:
       # try to decode the packet
-      tmPacketKey = SPACE.IF.s_definitions.getTMpacketKey(tmPacketDu)
+      tmPacketKey = SUPP.IF.s_definitions.getTMpacketKey(tmPacketDu)
       LOG("KEY =     " + str(tmPacketKey), "TM")
-      tmPktDef = SPACE.IF.s_definitions.getTMpktDefBySPID(tmPacketKey)
+      tmPktDef = SUPP.IF.s_definitions.getTMpktDefBySPID(tmPacketKey)
       tmStructDef = tmPktDef.tmStructDef
       structBitPos = (CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE + tmPktDef.pktDFHsize) << 3
       tmStruct = PUS.VP.Struct(tmStructDef)

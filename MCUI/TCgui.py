@@ -17,8 +17,8 @@ from tkinter import simpledialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import MC.IF
 import PUS.VP
-import SPACE.IF
 import SPACEUI.VPgui
+import SUPP.IF
 import UI.TKI
 
 #############
@@ -134,7 +134,7 @@ class TCpacketBrowser(simpledialog.Dialog, UI.TKI.AppGrid):
     self.slistbox = UI.TKI.ScrolledListbox(master, self.packetSelected)
     self.appGrid(self.slistbox, row=row, column=0, columnweight=1)
     lrow = 0
-    for tcPktDef in SPACE.IF.s_definitions.getTCpktDefs():
+    for tcPktDef in SUPP.IF.s_definitions.getTCpktDefs():
       packetName = tcPktDef.pktName
       self.insertListboxRow(lrow, packetName)
       lrow += 1
@@ -149,7 +149,7 @@ class TCpacketBrowser(simpledialog.Dialog, UI.TKI.AppGrid):
   def packetSelected(self, selectPos):
     """Callback when packet is selected"""
     # display the packet data
-    tcPktDef = SPACE.IF.s_definitions.getTCpktDefByIndex(selectPos)
+    tcPktDef = SUPP.IF.s_definitions.getTCpktDefByIndex(selectPos)
     self.details.update(tcPktDef)
   # ---------------------------------------------------------------------------
   def apply(self):

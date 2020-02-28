@@ -14,8 +14,8 @@
 #******************************************************************************
 import string
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import CCSDS.DU, CCSDS.PACKET
-import UTIL.DU, UTIL.SYS
+import CCSDS.PACKET
+import UTIL.SYS
 
 #############
 # constants #

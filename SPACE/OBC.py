@@ -18,6 +18,7 @@ import EGSE.IF
 import LINK.IF
 import PUS.PACKET, PUS.SERVICES, PUS.VP
 import SPACE.IF
+import SUPP.IF
 import UTIL.SYS, UTIL.TASK, UTIL.TIME
 
 ###########
@@ -74,9 +75,9 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
       tcPacketDu = PUS.PACKET.TCpacket(tcPacket)
       try:
         # try to decode the packet
-        tcPacketKey = SPACE.IF.s_definitions.getTCpacketKey(tcPacketDu)
+        tcPacketKey = SUPP.IF.s_definitions.getTCpacketKey(tcPacketDu)
         LOG("KEY =     " + str(tcPacketKey), "SPACE")
-        tcPktDef = SPACE.IF.s_definitions.getTCpktDefByName(tcPacketKey)
+        tcPktDef = SUPP.IF.s_definitions.getTCpktDefByName(tcPacketKey)
         tcStructDef = tcPktDef.tcStructDef
         structBitPos = (CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE + tcPktDef.pktDFHsize) << 3
         tcStruct = PUS.VP.Struct(tcStructDef)
@@ -107,10 +108,10 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     params = ""
     values = ""
     tmStruct = None
-    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
-                                                                params,
-                                                                values,
-                                                                tmStruct)
+    tmPacketData = SUPP.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
+                                                               params,
+                                                               values,
+                                                               tmStruct)
     # check the TM packet data
     if tmPacketData == None:
       LOG_ERROR("TM packet creation failed for " + pktMnemonic, "SPACE")
@@ -126,10 +127,10 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     params = ""
     values = ""
     tmStruct = None
-    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectDataBySPID(spid,
-                                                                      params,
-                                                                      values,
-                                                                      tmStruct)
+    tmPacketData = SUPP.IF.s_definitions.getTMpacketInjectDataBySPID(spid,
+                                                                     params,
+                                                                     values,
+                                                                     tmStruct)
 
     # check the TM packet data
     if tmPacketData == None:
@@ -243,10 +244,10 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     values += ","
     values += str(tcSSC)
     tmStruct = None
-    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemo,
-                                                                params,
-                                                                values,
-                                                                tmStruct)
+    tmPacketData = SUPP.IF.s_definitions.getTMpacketInjectData(pktMnemo,
+                                                               params,
+                                                               values,
+                                                               tmStruct)
     # check the TM packet
     if tmPacketData == None:
       LOG_ERROR("packet creation failed for this acknowledgement: " + str(ackType), "SPACE")
@@ -367,10 +368,10 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
     params = ""
     values = ""
     tmStruct = None
-    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemo,
-                                                                params,
-                                                                values,
-                                                                tmStruct)
+    tmPacketData = SUPP.IF.s_definitions.getTMpacketInjectData(pktMnemo,
+                                                               params,
+                                                               values,
+                                                               tmStruct)
     # check the TM packet
     if tmPacketData == None:
       LOG_ERROR("packet creation failed for cyclic TM", "SPACE")

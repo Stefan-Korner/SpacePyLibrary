@@ -15,6 +15,7 @@
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import PUS.PACKET, PUS.SERVICES
 import SPACE.IF
+import SUPP.IF
 import UTIL.DU, UTIL.SYS
 
 #############
@@ -385,7 +386,7 @@ class MTGapplicationSoftwareImpl(ApplicationSoftwareImpl):
     else:
       pktMnemonic = "YD2TMPK00502"
       parErrorId = "ZD2M682X"
-    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
+    tmPacketData = SUPP.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
       parErrorId, str(errorId))
     # check the TM packet data
     if tmPacketData == None:
@@ -423,7 +424,7 @@ class MTGapplicationSoftwareImpl(ApplicationSoftwareImpl):
     else:
       pktMnemonic = "YD2TMPK00531"
       parErrorId = "ZD2M698X"
-    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
+    tmPacketData = SUPP.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
       parErrorId, str(errorId))
     # check the TM packet data
     if tmPacketData == None:
@@ -485,7 +486,7 @@ class S4applicationSoftwareImpl(ApplicationSoftwareImpl):
     else:
       pktMnemonic = "XPSTMPK10602"
       parErrorId = "XPSM600X"
-    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
+    tmPacketData = SUPP.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
       parErrorId, str(errorId))
     # check the TM packet data
     if tmPacketData == None:
@@ -523,7 +524,7 @@ class S4applicationSoftwareImpl(ApplicationSoftwareImpl):
     else:
       pktMnemonic = "XPSTMPK10631"
       parErrorId = "XPSM684X"
-    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
+    tmPacketData = SUPP.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
       parErrorId, str(errorId))
     # check the TM packet data
     if tmPacketData == None:
@@ -615,9 +616,9 @@ class EUCLIDpowerFEEsim_BS(ApplicationSoftwareImpl):
     pktMnemonic = "BS_Monitor"
     params = EPWR_BS_OP
     values = self.operationMode
-    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
-                                                                params,
-                                                                values)
+    tmPacketData = SUPP.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
+                                                               params,
+                                                               values)
     # check the TM packet data
     if tmPacketData == None:
       LOG_ERROR("TM packet creation failed for " + pktMnemonic, "SPACE")
@@ -764,9 +765,9 @@ class EUCLIDpowerFEEsim_FTH(ApplicationSoftwareImpl):
     pktMnemonic = "FTH_MonitorProUST"
     params = EPWR_FTH_OP
     values = self.operationMode
-    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
-                                                                params,
-                                                                values)
+    tmPacketData = SUPP.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
+                                                               params,
+                                                               values)
     # check the TM packet data
     if tmPacketData == None:
       LOG_ERROR("TM packet creation failed for " + pktMnemonic, "SPACE")
@@ -779,9 +780,9 @@ class EUCLIDpowerFEEsim_FTH(ApplicationSoftwareImpl):
     pktMnemonic = "FTH_MonitorProUST"
     params = ""
     values = ""
-    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
-                                                                params,
-                                                                values)
+    tmPacketData = SUPP.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
+                                                               params,
+                                                               values)
     # check the TM packet data
     if tmPacketData == None:
       LOG_ERROR("TM packet creation failed for " + pktMnemonic, "SPACE")
@@ -904,9 +905,9 @@ class EUCLIDpowerFEEsim_LPS_SAS(ApplicationSoftwareImpl):
              self.lpsOperationMode + "," + \
              self.lpsOperationMode + "," + \
              self.lpsOperationMode
-    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
-                                                                params,
-                                                                values)
+    tmPacketData = SUPP.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
+                                                               params,
+                                                               values)
     # check the TM packet data
     if tmPacketData == None:
       LOG_ERROR("TM packet creation failed for " + pktMnemonic, "SPACE")
@@ -947,9 +948,9 @@ class EUCLIDpowerFEEsim_LPS_SAS(ApplicationSoftwareImpl):
              self.sasOperationMode + "," + \
              self.sasOperationMode + "," + \
              self.sasOperationMode
-    tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
-                                                                params,
-                                                                values)
+    tmPacketData = SUPP.IF.s_definitions.getTMpacketInjectData(pktMnemonic,
+                                                               params,
+                                                               values)
     # check the TM packet data
     if tmPacketData == None:
       LOG_ERROR("TM packet creation failed for " + pktMnemonic, "SPACE")

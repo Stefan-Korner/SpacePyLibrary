@@ -16,6 +16,7 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.DU, CCSDS.PACKET, CCSDS.TIME
 import PUS.PACKET, PUS.SERVICES
 import SPACE.IF
+import SUPP.IF
 import UTIL.SYS, UTIL.TCO, UTIL.TIME
 
 ###########
@@ -80,7 +81,7 @@ class TMpacketGeneratorImpl(SPACE.IF.TMpacketGenerator):
     implementation of SPACE.IF.TMpacketGenerator.getTMpacket
     """
     # fetch the packet definition
-    tmPktDef = SPACE.IF.s_definitions.getTMpktDefBySPID(spid)
+    tmPktDef = SUPP.IF.s_definitions.getTMpktDefBySPID(spid)
     if tmPktDef == None:
       raise Error("invalid SPID for packet creation: " + str(spid))
     binarySize = tmPktDef.pktSPsize
