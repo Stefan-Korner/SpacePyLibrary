@@ -18,7 +18,7 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.DU, CCSDS.PACKET, CCSDS.TIME
 import PUS.PACKET, PUS.PKTID, PUS.VP
 import SCOS.ENV, SCOS.MIB
-import SPACE.IF
+import SUPP.IF
 import UTIL.DU, UTIL.SYS
 
 ###########
@@ -41,7 +41,7 @@ class DefinitionData(object):
     self.tcPktIdentificator = None
 
 # =============================================================================
-class DefinitionsImpl(SPACE.IF.Definitions):
+class DefinitionsImpl(SUPP.IF.Definitions):
   """Manager for definition data"""
   # ---------------------------------------------------------------------------
   def __init__(self):
@@ -57,7 +57,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
   # ---------------------------------------------------------------------------
   def createTMpktDef(self, pidRecord, picRecord, tpcfRecord, vpdMap, pcfMap):
     """creates a TM packet definition"""
-    tmPktDef = SPACE.IF.TMpktDef();
+    tmPktDef = SUPP.IF.TMpktDef();
     tmPktDef.pktSPID = pidRecord.pidSPID
     if tpcfRecord == None:
       tmPktDef.pktName = "SPID_" + str(pidRecord.pidSPID)
@@ -134,7 +134,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
     # getBitWidth(...) can raise an exception --> it is catched by the caller
     bitWidth = getBitWidth(paramPtc, paramPfc)
     # consistency check OK
-    tmParamDef = SPACE.IF.TMparamDef()
+    tmParamDef = SUPP.IF.TMparamDef()
     tmParamDef.paramName = pcfRecord.pcfName.replace(" ", "_").replace("&", "_").replace(".", "_").replace("-", "_")
     tmParamDef.paramDescr = pcfRecord.pcfDescr
     tmParamDef.paramPtc = paramPtc
@@ -160,7 +160,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
           LOG_WARNING("param " + pcfRecord.pcfName + ": " + str(ex) + " ---> ignored", "SPACE")
           continue
         tmPktDef = tmPktDefs[spid]
-        paramToPacket = SPACE.IF.TMparamToPkt()
+        paramToPacket = SUPP.IF.TMparamToPkt()
         paramToPacket.paramDef = tmParamDef
         paramToPacket.valueType = valueType
         paramToPacket.pktDef = tmPktDef
@@ -393,7 +393,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
   # ---------------------------------------------------------------------------
   def createTCpktDef(self, ccfRecord, cdfMap, cpcMap):
     """creates a TM packet definition"""
-    tcPktDef = SPACE.IF.TCpktDef();
+    tcPktDef = SUPP.IF.TCpktDef();
     tcPktDef.pktName = ccfRecord.ccfCName
     tcPktDef.pktDescr = ccfRecord.ccfDescr
     tcPktDef.pktDescr2 = ccfRecord.ccfDescr2
@@ -602,7 +602,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
   def createDefinitions(self):
     """
     creates the definition data:
-    implementation of SPACE.IF.Definitions.createDefinitions
+    implementation of SUPP.IF.Definitions.createDefinitions
     """
     self.definitionData = DefinitionData()
     # read the mib tables and create the TM/TC definitions
@@ -623,7 +623,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
   def initDefinitions(self):
     """
     initialise the definition data from file or MIB:
-    implementation of SPACE.IF.Definitions.initDefinitions
+    implementation of SUPP.IF.Definitions.initDefinitions
     """
     if self.definitionData == None:
       # try to load the definition data
@@ -644,7 +644,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
   def getTMpktDefByIndex(self, index):
     """
     returns a TM packet definition:
-    implementation of SPACE.IF.Definitions.getTMpktDefByIndex
+    implementation of SUPP.IF.Definitions.getTMpktDefByIndex
     """
     # load or initialise on demand
     self.initDefinitions()
@@ -655,7 +655,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
   def getTMpktDefBySPID(self, spid):
     """
     returns a TM packet definition:
-    implementation of SPACE.IF.Definitions.getTMpktDefBySPID
+    implementation of SUPP.IF.Definitions.getTMpktDefBySPID
     """
     # load or initialise on demand
     self.initDefinitions()
@@ -666,7 +666,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
   def getSPIDbyPktName(self, name):
     """
     returns the packet SPID for a packet name:
-    implementation of SPACE.IF.Definitions.getSPIDbyPktName
+    implementation of SUPP.IF.Definitions.getSPIDbyPktName
     """
     # load or initialise on demand
     self.initDefinitions()
@@ -677,7 +677,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
   def getTMpktDefs(self):
     """
     returns the TM packet definitions:
-    implementation of SPACE.IF.Definitions.getTMpktDefs
+    implementation of SUPP.IF.Definitions.getTMpktDefs
     """
     # load or initialise on demand
     self.initDefinitions()
@@ -686,7 +686,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
   def getTMparamDefs(self):
     """
     returns the TM parameter definitions:
-    implementation of SPACE.IF.Definitions.getTMparamDefs
+    implementation of SUPP.IF.Definitions.getTMparamDefs
     """
     # load or initialise on demand
     self.initDefinitions()
@@ -701,12 +701,12 @@ class DefinitionsImpl(SPACE.IF.Definitions):
                             segmentationFlags=CCSDS.PACKET.UNSEGMENTED):
     """
     returns the data that are used for packet injection:
-    implementation of SPACE.IF.Definitions.getTMpacketInjectData
+    implementation of SUPP.IF.Definitions.getTMpacketInjectData
     """
     pktSPID = self.getSPIDbyPktName(pktMnemonic)
     if pktSPID == -1:
       return None
-    return SPACE.IF.TMpacketInjectData(pktSPID,
+    return SUPP.IF.TMpacketInjectData(pktSPID,
                                        pktMnemonic,
                                        params,
                                        values,
@@ -722,12 +722,12 @@ class DefinitionsImpl(SPACE.IF.Definitions):
                                   segmentationFlags=CCSDS.PACKET.UNSEGMENTED):
     """
     returns the data that are used for packet injection:
-    implementation of SPACE.IF.Definitions.getTMpacketInjectDataBySPID
+    implementation of SUPP.IF.Definitions.getTMpacketInjectDataBySPID
     """
     pktDef = self.getTMpktDefBySPID(spid)
     if pktDef == None:
       return None
-    return SPACE.IF.TMpacketInjectData(spid,
+    return SUPP.IF.TMpacketInjectData(spid,
                                        pktDef.pktName,
                                        params,
                                        values,
@@ -738,14 +738,14 @@ class DefinitionsImpl(SPACE.IF.Definitions):
   def getTMpacketKey(self, tmPacketDu):
     """
     retrieves the SPID from the TM packet data unit:
-    implementation of SPACE.IF.Definitions.getTMpacketKey
+    implementation of SUPP.IF.Definitions.getTMpacketKey
     """
     return self.definitionData.tmPktIdentificator.getPacketKey(tmPacketDu)
   # ---------------------------------------------------------------------------
   def getTCpktDefs(self):
     """
     returns the TC packet definitions:
-    implementation of SPACE.IF.Definitions.getTCpktDefs
+    implementation of SUPP.IF.Definitions.getTCpktDefs
     """
     # load or initialise on demand
     self.initDefinitions()
@@ -754,7 +754,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
   def getTCpktDefByIndex(self, index):
     """
     returns a TC packet definition:
-    implementation of SPACE.IF.Definitions.getTCpktDefByIndex
+    implementation of SUPP.IF.Definitions.getTCpktDefByIndex
     """
     # load or initialise on demand
     self.initDefinitions()
@@ -765,7 +765,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
   def getTCpktDefByName(self, name):
     """
     returns a TC packet definition:
-    implementation of SPACE.IF.Definitions.getTCpktDefByName
+    implementation of SUPP.IF.Definitions.getTCpktDefByName
     """
     # load or initialise on demand
     self.initDefinitions()
@@ -779,18 +779,18 @@ class DefinitionsImpl(SPACE.IF.Definitions):
                             tcStruct):
     """
     returns the data that are used for packet injection:
-    implementation of SPACE.IF.Definitions.getTCpacketInjectData
+    implementation of SUPP.IF.Definitions.getTCpacketInjectData
     """
     if pktMnemonic not in self.definitionData.tcPktDefsNameMap:
       return None
-    return SPACE.IF.TCpacketInjectData(pktMnemonic,
+    return SUPP.IF.TCpacketInjectData(pktMnemonic,
                                        route,
                                        tcStruct)
   # ---------------------------------------------------------------------------
   def getTCpacketKey(self, tcPacketDu):
     """
     retrieves the TC packet name from the TC packet data unit:
-    implementation of SPACE.IF.Definitions.getTCpacketKey
+    implementation of SUPP.IF.Definitions.getTCpacketKey
     """
     return self.definitionData.tcPktIdentificator.getPacketKey(tcPacketDu)
 
@@ -799,7 +799,7 @@ class DefinitionsImpl(SPACE.IF.Definitions):
 #############
 def init():
   """initialise singleton(s)"""
-  SPACE.IF.s_definitions = DefinitionsImpl()
+  SUPP.IF.s_definitions = DefinitionsImpl()
 # -----------------------------------------------------------------------------
 def getBitWidth(paramPtc, paramPfc):
   """calculates the bit width based on the parameter definition in the MIB"""

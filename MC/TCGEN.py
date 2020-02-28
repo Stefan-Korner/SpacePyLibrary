@@ -16,7 +16,7 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.DU, CCSDS.PACKET, CCSDS.TIME
 import MC.IF
 import PUS.PACKET, PUS.SERVICES, PUS.VP
-import SPACE.IF
+import SUPP.IF
 import UTIL.SYS, UTIL.TCO, UTIL.TIME
 
 ###########
@@ -51,7 +51,7 @@ class TCpacketGeneratorImpl(MC.IF.TCpacketGenerator):
     implementation of MC.IF.TCpacketGenerator.getTCpacket
     """
     # fetch the packet definition
-    tcPktDef = SPACE.IF.s_definitions.getTCpktDefByName(pktName)
+    tcPktDef = SUPP.IF.s_definitions.getTCpktDefByName(pktName)
     if tcPktDef == None:
       raise Error("invalid packet name for packet creation: " + pktName)
     binarySize = tcPktDef.pktSPsize

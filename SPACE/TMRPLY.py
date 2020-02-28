@@ -16,6 +16,7 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.PACKET
 import PUS.PACKET
 import SPACE.IF
+import SUPP.IF
 import UTIL.SYS, UTIL.TIME
 
 #############
@@ -176,10 +177,10 @@ class TMpacketReplayerImpl(SPACE.IF.TMpacketReplayer):
           self.items.append((SPACE.IF.RPLY_RAWPKT, rawPkt))
         else:
           if useSPIDasKey:
-            tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectDataBySPID(
+            tmPacketData = SUPP.IF.s_definitions.getTMpacketInjectDataBySPID(
               pktSPID, params, values, dataField, segmentationFlags)
           else:
-            tmPacketData = SPACE.IF.s_definitions.getTMpacketInjectData(
+            tmPacketData = SUPP.IF.s_definitions.getTMpacketInjectData(
               pktMnemo, params, values, dataField, segmentationFlags)
           # check the TM packet
           if tmPacketData == None:

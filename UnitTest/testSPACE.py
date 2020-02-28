@@ -16,7 +16,8 @@
 import unittest
 import testData
 import CCSDS.PACKET
-import SPACE.DEF, SPACE.TMGEN
+import SPACE.IF, SPACE.TMGEN
+import SUPP.DEF, SUPP.IF
 import UTIL.SYS
 
 #############
@@ -74,13 +75,13 @@ class TestSPACE(unittest.TestCase):
     global s_assembler, s_packetizer
     # initialise the system configuration
     initConfiguration()
-    SPACE.DEF.init()
-    SPACE.IF.s_definitions.createDefinitions()
+    SUPP.DEF.init()
+    SUPP.IF.s_definitions.createDefinitions()
     SPACE.TMGEN.init()
   # ---------------------------------------------------------------------------
   def test_DEFoperations(self):
     """function to test the DEF definition module"""
-    tmPktDefs = SPACE.IF.s_definitions.getTMpktDefs()
+    tmPktDefs = SUPP.IF.s_definitions.getTMpktDefs()
     self.assertEqual(tmPktDefs[0].pktSPID, 10001)
     self.assertEqual(tmPktDefs[1].pktSPID, 10002)
     self.assertEqual(tmPktDefs[2].pktSPID, 10003)
@@ -91,7 +92,7 @@ class TestSPACE(unittest.TestCase):
     self.assertEqual(tmPktDefs[7].pktSPID, 10008)
     self.assertEqual(tmPktDefs[8].pktSPID, 12343)
     self.assertEqual(tmPktDefs[9].pktSPID, 12345)
-    tmParamDefs = SPACE.IF.s_definitions.getTMparamDefs()
+    tmParamDefs = SUPP.IF.s_definitions.getTMparamDefs()
     self.assertEqual(tmParamDefs[0].paramName, "PAR1")
     self.assertEqual(tmParamDefs[1].paramName, "PAR10")
     self.assertEqual(tmParamDefs[2].paramName, "PAR11")
