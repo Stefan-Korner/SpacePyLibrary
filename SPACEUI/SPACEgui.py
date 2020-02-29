@@ -18,8 +18,8 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import PUS.VP
 import SCOS.ENV
 import SPACE.IF
-import SPACEUI.VPgui
 import SUPP.IF
+import SUPPUI.VPgui
 import UI.TKI
 import UTIL.TIME
 
@@ -64,7 +64,7 @@ class TMpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
     # --- variable parameter tree ---
     label = tkinter.Label(self, text="Variable Parameters")
     self.appGrid(label, row=0, column=2, rowweight=0)
-    self.parametersTreeview = SPACEUI.VPgui.TreeView(self)
+    self.parametersTreeview = SUPPUI.VPgui.TreeView(self)
     self.appGrid(self.parametersTreeview, row=1, column=2, rowspan=8, rowweight=0, columnweight=1)
     # --- fixed parameter listbox ---
     label = tkinter.Label(self, text="Fixed Parameters")
