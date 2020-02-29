@@ -27,9 +27,9 @@ from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CS.CNCclient, CS.CNCgui, CS.EDENclient, CS.EDENgui, CS.FRAMEgui, CS.FRAMEmodel, CS.FRAMErply, CS.NCTRSclient, CS.NCTRSgui
 import EGSE.IF
 import GRND.IF
-import MC.IF, MC.TCGEN, MC.TCmodel, MC.TMmodel, MC.TMrecorder
+import MC.IF, MC.TCGEN, MC.TCmodel, MC.TMmodel
 import MCUI.CFGgui, MCUI.TMgui, MCUI.TCgui
-import SUPP.DEF, SUPP.IF
+import SUPP.DEF, SUPP.IF, SUPP.TMrecorder
 import UI.TKI
 import UTIL.SYS, UTIL.TCO, UTIL.TASK
 
@@ -266,7 +266,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     """Decoded recordPackets command"""
     self.logMethod("recordPacketsCmd", "TM")
     # consistency check
-    if MC.IF.s_tmRecorder.isRecording():
+    if SUPP.IF.s_tmRecorder.isRecording():
       LOG_WARNING("Packet recording already started", "TM")
       return False
     if len(argv) != 2:
@@ -274,20 +274,20 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       return False
     # extract the arguments
     recordFileName = argv[1]
-    MC.IF.s_tmRecorder.startRecording(recordFileName);
+    SUPP.IF.s_tmRecorder.startRecording(recordFileName);
     return True
   # ---------------------------------------------------------------------------
   def stopPacketRecorderCmd(self, argv):
     """Decoded stopPacketRecorder command"""
     self.logMethod("stopPacketRecorderCmd", "TM")
     # consistency check
-    if not MC.IF.s_tmRecorder.isRecording():
+    if not SUPP.IF.s_tmRecorder.isRecording():
       LOG_WARNING("Packet recording not started", "TM")
       return False
     if len(argv) != 1:
       LOG_WARNING("invalid parameters passed for stopPacketRecorder", "TM")
       return False
-    MC.IF.s_tmRecorder.stopRecording();
+    SUPP.IF.s_tmRecorder.stopRecording();
     return True
   # ---------------------------------------------------------------------------
   def setPacketDataCmd(self, argv, extraData):
@@ -611,7 +611,7 @@ print("Create the TM model")
 MC.TMmodel.init()
 # create the TM recorder
 print("Create the TM recorder")
-MC.TMrecorder.init()
+SUPP.TMrecorder.init()
 # create the frame model
 print("Create the frame model")
 CS.FRAMEmodel.init()

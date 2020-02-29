@@ -538,8 +538,30 @@ class Definitions(object):
     """retrieves the TC packet name from the TC packet data unit"""
     pass
 
+# =============================================================================
+class TMrecorder(object):
+  """Telemetry recorder"""
+  # ---------------------------------------------------------------------------
+  def startRecording(self, recordFileName):
+    """starts recording of TM packets"""
+    pass
+  # ---------------------------------------------------------------------------
+  def stopRecording(self):
+    """stops recording of TM packets"""
+    pass
+  # ---------------------------------------------------------------------------
+  def isRecording(self):
+    """returns recording status"""
+    pass
+  # ---------------------------------------------------------------------------
+  def pushTMpacket(self, tmPacketDu, ertUTC):
+    """consumes a telemetry packet"""
+    pass
+
 ####################
 # global variables #
 ####################
 # definitions is a singleton
 s_definitions = None
+# telemetry recorder is a singleton
+s_tmRecorder = None
