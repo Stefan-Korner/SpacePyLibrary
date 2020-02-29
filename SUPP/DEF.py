@@ -10,7 +10,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT License    *
 # for more details.                                                           *
 #******************************************************************************
-# Space Simulation - Space Data Definitions                                   #
+# Supplement to TM/TC processing - Space Data Definitions                     *
 #******************************************************************************
 import cPickle as pickle
 import os, time

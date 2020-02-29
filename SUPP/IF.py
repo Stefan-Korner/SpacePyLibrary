@@ -10,7 +10,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT License    *
 # for more details.                                                           *
 #******************************************************************************
-# Supplement to TM/TC processing - Interface                                          *
+# Supplement to TM/TC processing - Interface                                  *
 #******************************************************************************
 import string
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
