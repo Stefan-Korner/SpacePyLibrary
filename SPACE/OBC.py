@@ -264,6 +264,9 @@ class OnboardComputerImpl(SPACE.IF.OnboardComputer):
       EGSE.IF.s_ccsLink.pushTMpacket(tmPacketDu)
     else:
       LINK.IF.s_groundLink.pushTMpacketAndERT(tmPacketDu, ertUTC)
+    # forward the TM packet also to the TM recorder
+    # where the packet is recorded on demand
+    SUPP.IF.s_tmRecorder.pushTMpacket(tmPacketDu, ertUTC)
     return True
   # ---------------------------------------------------------------------------
   def replayPackets(self, replayFileName):

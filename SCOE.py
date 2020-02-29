@@ -23,7 +23,7 @@ import PUS.PACKET, PUS.SERVICES
 import SCOE.EGSEserver, SCOE.EGSEgui
 import SPACE.ASW, SPACE.IF, SPACE.MIL, SPACE.OBC, SPACE.TMGEN, SPACE.TMRPLY
 import SPACEUI.SPACEgui, SPACEUI.MILgui
-import SUPP.DEF, SUPP.IF
+import SUPP.DEF, SUPP.IF, SUPP.TMrecorder
 import UI.TKI
 import UTIL.SYS, UTIL.TCO, UTIL.TASK
 
@@ -141,6 +141,10 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       retStatus = self.obcDisableAck4Cmd(argv)
     elif (cmd == "A") or (cmd == "SENDACK"):
       retStatus = self.sendAckCmd(argv)
+    elif (cmd == "RP") or (cmd == "RECORDPACKETS"):
+      retStatus = self.recordPacketsCmd(argv)
+    elif (cmd == "SP") or (cmd == "STOPPACKETRECORDER"):
+      retStatus = self.stopPacketRecorderCmd(argv)
     elif (cmd == "PP") or (cmd == "REPLAYPACKETS"):
       retStatus = self.replayPacketsCmd(argv)
     elif (cmd == "L") or (cmd == "LISTPACKETS"):
@@ -197,6 +201,8 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     LOG("n4 | obcEnableNak4.......enables autom. sending of NAK4 for TCs", "SPACE")
     LOG("d4 | obcDisableAck4......disables autom. sending of ACK4 for TCs", "SPACE")
     LOG("a  | sendAck <apid> <ssc> <stype> sends a TC acknowledgement", "SPACE")
+    LOG("sp | stopPacketRecorder..stops recording of TM packets", "SPACE")
+    LOG("pp | replayPackets <replayFile> replays TM packets", "SPACE")
     LOG("pp | replayPackets <replayFile> replays TM packets", "SPACE")
     LOG("l  | listPackets.........lists available packets", "SPACE")
     LOG("g  | generate............generates the testdata.sim file in testbin directory", "SPACE")
@@ -567,6 +573,34 @@ class ModelTask(UTIL.TASK.ProcessingTask):
     SPACE.IF.s_onboardComputer.generateAck(apid, ssc, ackType);
     return True
   # ---------------------------------------------------------------------------
+  def recordPacketsCmd(self, argv):
+    """Decoded recordPackets command"""
+    self.logMethod("recordPacketsCmd", "SPACE")
+    # consistency check
+    if SUPP.IF.s_tmRecorder.isRecording():
+      LOG_WARNING("Packet recording already started", "SPACE")
+      return False
+    if len(argv) != 2:
+      LOG_WARNING("invalid parameters passed for recordPackets", "SPACE")
+      return False
+    # extract the arguments
+    recordFileName = argv[1]
+    SUPP.IF.s_tmRecorder.startRecording(recordFileName);
+    return True
+  # ---------------------------------------------------------------------------
+  def stopPacketRecorderCmd(self, argv):
+    """Decoded stopPacketRecorder command"""
+    self.logMethod("stopPacketRecorderCmd", "SPACE")
+    # consistency check
+    if not SUPP.IF.s_tmRecorder.isRecording():
+      LOG_WARNING("Packet recording not started", "SPACE")
+      return False
+    if len(argv) != 1:
+      LOG_WARNING("invalid parameters passed for stopPacketRecorder", "SPACE")
+      return False
+    SUPP.IF.s_tmRecorder.stopRecording();
+    return True
+  # ---------------------------------------------------------------------------
   def replayPacketsCmd(self, argv):
     """Decoded replayPackets command"""
     self.logMethod("replayPacketsCmd", "SPACE")
@@ -670,6 +704,8 @@ def sendPacket(*argv): UTIL.TASK.s_processingTask.sendPacketCmd(("", ) + argv)
 def enableCyclic(*argv): UTIL.TASK.s_processingTask.enableCyclicCmd(("", ) + argv)
 def disableCyclic(*argv): UTIL.TASK.s_processingTask.disableCyclicCmd(("", ) + argv)
 def sendAck(*argv): UTIL.TASK.s_processingTask.sendAckCmd(("", ) + argv)
+def recordPackets(*argv): UTIL.TASK.s_processingTask.recordPacketsCmd(("", ) + argv)
+def stopPacketRecorder(*argv): UTIL.TASK.s_processingTask.stopPacketRecorderCmd(("", ) + argv)
 def replayPackets(*argv): UTIL.TASK.s_processingTask.replayPacketsCmd(("", ) + argv)
 def obcEnableAck1(*argv): UTIL.TASK.s_processingTask.obcEnableAck1Cmd(("", ) + argv)
 def obcEnableNak1(*argv): UTIL.TASK.s_processingTask.obcEnableNak1Cmd(("", ) + argv)
@@ -766,6 +802,7 @@ if cmdPrompt:
 
 # initialise singletons
 SUPP.DEF.init()
+SUPP.TMrecorder.init("SPACE")
 SPACE.OBC.init(egseMode=True)
 SPACE.TMGEN.init()
 SPACE.TMRPLY.init()

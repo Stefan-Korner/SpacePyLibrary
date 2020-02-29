@@ -23,8 +23,9 @@ import UTIL.TASK, UTIL.TCO, UTIL.TIME
 class PacketRecorder(SUPP.IF.TMrecorder):
   """Recorder of TM packets"""
   # ---------------------------------------------------------------------------
-  def __init__(self):
+  def __init__(self, subsystem):
     """default constructor"""
+    self.subsystem = subsystem
     self.tmPacketsFile = None
     self.tmPacketsNr = 0
   # ---------------------------------------------------------------------------
@@ -33,11 +34,11 @@ class PacketRecorder(SUPP.IF.TMrecorder):
     starts recording of TM packets,
     implementation of SUPP.IF.TMrecorder.startRecording
     """
-    LOG_WARNING("startRecording(" + recordFileName + ")", "TM")
+    LOG_WARNING("startRecording(" + recordFileName + ")", self.subsystem)
     try:
       self.tmPacketsFile = open(recordFileName, "w")
     except:
-      LOG_ERROR("cannot open " + recordFileName, "TM")
+      LOG_ERROR("cannot open " + recordFileName, self.subsystem)
       return False
     self.tmPacketsFile.write("##############################################\n")
     self.tmPacketsFile.write("# TM packet replay file with hex raw packets #\n")
@@ -50,7 +51,7 @@ class PacketRecorder(SUPP.IF.TMrecorder):
     stops recording of TM packets,
     implementation of SUPP.IF.TMrecorder.stopRecording
     """
-    LOG_WARNING("startRecording", "TM")
+    LOG_WARNING("startRecording", self.subsystem)
     if self.tmPacketsFile != None:
       self.tmPacketsFile.close()
       self.tmPacketsFile = None
@@ -71,7 +72,7 @@ class PacketRecorder(SUPP.IF.TMrecorder):
     if self.tmPacketsFile == None:
       return
     self.tmPacketsNr += 1
-    LOG("record TM packet " + str(self.tmPacketsNr), "TM")
+    LOG("record TM packet " + str(self.tmPacketsNr), self.subsystem)
     self.tmPacketsFile.write("# packet " + str(self.tmPacketsNr) + "\n")
     if ertUTC:
       ertTime = UTIL.TCO.correlateToERTmissionEpoch(ertUTC)
@@ -85,6 +86,6 @@ class PacketRecorder(SUPP.IF.TMrecorder):
 #############
 # functions #
 #############
-def init():
+def init(subsystem):
   """initialise singleton(s)"""
-  SUPP.IF.s_tmRecorder = PacketRecorder()
+  SUPP.IF.s_tmRecorder = PacketRecorder(subsystem)
