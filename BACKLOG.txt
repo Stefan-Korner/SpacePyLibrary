@@ -42,6 +42,8 @@ Backlog of features that shall be implemented
 
 037 Provide a tutorial with examples.
 
+038 Support the TM packet recorder also for SCOE and SIM - in the SPACEgui.
+
 --------------------------------- implemented ---------------------------------
 
 001 Remove the dependency to MIB files TPKTconnTable.dat, TPKTconfigTable.dat:
