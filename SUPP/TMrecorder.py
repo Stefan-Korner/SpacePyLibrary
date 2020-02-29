@@ -10,17 +10,17 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT License    *
 # for more details.                                                           *
 #******************************************************************************
-# Monitoring and Control (M&C) - Telemetry Recorder                           *
+# Supplement to TM/TC processing - Telemetry Recorder                         *
 #******************************************************************************
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import MC.IF
+import SUPP.IF
 import UTIL.TASK, UTIL.TCO, UTIL.TIME
 
 ###########
 # classes #
 ###########
 # =============================================================================
-class PacketRecorder(MC.IF.TMrecorder):
+class PacketRecorder(SUPP.IF.TMrecorder):
   """Recorder of TM packets"""
   # ---------------------------------------------------------------------------
   def __init__(self):
@@ -31,7 +31,7 @@ class PacketRecorder(MC.IF.TMrecorder):
   def startRecording(self, recordFileName):
     """
     starts recording of TM packets,
-    implementation of MC.IF.TMrecorder.startRecording
+    implementation of SUPP.IF.TMrecorder.startRecording
     """
     LOG_WARNING("startRecording(" + recordFileName + ")", "TM")
     try:
@@ -48,7 +48,7 @@ class PacketRecorder(MC.IF.TMrecorder):
   def stopRecording(self):
     """
     stops recording of TM packets,
-    implementation of MC.IF.TMrecorder.stopRecording
+    implementation of SUPP.IF.TMrecorder.stopRecording
     """
     LOG_WARNING("startRecording", "TM")
     if self.tmPacketsFile != None:
@@ -59,14 +59,14 @@ class PacketRecorder(MC.IF.TMrecorder):
   def isRecording(self):
     """
     returns recording status,
-    implementation of MC.IF.TMrecorder.isRecording
+    implementation of SUPP.IF.TMrecorder.isRecording
     """
     return (self.tmPacketsFile != None)
   # ---------------------------------------------------------------------------
   def pushTMpacket(self, tmPacketDu, ertUTC):
     """
     consumes a telemetry packet,
-    implementation of MC.IF.TMrecorder.pushTMpacket
+    implementation of SUPP.IF.TMrecorder.pushTMpacket
     """
     if self.tmPacketsFile == None:
       return
@@ -87,4 +87,4 @@ class PacketRecorder(MC.IF.TMrecorder):
 #############
 def init():
   """initialise singleton(s)"""
-  MC.IF.s_tmRecorder = PacketRecorder()
+  SUPP.IF.s_tmRecorder = PacketRecorder()
