@@ -72,7 +72,7 @@ from __future__ import print_function
 import sys
 import Tkinter as tkinter
 import PUS.VP
-import SPACEUI.VPgui
+import SUPPUI.VPgui
 import UTIL.DU
 
 #############
@@ -308,4 +308,4 @@ if not testStruct2(dStruct):
 #******************************************************************************
 root = tkinter.Tk()
 root.withdraw()
-dialog = SPACEUI.VPgui.TreeBrowser(root, "Packet_01", struct)
+dialog = SUPPUI.VPgui.TreeBrowser(root, "Packet_01", struct)

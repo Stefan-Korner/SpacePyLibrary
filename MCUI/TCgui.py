@@ -17,8 +17,8 @@ import tkSimpleDialog as simpledialog
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import MC.IF
 import PUS.VP
-import SPACEUI.VPgui
 import SUPP.IF
+import SUPPUI.VPgui
 import UI.TKI
 
 #############
@@ -60,7 +60,7 @@ class TCpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
     # --- parameter tree ---
     label = tkinter.Label(self, text="Parameters")
     self.appGrid(label, row=0, column=2, rowweight=0)
-    self.parametersTreeview = SPACEUI.VPgui.TreeView(self)
+    self.parametersTreeview = SUPPUI.VPgui.TreeView(self)
     self.appGrid(self.parametersTreeview, row=1, column=2, rowspan=8, rowweight=0, columnweight=1)
     # --- filler ---
     filler = tkinter.Label(self)
