@@ -232,6 +232,8 @@ class GUIview(UI.TKI.GUItabView):
       [["PKT", self.setPacketDataCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, tkinter.DISABLED],
        ["SND", self.sendPacketCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, tkinter.DISABLED],
        ["ACK", self.sendAckCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, tkinter.DISABLED],
+       ["REC+", self.recordPacketsCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
+       ["REC-", self.stopPacketRecorderCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, tkinter.DISABLED],
        ["RPLY", self.replayPacketsCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG, tkinter.DISABLED],
        ["LIST", self.listPacketsCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG],
        ["GEN", self.generateCallback, COLOR_BUTTON_FG, COLOR_BUTTON_BG]])
@@ -306,6 +308,8 @@ class GUIview(UI.TKI.GUItabView):
     self.addCommandMenuItem(label="OBCenableNak4", command=self.obcEnableNak4Callback)
     self.addCommandMenuItem(label="OBCdisableAck4", command=self.obcDisableAck4Callback)
     self.addCommandMenuItem(label="SendAck", command=self.sendAckCallback, enabled=False)
+    self.addCommandMenuItem(label="RecordPackets", command=self.recordPacketsCallback)
+    self.addCommandMenuItem(label="StopPacketRecorder", command=self.stopPacketRecorderCallback, enabled=False)
     self.addCommandMenuItem(label="ReplayPackets", command=self.replayPacketsCallback, enabled=False)
     self.addCommandMenuItem(label="ListPackets", command=self.listPacketsCallback)
     self.addCommandMenuItem(label="Generate", command=self.generateCallback)
@@ -451,6 +455,17 @@ class GUIview(UI.TKI.GUItabView):
       subtypeStr = str(dialog.result[2] + 1)
       self.notifyModelTask(["SENDACK", apidStr, sscStr, subtypeStr])
   # ---------------------------------------------------------------------------
+  def recordPacketsCallback(self):
+    """Called when the RecordPackets menu entry is selected"""
+    fileName = filedialog.asksaveasfilename(title="Create TM Packet Record File",
+                                            initialdir=SCOS.ENV.s_environment.tmFilesDir())
+    if fileName != "" and fileName != ():
+      self.notifyModelTask(["RECORDPACKETS", fileName])
+  # ---------------------------------------------------------------------------
+  def stopPacketRecorderCallback(self):
+    """Called when the StopPacketRecorder menu entry is selected"""
+    self.notifyModelTask(["STOPPACKETRECORDER"])
+  # ---------------------------------------------------------------------------
   def replayPacketsCallback(self):
     """Called when the ReplayPackets menu entry is selected"""
     fileName = filedialog.askopenfilename(title="Open TM Packet Replay File",
@@ -478,10 +493,12 @@ class GUIview(UI.TKI.GUItabView):
     """Generic callback when something changes in the model"""
     if status == "TM_CONNECTED":
       self.tmConnectedNotify()
-    elif status == "TM_RECORDING":
-      self.tmRecordingNotify()
     elif status == "PACKETDATA_SET":
       self.packetDataSetNotify()
+    elif status == "PACKET_REC_STARTED":
+      self.packetRecStarted()
+    elif status == "PACKET_REC_STOPPED":
+      self.packetRecStopped()
     elif status == "UPDATE_REPLAY":
       self.updateReplayNotify()
     elif status == "ENABLED_CYCLIC":
@@ -541,6 +558,47 @@ class GUIview(UI.TKI.GUItabView):
         nameValueStr += ", "
       nameValueStr += nameValue[0] + "=" + nameValue[1]
     self.parameterValuesField.set(nameValueStr)
+  # ---------------------------------------------------------------------------
+  def packetRecStarted(self):
+    """Called when the recordPackets function is successfully processed"""
+    self.enableCommandMenuItem("SetPacketData")
+    self.enableCommandMenuItem("EnableCyclic")
+    self.enableCommandMenuItem("SendAck")
+    self.disableCommandMenuItem("RecordPackets")
+    self.enableCommandMenuItem("StopPacketRecorder")
+    self.enableCommandMenuItem("ReplayPackets")
+    self.menuButtons.setState("PKT", tkinter.NORMAL)
+    self.menuButtons.setState("ACK", tkinter.NORMAL)
+    self.menuButtons.setState("REC+", tkinter.DISABLED)
+    self.menuButtons.setState("REC-", tkinter.NORMAL)
+    self.menuButtons.setState("RPLY", tkinter.NORMAL)
+  # ---------------------------------------------------------------------------
+  def packetRecStopped(self):
+    """Called when the stopPacketRecorder function is successfully processed"""
+    if SPACE.IF.s_configuration.connected:
+      self.enableCommandMenuItem("SetPacketData")
+      self.enableCommandMenuItem("EnableCyclic")
+      self.enableCommandMenuItem("SendAck")
+      self.enableCommandMenuItem("RecordPackets")
+      self.disableCommandMenuItem("StopPacketRecorder")
+      self.enableCommandMenuItem("ReplayPackets")
+      self.menuButtons.setState("PKT", tkinter.NORMAL)
+      self.menuButtons.setState("ACK", tkinter.NORMAL)
+      self.menuButtons.setState("REC+", tkinter.NORMAL)
+      self.menuButtons.setState("REC-", tkinter.DISABLED)
+      self.menuButtons.setState("RPLY", tkinter.NORMAL)
+    else:
+      self.disableCommandMenuItem("SetPacketData")
+      self.disableCommandMenuItem("EnableCyclic")
+      self.disableCommandMenuItem("SendAck")
+      self.enableCommandMenuItem("RecordPackets")
+      self.disableCommandMenuItem("StopPacketRecorder")
+      self.disableCommandMenuItem("ReplayPackets")
+      self.menuButtons.setState("PKT", tkinter.DISABLED)
+      self.menuButtons.setState("ACK", tkinter.DISABLED)
+      self.menuButtons.setState("REC+", tkinter.NORMAL)
+      self.menuButtons.setState("REC-", tkinter.DISABLED)
+      self.menuButtons.setState("RPLY", tkinter.DISABLED)
   # ---------------------------------------------------------------------------
   def updateReplayNotify(self):
     """Called when the replay state has changed"""

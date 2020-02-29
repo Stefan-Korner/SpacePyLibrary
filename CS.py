@@ -612,7 +612,7 @@ print("Create the TM model")
 MC.TMmodel.init()
 # create the TM recorder
 print("Create the TM recorder")
-SUPP.TMrecorder.init()
+SUPP.TMrecorder.init("TM")
 # create the frame model
 print("Create the frame model")
 CS.FRAMEmodel.init()
