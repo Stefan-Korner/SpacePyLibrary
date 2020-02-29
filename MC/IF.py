@@ -47,26 +47,6 @@ class TMmodel(object):
     pass
 
 # =============================================================================
-class TMrecorder(object):
-  """Telemetry recorder"""
-  # ---------------------------------------------------------------------------
-  def startRecording(self, recordFileName):
-    """starts recording of TM packets"""
-    pass
-  # ---------------------------------------------------------------------------
-  def stopRecording(self):
-    """stops recording of TM packets"""
-    pass
-  # ---------------------------------------------------------------------------
-  def isRecording(self):
-    """returns recording status"""
-    pass
-  # ---------------------------------------------------------------------------
-  def pushTMpacket(self, tmPacketDu, ertUTC):
-    """consumes a telemetry packet"""
-    pass
-
-# =============================================================================
 class TCmodel(object):
   """Telecommand model"""
   # ---------------------------------------------------------------------------
@@ -101,8 +81,6 @@ class TCpacketGenerator(object):
 s_configuration = None
 # telemetry model is a singleton
 s_tmModel = None
-# telemetry recorder is a singleton
-s_tmRecorder = None
 # telecommand model is a singleton
 s_tcModel = None
 # telecommand packet generator is a singleton

@@ -70,7 +70,7 @@ class TMmodel(MC.IF.TMmodel):
       MC.IF.s_tcModel.notifyTCack(tmPacketDu.serviceSubType)
     # forward the TM packet also to the TM recorder
     # where the packet is recorded on demand
-    MC.IF.s_tmRecorder.pushTMpacket(tmPacketDu, ertUTC)
+    SUPP.IF.s_tmRecorder.pushTMpacket(tmPacketDu, ertUTC)
 
 #############
 # functions #
