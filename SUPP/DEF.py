@@ -706,17 +706,18 @@ class DefinitionsImpl(SUPP.IF.Definitions):
     if pktSPID == -1:
       return None
     return SUPP.IF.TMpacketInjectData(pktSPID,
-                                       pktMnemonic,
-                                       params,
-                                       values,
-                                       tmStruct,
-                                       dataField,
-                                       segmentationFlags)
+                                      pktMnemonic,
+                                      params,
+                                      values,
+                                      tmStruct,
+                                      dataField,
+                                      segmentationFlags)
   # ---------------------------------------------------------------------------
   def getTMpacketInjectDataBySPID(self,
                                   spid,
                                   params,
                                   values,
+                                  tmStruct,
                                   dataField=None,
                                   segmentationFlags=CCSDS.PACKET.UNSEGMENTED):
     """
@@ -727,12 +728,12 @@ class DefinitionsImpl(SUPP.IF.Definitions):
     if pktDef == None:
       return None
     return SUPP.IF.TMpacketInjectData(spid,
-                                       pktDef.pktName,
-                                       params,
-                                       values,
-                                       tmStruct,
-                                       dataField,
-                                       segmentationFlags)
+                                      pktDef.pktName,
+                                      params,
+                                      values,
+                                      tmStruct,
+                                      dataField,
+                                      segmentationFlags)
   # ---------------------------------------------------------------------------
   def getTMpacketKey(self, tmPacketDu):
     """
