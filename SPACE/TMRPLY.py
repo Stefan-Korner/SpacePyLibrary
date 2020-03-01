@@ -176,12 +176,13 @@ class TMpacketReplayerImpl(SPACE.IF.TMpacketReplayer):
         if rawPkt != None:
           self.items.append((SPACE.IF.RPLY_RAWPKT, rawPkt))
         else:
+          tmStruct = None
           if useSPIDasKey:
             tmPacketData = SUPP.IF.s_definitions.getTMpacketInjectDataBySPID(
-              pktSPID, params, values, dataField, segmentationFlags)
+              pktSPID, params, values, tmStruct, dataField, segmentationFlags)
           else:
             tmPacketData = SUPP.IF.s_definitions.getTMpacketInjectData(
-              pktMnemo, params, values, dataField, segmentationFlags)
+              pktMnemo, params, values, tmStruct, dataField, segmentationFlags)
           # check the TM packet
           if tmPacketData == None:
             LOG_ERROR("error in line " + str(lineNr) + " of " + replayFileName, "SPACE")
