@@ -42,6 +42,11 @@ Backlog of features that shall be implemented
 
 037 Provide a tutorial with examples.
 
+039 Integrate SLE from https://github.com/visionspacetec/sle-*
+
+040 Make the position of the datafield body for CnC TM(1,129) and TM(1,130)
+    TC-Acknowledgement packets configurable.
+
 --------------------------------- implemented ---------------------------------
 
 001 Remove the dependency to MIB files TPKTconnTable.dat, TPKTconfigTable.dat:
