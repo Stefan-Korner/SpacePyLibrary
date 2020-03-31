@@ -71,12 +71,15 @@ s_tmTTtimeFormat = DEFAULT_TM_TT_TIME_FORMAT
 class TMpacket(CCSDS.PACKET.TMpacket):
   """telemetry PUS packet (with datafield header)"""
   # ---------------------------------------------------------------------------
-  def __init__(self, binaryString=None):
+  def __init__(self,
+               binaryString=None,
+               attributesSize2=TM_PACKET_DATAFIELD_HEADER_BYTE_SIZE,
+               attributeMap2=TM_PACKET_DATAFIELD_HEADER_ATTRIBUTES):
     """default constructor: initialise datafield header"""
     CCSDS.PACKET.TMpacket.__init__(self,
                                    binaryString,
-                                   TM_PACKET_DATAFIELD_HEADER_BYTE_SIZE,
-                                   TM_PACKET_DATAFIELD_HEADER_ATTRIBUTES)
+                                   attributesSize2,
+                                   attributeMap2)
   # ---------------------------------------------------------------------------
   def initAttributes(self):
     """hook for initializing attributes, delegates to parent class"""
@@ -98,12 +101,15 @@ class TMpacket(CCSDS.PACKET.TMpacket):
 class TCpacket(CCSDS.PACKET.TCpacket):
   """telecommand PUS packet (with datafield header)"""
   # ---------------------------------------------------------------------------
-  def __init__(self, binaryString=None):
+  def __init__(self,
+               binaryString=None,
+               attributesSize2=TC_PACKET_DATAFIELD_HEADER_BYTE_SIZE,
+               attributeMap2=TC_PACKET_DATAFIELD_HEADER_ATTRIBUTES):
     """default constructor: initialise datafield header"""
     CCSDS.PACKET.TCpacket.__init__(self,
                                    binaryString,
-                                   TC_PACKET_DATAFIELD_HEADER_BYTE_SIZE,
-                                   TC_PACKET_DATAFIELD_HEADER_ATTRIBUTES)
+                                   attributesSize2,
+                                   attributeMap2)
   # ---------------------------------------------------------------------------
   def initAttributes(self):
     """hook for initializing attributes, delegates to parent class"""
