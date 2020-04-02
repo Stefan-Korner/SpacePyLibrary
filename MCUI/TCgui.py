@@ -213,9 +213,9 @@ class GUIview(UI.TKI.GUItabView):
     dialog = TCpacketBrowser(self,
       title="Set Packet Data Dialog",
       prompt="Please select a packet.")
-    #if dialog.result != None:
-    #  packetName, route, tcStruct = dialog.result
-    #  self.notifyModelTask(["SETPACKETDATA", packetName, route], tcStruct)
+    if dialog.result != None:
+      packetName, route, tcStruct = dialog.result
+      self.notifyModelTask(["SETPACKETDATA", packetName, route], tcStruct)
   # ---------------------------------------------------------------------------
   def sendPacketCallback(self):
     """Called when the SendPacket menu entry is selected"""
