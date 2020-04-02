@@ -20,12 +20,14 @@
 #******************************************************************************
 from UTIL.DU import BITS, BYTES, UNSIGNED, STRING, TIME
 import CCSDS.PACKET
+import EGSE.CNC
 import PUS.PACKET
 
 #############
 # constants #
 #############
 VERSION_NUMBER = 3
+TC_ACK_NAK_APID = 1857
 TC_ACK_NAK_TYPE = 1
 TC_ACK_SUBTYPE = 129
 TC_NAK_SUBTYPE = 130
@@ -34,13 +36,15 @@ TC_NAK_SUBTYPE = 130
 # - key: attribute name
 # - value: fieldOffset, fieldLength, fieldType
 # -----------------------------------------------------------------------------
-TC_ACKNAK_DATAFIELD_HEADER_BYTE_SIZE = 3
+TC_ACKNAK_DATAFIELD_HEADER_BYTE_SIZE = 4
 TC_ACKNAK_DATAFIELD_HEADER_ATTRIBUTES = {
   "pusSpare1":            ( 0,  1, BITS),
   "pusVersionNumber":     ( 1,  3, BITS),
   "pusSpare2":            ( 4,  4, BITS),
   "serviceType":          ( 1,  1, UNSIGNED),
-  "serviceSubType":       ( 2,  1, UNSIGNED)}
+  "serviceSubType":       ( 2,  1, UNSIGNED),
+  "destinationID":        ( 3,  1, UNSIGNED)
+}
 
 ###########
 # classes #
@@ -98,9 +102,13 @@ class TCackNak(PUS.PACKET.TMpacket):
   def initAttributes(self):
     """hook for initializing attributes, delegates to parent class"""
     # resize the packet in order that it can hold the TC APID, TC SSC and CRC
-    minPacketSize = PUS.SERVICES.service1_getTCackMinPacketSize()
+    minPacketSize = EGSE.CNC.getTCackNakMinPacketSize()
     self.setLen(minPacketSize)
     PUS.PACKET.TMpacket.initAttributes(self)
+    # APID according to the standard
+    self.applicationProcessId = TC_ACK_NAK_APID
+    # PUS Type according to the standard
+    self.serviceType = TC_ACK_NAK_TYPE
   # ---------------------------------------------------------------------------
   def setACK(self):
     """sets ACK state"""

@@ -19,7 +19,7 @@
 from __future__ import print_function
 import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
-import EGSE.IF
+import EGSE.CNC, EGSE.IF
 import PUS.PACKET, PUS.SERVICES
 import SCOE.EGSEserver, SCOE.EGSEgui
 import SPACE.ASW, SPACE.IF, SPACE.MIL, SPACE.OBC, SPACE.TMGEN, SPACE.TMRPLY
@@ -36,6 +36,8 @@ SYS_CONFIGURATION = [
   ["HOST", "127.0.0.1"],
   ["CCS_SERVER_PORT", "48569"],
   ["CCS_SERVER_PORT2", "-1"],
+  ["CNC_TC_ACKNAK_APID_PARAM_BYTE_OFFSET", "16"],
+  ["CNC_TC_ACKNAK_SSC_PARAM_BYTE_OFFSET", "18"],
   ["ASW_MISSION", "S4"],
   ["TC_ACK_ACCEPT_SUCC_MNEMO", "<<shall be passed as environment variable>>"],
   ["TC_ACK_ACCEPT_FAIL_MNEMO", "<<shall be passed as environment variable>>"],
@@ -758,6 +760,9 @@ PUS.SERVICES.service1_setTCackParamsProperties(
   int(UTIL.SYS.s_configuration.TC_ACK_APID_PARAM_BYTE_OFFSET),
   int(UTIL.SYS.s_configuration.TC_ACK_SSC_PARAM_BYTE_OFFSET))
 EGSE.IF.s_serverConfiguration = EGSE.IF.ServerConfiguration()
+EGSE.CNC.setTCackNakParamsProperties(
+  int(UTIL.SYS.s_configuration.CNC_TC_ACKNAK_APID_PARAM_BYTE_OFFSET),
+  int(UTIL.SYS.s_configuration.CNC_TC_ACKNAK_SSC_PARAM_BYTE_OFFSET))
 SPACE.IF.s_configuration = SPACE.IF.Configuration()
 # initialise the request handler
 requestHandler = UTIL.TASK.RequestHandler(sys.argv)

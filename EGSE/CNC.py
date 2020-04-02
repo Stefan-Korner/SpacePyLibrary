@@ -18,8 +18,70 @@ import sys
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CCSDS.PACKET
 import EGSE.CNCPDU, EGSE.IF
-import PUS.SERVICES
 import UTIL.TASK, UTIL.TCP, UTIL.TIME
+
+#############
+# constants #
+#############
+# The position (offset) of the TC ACK/NAK attributes are global properties
+# that can be changed via setTCackNakParamsProperties()
+DEFAULT_TC_ACKNAK_APID_PARAM_BYTE_OFFSET = 16
+DEFAULT_TC_ACKNAK_SSC_PARAM_BYTE_OFFSET = 18
+TC_ACKNAK_APID_PARAM_BYTE_LENGTH = 2
+TC_ACKNAK_SSC_PARAM_BYTE_LENGTH = 2
+TC_ACKNAK_APID_PARAM_MASK = 0x1800
+TC_ACKNAK_SSC_PARAM_MASK = 0xC000
+
+####################
+# global variables #
+####################
+# The position (offset) of the TC ACK/NAK attributes are global properties
+# that can be changed via setTCackNakParamsProperties()
+s_tcAckNakAPIDparamByteOffset = DEFAULT_TC_ACKNAK_APID_PARAM_BYTE_OFFSET
+s_tcAckNakSSCparamByteOffset = DEFAULT_TC_ACKNAK_SSC_PARAM_BYTE_OFFSET
+
+#############
+# functions #
+#############
+# -----------------------------------------------------------------------------
+def setTCackNakParamsProperties(tcAckNakAPIDparamByteOffset,
+                                tcAckNakSSCparamByteOffset):
+  """changes the global positions of the TC ACK/NAK attributes"""
+  global s_tcAckNakAPIDparamByteOffset, s_tcAckNakSSCparamByteOffset
+  s_tcAckNakAPIDparamByteOffset = tcAckNakAPIDparamByteOffset
+  s_tcAckNakSSCparamByteOffset = tcAckNakSSCparamByteOffset
+# -----------------------------------------------------------------------------
+def getTCackNakMinPacketSize():
+  """returns the minimal size of a TC ACK/NAK packet"""
+  return (s_tcAckNakSSCparamByteOffset + TC_ACKNAK_SSC_PARAM_BYTE_LENGTH)
+# -----------------------------------------------------------------------------
+def getTCackNakAPID(tcAckNakDU):
+  """retrieves the APID of the related TC packet in the datafield attribute"""
+  # filters the relevant bits"""
+  return (tcAckNakDU.getUnsigned(s_tcAckNakAPIDparamByteOffset,
+                                 TC_ACKNAK_APID_PARAM_BYTE_LENGTH) |
+          TC_ACKNAK_APID_PARAM_MASK)
+# -----------------------------------------------------------------------------
+def setTCackNakAPID(tcAckNakDU, apid):
+  """sets the APID of the related TC packet in the datafield attribute"""
+  # filters the relevant bits"""
+  tcAckNakDU.setUnsigned(s_tcAckNakAPIDparamByteOffset,
+                         TC_ACKNAK_APID_PARAM_BYTE_LENGTH,
+                         apid | TC_ACKNAK_APID_PARAM_MASK)
+# -----------------------------------------------------------------------------
+def getTCackNakSSC(tcAckNakDU):
+  """retrieves the SSC of the related TC packet in the datafield attribute"""
+  # filters the relevant bits"""
+  return (tcAckNakDU.getUnsigned(s_tcAckNakSSCparamByteOffset,
+                                 TC_ACKNAK_SSC_PARAM_BYTE_LENGTH) |
+          TC_ACKNAK_SSC_PARAM_MASK)
+# -----------------------------------------------------------------------------
+def setTCackNakSSC(pusTMpacketDU, ssc):
+  """sets the SSC of the related TC packet in the datafield attribute"""
+  # filters the relevant bits"""
+  pusTMpacketDU.setUnsigned(s_tcAckNakSSCparamByteOffset,
+                            TC_ACKNAK_SSC_PARAM_BYTE_LENGTH,
+                            ssc | TC_ACKNAK_SSC_PARAM_MASK)
 
 ###########
 # classes #
@@ -33,6 +95,7 @@ class TCserver(UTIL.TCP.SingleClientServer):
     """Initialise attributes only"""
     modelTask = UTIL.TASK.s_processingTask
     UTIL.TCP.SingleClientServer.__init__(self, modelTask, portNr)
+    self.tcAckNakSSC = 0
   # ---------------------------------------------------------------------------
   def sendCNCackNak(self, cncCommandDU, okStatus):
     """Send a CnC ACK or NAK as response to a CnC TC packet to the CCS"""
@@ -63,6 +126,7 @@ class TCserver(UTIL.TCP.SingleClientServer):
     cncAckNakDU.sequenceControlCount = ssc
     cncAckNakDU.segmentationFlags = CCSDS.PACKET.UNSEGMENTED
     cncAckNakDU.setCNCmessage(responseMessage)
+    # send the ACK/NAK response over the TC link
     self.send(cncAckNakDU.getBufferString())
   # ---------------------------------------------------------------------------
   def sendTCackNak(self, ccsdsTCpacketDU, okStatus):
@@ -83,12 +147,18 @@ class TCserver(UTIL.TCP.SingleClientServer):
     apid = ccsdsTCpacketDU.applicationProcessId
     ssc = ccsdsTCpacketDU.sequenceControlCount
     tcAckNakDU = EGSE.CNCPDU.TCackNak()
+    # set TM packet header info
+    tcAckNakDU.sequenceControlCount = self.tcAckNakSSC
+    self.tcAckNakSSC = (self.tcAckNakSSC + 1) % 16384
     if okStatus:
       tcAckNakDU.setACK()
     else:
       tcAckNakDU.setNAK()
-    PUS.SERVICES.service1_setTCackAPID(tcAckNakDU, apid)
-    PUS.SERVICES.service1_setTCackSSC(tcAckNakDU, ssc)
+    setTCackNakAPID(tcAckNakDU, apid)
+    setTCackNakSSC(tcAckNakDU, ssc)
+    # send the ACK/NAK response over the TC link
+    # note: if the ACK/NAK response shall be sent over the TM link, then the
+    #       use the following: EGSE.IF.s_ccsLink.pushTMpacket(tcAckNakDU)
     self.send(tcAckNakDU.getBufferString())
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):

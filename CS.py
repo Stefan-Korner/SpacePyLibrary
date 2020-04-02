@@ -26,7 +26,7 @@ from __future__ import print_function
 import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CS.CNCclient, CS.CNCgui, CS.EDENclient, CS.EDENgui, CS.FRAMEgui, CS.FRAMEmodel, CS.FRAMErply, CS.NCTRSclient, CS.NCTRSgui
-import EGSE.IF
+import EGSE.CNC, EGSE.IF
 import GRND.IF
 import MC.IF, MC.TCGEN, MC.TCmodel, MC.TMmodel
 import MCUI.CFGgui, MCUI.TMgui, MCUI.TCgui
@@ -41,6 +41,8 @@ SYS_CONFIGURATION = [
   ["CNC_HOST", "127.0.0.1"],
   ["CNC_SERVER_PORT", "48569"],
   ["CNC_SERVER_PORT2", "48570"],
+  ["CNC_TC_ACKNAK_APID_PARAM_BYTE_OFFSET", "16"],
+  ["CNC_TC_ACKNAK_SSC_PARAM_BYTE_OFFSET", "18"],
   ["EDEN_HOST", "127.0.0.1"],
   ["EDEN_SERVER_PORT", "48569"],
   ["EDEN_SERVER_PORT2", "-1"],
@@ -535,10 +537,11 @@ else:
 UTIL.SYS.s_configuration.setDefaults(SYS_CONFIGURATION)
 UTIL.TCO.setERTmissionEpochStr(UTIL.SYS.s_configuration.ERT_MISSION_EPOCH_STR)
 UTIL.TCO.setERTleapSeconds(int(UTIL.SYS.s_configuration.ERT_LEAP_SECONDS))
-
-
 MC.IF.s_configuration = MC.IF.Configuration()
 EGSE.IF.s_cncClientConfiguration = EGSE.IF.CNCclientConfiguration()
+EGSE.CNC.setTCackNakParamsProperties(
+  int(UTIL.SYS.s_configuration.CNC_TC_ACKNAK_APID_PARAM_BYTE_OFFSET),
+  int(UTIL.SYS.s_configuration.CNC_TC_ACKNAK_SSC_PARAM_BYTE_OFFSET))
 EGSE.IF.s_edenClientConfiguration = EGSE.IF.EDENclientConfiguration()
 GRND.IF.s_clientConfiguration = GRND.IF.ClientConfiguration()
 # initialise the request handler
