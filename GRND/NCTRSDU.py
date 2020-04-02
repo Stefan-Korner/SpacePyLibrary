@@ -612,21 +612,21 @@ class AdminMessageDataUnit(CCSDS.DU.DataUnit):
         self.severity = ADMIN_MSG_ALARM
         self.setMessage("Failed to initiate AD service " +
                         (TC_PAR_VCID % vcId) +
-                        " in "
+                        " in " +
                         (TC_PAR_GS_EQUIPMENT_NAME % groundstationName) +
                         "\0")
       elif eventId == ADMIN_MSG_TC_AD_SERVICE_TERMINATED_IN_GS:
         self.severity = ADMIN_MSG_WARN
         self.setMessage("AD service " +
                         (TC_PAR_VCID % vcId) +
-                        " terminated in "
+                        " terminated in " +
                         (TC_PAR_GS_EQUIPMENT_NAME % groundstationName) +
                         "\0")
       elif eventId == ADMIN_MSG_TC_AD_SERVICE_WILL_TERM_IN_GS_BD:
         self.severity = ADMIN_MSG_WARN
         self.setMessage("AD service " +
                         (TC_PAR_VCID % vcId) +
-                        " will terminate in "
+                        " will terminate in " +
                         (TC_PAR_GS_EQUIPMENT_NAME % groundstationName) +
                         ":BD TC sent" +
                         "\0")
@@ -634,13 +634,13 @@ class AdminMessageDataUnit(CCSDS.DU.DataUnit):
         self.severity = ADMIN_MSG_WARN
         self.setMessage("AD service " +
                         (TC_PAR_VCID % vcId) +
-                        " will terminate in "
+                        " will terminate in " +
                         (TC_PAR_GS_EQUIPMENT_NAME % groundstationName) +
                         ":xxxxxxxxxxxxxxx" +
                         "\0")
       elif eventId == ADMIN_MSG_TC_ALL_SERVICES_WILL_TERM_IN_GS:
         self.severity = ADMIN_MSG_WARN
-        self.setMessage("All services will terminate in "
+        self.setMessage("All services will terminate in " +
                         (TC_PAR_GS_EQUIPMENT_NAME % groundstationName) +
                         ":xxxxxxxxxxxxxxx" +
                         "\0")
