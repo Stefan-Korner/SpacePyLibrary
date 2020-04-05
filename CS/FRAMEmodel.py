@@ -45,9 +45,9 @@ class FrameModel(CCSDS.PACKETIZER.Packetizer, CCSDS.TCENCODER.TCencoder):
     """sends a TM packet"""
     if sendFormat == SEND_AS_PACKET:
       LOG_INFO("TC packet ready for sending", "FRAME")
-      CS.NCTRSclient.s_tcClient.sendTCpacket(tcPacketDu.getBufferString())
+      CS.NCTRSclient.s_tcClient.sendTCpacket(tcPacketDu.getBuffer())
     else:
-      self.pushTCpacket(tcPacketDu.getBufferString(), sendFormat == SEND_AS_CLTU)
+      self.pushTCpacket(tcPacketDu.getBuffer(), sendFormat == SEND_AS_CLTU)
     return True
   # ---------------------------------------------------------------------------
   def notifyTCframeCallback(self, frameDU):

@@ -59,7 +59,7 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
           # Prepare the TM frame for recording
           ertTime = UTIL.TCO.correlateToERTmissionEpoch(ertUTC)
           tmDu = GRND.NCTRS.createTMdataUnit()
-          tmDu.setFrame(tmFrameDu.getBufferString())
+          tmDu.setFrame(tmFrameDu.getBuffer())
           tmDu.spacecraftId = self.nctrsTMfields.spacecraftId
           tmDu.dataStreamType = self.nctrsTMfields.dataStreamType
           tmDu.virtualChannelId = self.nctrsTMfields.virtualChannelId
@@ -71,7 +71,7 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
           tmDu.packetSize = len(tmDu)
           # write the DU to file
           if recordFormat == "NCTRS":
-            recordFile.write(tmDu.getBufferString())
+            recordFile.write(tmDu.getBuffer())
           else:
             # NCTRS_ASCII or NCTRS_ASCII_DETAILS
             recordFile.write("\n" + GRND.IF.s_configuration.frameRecordFormat + " Frame Header:")
@@ -113,7 +113,7 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
           LOG_INFO(GRND.IF.s_configuration.frameRecordFormat + " Frame recorded", "GRND")
           # Prepare the TM frame for recording
           tmDu = GRND.CRYOSATDU.TMframeDataUnit()
-          tmDu.setFrame(tmFrameDu.getBufferString())
+          tmDu.setFrame(tmFrameDu.getBuffer())
           ertTime = UTIL.TCO.correlateToERTmissionEpoch(ertUTC)
           coarseTime = int(ertTime)
           fineTime = int((ertTime - coarseTime) * 1000000)
@@ -125,7 +125,7 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
           tmDu.padding = 0
           # write the DU to file
           if recordFormat == "CRYOSAT":
-            recordFile.write(tmDu.getBufferString())
+            recordFile.write(tmDu.getBuffer())
           else:
             # CRYOSAT_ASCII or CRYOSAT_ASCII_DETAILS
             recordFile.write("\n" + GRND.IF.s_configuration.frameRecordFormat + " Frame Header:")
@@ -161,7 +161,7 @@ class TMsender(GRND.NCTRS.TMsender, GRND.IF.TMmcsLink):
         LOG_ERROR("cannot write to frame recording file", "GRND")
         LOG(str(ex), "GRND")
     if GRND.IF.s_configuration.nctrsTMconn:
-      self.sendFrame(tmFrameDu.getBufferString())
+      self.sendFrame(tmFrameDu.getBuffer())
   # ---------------------------------------------------------------------------
   def recordFrames(self, recordFileName):
     """

@@ -127,7 +127,7 @@ class TCserver(UTIL.TCP.SingleClientServer):
     cncAckNakDU.segmentationFlags = CCSDS.PACKET.UNSEGMENTED
     cncAckNakDU.setCNCmessage(responseMessage)
     # send the ACK/NAK response over the TC link
-    self.send(cncAckNakDU.getBufferString())
+    self.send(cncAckNakDU.getBuffer())
   # ---------------------------------------------------------------------------
   def sendTCackNak(self, ccsdsTCpacketDU, okStatus):
     """Send a TC ACK or NAK as response to a CCSDSC TC packet to the CCS"""
@@ -159,7 +159,7 @@ class TCserver(UTIL.TCP.SingleClientServer):
     # send the ACK/NAK response over the TC link
     # note: if the ACK/NAK response shall be sent over the TM link, then the
     #       use the following: EGSE.IF.s_ccsLink.pushTMpacket(tcAckNakDU)
-    self.send(tcAckNakDU.getBufferString())
+    self.send(tcAckNakDU.getBuffer())
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when the CCS has send data"""
@@ -285,12 +285,12 @@ class TCclient(UTIL.TCP.Client):
     try:
       if ccsdsTMpacketDU.versionNumber == EGSE.CNCPDU.VERSION_NUMBER:
         # CNC ACK/NAK
-        cncAckNakDU = EGSE.CNCPDU.CNCackNak(ccsdsTMpacketDU.getBufferString())
+        cncAckNakDU = EGSE.CNCPDU.CNCackNak(ccsdsTMpacketDU.getBuffer())
         LOG_INFO("CNC.TCclient.receiveCallback(CnC response)", "CNC")
         self.notifyCNCresponse(cncAckNakDU)
       elif ccsdsTMpacketDU.dataFieldHeaderFlag == 1:
         # TC ACK/NAK
-        tcAckNakDU = EGSE.CNCPDU.TCackNak(ccsdsTMpacketDU.getBufferString())
+        tcAckNakDU = EGSE.CNCPDU.TCackNak(ccsdsTMpacketDU.getBuffer())
         LOG_INFO("CNC.TCclient.receiveCallback(TC response)", "CNC")
         self.notifyCCSDSresponse(tcAckNakDU)
       else:
@@ -389,7 +389,7 @@ class TMclient(UTIL.TCP.Client):
     # dispatch the CCSDS tm packet
     try:
       LOG_INFO("CNC.TMclient.receiveCallback(TM packet)", "CNC")
-      self.notifyTMpacket(ccsdsTMpacketDU.getBufferString())
+      self.notifyTMpacket(ccsdsTMpacketDU.getBuffer())
     except Exception, ex:
       LOG_ERROR("Processing of received TM packet failed: " + str(ex), "CNC")
       self.disconnectFromServer()

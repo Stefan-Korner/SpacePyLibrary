@@ -76,7 +76,7 @@ class ModelTask(UTIL.TASK.ProcessingTask):
       LOG("or:    1")
       return
     tmPacketDU = CCSDS.PACKET.TMpacket(UnitTest.testData.TM_PACKET_01)
-    s_server2.sendTMpacket(tmPacketDU.getBufferString())
+    s_server2.sendTMpacket(tmPacketDU.getBuffer())
 
 # =============================================================================
 class TCserver(EGSE.CNC.TCserver):

@@ -75,10 +75,6 @@ class BinaryUnit(object):
     """returns the used elements of the buffer"""
     return self.buffer[0:self.usedBufferSize]
   # ---------------------------------------------------------------------------
-  def getBufferString(self):
-    """returns the used elements of the buffer as binary string"""
-    return self.buffer[0:self.usedBufferSize].tostring()
-  # ---------------------------------------------------------------------------
   def getBufferHeader(self):
     """returns the header part of the buffer"""
     if self.attributesSize1 == None:

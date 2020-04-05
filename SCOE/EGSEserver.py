@@ -90,7 +90,7 @@ class CNCtmServer(EGSE.CNC.TMserver, EGSE.IF.CCSlink):
     implementation of EGSE.IF.CCSlink.pushTMpacket
     """
     # the CCSDS TM packet is not checked but directly send
-    self.sendTMpacket(tmPacketDu.getBufferString())
+    self.sendTMpacket(tmPacketDu.getBuffer())
   # ---------------------------------------------------------------------------
   def notifyError(self, errorMessage, data):
     """error notification"""
@@ -127,7 +127,7 @@ class EDENserver(EGSE.EDEN.Server, EGSE.IF.CCSlink):
     implementation of EGSE.IF.CCSlink.pushTMpacket
     """
     # we expect a SPACE packet and not a SCOE packet
-    self.sendTmSpace(tmPacketDu.getBufferString())
+    self.sendTmSpace(tmPacketDu.getBuffer())
   # ---------------------------------------------------------------------------
   def notifyError(self, errorMessage, data):
     """error notification"""
