@@ -417,7 +417,7 @@ class TCpktDef(object):
     retVal += " pktPI2val = " + str(self.pktPI2val) + "\n"
     retVal += " pktSPsize = " + str(self.pktSPsize) + "\n"
     retVal += " pktSPDFsize = " + str(self.pktSPDFsize) + "\n"
-    retVal += " pktSPDFdataSize = " + str(self.pktSPDFsize) + "\n"
+    retVal += " pktSPDFdataSize = " + str(self.pktSPDFdataSize) + "\n"
     retVal += " tcStructDef = " + str(self.tcStructDef) + "\n"
     return retVal
 

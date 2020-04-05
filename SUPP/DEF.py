@@ -21,6 +21,13 @@ import SCOS.ENV, SCOS.MIB
 import SUPP.IF
 import UTIL.DU, UTIL.SYS
 
+#############
+# constants #
+#############
+# TODO: use the correct values from the MIB or from the configuration
+TC_PUS_PACKET_DEFAULT_DATAFIELD_HEADER_SIZE = 4
+TC_SOUCE_PACKET_DEFAULT_DATAFIELD_DATA_SIZE = 4
+
 ###########
 # classes #
 ###########
@@ -223,7 +230,7 @@ class DefinitionsImpl(SUPP.IF.Definitions):
     # special handling of variable size parameters
     if bitWidth == 0:
       # TODO: consider also information in the MIB
-      lengthBytes = self.tcParamLengthBytes
+      lengthBytes = self.tmParamLengthBytes
       return PUS.VP.VariableParamDef(paramName,
                                      paramType,
                                      lengthBytes,
@@ -400,14 +407,18 @@ class DefinitionsImpl(SUPP.IF.Definitions):
     tcPktDef.pktAPID = ccfRecord.ccfAPID
     tcPktDef.pktType = ccfRecord.ccfType
     tcPktDef.pktSType = ccfRecord.ccfSType
-    # TODO: use the correct values from the MIB or from the configuration
-    tcPktDef.pktDFHsize = 4
-    tcPktDef.pktHasDFhdr = True
-    tcPktDef.pktCheck = True
-    tcPktDef.pktSPsize = 16
-    tcPktDef.pktSPDFsize = 10
-    tcPktDef.pktSPDFdataSize = 6
+    tcPktDef.pktHasDFhdr = (tcPktDef.pktType > 0 or tcPktDef.pktSType > 0)
+    tcPktDef.pktDFHsize = \
+      TC_PUS_PACKET_DEFAULT_DATAFIELD_HEADER_SIZE if tcPktDef.pktHasDFhdr else 0
+    tcPktDef.pktSPDFdataSize = TC_SOUCE_PACKET_DEFAULT_DATAFIELD_DATA_SIZE
+    tcPktDef.pktCheck = (ccfRecord.ccfCType != "S")
+    crcDelta = CCSDS.DU.CRC_BYTE_SIZE if tcPktDef.pktCheck else 0
+    tcPktDef.pktSPDFsize = \
+      tcPktDef.pktDFHsize + tcPktDef.pktSPDFdataSize + crcDelta
+    tcPktDef.pktSPsize = \
+      CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE + tcPktDef.pktSPDFsize
     tcPktDef.tcStructDef = self.createTcToplevelStructDef(tcPktDef.pktName, cdfMap, cpcMap)
+    print(tcPktDef)
     return tcPktDef
   # ---------------------------------------------------------------------------
   def createTcParamDef(self, paramName, defaultValue, cpcMap, isReadOnly):

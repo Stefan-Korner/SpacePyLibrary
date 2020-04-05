@@ -28,8 +28,9 @@ class TCpacketDefaults(object):
   # ---------------------------------------------------------------------------
   def __init__(self):
     """default constructor"""
-    # PUS packets already have these defaults
-    self.ccsdsPacketVersionNumber = 0
+    # PUS packets already have defaults for this fields
+    self.ccsdsPacketVersionNumber = \
+      int(UTIL.SYS.s_configuration.TC_CCSDS_PACKET_VERSION_NUMBER)
     self.ccsdsPacketSegmentationFlags = CCSDS.PACKET.UNSEGMENTED
 
 # =============================================================================

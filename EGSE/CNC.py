@@ -267,9 +267,9 @@ class TCclient(UTIL.TCP.Client):
       LOG_ERROR("Read of CnC header failed: invalid size: " + str(packetHeaderLen), "CNC")
       self.disconnectFromServer()
       return
-    cncTMpacketDU = EGSE.CNCPDU.CNCackNak(packetHeader)
+    ccsdsTMpacketDU = CCSDS.PACKET.TMpacket(packetHeader)
     # read the data field for the packet from the data socket
-    dataFieldLength = cncTMpacketDU.packetLength + 1
+    dataFieldLength = ccsdsTMpacketDU.packetLength + 1
     dataField = self.recv(dataFieldLength)
     if dataField == None:
       # failure handling was done automatically by derived logic
@@ -280,19 +280,35 @@ class TCclient(UTIL.TCP.Client):
       LOG_ERROR("Read of remaining packet failed: invalid remaining size: " + str(remainingSizeRead), "CNC")
       self.disconnectFromServer()
       return
-    cncTMpacketDU.setCNCmessage(dataField)
-    # dispatch the CnC response
+    ccsdsTMpacketDU.append(dataField)
+    # convert and dispatch the data depending on the CNC/TM packet type
     try:
-      LOG_INFO("CNC.TCclient.receiveCallback(CnC response)", "CNC")
-      self.notifyCNCresponse(cncTMpacketDU)
+      if ccsdsTMpacketDU.versionNumber == EGSE.CNCPDU.VERSION_NUMBER:
+        # CNC ACK/NAK
+        cncAckNakDU = EGSE.CNCPDU.CNCackNak(ccsdsTMpacketDU.getBufferString())
+        LOG_INFO("CNC.TCclient.receiveCallback(CnC response)", "CNC")
+        self.notifyCNCresponse(cncAckNakDU)
+      elif ccsdsTMpacketDU.dataFieldHeaderFlag == 1:
+        # TC ACK/NAK
+        tcAckNakDU = EGSE.CNCPDU.TCackNak(ccsdsTMpacketDU.getBufferString())
+        LOG_INFO("CNC.TCclient.receiveCallback(TC response)", "CNC")
+        self.notifyCCSDSresponse(tcAckNakDU)
+      else:
+        LOG_ERROR("Unexpected CnC response: " + ccsdsTMpacketDU.getDumpString(), "CNC")
     except Exception, ex:
       LOG_ERROR("Processing of received CnC response failed: " + str(ex), "CNC")
       self.disconnectFromServer()
   # ---------------------------------------------------------------------------
-  def notifyCNCresponse(self, cncTMpacketDU):
+  def notifyCNCresponse(self, cncAckNakDU):
     """CnC response received: hook for derived classes"""
-    LOG("notifyCNCresponse: cncTMpacketDU = " + cncTMpacketDU.getDumpString(), "CNC")
-    LOG("message = " + cncTMpacketDU.getCNCmessage(), "CNC")
+    LOG("notifyCNCresponse: cncAckNakDU = " + cncAckNakDU.getDumpString(), "CNC")
+    LOG("message = " + cncAckNakDU.getCNCmessage(), "CNC")
+    return True
+  # ---------------------------------------------------------------------------
+  def notifyCCSDSresponse(self, tcAckNakDU):
+    """TC response received: hook for derived classes"""
+    LOG("notifyCCSDSresponse: tcAckNakDU = " + tcAckNakDU.getDumpString(), "CNC")
+    LOG("status = " + tcAckNakDU.getStatus(), "CNC")
     return True
 
 # =============================================================================

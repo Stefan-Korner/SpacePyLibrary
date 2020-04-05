@@ -252,11 +252,13 @@ class Param(Entity):
     defType = type(self.paramDef)
     if defType == VariableParamDef:
       # for variable length parameters: encode the length bytes first
+      # for TCs it is also allowed to have no length byte (e.g. CNC protocol)
       lengthBytes = self.paramDef.lengthBytes
-      byteLength = len(value)
-      du.setUnsigned(bytePos, lengthBytes, byteLength)
-      bytePos += lengthBytes
-      byteWidth = byteLength      
+      if lengthBytes > 0:
+        byteLength = len(value)
+        du.setUnsigned(bytePos, lengthBytes, byteLength)
+        bytePos += lengthBytes
+        byteWidth = byteLength      
     if paramType == UTIL.DU.BYTES:
       du.setBytes(bytePos, byteWidth, value)
       return nextBitPos

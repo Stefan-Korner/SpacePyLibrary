@@ -57,11 +57,14 @@ class TMmodel(MC.IF.TMmodel):
       tmPacketKey = SUPP.IF.s_definitions.getTMpacketKey(tmPacketDu)
       LOG("KEY =     " + str(tmPacketKey), "TM")
       tmPktDef = SUPP.IF.s_definitions.getTMpktDefBySPID(tmPacketKey)
-      tmStructDef = tmPktDef.tmStructDef
-      structBitPos = (CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE + tmPktDef.pktDFHsize) << 3
-      tmStruct = PUS.VP.Struct(tmStructDef)
-      tmStruct.decode(tmPacketDu, structBitPos)
-      LOG("tmStruct =" + str(tmStruct), "TM")
+      if tmPktDef == None:
+        LOG_WARNING("packet cannot be identified - don't decode it", "TM")
+      else:
+        tmStructDef = tmPktDef.tmStructDef
+        structBitPos = (CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE + tmPktDef.pktDFHsize) << 3
+        tmStruct = PUS.VP.Struct(tmStructDef)
+        tmStruct.decode(tmPacketDu, structBitPos)
+        LOG("tmStruct =" + str(tmStruct), "TM")
     except Exception, ex:
       LOG_WARNING("packet cannot be decoded: " + str(ex), "TM")
     # processing of PUS telecommands

@@ -170,6 +170,7 @@ class CCFrecord:
     self.ccfCName = fields[0]
     self.ccfDescr = fields[1]
     self.ccfDescr2 = fields[2]
+    self.ccfCType = fields[3]
     ccfType = fields[6]
     if ccfType == "":
       self.ccfType = -1

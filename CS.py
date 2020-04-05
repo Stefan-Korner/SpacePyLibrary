@@ -26,7 +26,7 @@ from __future__ import print_function
 import sys, os
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import CS.CNCclient, CS.CNCgui, CS.EDENclient, CS.EDENgui, CS.FRAMEgui, CS.FRAMEmodel, CS.FRAMErply, CS.NCTRSclient, CS.NCTRSgui
-import EGSE.CNC, EGSE.IF
+import EGSE.CNC, EGSE.CNCPDU, EGSE.IF
 import GRND.IF
 import MC.IF, MC.TCGEN, MC.TCmodel, MC.TMmodel
 import MCUI.CFGgui, MCUI.TMgui, MCUI.TCgui
@@ -57,6 +57,7 @@ SYS_CONFIGURATION = [
   ["SYS_APP_MNEMO", "CS"],
   ["SYS_APP_NAME", "Control System"],
   ["SYS_APP_VERSION", "2.2"],
+  ["TC_CCSDS_PACKET_VERSION_NUMBER", str(EGSE.CNCPDU.VERSION_NUMBER)],
   ["TC_PARAM_LENGTH_BYTES", "2"],
   ["TM_TRANSFER_FRAME_VCID", "0"],
   ["TM_PARAM_LENGTH_BYTES", "2"],
