@@ -48,7 +48,7 @@ class TCclient(EGSE.CNC.TCclient):
   def pushTCpacket(self, tcPacketDu):
     """Consumes a telecommand packet"""
     # the CCSDS TC packet is not checked but directly send
-    self.sendCNCpacket(tcPacketDu.getBufferString())
+    self.sendCNCpacket(tcPacketDu.getBuffer())
   # ---------------------------------------------------------------------------
   def notifyCNCresponse(self, cncAckNakDU):
     """CnC response received: overloaded from EGSE.CNC.TCclient"""

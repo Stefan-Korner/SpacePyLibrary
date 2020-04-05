@@ -34,7 +34,7 @@ class Server(UTIL.TCP.SingleClientServer):
   def sendPDU(self, pdu):
     """Send the PDU to CCS"""
     # this operation does not verify the contents of the PDU
-    self.send(pdu.getBufferString())
+    self.send(pdu.getBuffer())
   # ---------------------------------------------------------------------------
   def sendTc_eSpace(self, tcSpacePDU, telecommandEchoStatus):
     """Send a (TC_E,SPACE) PDU to the CCS"""
@@ -259,7 +259,7 @@ class Client(UTIL.TCP.Client):
   def sendPDU(self, pdu):
     """Send the PDU to the SCOE"""
     # this operation does not verify the contents of the DU
-    self.send(pdu.getBufferString())
+    self.send(pdu.getBuffer())
   # ---------------------------------------------------------------------------
   def sendTcSpace(self, tcPacket):
     """Send a (TC,SPACE) PDU to the SCOE"""

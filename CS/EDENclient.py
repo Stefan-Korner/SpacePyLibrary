@@ -47,12 +47,12 @@ class Client(EGSE.EDEN.Client):
   def pushTcSpace(self, tcPacketDu):
     """Consumes a telecommand packet"""
     # the CCSDS TC packet is not checked but directly send
-    self.sendTcScoe(tcPacketDu.getBufferString())
+    self.sendTcScoe(tcPacketDu.getBuffer())
   # ---------------------------------------------------------------------------
   def pushTcScoe(self, tcPacketDu):
     """Consumes a telecommand packet"""
     # the CCSDS TC packet is not checked but directly send
-    self.sendTcScoe(tcPacketDu.getBufferString())
+    self.sendTcScoe(tcPacketDu.getBuffer())
   # ---------------------------------------------------------------------------
   def notifyTmSpace(self, tmPacket):
     """(TM,SPACE) received: overloaded from EGSE.EDEN.Client"""
@@ -102,12 +102,12 @@ class Client2(EGSE.EDEN.Client):
   def pushTcSpace(self, tcPacketDu):
     """Consumes a telecommand packet"""
     # the CCSDS TC packet is not checked but directly send
-    self.sendTcScoe(tcPacketDu.getBufferString())
+    self.sendTcScoe(tcPacketDu.getBuffer())
   # ---------------------------------------------------------------------------
   def pushTcScoe(self, tcPacketDu):
     """Consumes a telecommand packet"""
     # the CCSDS TC packet is not checked but directly send
-    self.sendTcScoe(tcPacketDu.getBufferString())
+    self.sendTcScoe(tcPacketDu.getBuffer())
   # ---------------------------------------------------------------------------
   def notifyTmSpace(self, tmPacket):
     """(TM,SPACE) received: overloaded from EGSE.EDEN.Client"""

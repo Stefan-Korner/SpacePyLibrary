@@ -109,7 +109,7 @@ class TMsender(UTIL.TCP.SingleClientServer):
     # ensure a correct size attribute
     tmDu.packetSize = len(tmDu)
     # this operation does not verify the contents of the DU
-    self.send(tmDu.getBufferString())
+    self.send(tmDu.getBuffer())
   # ---------------------------------------------------------------------------
   def sendFrame(self, tmFrame):
     """Send the TM frame to the TM receiver"""
@@ -145,7 +145,7 @@ class TCreceiver(UTIL.TCP.SingleClientServer):
     # ensure a correct size attribute
     tcDu.packetSize = len(tcDu)
     # this operation does not verify the contents of the DU
-    self.send(tcDu.getBufferString())
+    self.send(tcDu.getBuffer())
   # ---------------------------------------------------------------------------
   def receiveCallback(self, socket, stateMask):
     """Callback when the MCS has send data"""
@@ -333,7 +333,7 @@ class TCsender(UTIL.TCP.Client):
     # ensure a correct size attribute
     tcDu.packetSize = len(tcDu)
     # this operation does not verify the contents of the DU
-    self.send(tcDu.getBufferString())
+    self.send(tcDu.getBuffer())
   # ---------------------------------------------------------------------------
   def sendTCpacket(self, packetData):
     """Send the TC packet to the TC receiver"""
@@ -426,7 +426,7 @@ class AdminMessageSender(UTIL.TCP.SingleClientServer):
     # ensure a correct size attribute
     messageDu.packetSize = len(messageDu)
     # this operation does not verify the contents of the DU
-    self.send(messageDu.getBufferString())
+    self.send(messageDu.getBuffer())
   # ---------------------------------------------------------------------------
   def sendAdminMessageTM(self, eventId):
     """Send the TM admin message data unit"""
