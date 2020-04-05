@@ -417,7 +417,6 @@ class DefinitionsImpl(SUPP.IF.Definitions):
     tcPktDef.pktSPsize = \
       CCSDS.PACKET.PRIMARY_HEADER_BYTE_SIZE + tcPktDef.pktSPDFsize
     tcPktDef.tcStructDef = self.createTcToplevelStructDef(tcPktDef.pktName, cdfMap, cpcMap)
-    print(tcPktDef)
     return tcPktDef
   # ---------------------------------------------------------------------------
   def createTcParamDef(self, paramName, defaultValue, cpcMap, isReadOnly):
