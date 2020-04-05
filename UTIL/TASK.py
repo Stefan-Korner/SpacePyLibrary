@@ -574,7 +574,7 @@ class RequestHandler(ConsoleHandler):
     # read the next set of byte from stdin
     tcpLineBuffer = self.tcpLineBuffer
     try:
-      tcpLineBuffer += self.clientSocket.recv(LINEBUFFERLEN)
+      tcpLineBuffer += self.clientSocket.recv(LINEBUFFERLEN).decode("ascii")
       LOG("tcpLineBuffer: " + tcpLineBuffer)
     except:
       # read failed
@@ -605,7 +605,7 @@ class RequestHandler(ConsoleHandler):
         # set the OK response back to the TECO
         retString = "OK 0\n"
         try:
-          self.clientSocket.send(retString)
+          self.clientSocket.send(retString.encode())
         except:
           LOG_ERROR("send of OK response failed!")
         # terminate the client connection
@@ -617,7 +617,7 @@ class RequestHandler(ConsoleHandler):
         # send the OK response back to the TECO
         retString = "OK 0\n";
         try:
-          self.clientSocket.send(retString)
+          self.clientSocket.send(retString.encode())
         except:
           LOG_ERROR("send of OK response failed!")
       else:
@@ -625,7 +625,7 @@ class RequestHandler(ConsoleHandler):
         # set the Error response back to the TECO:
         retString = "Error: execution failed (see log)!\n"
         try:
-          self.clientSocket.send(retString)
+          self.clientSocket.send(retString.encode())
         except:
           LOG_ERROR("send of Error response failed!")
   # ---------------------------------------------------------------------------
