@@ -125,3 +125,11 @@ class TCackNak(PUS.PACKET.TMpacket):
   def isNAK(self):
     """checks NAK state"""
     return (self.serviceSubType == TC_NAK_SUBTYPE)
+  # ---------------------------------------------------------------------------
+  def getStatus(self):
+    """returns the ACK/NAK state as string"""
+    if self.serviceSubType == TC_ACK_SUBTYPE:
+      return "ACK"
+    if self.serviceSubType == TC_NAK_SUBTYPE:
+      return "NAK"
+    return "unknown ACK/NAK type: " + str(self.serviceSubType)

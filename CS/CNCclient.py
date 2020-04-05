@@ -50,10 +50,15 @@ class TCclient(EGSE.CNC.TCclient):
     # the CCSDS TC packet is not checked but directly send
     self.sendCNCpacket(tcPacketDu.getBufferString())
   # ---------------------------------------------------------------------------
-  def notifyCNCresponse(self, cncTMpacketDU):
+  def notifyCNCresponse(self, cncAckNakDU):
     """CnC response received: overloaded from EGSE.CNC.TCclient"""
-    LOG_INFO("notifyCNCresponse: message = " + cncTMpacketDU.getCNCmessage(), "CNC")
-    MC.IF.s_tmModel.pushTMpacket(cncTMpacketDU, None)
+    LOG_INFO("notifyCNCresponse: message = " + cncAckNakDU.getCNCmessage(), "CNC")
+    MC.IF.s_tmModel.pushTMpacket(cncAckNakDU, None)
+  # ---------------------------------------------------------------------------
+  def notifyCCSDSresponse(self, tcAckNakDU):
+    """TC response received: overloaded from EGSE.CNC.TCclient"""
+    LOG_INFO("notifyCCSDSresponse: status = " + tcAckNakDU.getStatus(), "CNC")
+    MC.IF.s_tmModel.pushTMpacket(tcAckNakDU, None)
 
 # =============================================================================
 class TMclient(EGSE.CNC.TMclient):
