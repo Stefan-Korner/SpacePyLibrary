@@ -44,6 +44,11 @@ Backlog of features that shall be implemented
 
 039 Integrate SLE from https://github.com/visionspacetec/sle-*
 
+041 Use a spin box for TC route selection in the CS application.
+
+042 Support string parameter specific size of length field. This is needed for
+    clean CNC command packet support.
+
 --------------------------------- implemented ---------------------------------
 
 001 Remove the dependency to MIB files TPKTconnTable.dat, TPKTconfigTable.dat:
