@@ -44,8 +44,6 @@ Backlog of features that shall be implemented
 
 039 Integrate SLE from https://github.com/visionspacetec/sle-*
 
-041 Use a spin box for TC route selection in the CS application.
-
 042 Support string parameter specific size of length field. This is needed for
     clean CNC command packet support.
 
@@ -93,3 +91,5 @@ Backlog of features that shall be implemented
 
 040 Make the position of the datafield body for CnC TM(1,129) and TM(1,130)
     TC-Acknowledgement packets configurable.
+
+041 Use a combo box for TC route selection in the CS application.

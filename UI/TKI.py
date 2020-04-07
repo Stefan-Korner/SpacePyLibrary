@@ -556,7 +556,7 @@ class InputField(object):
 
 # =============================================================================
 class CheckbuttonField(object):
-  """Combines a fixed label field and an checkbutton field"""
+  """Combines a fixed label field and a checkbutton field"""
   # ---------------------------------------------------------------------------
   def __init__(self, master, appGridMaster=None, row=0, column=0, label="", selectcolor="#C0C0C0"):
     """Creates the label and checkbutton and places the widgets on the grid"""
@@ -577,7 +577,7 @@ class CheckbuttonField(object):
 
 # =============================================================================
 class RadiobuttonsField(object):
-  """Combines fixed label fields and an radiobutton fields"""
+  """Combines fixed label fields and radiobutton fields"""
   # ---------------------------------------------------------------------------
   def __init__(self, master, appGridMaster=None, row=0, column=0, labels=["?"]):
     """Creates the labels and radiobuttons and places the widgets on the grid"""
@@ -601,6 +601,27 @@ class RadiobuttonsField(object):
   def get(self):
     """Returns the status of the embedded checkbutton as boolean"""
     return (self.intVar.get())
+
+# =============================================================================
+class ComboboxField(object):
+  """Combines a fixed label field and a combobox field"""
+  # ---------------------------------------------------------------------------
+  def __init__(self, master, appGridMaster=None, row=0, column=0, label="", options=["?"]):
+    """Creates the label and combobox and places the widgets on the grid"""
+    if appGridMaster == None:
+      appGridMaster = master
+    self.stringVar = tkinter.StringVar()
+    self.label = tkinter.Label(master, text=label, anchor=tkinter.W)
+    appGridMaster.appGrid(self.label, row=row, column=column, rowweight=0)
+    self.combo = ttk.Combobox(master,
+                              textvariable=self.stringVar,
+                              value=options)
+    self.combo.current(0)
+    appGridMaster.appGrid(self.combo, row=row, column=column+1)
+  # ---------------------------------------------------------------------------
+  def get(self):
+    """Returns the selected option"""
+    return self.stringVar.get()
 
 # =============================================================================
 class InputDialog(simpledialog.Dialog, AppGrid):

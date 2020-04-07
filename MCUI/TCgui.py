@@ -66,8 +66,11 @@ class TCpacketDetails(tkinter.Frame, UI.TKI.AppGrid):
     filler = tkinter.Label(self)
     self.appGrid(filler, row=9, columnspan=3, rowweight=0)
     # --- route ---
-    self.routeField = UI.TKI.InputField(self, row=10, label="route:")
-    self.appGrid(self.routeField.field, row=10, column=1, columnspan=2, rowweight=0)
+    routeOptions = ("CNC",
+                    "EDEN_SPACE", "EDEN_SCOE", "EDEN2_SPACE", "EDEN2_SCOE",
+                    "NCTRS_PACKET", "NCTRS_FRAME", "NCTRS_CLTU")
+    self.routeField = UI.TKI.ComboboxField(self, row=10, label="route:", options=routeOptions)
+    self.appGrid(self.routeField.combo, row=10, column=1, columnspan=2, rowweight=0)
     # --- filler ---
     filler = tkinter.Label(self)
     self.appGrid(filler, row=11, columnspan=3, rowweight=0)
