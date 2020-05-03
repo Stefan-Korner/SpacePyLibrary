@@ -28,7 +28,8 @@ def initConfiguration():
   UTIL.SYS.s_configuration.setDefaults([
   ["SYS_APP_MNEMO", "GUI"],
   ["SYS_APP_NAME", "Test GUI"],
-  ["SYS_APP_VERSION", "1.0"]])
+  ["SYS_APP_VERSION", "1.0"],
+  ["MSG_MAX_LINES", "200"]])
 
 ###########
 # classes #
