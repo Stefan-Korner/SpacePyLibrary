@@ -26,8 +26,6 @@ Backlog of features that shall be implemented
 
 024 Improve source code with consistent doc strings.
 
-025 Limit the number of lines in the logging panes of the GUI.
-
 026 Support multiple CnC and EDEN connections in CS.
 
 027 Implement new GUIs with PySide2 in version 4.
@@ -75,6 +73,9 @@ Backlog of features that shall be implemented
 017 Implement TC parameter encoding in CS TC model.
 
 021 Harmonize Python2 and Python3 code.
+
+025 Limit the number of lines in the logging panes of the GUI:
+    New configuration option MSG_MAX_LINES added.
 
 031 Support variable TM packets.
 

@@ -398,6 +398,7 @@ class ScrolledTreeview(tkinter.Frame):
 # =============================================================================
 class ScrolledText(tkinter.Frame):
   """tkinter.Text with scroll bars, implemented as tkinter.Frame"""
+  # the methogs must be invoked in the gui task
   # ---------------------------------------------------------------------------
   def __init__(self, master):
     tkinter.Frame.__init__(self, master, relief=tkinter.GROOVE, borderwidth=1)
@@ -422,6 +423,23 @@ class ScrolledText(tkinter.Frame):
   def text(self):
     """Helper for direct access of the text widget"""
     return self.text
+  # ---------------------------------------------------------------------------
+  def appendText(self, text, style):
+    """Appends a text to the text widget"""
+    self.text.insert(tkinter.END, text, style)
+    self.text.yview_moveto(1)
+  # ---------------------------------------------------------------------------
+  def lines(self):
+    """Returns the number of lines"""
+    return max(int(self.text.index(tkinter.END)[:-2]) - 1, 0)
+  # ---------------------------------------------------------------------------
+  def keepLines(self, newLines):
+    """Drops old lines from the beginning of to the text widget"""
+    linesToDrop = self.lines() - newLines
+    if linesToDrop > 0:
+      startPos = 1.0
+      stopPos = startPos + linesToDrop
+      self.text.delete(startPos, stopPos)
 
 # =============================================================================
 class MessageLogger(ScrolledText, UTIL.SYS.Logger):
@@ -437,6 +455,9 @@ class MessageLogger(ScrolledText, UTIL.SYS.Logger):
     self.text.tag_config("info", foreground="black", background="green")
     self.text.tag_config("warn", foreground="black", background="yellow")
     self.text.tag_config("err", foreground="black", background="red")
+    # auto-clip number of message lines when value > 0
+    self.maxMessageLines = int(UTIL.SYS.s_configuration.MSG_MAX_LINES)
+    self.keepMessageLines = int(self.maxMessageLines * 0.7)
   # ---------------------------------------------------------------------------
   def __del__(self):
     """Unregisters the scrolled text as child logger"""
@@ -452,8 +473,13 @@ class MessageLogger(ScrolledText, UTIL.SYS.Logger):
   def insertLineCallback(self, text, style):
     """Appends a line at the end of the message window"""
     # this message must be invoked in the gui task
-    self.text.insert(tkinter.END, text + "\n", style)
-    self.text.yview_moveto(1)
+    self.appendText(text + "\n", style)
+    # restrict the number of lines to avoid a memory leak
+    maxMessageLines = self.maxMessageLines
+    if maxMessageLines > 0:
+      actMessageLines = self.lines()
+      if actMessageLines > maxMessageLines:
+        self.keepLines(self.keepMessageLines)
   # ---------------------------------------------------------------------------
   def _log(self, message, subsystem):
     """logs a message"""

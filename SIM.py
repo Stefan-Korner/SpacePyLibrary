@@ -71,7 +71,8 @@ SYS_CONFIGURATION = [
   ["SYS_COLOR_LOG", "1"],
   ["SYS_APP_MNEMO", "SIM"],
   ["SYS_APP_NAME", "Simulator"],
-  ["SYS_APP_VERSION", "3.2"]]
+  ["SYS_APP_VERSION", "3.2"],
+  ["MSG_MAX_LINES", "200"]]
 
 ###########
 # classes #
