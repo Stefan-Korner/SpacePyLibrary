@@ -51,7 +51,7 @@ class PacketRecorder(SUPP.IF.TMrecorder):
     stops recording of TM packets,
     implementation of SUPP.IF.TMrecorder.stopRecording
     """
-    LOG_WARNING("startRecording", self.subsystem)
+    LOG_WARNING("stopRecording", self.subsystem)
     if self.tmPacketsFile != None:
       self.tmPacketsFile.close()
       self.tmPacketsFile = None
