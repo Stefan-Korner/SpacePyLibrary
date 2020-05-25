@@ -423,10 +423,6 @@ class ScrolledText(tkinter.Frame):
     self.text.config(xscrollcommand=self.hscrollbar.set,
                      yscrollcommand=self.vscrollbar.set)
   # ---------------------------------------------------------------------------
-  def text(self):
-    """Helper for direct access of the text widget"""
-    return self.text
-  # ---------------------------------------------------------------------------
   def appendText(self, text, style):
     """Appends a text to the text widget"""
     self.text.insert(tkinter.END, text, style)
