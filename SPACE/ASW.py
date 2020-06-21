@@ -21,10 +21,6 @@ import UTIL.DU, UTIL.SYS
 #############
 # constants #
 #############
-# ASW general
-ASW_TC_MIN_APID = 1234
-ASW_TC_MAX_APID = 1236
-
 # MIL Bus general
 
 # MIL Bus Controller
@@ -182,6 +178,57 @@ class ApplicationSoftwareImpl(SPACE.IF.ApplicationSoftware):
       int(UTIL.SYS.s_configuration.TC_FKT_ID_BYTE_OFFSET)
     self.tcFunctionIdByteSize = \
       int(UTIL.SYS.s_configuration.TC_FKT_ID_BYTE_SIZE)
+    self.connectionTestReportMnemo = \
+      UTIL.SYS.s_configuration.TM_TEST_MNEMO
+  # ---------------------------------------------------------------------------
+  # can be overloaded in derived classes
+  def processFunctionService(self, apid, tcFunctionId, tcPacketDu):
+    """default processing of PUS Service (8,1) telecommand packet"""
+    return self.processDefault(apid, tcPacketDu)
+  # ---------------------------------------------------------------------------
+  # can be overloaded in derived classes
+  def processTestService(self, apid, tcPacketDu):
+    """default processing of the PUS Service (17,1) telecommand packet"""
+    LOG("ASW: Connection Test", "SPACE")
+    return SPACE.IF.s_onboardComputer.generateEmptyTMpacket(
+      self.connectionTestReportMnemo)
+  # ---------------------------------------------------------------------------
+  # can be overloaded in derived classes
+  def processDefault(self, apid, tcPacketDu):
+    """default implementation of TC processing"""
+    LOG("ASW: Standard Telecommand", "SPACE")
+    return True
+  # ---------------------------------------------------------------------------
+  def processTCpacket(self, tcPacketDu):
+    """
+    processes a telecommand packet from the CCS
+    implementation of SPACE.IF.ApplicationSoftware.processTCpacket
+    """
+    apid = tcPacketDu.applicationProcessId
+    LOG_INFO("ApplicationSoftwareImpl.processTCpacket(" + str(apid) + ")", "SPACE")
+    # processing of PUS telecommands
+    if PUS.PACKET.isPUSpacketDU(tcPacketDu):
+      if tcPacketDu.serviceType == PUS.SERVICES.TC_FKT_TYPE:
+        # packet is a PUS Function Management command
+        if tcPacketDu.serviceSubType == PUS.SERVICES.TC_FKT_PERFORM_FUNCTION:
+          tcFunctionId = tcPacketDu.getUnsigned(
+            self.tcFunctionIdBytePos, self.tcFunctionIdByteSize)
+          LOG("tcFunctionId = " + str(tcFunctionId), "SPACE")
+          return self.processFunctionService(apid, tcFunctionId, tcPacketDu)
+      elif tcPacketDu.serviceType == PUS.SERVICES.TC_TEST_TYPE:
+        # packet is a PUS Test command
+        if tcPacketDu.serviceSubType == PUS.SERVICES.TC_TEST_SUBTYPE:
+          return self.processTestService(apid, tcPacketDu)
+    # other telecommand
+    return self.processDefault(apid, tcPacketDu)
+
+# =============================================================================
+class MILapplicationSoftwareImpl(ApplicationSoftwareImpl):
+  """Specialization of the spacecraft's application software"""
+  # ---------------------------------------------------------------------------
+  def __init__(self):
+    """Initialise attributes only"""
+    ApplicationSoftwareImpl.__init__(self)
   # ---------------------------------------------------------------------------
   # shall be overloaded in derived classes
   def sendBC_Identity(self, bus):
@@ -201,138 +248,125 @@ class ApplicationSoftwareImpl(SPACE.IF.ApplicationSoftware):
   def sendRT_ResetResponse(self, bus):
     pass
   # ---------------------------------------------------------------------------
-  def processTCpacket(self, tcPacketDu):
+  def processFunctionService(self, apid, tcFunctionId, tcPacketDu):
     """
-    processes a telecommand C&C packet from the CCS
-    implementation of SPACE.IF.ApplicationSoftware.processTCpacket
+    processes PUS Service (8,1) telecommand packet
+    implementation of ApplicationSoftwareImpl.processFunctionService
     """
-    apid = tcPacketDu.applicationProcessId
-    LOG_INFO("ApplicationSoftwareImpl.processTCpacket(" + str(apid) + ")", "SPACE")
-    # immediatly process standard TCs
-    if apid >= ASW_TC_MIN_APID and apid <= ASW_TC_MIN_APID:
-      LOG("--> Standard Telecommand", "SPACE")
-      return True
-    # processing of PUS telecommands
-    if tcPacketDu.serviceType == PUS.SERVICES.TC_FKT_TYPE:
-      # packet is a PUS Function Management command
-      if tcPacketDu.serviceSubType == PUS.SERVICES.TC_FKT_PERFORM_FUNCTION:
-        tcFunctionId = tcPacketDu.getUnsigned(
-          self.tcFunctionIdBytePos, self.tcFunctionIdByteSize)
-        LOG("tcFunctionId = " + str(tcFunctionId), "SPACE")
-        forwardToBc = False
-        forwardToRt = False
-        if apid == self.getBcPfAPID():
-          forwardToBc = True
-          bus = SPACE.IF.MIL_BUS_PF
-        elif apid == self.getBcPlAPID():
-          forwardToBc = True
-          bus = SPACE.IF.MIL_BUS_PL
-        elif apid == self.getRtPfAPID():
-          forwardToRt = True
-          bus = SPACE.IF.MIL_BUS_PF
-        elif apid == self.getRtPlAPID():
-          forwardToRt = True
-          bus = SPACE.IF.MIL_BUS_PL
-        else:
-          # unexpected APID
-          LOG_ERROR("ASW: unexpected APID: " + str(apid), "SPACE")
-          return False
-        if forwardToBc and SPACE.IF.s_milBusController != None:
-          if tcFunctionId == BC_Identify_FID:
-            if SPACE.IF.s_milBusController.identify(bus):
-              return self.sendBC_Identity(bus)
-            LOG_ERROR("ASW: BC_Identify failed", "SPACE")
-            return False
-          elif tcFunctionId == BC_SelfTest_FID:
-            errorId = 1
-            if SPACE.IF.s_milBusController.selfTest(bus):
-              errorId = 0
-            return self.sendBC_SelfTestResponse(bus, errorId)
-          elif tcFunctionId == BC_GetSelfTestReport_FID:
-            if SPACE.IF.s_milBusController.getSelfTestReport(bus):
-              return self.sendBC_SelfTestReport(bus)
-            LOG_ERROR("ASW: BC_GetSelfTestReport failed", "SPACE")
-            return False
-          elif tcFunctionId == BC_Reset_FID:
-            if SPACE.IF.s_milBusController.reset(bus):
-              return self.sendBC_ResetResponse(bus)
-            LOG_ERROR("ASW: BC_Reset failed", "SPACE")
-            return False
-          elif tcFunctionId == BC_Configure_FID:
-            return SPACE.IF.s_milBusController.configure(bus)
-          elif tcFunctionId == BC_ConfigureFrame_FID:
-            return SPACE.IF.s_milBusController.configureFrame(bus)
-          elif tcFunctionId == BC_AddInterrogation_FID:
-            return SPACE.IF.s_milBusController.addInterrogation(bus)
-          elif tcFunctionId == BC_Discover_FID:
-            return SPACE.IF.s_milBusController.discover(bus)
-          elif tcFunctionId == E5013_SETUP_DIST_DATABLOCK_FID:
-            return SPACE.IF.s_milBusController.setupDistDatablock(bus)
-          elif tcFunctionId == BC_Start_FID:
-            return SPACE.IF.s_milBusController.start(bus)
-          elif tcFunctionId == BC_Stop_FID:
-            return SPACE.IF.s_milBusController.stop(bus)
-          elif tcFunctionId == BC_ForceFrameSwitch_FID:
-            return SPACE.IF.s_milBusController.forceFrameSwitch(bus)
-          elif tcFunctionId == BC_Send_FID:
-            return SPACE.IF.s_milBusController.send(bus)
-          elif tcFunctionId == BC_SetData_FID:
-            return SPACE.IF.s_milBusController.setData(bus)
-          elif tcFunctionId == BC_ForceBusSwitch_FID:
-            return SPACE.IF.s_milBusController.forceBusSwitch(bus)
-          elif tcFunctionId == BC_InjectError_FID:
-            return SPACE.IF.s_milBusController.injectError(bus)
-          elif tcFunctionId == BC_ClearError_FID:
-            return SPACE.IF.s_milBusController.clearError(bus)
-          elif tcFunctionId == E5013_BC_ACTIVATE_FID:
-            return SPACE.IF.s_milBusController.activate(bus)
-          elif tcFunctionId == E5013_BC_DEACTIVATE_FID:
-            return SPACE.IF.s_milBusController.deactivate(bus)
-          elif tcFunctionId == E5013_DTD_FID:
-            return SPACE.IF.s_milBusController.dtd(bus)
-        elif forwardToRt and SPACE.IF.s_milBusRemoteTerminals != None:
-          if tcFunctionId == RT_Identify_FID:
-            if SPACE.IF.s_milBusRemoteTerminals.identify(bus):
-              return self.sendRT_Identity(bus)
-            LOG_ERROR("ASW: RT_Identify failed", "SPACE")
-            return False
-          elif tcFunctionId == RT_SelfTest_FID:
-            errorId = 1
-            if SPACE.IF.s_milBusRemoteTerminals.selfTest(bus):
-              errorId = 0
-            return self.sendRT_SelfTestResponse(bus, errorId)
-          elif tcFunctionId == RT_GetSelfTestReport_FID:
-            if SPACE.IF.s_milBusRemoteTerminals.getSelfTestReport(bus):
-              return self.sendRT_SelfTestReport(bus)
-            LOG_ERROR("ASW: RT_GetSelfTestReport failed", "SPACE")
-            return False
-          elif tcFunctionId == RT_Configure_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.configure(bus)
-          elif tcFunctionId == RT_AddResponse_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.addResponse(bus)
-          elif tcFunctionId == RT_Reset_FID:
-            if SPACE.IF.s_milBusRemoteTerminals.reset(bus):
-              return self.sendRT_ResetResponse(bus)
-            LOG_ERROR("ASW: RT_Reset failed", "SPACE")
-            return False
-          elif tcFunctionId == RT_SAEnable_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.saEnable(bus)
-          elif tcFunctionId == E5013_SETUP_ACQU_DATABLOCK_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.setupAcquDatablock(bus)
-          elif tcFunctionId == RT_Start_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.start(bus)
-          elif tcFunctionId == RT_Stop_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.stop(bus)
-          elif tcFunctionId == RT_InjectError_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.injectError(bus)
-          elif tcFunctionId == RT_ClearError_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.clearError(bus)
-          elif tcFunctionId == E5013_RT_ACTIVATE_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.activate(bus)
-          elif tcFunctionId == E5013_RT_DEACTIVATE_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.deactivate(bus)
-          elif tcFunctionId == E5013_ATR_FID:
-            return SPACE.IF.s_milBusRemoteTerminals.atr(bus)
+    forwardToBc = False
+    forwardToRt = False
+    if apid == self.getBcPfAPID():
+      forwardToBc = True
+      bus = SPACE.IF.MIL_BUS_PF
+    elif apid == self.getBcPlAPID():
+      forwardToBc = True
+      bus = SPACE.IF.MIL_BUS_PL
+    elif apid == self.getRtPfAPID():
+      forwardToRt = True
+      bus = SPACE.IF.MIL_BUS_PF
+    elif apid == self.getRtPlAPID():
+      forwardToRt = True
+      bus = SPACE.IF.MIL_BUS_PL
+    else:
+      # unexpected APID
+      LOG_ERROR("ASW: unexpected APID: " + str(apid), "SPACE")
+      return False
+    if forwardToBc and SPACE.IF.s_milBusController != None:
+      if tcFunctionId == BC_Identify_FID:
+        if SPACE.IF.s_milBusController.identify(bus):
+          return self.sendBC_Identity(bus)
+        LOG_ERROR("ASW: BC_Identify failed", "SPACE")
+        return False
+      elif tcFunctionId == BC_SelfTest_FID:
+        errorId = 1
+        if SPACE.IF.s_milBusController.selfTest(bus):
+          errorId = 0
+        return self.sendBC_SelfTestResponse(bus, errorId)
+      elif tcFunctionId == BC_GetSelfTestReport_FID:
+        if SPACE.IF.s_milBusController.getSelfTestReport(bus):
+          return self.sendBC_SelfTestReport(bus)
+        LOG_ERROR("ASW: BC_GetSelfTestReport failed", "SPACE")
+        return False
+      elif tcFunctionId == BC_Reset_FID:
+        if SPACE.IF.s_milBusController.reset(bus):
+          return self.sendBC_ResetResponse(bus)
+        LOG_ERROR("ASW: BC_Reset failed", "SPACE")
+        return False
+      elif tcFunctionId == BC_Configure_FID:
+        return SPACE.IF.s_milBusController.configure(bus)
+      elif tcFunctionId == BC_ConfigureFrame_FID:
+        return SPACE.IF.s_milBusController.configureFrame(bus)
+      elif tcFunctionId == BC_AddInterrogation_FID:
+        return SPACE.IF.s_milBusController.addInterrogation(bus)
+      elif tcFunctionId == BC_Discover_FID:
+        return SPACE.IF.s_milBusController.discover(bus)
+      elif tcFunctionId == E5013_SETUP_DIST_DATABLOCK_FID:
+        return SPACE.IF.s_milBusController.setupDistDatablock(bus)
+      elif tcFunctionId == BC_Start_FID:
+        return SPACE.IF.s_milBusController.start(bus)
+      elif tcFunctionId == BC_Stop_FID:
+        return SPACE.IF.s_milBusController.stop(bus)
+      elif tcFunctionId == BC_ForceFrameSwitch_FID:
+        return SPACE.IF.s_milBusController.forceFrameSwitch(bus)
+      elif tcFunctionId == BC_Send_FID:
+        return SPACE.IF.s_milBusController.send(bus)
+      elif tcFunctionId == BC_SetData_FID:
+        return SPACE.IF.s_milBusController.setData(bus)
+      elif tcFunctionId == BC_ForceBusSwitch_FID:
+        return SPACE.IF.s_milBusController.forceBusSwitch(bus)
+      elif tcFunctionId == BC_InjectError_FID:
+        return SPACE.IF.s_milBusController.injectError(bus)
+      elif tcFunctionId == BC_ClearError_FID:
+        return SPACE.IF.s_milBusController.clearError(bus)
+      elif tcFunctionId == E5013_BC_ACTIVATE_FID:
+        return SPACE.IF.s_milBusController.activate(bus)
+      elif tcFunctionId == E5013_BC_DEACTIVATE_FID:
+        return SPACE.IF.s_milBusController.deactivate(bus)
+      elif tcFunctionId == E5013_DTD_FID:
+        return SPACE.IF.s_milBusController.dtd(bus)
+    elif forwardToRt and SPACE.IF.s_milBusRemoteTerminals != None:
+      if tcFunctionId == RT_Identify_FID:
+        if SPACE.IF.s_milBusRemoteTerminals.identify(bus):
+          return self.sendRT_Identity(bus)
+        LOG_ERROR("ASW: RT_Identify failed", "SPACE")
+        return False
+      elif tcFunctionId == RT_SelfTest_FID:
+        errorId = 1
+        if SPACE.IF.s_milBusRemoteTerminals.selfTest(bus):
+          errorId = 0
+        return self.sendRT_SelfTestResponse(bus, errorId)
+      elif tcFunctionId == RT_GetSelfTestReport_FID:
+        if SPACE.IF.s_milBusRemoteTerminals.getSelfTestReport(bus):
+          return self.sendRT_SelfTestReport(bus)
+        LOG_ERROR("ASW: RT_GetSelfTestReport failed", "SPACE")
+        return False
+      elif tcFunctionId == RT_Configure_FID:
+        return SPACE.IF.s_milBusRemoteTerminals.configure(bus)
+      elif tcFunctionId == RT_AddResponse_FID:
+        return SPACE.IF.s_milBusRemoteTerminals.addResponse(bus)
+      elif tcFunctionId == RT_Reset_FID:
+        if SPACE.IF.s_milBusRemoteTerminals.reset(bus):
+          return self.sendRT_ResetResponse(bus)
+        LOG_ERROR("ASW: RT_Reset failed", "SPACE")
+        return False
+      elif tcFunctionId == RT_SAEnable_FID:
+        return SPACE.IF.s_milBusRemoteTerminals.saEnable(bus)
+      elif tcFunctionId == E5013_SETUP_ACQU_DATABLOCK_FID:
+        return SPACE.IF.s_milBusRemoteTerminals.setupAcquDatablock(bus)
+      elif tcFunctionId == RT_Start_FID:
+        return SPACE.IF.s_milBusRemoteTerminals.start(bus)
+      elif tcFunctionId == RT_Stop_FID:
+        return SPACE.IF.s_milBusRemoteTerminals.stop(bus)
+      elif tcFunctionId == RT_InjectError_FID:
+        return SPACE.IF.s_milBusRemoteTerminals.injectError(bus)
+      elif tcFunctionId == RT_ClearError_FID:
+        return SPACE.IF.s_milBusRemoteTerminals.clearError(bus)
+      elif tcFunctionId == E5013_RT_ACTIVATE_FID:
+        return SPACE.IF.s_milBusRemoteTerminals.activate(bus)
+      elif tcFunctionId == E5013_RT_DEACTIVATE_FID:
+        return SPACE.IF.s_milBusRemoteTerminals.deactivate(bus)
+      elif tcFunctionId == E5013_ATR_FID:
+        return SPACE.IF.s_milBusRemoteTerminals.atr(bus)
     return True
   # ---------------------------------------------------------------------------
   def notifyMILdatablockAcquisition(self, rtAddress, dataBlock):
@@ -348,12 +382,12 @@ class ApplicationSoftwareImpl(SPACE.IF.ApplicationSoftware):
     LOG_INFO("ApplicationSoftwareImpl.notifyMILdatablockDistribution(" + str(rtAddress) + ")", "SPACE")
 
 # =============================================================================
-class MTGapplicationSoftwareImpl(ApplicationSoftwareImpl):
+class MTGapplicationSoftwareImpl(MILapplicationSoftwareImpl):
   """Implementation of the MTG spacecraft's application software"""
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise attributes only"""
-    ApplicationSoftwareImpl.__init__(self)
+    MILapplicationSoftwareImpl.__init__(self)
   # ---------------------------------------------------------------------------
   def getBcPfAPID(self):
     """implementation of SPACE.IF.ApplicationSoftware.getBcPfAPID"""
@@ -448,12 +482,12 @@ class MTGapplicationSoftwareImpl(ApplicationSoftwareImpl):
       return SPACE.IF.s_onboardComputer.generateEmptyTMpacket("YD2TMPK00535")
 
 # =============================================================================
-class S4applicationSoftwareImpl(ApplicationSoftwareImpl):
+class S4applicationSoftwareImpl(MILapplicationSoftwareImpl):
   """Implementation of the Sentinel 4 spacecraft's application software"""
   # ---------------------------------------------------------------------------
   def __init__(self):
     """Initialise attributes only"""
-    ApplicationSoftwareImpl.__init__(self)
+    MILapplicationSoftwareImpl.__init__(self)
   # ---------------------------------------------------------------------------
   def getBcPfAPID(self):
     """implementation of SPACE.IF.ApplicationSoftware.getBcPfAPID"""
@@ -557,58 +591,48 @@ class EUCLIDpowerFEEsim_BS(ApplicationSoftwareImpl):
     self.commandingMode = EPWR_CMD_LOCAL
     self.operationMode = EPWR_OP_OFFLINE
   # ---------------------------------------------------------------------------
-  def processTCpacket(self, tcPacketDu):
+  def processFunctionService(self, apid, tcFunctionId, tcPacketDu):
     """
-    processes a telecommand C&C packet from the CCS
-    implementation of SPACE.IF.ApplicationSoftware.processTCpacket
+    processes PUS Service (8,1) telecommand packet
+    implementation of ApplicationSoftwareImpl.processFunctionService
     """
-    apid = tcPacketDu.applicationProcessId
-    LOG_INFO("EUCLIDpowerFEEsim_BS.processTCpacket(" + str(apid) + ")", "SPACE")
-    # packet is a PUS Function Management command
-    if tcPacketDu.serviceType == PUS.SERVICES.TC_FKT_TYPE:
-      if tcPacketDu.serviceSubType == PUS.SERVICES.TC_FKT_PERFORM_FUNCTION:
-        tcFunctionId = tcPacketDu.getUnsigned(
-          self.tcFunctionIdBytePos, self.tcFunctionIdByteSize)
-        LOG("tcFunctionId = " + str(tcFunctionId), "SPACE")
-        if tcFunctionId == BS_Initialize:
-          LOG_INFO("*** BS_Initialize ***", "SPACE")
-          LOG("push HKTM", "SPACE")
-          return self.sendBS_Monitor()
-        elif tcFunctionId == BS_SetLocal:
-          LOG_INFO("*** BS_SetLocal ***", "SPACE")
-          LOG("set the SCOE into the LOCAL commanding mode", "SPACE")
-          self.commandingMode = EPWR_CMD_LOCAL
-        elif tcFunctionId == BS_SetRemote:
-          LOG_INFO("*** BS_SetRemote ***", "SPACE")
-          LOG("set the SCOE into the REMOTE commanding mode", "SPACE")
-          self.commandingMode = EPWR_CMD_REMOTE
-        elif tcFunctionId == BS_LockInstruments:
-          LOG_INFO("*** BS_LockInstruments ***", "SPACE")
-          LOG("not used for simulation", "SPACE")
-        elif tcFunctionId == BS_UnlockInstruments:
-          LOG_INFO("*** BS_UnlockInstruments ***", "SPACE")
-          LOG("not used for simulation", "SPACE")
-        elif tcFunctionId == BS_SetOnline:
-          LOG_INFO("*** BS_SetOnline ***", "SPACE")
-          LOG("set the SCOE into the ONLINE operation mode", "SPACE")
-          self.operationMode = EPWR_OP_ONLINE
-          return self.sendBS_Monitor()
-        elif tcFunctionId == BS_SetOffline:
-          LOG_INFO("*** BS_SetOffline ***", "SPACE")
-          LOG("set the SCOE into the OFFLINE operation mode", "SPACE")
-          self.operationMode = EPWR_OP_OFFLINE
-          return self.sendBS_Monitor()
-        elif tcFunctionId == BS_SelfTest:
-          LOG_INFO("*** BS_SelfTest ***", "SPACE")
-          # the SELFTEST is only allowed in OFFLINE mode
-          if self.operationMode == EPWR_OP_ONLINE:
-            LOG_ERROR("SELFTEST not allowed when system is ONLINE", "SPACE")
-            return False
-        else:
-          # unexpected Function ID
-          LOG_WARNING("no simulation for Function ID " + str(tcFunctionId) + " implemented", "SPACE")
-        return True
-    LOG_WARNING("TC ignored by simulation", "SPACE")
+    if tcFunctionId == BS_Initialize:
+      LOG_INFO("*** BS_Initialize ***", "SPACE")
+      LOG("push HKTM", "SPACE")
+      return self.sendBS_Monitor()
+    elif tcFunctionId == BS_SetLocal:
+      LOG_INFO("*** BS_SetLocal ***", "SPACE")
+      LOG("set the SCOE into the LOCAL commanding mode", "SPACE")
+      self.commandingMode = EPWR_CMD_LOCAL
+    elif tcFunctionId == BS_SetRemote:
+      LOG_INFO("*** BS_SetRemote ***", "SPACE")
+      LOG("set the SCOE into the REMOTE commanding mode", "SPACE")
+      self.commandingMode = EPWR_CMD_REMOTE
+    elif tcFunctionId == BS_LockInstruments:
+      LOG_INFO("*** BS_LockInstruments ***", "SPACE")
+      LOG("not used for simulation", "SPACE")
+    elif tcFunctionId == BS_UnlockInstruments:
+      LOG_INFO("*** BS_UnlockInstruments ***", "SPACE")
+      LOG("not used for simulation", "SPACE")
+    elif tcFunctionId == BS_SetOnline:
+      LOG_INFO("*** BS_SetOnline ***", "SPACE")
+      LOG("set the SCOE into the ONLINE operation mode", "SPACE")
+      self.operationMode = EPWR_OP_ONLINE
+      return self.sendBS_Monitor()
+    elif tcFunctionId == BS_SetOffline:
+      LOG_INFO("*** BS_SetOffline ***", "SPACE")
+      LOG("set the SCOE into the OFFLINE operation mode", "SPACE")
+      self.operationMode = EPWR_OP_OFFLINE
+      return self.sendBS_Monitor()
+    elif tcFunctionId == BS_SelfTest:
+      LOG_INFO("*** BS_SelfTest ***", "SPACE")
+      # the SELFTEST is only allowed in OFFLINE mode
+      if self.operationMode == EPWR_OP_ONLINE:
+        LOG_ERROR("SELFTEST not allowed when system is ONLINE", "SPACE")
+        return False
+    else:
+      # unexpected Function ID
+      LOG_WARNING("no simulation for Function ID " + str(tcFunctionId) + " implemented", "SPACE")
     return True
   # ---------------------------------------------------------------------------
   def sendBS_Monitor(self):
@@ -636,128 +660,118 @@ class EUCLIDpowerFEEsim_FTH(ApplicationSoftwareImpl):
     self.commandingMode = EPWR_CMD_LOCAL
     self.operationMode = EPWR_OP_OFFLINE
   # ---------------------------------------------------------------------------
-  def processTCpacket(self, tcPacketDu):
+  def processFunctionService(self, apid, tcFunctionId, tcPacketDu):
     """
-    processes a telecommand C&C packet from the CCS
-    implementation of SPACE.IF.ApplicationSoftware.processTCpacket
+    processes PUS Service (8,1) telecommand packet
+    implementation of ApplicationSoftwareImpl.processFunctionService
     """
-    apid = tcPacketDu.applicationProcessId
-    LOG_INFO("EUCLIDpowerFEEsim_BS.processTCpacket(" + str(apid) + ")", "SPACE")
-    # packet is a PUS Function Management command
-    if tcPacketDu.serviceType == PUS.SERVICES.TC_FKT_TYPE:
-      if tcPacketDu.serviceSubType == PUS.SERVICES.TC_FKT_PERFORM_FUNCTION:
-        tcFunctionId = tcPacketDu.getUnsigned(
-          self.tcFunctionIdBytePos, self.tcFunctionIdByteSize)
-        LOG("tcFunctionId = " + str(tcFunctionId), "SPACE")
-        if tcFunctionId == FTH_Initialize:
-          LOG_INFO("*** FTH_Initialize ***", "SPACE")
-          LOG("push HKTM", "SPACE")
-          return self.sendFTH_MonitorProUST()
-        elif tcFunctionId == FTH_EnableGUI:
-          LOG_INFO("*** FTH_EnableGUI ***", "SPACE")
-          LOG("set the SCOE into the REMOTE commanding mode", "SPACE")
-          self.commandingMode = EPWR_CMD_REMOTE
-        elif tcFunctionId == FTH_DisableGUI:
-          LOG_INFO("*** FTH_DisableGUI ***", "SPACE")
-          LOG("set the SCOE into the LOCAL commanding mode", "SPACE")
-          self.commandingMode = EPWR_CMD_LOCAL
-        elif tcFunctionId == FTH_SetOnline:
-          LOG_INFO("*** FTH_SetOnline ***", "SPACE")
-          LOG("set the SCOE into the ONLINE operation mode", "SPACE")
-          self.operationMode = EPWR_OP_FTH_ONLINE
-          return self.sendFTH_MonitorProUST()
-        elif tcFunctionId == FTH_SetOffline:
-          LOG_INFO("*** FTH_SetOffline ***", "SPACE")
-          LOG("set the SCOE into the OFFLINE operation mode", "SPACE")
-          self.operationMode = EPWR_OP_OFFLINE
-          return self.sendFTH_MonitorProUST()
-        elif tcFunctionId == FTH_SelfTest:
-          LOG_INFO("*** FTH_SelfTest ***", "SPACE")
-          # the SELFTEST is only allowed in OFFLINE mode
-          if self.operationMode == EPWR_OP_FTH_ONLINE:
-            LOG_ERROR("SELFTEST not allowed when system is ONLINE", "SPACE")
-            return False
-        elif tcFunctionId == FTH_ConfigNEA:
-          LOG_INFO("*** FTH_ConfigNEA ***", "SPACE")
-          pNEA_ID = tcPacketDu.getString(
-            FTH_ConfigNEA_NEA_ID_BYTE_OFFSET, FTH_ConfigNEA_NEA_ID_BYTE_SIZE).rstrip('\0')
-          pA_LO = tcPacketDu.getUnsigned(
-            FTH_ConfigNEA_A_LO_BYTE_OFFSET, FTH_ConfigNEA_A_LO_BYTE_SIZE)
-          pA_LO = UTIL.DU.unsigned2signed(pA_LO, FTH_ConfigNEA_A_LO_BYTE_SIZE) / 1000000.0
-          pA_HI_min = tcPacketDu.getUnsigned(
-            FTH_ConfigNEA_A_HI_min_BYTE_OFFSET, FTH_ConfigNEA_A_HI_min_BYTE_SIZE)
-          pA_HI_min = UTIL.DU.unsigned2signed(pA_HI_min, FTH_ConfigNEA_A_HI_min_BYTE_SIZE) / 1000000.0
-          pA_HI_max = tcPacketDu.getUnsigned(
-            FTH_ConfigNEA_A_HI_max_BYTE_OFFSET, FTH_ConfigNEA_A_HI_max_BYTE_SIZE)
-          pA_HI_max = UTIL.DU.unsigned2signed(pA_HI_max, FTH_ConfigNEA_A_HI_max_BYTE_SIZE) / 1000000.0
-          pA_Tmin = tcPacketDu.getUnsigned(
-            FTH_ConfigNEA_Tmin_BYTE_OFFSET, FTH_ConfigNEA_Tmin_BYTE_SIZE)
-          pA_Tmax = tcPacketDu.getUnsigned(
-            FTH_ConfigNEA_Tmax_BYTE_OFFSET, FTH_ConfigNEA_Tmax_BYTE_SIZE)
-          pNEA_TYPE = tcPacketDu.getString(
-            FTH_ConfigNEA_NEA_TYPE_BYTE_OFFSET, FTH_ConfigNEA_NEA_TYPE_BYTE_SIZE).rstrip('\0')
-          LOG_INFO("pNEA_ID = " + pNEA_ID, "SPACE")
-          LOG_INFO("pA_LO = " + str(pA_LO), "SPACE")
-          LOG_INFO("pA_HI_min = " + str(pA_HI_min), "SPACE")
-          LOG_INFO("pA_HI_max = " + str(pA_HI_max), "SPACE")
-          LOG_INFO("pA_Tmin = " + str(pA_Tmin), "SPACE")
-          LOG_INFO("pA_Tmax = " + str(pA_Tmax), "SPACE")
-          LOG_INFO("pNEA_TYPE = " + pNEA_TYPE, "SPACE")
-          neaMask = str(str(pA_LO) + "," + str(pA_HI_min) + "," + str(pA_HI_max) + "," + str(pA_Tmin) + ".0," + str(pA_Tmax) + ".0")
-          if pNEA_ID == "NEA1" and pNEA_TYPE == "N":
-            paramName = "NEA_MASK_1N"
-          elif pNEA_ID == "NEA1" and pNEA_TYPE == "R":
-            paramName = "NEA_MASK_1R"
-          elif pNEA_ID == "NEA2" and pNEA_TYPE == "N":
-            paramName = "NEA_MASK_2N"
-          elif pNEA_ID == "NEA2" and pNEA_TYPE == "R":
-            paramName = "NEA_MASK_2R"
-          elif pNEA_ID == "NEA3" and pNEA_TYPE == "N":
-            paramName = "NEA_MASK_3N"
-          elif pNEA_ID == "NEA3" and pNEA_TYPE == "R":
-            paramName = "NEA_MASK_3R"
-          else:
-            # unexpected NEA_Mask identifiers
-            LOG_WARNING("invalid NEA_ID " + pNEA_ID + " or NEA_TYPE " + pNEA_TYPE, "SPACE")
-            return False
-          return self.sendFTH_MonitorProUST_withStringParam(paramName, neaMask, FTH_NEA_Mask_BYTE_SIZE)
-        elif tcFunctionId == FTH_SelectNEA:
-          LOG_INFO("*** FTH_SelectNEA ***", "SPACE")
-          pNEA_ID = tcPacketDu.getString(
-            FTH_SelectNEA_NEA_ID_BYTE_OFFSET, FTH_SelectNEA_NEA_ID_BYTE_SIZE).rstrip('\0')
-          pNEA_TYPE = tcPacketDu.getString(
-            FTH_SelectNEA_NEA_TYPE_BYTE_OFFSET, FTH_SelectNEA_NEA_TYPE_BYTE_SIZE).rstrip('\0')
-          pSelect = tcPacketDu.getUnsigned(
-            FTH_SelectNEA_select_BYTE_OFFSET, FTH_SelectNEA_select_BYTE_SIZE)
-          LOG_INFO("pNEA_ID = " + pNEA_ID, "SPACE")
-          LOG_INFO("pNEA_TYPE = " + pNEA_TYPE, "SPACE")
-          LOG_INFO("pSelect = " + str(pSelect), "SPACE")
-          if pSelect == 1:
-            neaPulse = "0,0.0,0.0,None,Selected"
-          else:
-            neaPulse = "0,0.0,0.0,None,Unselected"
-          if pNEA_ID == "NEA1" and pNEA_TYPE == "N":
-            paramName = "NEA_PULSE_1N"
-          elif pNEA_ID == "NEA1" and pNEA_TYPE == "R":
-            paramName = "NEA_PULSE_1R"
-          elif pNEA_ID == "NEA2" and pNEA_TYPE == "N":
-            paramName = "NEA_PULSE_2N"
-          elif pNEA_ID == "NEA2" and pNEA_TYPE == "R":
-            paramName = "NEA_PULSE_2R"
-          elif pNEA_ID == "NEA3" and pNEA_TYPE == "N":
-            paramName = "NEA_PULSE_3N"
-          elif pNEA_ID == "NEA3" and pNEA_TYPE == "R":
-            paramName = "NEA_PULSE_3R"
-          else:
-            # unexpected NEA_Pulse identifiers
-            LOG_WARNING("invalid NEA_ID " + pNEA_ID + " or NEA_TYPE " + pNEA_TYPE, "SPACE")
-            return False
-          return self.sendFTH_MonitorProUST_withStringParam(paramName, neaPulse, FTH_NEA_Pulse_BYTE_SIZE)
-        else:
-          # unexpected Function ID
-          LOG_WARNING("no simulation for Function ID " + str(tcFunctionId) + " implemented", "SPACE")
-        return True
-    LOG_WARNING("TC ignored by simulation", "SPACE")
+    if tcFunctionId == FTH_Initialize:
+      LOG_INFO("*** FTH_Initialize ***", "SPACE")
+      LOG("push HKTM", "SPACE")
+      return self.sendFTH_MonitorProUST()
+    elif tcFunctionId == FTH_EnableGUI:
+      LOG_INFO("*** FTH_EnableGUI ***", "SPACE")
+      LOG("set the SCOE into the REMOTE commanding mode", "SPACE")
+      self.commandingMode = EPWR_CMD_REMOTE
+    elif tcFunctionId == FTH_DisableGUI:
+      LOG_INFO("*** FTH_DisableGUI ***", "SPACE")
+      LOG("set the SCOE into the LOCAL commanding mode", "SPACE")
+      self.commandingMode = EPWR_CMD_LOCAL
+    elif tcFunctionId == FTH_SetOnline:
+      LOG_INFO("*** FTH_SetOnline ***", "SPACE")
+      LOG("set the SCOE into the ONLINE operation mode", "SPACE")
+      self.operationMode = EPWR_OP_FTH_ONLINE
+      return self.sendFTH_MonitorProUST()
+    elif tcFunctionId == FTH_SetOffline:
+      LOG_INFO("*** FTH_SetOffline ***", "SPACE")
+      LOG("set the SCOE into the OFFLINE operation mode", "SPACE")
+      self.operationMode = EPWR_OP_OFFLINE
+      return self.sendFTH_MonitorProUST()
+    elif tcFunctionId == FTH_SelfTest:
+      LOG_INFO("*** FTH_SelfTest ***", "SPACE")
+      # the SELFTEST is only allowed in OFFLINE mode
+      if self.operationMode == EPWR_OP_FTH_ONLINE:
+        LOG_ERROR("SELFTEST not allowed when system is ONLINE", "SPACE")
+        return False
+    elif tcFunctionId == FTH_ConfigNEA:
+      LOG_INFO("*** FTH_ConfigNEA ***", "SPACE")
+      pNEA_ID = tcPacketDu.getString(
+        FTH_ConfigNEA_NEA_ID_BYTE_OFFSET, FTH_ConfigNEA_NEA_ID_BYTE_SIZE).rstrip('\0')
+      pA_LO = tcPacketDu.getUnsigned(
+        FTH_ConfigNEA_A_LO_BYTE_OFFSET, FTH_ConfigNEA_A_LO_BYTE_SIZE)
+      pA_LO = UTIL.DU.unsigned2signed(pA_LO, FTH_ConfigNEA_A_LO_BYTE_SIZE) / 1000000.0
+      pA_HI_min = tcPacketDu.getUnsigned(
+        FTH_ConfigNEA_A_HI_min_BYTE_OFFSET, FTH_ConfigNEA_A_HI_min_BYTE_SIZE)
+      pA_HI_min = UTIL.DU.unsigned2signed(pA_HI_min, FTH_ConfigNEA_A_HI_min_BYTE_SIZE) / 1000000.0
+      pA_HI_max = tcPacketDu.getUnsigned(
+        FTH_ConfigNEA_A_HI_max_BYTE_OFFSET, FTH_ConfigNEA_A_HI_max_BYTE_SIZE)
+      pA_HI_max = UTIL.DU.unsigned2signed(pA_HI_max, FTH_ConfigNEA_A_HI_max_BYTE_SIZE) / 1000000.0
+      pA_Tmin = tcPacketDu.getUnsigned(
+        FTH_ConfigNEA_Tmin_BYTE_OFFSET, FTH_ConfigNEA_Tmin_BYTE_SIZE)
+      pA_Tmax = tcPacketDu.getUnsigned(
+        FTH_ConfigNEA_Tmax_BYTE_OFFSET, FTH_ConfigNEA_Tmax_BYTE_SIZE)
+      pNEA_TYPE = tcPacketDu.getString(
+        FTH_ConfigNEA_NEA_TYPE_BYTE_OFFSET, FTH_ConfigNEA_NEA_TYPE_BYTE_SIZE).rstrip('\0')
+      LOG_INFO("pNEA_ID = " + pNEA_ID, "SPACE")
+      LOG_INFO("pA_LO = " + str(pA_LO), "SPACE")
+      LOG_INFO("pA_HI_min = " + str(pA_HI_min), "SPACE")
+      LOG_INFO("pA_HI_max = " + str(pA_HI_max), "SPACE")
+      LOG_INFO("pA_Tmin = " + str(pA_Tmin), "SPACE")
+      LOG_INFO("pA_Tmax = " + str(pA_Tmax), "SPACE")
+      LOG_INFO("pNEA_TYPE = " + pNEA_TYPE, "SPACE")
+      neaMask = str(str(pA_LO) + "," + str(pA_HI_min) + "," + str(pA_HI_max) + "," + str(pA_Tmin) + ".0," + str(pA_Tmax) + ".0")
+      if pNEA_ID == "NEA1" and pNEA_TYPE == "N":
+        paramName = "NEA_MASK_1N"
+      elif pNEA_ID == "NEA1" and pNEA_TYPE == "R":
+        paramName = "NEA_MASK_1R"
+      elif pNEA_ID == "NEA2" and pNEA_TYPE == "N":
+        paramName = "NEA_MASK_2N"
+      elif pNEA_ID == "NEA2" and pNEA_TYPE == "R":
+        paramName = "NEA_MASK_2R"
+      elif pNEA_ID == "NEA3" and pNEA_TYPE == "N":
+        paramName = "NEA_MASK_3N"
+      elif pNEA_ID == "NEA3" and pNEA_TYPE == "R":
+        paramName = "NEA_MASK_3R"
+      else:
+        # unexpected NEA_Mask identifiers
+        LOG_WARNING("invalid NEA_ID " + pNEA_ID + " or NEA_TYPE " + pNEA_TYPE, "SPACE")
+        return False
+      return self.sendFTH_MonitorProUST_withStringParam(paramName, neaMask, FTH_NEA_Mask_BYTE_SIZE)
+    elif tcFunctionId == FTH_SelectNEA:
+      LOG_INFO("*** FTH_SelectNEA ***", "SPACE")
+      pNEA_ID = tcPacketDu.getString(
+        FTH_SelectNEA_NEA_ID_BYTE_OFFSET, FTH_SelectNEA_NEA_ID_BYTE_SIZE).rstrip('\0')
+      pNEA_TYPE = tcPacketDu.getString(
+        FTH_SelectNEA_NEA_TYPE_BYTE_OFFSET, FTH_SelectNEA_NEA_TYPE_BYTE_SIZE).rstrip('\0')
+      pSelect = tcPacketDu.getUnsigned(
+        FTH_SelectNEA_select_BYTE_OFFSET, FTH_SelectNEA_select_BYTE_SIZE)
+      LOG_INFO("pNEA_ID = " + pNEA_ID, "SPACE")
+      LOG_INFO("pNEA_TYPE = " + pNEA_TYPE, "SPACE")
+      LOG_INFO("pSelect = " + str(pSelect), "SPACE")
+      if pSelect == 1:
+        neaPulse = "0,0.0,0.0,None,Selected"
+      else:
+        neaPulse = "0,0.0,0.0,None,Unselected"
+      if pNEA_ID == "NEA1" and pNEA_TYPE == "N":
+        paramName = "NEA_PULSE_1N"
+      elif pNEA_ID == "NEA1" and pNEA_TYPE == "R":
+        paramName = "NEA_PULSE_1R"
+      elif pNEA_ID == "NEA2" and pNEA_TYPE == "N":
+        paramName = "NEA_PULSE_2N"
+      elif pNEA_ID == "NEA2" and pNEA_TYPE == "R":
+        paramName = "NEA_PULSE_2R"
+      elif pNEA_ID == "NEA3" and pNEA_TYPE == "N":
+        paramName = "NEA_PULSE_3N"
+      elif pNEA_ID == "NEA3" and pNEA_TYPE == "R":
+        paramName = "NEA_PULSE_3R"
+      else:
+        # unexpected NEA_Pulse identifiers
+        LOG_WARNING("invalid NEA_ID " + pNEA_ID + " or NEA_TYPE " + pNEA_TYPE, "SPACE")
+        return False
+      return self.sendFTH_MonitorProUST_withStringParam(paramName, neaPulse, FTH_NEA_Pulse_BYTE_SIZE)
+    else:
+      # unexpected Function ID
+      LOG_WARNING("no simulation for Function ID " + str(tcFunctionId) + " implemented", "SPACE")
     return True
   # ---------------------------------------------------------------------------
   def sendFTH_MonitorProUST(self):
@@ -806,86 +820,76 @@ class EUCLIDpowerFEEsim_LPS_SAS(ApplicationSoftwareImpl):
     self.sasOperationMode = EPWR_OP_OFFLINE
     self.scoeRunning = EPWR_SRUN_SAS
   # ---------------------------------------------------------------------------
-  def processTCpacket(self, tcPacketDu):
+  def processFunctionService(self, apid, tcFunctionId, tcPacketDu):
     """
-    processes a telecommand C&C packet from the CCS
-    implementation of SPACE.IF.ApplicationSoftware.processTCpacket
+    processes PUS Service (8,1) telecommand packet
+    implementation of ApplicationSoftwareImpl.processFunctionService
     """
-    apid = tcPacketDu.applicationProcessId
-    LOG_INFO("EUCLIDpowerFEEsim_LPS_SAS.processTCpacket(" + str(apid) + ")", "SPACE")
-    # packet is a PUS Function Management command
-    if tcPacketDu.serviceType == PUS.SERVICES.TC_FKT_TYPE:
-      if tcPacketDu.serviceSubType == PUS.SERVICES.TC_FKT_PERFORM_FUNCTION:
-        tcFunctionId = tcPacketDu.getUnsigned(
-          self.tcFunctionIdBytePos, self.tcFunctionIdByteSize)
-        LOG("tcFunctionId = " + str(tcFunctionId), "SPACE")
-        if tcFunctionId == LPS_Initialize:
-          LOG_INFO("*** LPS_Initialize ***", "SPACE")
-          LOG("set the SCOE into the LPSN running mode", "SPACE")
-          if self.isNominal:
-            self.scoeRunning = EPWR_SRUN_LPSN
-          else:
-            self.scoeRunning = EPWR_SRUN_LPSR
-          return self.sendLPS_Monitor()
-        elif tcFunctionId == LPS_SetLocal:
-          LOG_INFO("*** LPS_SetLocal ***", "SPACE")
-          LOG("set the SCOE into the LOCAL commanding mode", "SPACE")
-          self.commandingMode = EPWR_CMD_LOCAL
-        elif tcFunctionId == LPS_SetRemote:
-          LOG_INFO("*** LPS_SetRemote ***", "SPACE")
-          LOG("set the SCOE into the REMOTE commanding mode", "SPACE")
-          self.commandingMode = EPWR_CMD_REMOTE
-        elif tcFunctionId == LPS_LockInstruments:
-          LOG_INFO("*** LPS_LockInstruments ***", "SPACE")
-          LOG("not used for simulation", "SPACE")
-        elif tcFunctionId == LPS_UnlockInstruments:
-          LOG_INFO("*** LPS_UnlockInstruments ***", "SPACE")
-          LOG("not used for simulation", "SPACE")
-        elif tcFunctionId == LPS_SetOnLine:
-          LOG_INFO("*** LPS_SetOnLine ***", "SPACE")
-          LOG("set the SCOE into the ONLINE operation mode", "SPACE")
-          self.lpsOperationMode = EPWR_OP_ONLINE
-          return self.sendLPS_Monitor()
-        elif tcFunctionId == LPS_SetOffLine:
-          LOG_INFO("*** LPS_SetOffLine ***", "SPACE")
-          LOG("set the SCOE into the OFFLINE operation mode", "SPACE")
-          self.lpsOperationMode = EPWR_OP_OFFLINE
-          return self.sendLPS_Monitor()
-        elif tcFunctionId == LPS_SelfTest:
-          LOG_INFO("*** LPS_SelfTest ***", "SPACE")
-        elif tcFunctionId == SAS_Initialize:
-          LOG_INFO("*** SAS_Initialize ***", "SPACE")
-          LOG("set the SCOE into the SAS running mode", "SPACE")
-          self.scoeRunning = EPWR_SRUN_SAS
-          return self.sendLPS_Monitor()
-        elif tcFunctionId == SAS_SetLocal:
-          LOG_INFO("*** SAS_SetLocal ***", "SPACE")
-          self.commandingMode = EPWR_CMD_LOCAL
-        elif tcFunctionId == SAS_SetRemote:
-          LOG_INFO("*** SAS_SetRemote ***", "SPACE")
-          self.commandingMode = EPWR_CMD_REMOTE
-        elif tcFunctionId == SAS_LockInstruments:
-          LOG_INFO("*** SAS_LockInstruments ***", "SPACE")
-          LOG("not used for simulation", "SPACE")
-        elif tcFunctionId == SAS_UnlockInstruments:
-          LOG_INFO("*** SAS_UnlockInstruments ***", "SPACE")
-          LOG("not used for simulation", "SPACE")
-        elif tcFunctionId == SAS_SetOnline:
-          LOG_INFO("*** SAS_SetOnline ***", "SPACE")
-          LOG("set the SCOE into the OFFLINE operation mode", "SPACE")
-          self.sasOperationMode = EPWR_OP_ONLINE
-          return self.sendSAS_Monitor()
-        elif tcFunctionId == SAS_SetOffline:
-          LOG_INFO("*** SAS_SetOffline ***", "SPACE")
-          self.sasOperationMode = EPWR_OP_OFFLINE
-          return self.sendSAS_Monitor()
-        elif tcFunctionId == SAS_SelfTest:
-          LOG_INFO("*** SAS_SelfTest ***", "SPACE")
-        else:
-          # unexpected Function ID
-          LOG_WARNING("no simulation for Function ID " + str(tcFunctionId) + " implemented", "SPACE")
-        return True
-    LOG_WARNING("TC ignored by simulation", "SPACE")
+    if tcFunctionId == LPS_Initialize:
+      LOG_INFO("*** LPS_Initialize ***", "SPACE")
+      LOG("set the SCOE into the LPSN running mode", "SPACE")
+      if self.isNominal:
+        self.scoeRunning = EPWR_SRUN_LPSN
+      else:
+        self.scoeRunning = EPWR_SRUN_LPSR
+      return self.sendLPS_Monitor()
+    elif tcFunctionId == LPS_SetLocal:
+      LOG_INFO("*** LPS_SetLocal ***", "SPACE")
+      LOG("set the SCOE into the LOCAL commanding mode", "SPACE")
+      self.commandingMode = EPWR_CMD_LOCAL
+    elif tcFunctionId == LPS_SetRemote:
+      LOG_INFO("*** LPS_SetRemote ***", "SPACE")
+      LOG("set the SCOE into the REMOTE commanding mode", "SPACE")
+      self.commandingMode = EPWR_CMD_REMOTE
+    elif tcFunctionId == LPS_LockInstruments:
+      LOG_INFO("*** LPS_LockInstruments ***", "SPACE")
+      LOG("not used for simulation", "SPACE")
+    elif tcFunctionId == LPS_UnlockInstruments:
+      LOG_INFO("*** LPS_UnlockInstruments ***", "SPACE")
+      LOG("not used for simulation", "SPACE")
+    elif tcFunctionId == LPS_SetOnLine:
+      LOG_INFO("*** LPS_SetOnLine ***", "SPACE")
+      LOG("set the SCOE into the ONLINE operation mode", "SPACE")
+      self.lpsOperationMode = EPWR_OP_ONLINE
+      return self.sendLPS_Monitor()
+    elif tcFunctionId == LPS_SetOffLine:
+      LOG_INFO("*** LPS_SetOffLine ***", "SPACE")
+      LOG("set the SCOE into the OFFLINE operation mode", "SPACE")
+      self.lpsOperationMode = EPWR_OP_OFFLINE
+      return self.sendLPS_Monitor()
+    elif tcFunctionId == LPS_SelfTest:
+      LOG_INFO("*** LPS_SelfTest ***", "SPACE")
+    elif tcFunctionId == SAS_Initialize:
+      LOG_INFO("*** SAS_Initialize ***", "SPACE")
+      LOG("set the SCOE into the SAS running mode", "SPACE")
+      self.scoeRunning = EPWR_SRUN_SAS
+      return self.sendLPS_Monitor()
+    elif tcFunctionId == SAS_SetLocal:
+      LOG_INFO("*** SAS_SetLocal ***", "SPACE")
+      self.commandingMode = EPWR_CMD_LOCAL
+    elif tcFunctionId == SAS_SetRemote:
+      LOG_INFO("*** SAS_SetRemote ***", "SPACE")
+      self.commandingMode = EPWR_CMD_REMOTE
+    elif tcFunctionId == SAS_LockInstruments:
+      LOG_INFO("*** SAS_LockInstruments ***", "SPACE")
+      LOG("not used for simulation", "SPACE")
+    elif tcFunctionId == SAS_UnlockInstruments:
+      LOG_INFO("*** SAS_UnlockInstruments ***", "SPACE")
+      LOG("not used for simulation", "SPACE")
+    elif tcFunctionId == SAS_SetOnline:
+      LOG_INFO("*** SAS_SetOnline ***", "SPACE")
+      LOG("set the SCOE into the OFFLINE operation mode", "SPACE")
+      self.sasOperationMode = EPWR_OP_ONLINE
+      return self.sendSAS_Monitor()
+    elif tcFunctionId == SAS_SetOffline:
+      LOG_INFO("*** SAS_SetOffline ***", "SPACE")
+      self.sasOperationMode = EPWR_OP_OFFLINE
+      return self.sendSAS_Monitor()
+    elif tcFunctionId == SAS_SelfTest:
+      LOG_INFO("*** SAS_SelfTest ***", "SPACE")
+    else:
+      # unexpected Function ID
+      LOG_WARNING("no simulation for Function ID " + str(tcFunctionId) + " implemented", "SPACE")
     return True
   # ---------------------------------------------------------------------------
   def sendLPS_Monitor(self):
@@ -977,4 +981,4 @@ def init():
   elif mission == "EUCLID_LPSR":
     SPACE.IF.s_applicationSoftware = EUCLIDpowerFEEsim_LPS_SAS(False)
   else:
-    LOG_ERROR("No ASW implementation for mission " + mission + " present", "SPACE")
+    SPACE.IF.s_applicationSoftware = ApplicationSoftwareImpl()

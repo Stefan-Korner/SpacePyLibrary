@@ -94,3 +94,5 @@ Backlog of features that shall be implemented
     TC-Acknowledgement packets configurable.
 
 041 Use a combo box for TC route selection in the CS application.
+
+043 Support PUS connection test service.

@@ -54,6 +54,7 @@ SYS_CONFIGURATION = [
   ["TC_PARAM_LENGTH_BYTES", "2"],
   ["TM_CYCLIC_MNEMO", "<<shall be passed as environment variable>>"],
   ["TM_CYCLIC_PERIOD_MS", "5000"],
+  ["TM_TEST_MNEMO", "<<shall be passed as environment variable>>"],
   ["TM_PKT_SIZE_ADD", "0"],
   ["TM_TT_TIME_FORMAT", "CUC4"],
   ["TM_TT_TIME_BYTE_OFFSET", "<<shall be passed as environment variable>>"],
