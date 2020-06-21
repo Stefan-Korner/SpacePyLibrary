@@ -50,6 +50,12 @@ TC_FKT_PERFORM_FUNCTION = 1
 TC_OBQ_TYPE = 11
 TC_OBQ_UPLINK_SUBTYPES = [4, 128]   # 128 is TET specific
 
+# -----------------------------------------------------------------------------
+# PUS service 17: Test service
+# TYPE / SUBTYPES
+TC_TEST_TYPE = 17
+TC_TEST_SUBTYPE = 1
+
 ####################
 # global variables #
 ####################

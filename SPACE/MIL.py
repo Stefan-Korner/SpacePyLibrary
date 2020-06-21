@@ -14,7 +14,7 @@
 #******************************************************************************
 from UTIL.SYS import Error, LOG, LOG_INFO, LOG_WARNING, LOG_ERROR
 import SPACE.IF
-import UTIL.TASK
+import UTIL.SYS, UTIL.TASK
 
 #############
 # constants #
@@ -258,6 +258,11 @@ class MILbusRemoteTerminalsImpl(SPACE.IF.MILbusRemoteTerminals):
 #############
 # functions #
 #############
+def missionHasMIL():
+  """checks if a MIL-1553 simulation is required"""
+  mission = UTIL.SYS.s_configuration.ASW_MISSION
+  return (mission == "MTG" or mission == "S4")
+
 def init():
   """initialise singleton(s)"""
   SPACE.IF.s_milBus = MILbusImpl()

@@ -37,7 +37,7 @@ SYS_CONFIGURATION = [
   ["CCS_SERVER_PORT2", "-1"],
   ["CNC_TC_ACKNAK_APID_PARAM_BYTE_OFFSET", "16"],
   ["CNC_TC_ACKNAK_SSC_PARAM_BYTE_OFFSET", "18"],
-  ["ASW_MISSION", "S4"],
+  ["ASW_MISSION", "DEFAULT"],
   ["TC_ACK_ACCEPT_SUCC_MNEMO", "<<shall be passed as environment variable>>"],
   ["TC_ACK_ACCEPT_FAIL_MNEMO", "<<shall be passed as environment variable>>"],
   ["TC_ACK_EXESTA_SUCC_MNEMO", "<<shall be passed as environment variable>>"],
@@ -53,6 +53,7 @@ SYS_CONFIGURATION = [
   ["TC_PARAM_LENGTH_BYTES", "2"],
   ["TM_CYCLIC_MNEMO", "<<shall be passed as environment variable>>"],
   ["TM_CYCLIC_PERIOD_MS", "5000"],
+  ["TM_TEST_MNEMO", "<<shall be passed as environment variable>>"],
   ["TM_PKT_SIZE_ADD", "0"],
   ["TM_TT_TIME_FORMAT", "CUC4"],
   ["TM_TT_TIME_BYTE_OFFSET", "<<shall be passed as environment variable>>"],
@@ -787,10 +788,12 @@ if guiMode:
   modelTask = ModelTask(isParent=False)
   tab0 = UI.TKI.createTab()
   tab1 = UI.TKI.createTab()
-  tab2 = UI.TKI.createTab()
+  if SPACE.MIL.missionHasMIL():
+    tab2 = UI.TKI.createTab()
   gui0view = SCOE.EGSEgui.GUIview(tab0)
   gui1view = SPACEUI.SPACEgui.GUIview(tab1)
-  gui2view = SPACEUI.MILgui.GUIview(tab2)
+  if SPACE.MIL.missionHasMIL():
+    gui2view = SPACEUI.MILgui.GUIview(tab2)
   UI.TKI.finaliseGUIcreation()
 else:
   modelTask = ModelTask(isParent=True)
@@ -813,7 +816,8 @@ SPACE.OBC.init(egseMode=True)
 SPACE.TMGEN.init()
 SPACE.TMRPLY.init()
 SPACE.ASW.init()
-SPACE.MIL.init()
+if SPACE.MIL.missionHasMIL():
+  SPACE.MIL.init()
 
 # create the EGSE server
 LOG("Open the EGSE servers")
